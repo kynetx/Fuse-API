@@ -1,0 +1,8 @@
+CloudOS-config.js
+
+*.chls
+*.csproj
+*.csproj.user
+
+[Bb]in
+[Oo]bj

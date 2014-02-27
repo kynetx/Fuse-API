@@ -1,21 +1,17 @@
-ruleset a369x205 {
+ruleset fuse_main {
     meta {
-        name "Fuse API"
+        name "Fuse API Main"
         description <<
             This is the master ruleset that manages, provides, and updates all things related to fuse. According to Ben,
         it is the bringer of all happiness.
     >>
-    author "AKO & EDO & BEN"
+    author "AKO & EDO & BEN & PHIL"
     logging off
-    sharing on
 
     provides fuse_get_vehicle_list, fuse_get_trips, fuse_get_vehicle_location,
              fuse_get_vehicle_maintenance, fuse_get_vehicle_overview
 
-    key aws {
-        "AWSAccessKey": "0GEYA8DTVCB3XHM819R2",
-        "AWSSecretKey": "I4TrjKcflLnchhsEzjlNju/s9EHiqdOScbyqGgn+"
-    }
+//    use module b16x5 alias dropbox_keys
 
     use module a169x676 alias pds
     use module a41x220  alias maintenance
