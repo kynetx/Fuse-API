@@ -11,7 +11,7 @@ ruleset fuse_main {
     provides fuse_get_vehicle_list, fuse_get_trips, fuse_get_vehicle_location,
              fuse_get_vehicle_maintenance, fuse_get_vehicle_overview
 
-//    use module b16x5 alias dropbox_keys
+    use module b16x10 alias fuse_keys
 
     use module a169x676 alias pds
     use module a41x220  alias maintenance
