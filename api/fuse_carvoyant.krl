@@ -10,34 +10,49 @@ Provides rules for handling Carvoyant events
 
   global {
 
-    hostname = "dash.carvoyant.com";
-    carvoyant_config_key = "fuse:carvoyant";
+    // config data contains
+    //   deviceID - Carvoyant device ID
+    //   apiKey - API Key in http://confluence.carvoyant.com/display/PUBDEV/Authentication+Mechanism
+    //   secToken - Access Token in http://confluence.carvoyant.com/display/PUBDEV/Authentication+Mechanism 
+
+    // key is optional, if missing, use default
+    get_config = function(key) {
+       carvoyant_config_key = key || "fuse:carvoyant";
+       hostname = "dash.carvoyant.com";
+       config_data = pds:get_items(carvoyant_config_key);
+       url = "https://#{hostname}/api/vehicle/"+ config_data{"deviceID"}
+       config_data
+         .put({"hostname": hostname,
+	       "base_url": url
+	      })
+    }
 
     // ---------- general carvoyant API access functions ----------
-    carvoyant_api_url = function(vehicle_id) {
-      "https://#{hostname}/api/vehicle/"+ vehicle_id
-    };
+    // See http://confluence.carvoyant.com/display/PUBDEV/Authentication+Mechanism for details
 
+    // params is optional
     carvoyant_headers = function(config_data, params) {
       {"credentials": {
           "username": config_data{"apiKey"},
           "password": config_data{"secToken"},
           "realm": "Carvoyant API",
-          "netloc": "#{hostname}:443"
+          "netloc": config_data{"hostname"} + ":443"
           },
        "params" : params || {}
       }
     };
 
-    carvoyant_get = function(url, config_data, params) {
-      http:get(url, carvoyant_headers(config_data, params))
+    // functions
+    carvoyant_get = function(url, config_data) {
+      http:get(url, carvoyant_headers(config_data))
     };
 
-    carvoyant_post = defaction(url, config_data, params) {
+    // actions
+    carvoyant_post = defaction(url, params, config_data) {
       http:post(url, carvoyant_headers(config_data, params))
     };
 
-    carvoyant_put = defaction(url, config_data, params) {
+    carvoyant_put = defaction(url, params, config_data) {
       http:put(url, carvoyant_headers(config_data, params))
     };
 
@@ -46,32 +61,33 @@ Provides rules for handling Carvoyant events
     };
 
     // ---------- subscriptions ----------
-    carvoyant_subscription_url = function(vehicle_id, subscription_type, subscription_id) {
-       base_url = covyant_api_url(vehicle_id) + "/eventSubscription/" + subsciption_type;
+    carvoyant_subscription_url = function(subscription_type, config_data, subscription_id) {
+       base_url = config_data{"base_url"} + "/eventSubscription/" + subsciption_type;
        subscription_id.isnull() => base_url 
 	                         | base_url + "/" + subscription_id
     };
 
+    // subscription functions
     // subscription_id is optional, if left off, retrieves all subscriptions of given type
-    cavoyant_get_subscription = defaction(subscription_type, params, subscription_id) {
-       carvoyant_config_data = pds:get_items(carvoyant_config_key);
-       carvoyant_post(carvoyant_subscription_url(carvoyant_config_data{"deviceID"}, subscription_type, subscription_id),
-                      carvoyant_config_data,
-		      parmams)
-    }
+    cavoyant_get_subscription = function(subscription_type, subscription_id) {
+       config_data = get_config();
+       carvoyant_get(carvoyant_subscription_url(subscription_type, config_data, subscription_id),
+		     config_data)
+    };
 
 
+    // subscription actions
     cavoyant_add_subscription = defaction(subscription_type, params) {
-       carvoyant_config_data = pds:get_items(carvoyant_config_key);
-       carvoyant_post(carvoyant_subscription_url(carvoyant_config_data{"deviceID"}, subscription_type),
-                      carvoyant_config_data,
-		      parmams)
-    }
+       config_data = get_config();
+       carvoyant_post(carvoyant_subscription_url(subscription_type, config_data),
+                      config_data,
+		      params)
+    };
 
     cavoyant_del_subscription = defaction(subscription_type, subscription_id) {
-       carvoyant_config_data = pds:get_items(carvoyant_config_key);
-       carvoyant_delete(carvoyant_subscription_url(carvoyant_config_data{"deviceID"}, subscription_type, subscription_id),
-                        carvoyant_config_data)
+       config_data = get_config();
+       carvoyant_delete(carvoyant_subscription_url(subscription_type, config_data, subscription_id),
+                        config_data)
     }
 
   }
