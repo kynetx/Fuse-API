@@ -9,6 +9,14 @@ Provides rules for handling Carvoyant events
     use module b16x10 alias fuse_keys
 
     errors to a16xSomeValidRID
+
+/* 
+
+Design decisions:
+
+1.) Use Carvoyant names, including camel case to avoid complex mapping calculations on keys. 
+
+*/
   
   }
 
@@ -23,15 +31,17 @@ Provides rules for handling Carvoyant events
     //  vehicle ID can't be in config data. Has to match one of them, but is supplied
 
 
+    // vehicle_id is optional if creating a new vehicle profile
     // key is optional, if missing, use default
-    get_config = function(key) {
+    get_config = function(vehicle_id, key) {
        carvoyant_config_key = key || "fuse:carvoyant";
        hostname = "dash.carvoyant.com";
        config_data = pds:get_items(carvoyant_config_key);
-       url = "https://#{hostname}/api/vehicle/"+ config_data{"deviceID"}
+       url = "https://#{hostname}/api/vehicle/#{vehicle_id}";
        config_data
          .put({"hostname": hostname,
-	       "base_url": url
+	       "base_url": url,
+	       "vehicle_id": vehicle_id
 	      })
     }
 
@@ -93,32 +103,35 @@ Provides rules for handling Carvoyant events
 
     // subscription functions
     // subscription_id is optional, if left off, retrieves all subscriptions of given type
-    cavoyant_get_subscription = function(subscription_type, subscription_id) {
-      config_data = get_config();
+    cavoyant_get_subscription = function(vehicle_id, subscription_type, subscription_id) {
+      config_data = get_config(vehicle_id);
       carvoyant_get(carvoyant_subscription_url(subscription_type, config_data, subscription_id),
    	            config_data)
     };
 
 
     // subscription actions
-    cavoyant_add_subscription = defaction(subscription_type, params) {
+    cavoyant_add_subscription = defaction(vehicle_id, subscription_type, params) {
       configure using autoraise = false;
-      config_data = get_config();
+      config_data = get_config(vehicle_id);
       carvoyant_post(carvoyant_subscription_url(subscription_type, config_data),
-                     config_data,
-	             params)
+      		     params,
+                     config_data
+		    )
         with autoraise = autoraise;
     };
 
-    cavoyant_del_subscription = defaction(subscription_type, subscription_id) {
+    cavoyant_del_subscription = defaction(vehicle_id, subscription_type, subscription_id) {
       configure using autoraise = false;
-      config_data = get_config();
+      config_data = get_config(vehicle_id);
       carvoyant_delete(carvoyant_subscription_url(subscription_type, config_data, subscription_id),
                        config_data)
         with autoraise = autoraise;
     }
 
     // ---------- internal functions ----------
+
+    // this should be in a library somewhere
     // eci is optional
     get_my_esl = function(eci){
       use_eci = eci || meta:eci();
@@ -128,27 +141,84 @@ Provides rules for handling Carvoyant events
 
   }
 
-  rule carvoyant_init_subscription {
-    select when carvoyant init
+  // ---------- rules for initializing and updating vehicle cloud ----------
+  rule carvoyant_init_vehicle {
+    select when carvoyant init_vehicle
     pre {
+      config_data = get_config();
+      params = {
+        "name": event:attr("name") || "Unknown Vehicle",
+        "deviceId": event:attr("deviceId") || "unknown",
+        "label": event:attr("label") || "My Vehicle",
+        "mileage": event:attr("mileage")
+      }
+    }
+    {
+      carvoyant_post(config_data{"base_url"},
+      		     params,
+                     config_data
+		    )
+        with autoraise = "vehicle_init";
+    }
+  }
+
+  rule initialization_ok {
+    select when http post status_code  re#2\d\d#  label "vehicle_init" 
+    pre {
+      vehicle_data = event:attr('content').decode().pick("$.vehicle");
+      vid = vehicle_data{"vehicleId"};
+      vin = vehicle_data{"vin"};
+    }
+    noop();
+    always {
+      set ent:vehicleId vid;
+      set ent:vin vin;
+      raise fuse event new_vehicle_added with 
+        vehicle_data = vehicle_data
+    }
+  }
+
+  rule carvoyant_update_vehicle {
+    select when carvoyant update_vehicle
+    pre {
+      config_data = get_config(event:attr("vehicleId"));
+      // will update any of the updatable data that appears in attrs() and leave the rest alone
+      params = event:attrs().delete("vehicleID");
+    }
+    {
+      carvoyant_post(config_data{"base_url"},
+      		     params,
+                     config_data
+		    )
+        with autoraise = "vehicle_update";
+    }
+  }
+
+  
+
+  // ---------- rules for creating subscriptions ----------
+  rule carvoyant_add_subscription {
+    select when carvoyant new_subscription_needed
+    pre {
+      vid = event:attr("vehicle_id");
       sub_type = event:attr("subscription_type");
       params = {"minimumTime": event:attr("minimumTime") || 60,
                 "postUrl": get_my_eci()
 	       }
     }
     if valid_subscription_type(sub_type) then 
-        carvoyant_add_subscription(sub_type, params) with
-    	  autoraise = sub_type;
+        carvoyant_add_subscription(vid, sub_type, params) with
+    	  autoraise = "add_subscription";
     notfired {
       error warn "Invalid Carvoyant event subscription type: #{sub_type}"
     }
   }
 
   rule subscription_ok {
-    select when http post status_code #(2\d\d)# setting (status)
+    select when http post status_code re#(2\d\d)# label "add_subscription" setting (status)
     pre {
       sub = event:attr('content').decode().pick("$.subscription");
-      new_subs = ent:subscriptions.put();
+      new_subs = ent:subscriptions.put([sub{"vehicleId"}], sub); // FIX
     }
     noop()
     always {
@@ -156,13 +226,20 @@ Provides rules for handling Carvoyant events
     }
   }
 
-  rule subscription_fail {
-    select when http post status_code #([45]\d\d)# setting (status)
+  // ---------- rules for handling notifications ----------
+
+
+  // ---------- error handling ----------
+  rule carvoyant_http_fail {
+    select when http post status_code re#([45]\d\d)# setting (status)
+//             or http put status_code re#([45]\d\d)# setting (status)
+//             or http delete status_code re#([45]\d\d)# setting (status)
     noop()
     fired {
       error warn "Carvoyant HTTP Error (#{status}): ${event:attr('status_line')}. Autoraise label: #{event:attr('label')}."
     }
   }
+
 
 
 }
