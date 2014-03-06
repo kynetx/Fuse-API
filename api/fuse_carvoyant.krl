@@ -7,8 +7,12 @@ Provides rules for handling Carvoyant events
 >>
 
     use module b16x10 alias fuse_keys
+    use module a169x676 alias pds
 
     errors to a16xSomeValidRID
+
+
+    provides get_config
 
 /* 
 
@@ -35,13 +39,16 @@ Design decisions:
     // key is optional, if missing, use default
     get_config = function(vehicle_id, key) {
        carvoyant_config_key = key || "fuse:carvoyant";
+       config_data = pds:get_items(carvoyant_config_key) || {};
+
        hostname = "dash.carvoyant.com";
-       config_data = pds:get_items(carvoyant_config_key);
        url = "https://#{hostname}/api/vehicle/#{vehicle_id}";
        config_data
          .put({"hostname": hostname,
 	       "base_url": url,
-	       "vehicle_id": vehicle_id
+	       "vehicle_id": vehicle_id,
+	       "apiKey" : config_data{"apiKey"} || keys:cavoyant_test("apiKey"),
+	       "secToken" : config_data{"secToken"} || keys:cavoyant_test("secToken")
 	      })
     }
 
@@ -83,6 +90,12 @@ Design decisions:
       http:delete(url, carvoyant_headers(config_data)) 
         with autoraise = autoraise;
     };
+
+    // ---------- vehicle data ----------
+    carvoyant_vehicle_data = function(vehicleID) {
+      config_data = get_config(vehicle_id);
+      carvoyant_get(config_data{"base_url"}, config_data);
+    }
 
     // ---------- subscriptions ----------
     carvoyant_subscription_url = function(subscription_type, config_data, subscription_id) {
@@ -162,22 +175,6 @@ Design decisions:
     }
   }
 
-  rule initialization_ok {
-    select when http post status_code  re#2\d\d#  label "vehicle_init" 
-    pre {
-      vehicle_data = event:attr('content').decode().pick("$.vehicle");
-      vid = vehicle_data{"vehicleId"};
-      vin = vehicle_data{"vin"};
-    }
-    noop();
-    always {
-      set ent:vehicleId vid;
-      set ent:vin vin;
-      raise fuse event new_vehicle_added with 
-        vehicle_data = vehicle_data
-    }
-  }
-
   rule carvoyant_update_vehicle {
     select when carvoyant update_vehicle
     pre {
@@ -194,6 +191,31 @@ Design decisions:
     }
   }
 
+  rule initialization_ok {
+    select when http post status_code  re#2\d\d#  label "vehicle_init" 
+             or http post status_code  re#2\d\d#  label "vehicle_update"
+    pre {
+
+      // not sure this is actually set with the new data. If not, make a call to get()
+      vehicle_data = event:attr('content').decode().pick("$.vehicle");
+
+      storable_vehicle_data = vehicle_data.filter(function(k,v){k eq "name" || 
+      			      					k eq "vehicleId" ||
+								k eq "deviceId" ||
+								k eq "vin" ||
+								k eq "label" ||
+								k eq "mileage"
+                                                               })
+    }
+    noop();
+    always {
+      set ent:vehicle_data storable_vehicle_data;
+      raise fuse event new_vehicle_added with 
+        vehicle_data = vehicle_data
+    }
+  }
+
+  
   
 
   // ---------- rules for creating subscriptions ----------
