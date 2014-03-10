@@ -104,7 +104,40 @@ Check that headers are good
     }
   }
 
-  // sets it off
+  rule get_vehicle_data {
+    select when test use_config
+    pre {
+      test_desc = <<
+Check that get_vehicle() works
+>>;
+
+      vehicles = carvoyant:carvoyant_vehicle_data();
+
+      values = {
+        "vehicle_data" : vehicles
+      };
+    }
+    if ( vehicles{["credentials", "username"]} 
+      ) then {
+      show_test:diag("test carvoyant_vehicle_data", values);
+    }
+
+    fired {
+     raise test event succeeds for b503129x0 with
+        test_desc = test_desc and
+        rulename = meta:ruleName() and
+	msg = "vehicle data is valid" and
+	details = values;
+    } else {
+      raise test event fails for b503129x0 with
+        test_desc = test_desc and
+        rulename = meta:ruleName() and
+	msg = "vehicle data not valid" and
+	details = values;
+    }
+  }
+
+  // sets error handling check off
   rule test_handle_error_init {
     select when test handle_error
     always {
