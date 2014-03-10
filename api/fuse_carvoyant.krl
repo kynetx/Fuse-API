@@ -12,7 +12,7 @@ Provides rules for handling Carvoyant events
     errors to a16x13
 
 
-    provides get_config
+    provides get_config, carvoyant_headers
 
 /* 
 
