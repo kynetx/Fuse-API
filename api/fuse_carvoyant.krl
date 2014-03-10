@@ -76,7 +76,9 @@ b16x13: fuse_error.krl
 
     // functions
     carvoyant_get = function(url, config_data) {
-      http:get(url, carvoyant_headers(config_data))
+      raw_result = http:get(url, carvoyant_headers(config_data));
+      (raw_result eq "200") => raw_result.put("content", raw_result{"content"}.decode())
+                             | raw_result
     };
 
     // actions
