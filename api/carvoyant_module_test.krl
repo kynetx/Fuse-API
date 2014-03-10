@@ -111,13 +111,15 @@ Check that headers are good
 Check that get_vehicle() works
 >>;
 
-      vehicles = carvoyant:carvoyant_vehicle_data();
+      vehicle_data = carvoyant:carvoyant_vehicle_data();
+      vehicles = vehicle_data{"content"};
 
       values = {
         "vehicle_data" : vehicles
       };
     }
-    if ( vehicles{["credentials", "username"]} 
+    if ( vehicle_data{"status_code"} eq "200"
+      && vehicles{"vehicle"}.length() > 0
       ) then {
       show_test:diag("test carvoyant_vehicle_data", values);
     }
