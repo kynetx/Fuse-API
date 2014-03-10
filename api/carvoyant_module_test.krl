@@ -56,7 +56,7 @@ Checks to make sure get_config() works
 	details = values;
 
       log "<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
-      log "Config: " + config;
+      log "Config: " + config.encode;
       log "<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
 
     }
