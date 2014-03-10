@@ -84,15 +84,16 @@ Checks to make sure get_config() works
 Checks to make sure error handler ruleset fires
 >>;
 
+      passed = event:attr("details").pick("$..attrs");
 
       values = {'attributes' : event:attrs()
                };
     }   
 
-    if( event:attr("error_rid") eq meta:rid() 
-     && event:attr("genus") eq "test"
-     && event:attr("species") eq "handle_error"
-     && event:attr("level") eq "warn"
+    if( passed{"error_rid"} eq meta:rid() 
+     && passed{"genus"} eq "test"
+     && passed{"species"} eq "handle_error"
+     && passed{"level"} eq "warn"
       ) then {
       show_test:diag("test error handling", values);
     }
@@ -112,7 +113,7 @@ Checks to make sure error handler ruleset fires
 	details = values;
 
       log "<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
-      log "Error attributes: " + event:attrs().encode();
+      log "Error attributes: " + passed.encode();
       log "<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
 
     }
