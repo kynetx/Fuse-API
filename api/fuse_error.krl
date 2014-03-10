@@ -36,7 +36,7 @@ ruleset fuse_error {
             ent_keys = rsm:entity_keys().encode();
 
             error_email = <<
-                A Guard tour error occured with the following details:
+                A Fuse tour error occured with the following details:
                 genus: #{genus}
                 species: #{species}
                 level: #{level}
