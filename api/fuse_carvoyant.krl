@@ -54,8 +54,8 @@ b16x13: fuse_error.krl
          .put({"hostname": hostname,
 	       "base_url": url,
 	       "vehicle_id": vehicle_id,
-	       "apiKey" : config_data{"apiKey"} || keys:cavoyant_test("apiKey"),
-	       "secToken" : config_data{"secToken"} || keys:cavoyant_test("secToken")
+	       "apiKey" : config_data{"apiKey"} || keys:carvoyant_test("apiKey"),
+	       "secToken" : config_data{"secToken"} || keys:carvoyant_test("secToken")
 	      })
     }
 
