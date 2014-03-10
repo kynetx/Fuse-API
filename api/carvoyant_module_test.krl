@@ -84,7 +84,7 @@ Checks to make sure get_config() works
 Checks to make sure error handler ruleset fires
 >>;
 
-      passed = event:attr("details").pick("$..attrs");
+      passed = event:attr("details");
 
       values = {'attributes' : event:attrs()
                };
