@@ -35,8 +35,7 @@ Checks to make sure get_config() works
 
     }   
 
-
-    if(not config{"apiKey"}.isnull()) then {
+    if(not config{"apiKey"} ) then {
       show_test:diag("test get_config", values);
     }
 
