@@ -11,7 +11,6 @@ Provides rules for handling Carvoyant events
 
     errors to a16x13
 
-
     provides get_config, carvoyant_headers, carvoyant_vehicle_data
 
 /* 
@@ -77,7 +76,9 @@ b16x13: fuse_error.krl
     // functions
     carvoyant_get = function(url, config_data) {
       raw_result = http:get(url, carvoyant_headers(config_data));
-      (raw_result{"status_code"} eq "200") => raw_result.put("content", raw_result{"content"}.decode())
+
+//      (raw_result{"status_code"} eq "200") => raw_result.put("content", raw_result{"content"}.decode())
+      (raw_result{"status_code"} eq "200") => {"content" : raw_result{"content"}.decode()}
                                             | raw_result
     };
 

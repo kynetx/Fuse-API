@@ -6,7 +6,8 @@ Test the Carvoyant module
 >>
     author "Phil Windley"
     logging on
-    
+
+    errors to a16x13
 
     use module b503129x0 alias show_test
 
