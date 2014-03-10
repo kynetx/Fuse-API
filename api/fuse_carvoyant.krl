@@ -9,7 +9,7 @@ Provides rules for handling Carvoyant events
     use module b16x10 alias fuse_keys
     use module a169x676 alias pds
 
-    errors to a16xSomeValidRID
+    errors to a16x13
 
 
     provides get_config
@@ -19,6 +19,13 @@ Provides rules for handling Carvoyant events
 Design decisions:
 
 1.) Use Carvoyant names, including camel case to avoid complex mapping calculations on keys. 
+
+RID Key:
+
+b16x10: fuse_keys.krl
+b16x11: fuse_carvoyant.krl
+b16x12: carvoyant_module_test.krl
+b16x13: fuse_error.krl
 
 */
   
