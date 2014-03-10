@@ -89,7 +89,11 @@ Checks to make sure error handler ruleset fires
                };
     }   
 
-    if( 0 ) then {
+    if( event:attr("error_rid") eq meta:rid() 
+     && event:attr("genus") eq "test"
+     && event:attr("species") eq "handle_error"
+     && event:attr("level") eq "warn"
+      ) then {
       show_test:diag("test error handling", values);
     }
 
