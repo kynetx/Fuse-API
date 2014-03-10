@@ -59,7 +59,6 @@ b16x13: fuse_error.krl
 	      })
     }
 
-
     // ---------- general carvoyant API access functions ----------
     // See http://confluence.carvoyant.com/display/PUBDEV/Authentication+Mechanism for details
 

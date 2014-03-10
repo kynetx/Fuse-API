@@ -40,6 +40,8 @@ Checks to make sure get_config() works
     }
 
     fired {
+      raise test event use_config with 
+        config_data = config;
       raise test event succeeds for b503129x0 with
         test_desc = test_desc and
         rulename = meta:ruleName() and
@@ -60,6 +62,46 @@ Checks to make sure get_config() works
     }
   }
  
+
+  rule use_config_headers {
+    select when test use_config
+    pre {
+      test_desc = <<
+Check that headers are good
+>>;
+
+      config_data = event:attr("config_data");
+      params = {
+        "foo" : 1,
+        "blah" : {"flip": "flop"}
+      };
+      headers = carvoyant:carvoyant_headers(config_data,params);
+
+      values = {
+        "config" : config_data,
+        "params" : params,
+        "headers" : headers
+      };
+    }
+    if (headers{["credentials", "username"]} eq config_data{"apiKey"}
+       ) then {
+      show_test:diag("test check_header", values);
+    }
+
+    fired {
+     raise test event succeeds for b503129x0 with
+        test_desc = test_desc and
+        rulename = meta:ruleName() and
+	msg = "config data is valid" and
+	details = values;
+    } else {
+      raise test event fails for b503129x0 with
+        test_desc = test_desc and
+        rulename = meta:ruleName() and
+	msg = "config data empty" and
+	details = values;
+    }
+  }
 
   // sets it off
   rule test_handle_error_init {
