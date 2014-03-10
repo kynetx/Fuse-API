@@ -87,11 +87,11 @@ Checks to make sure error handler ruleset fires
       rid = event:attr("rid");
       other = event:attr("attrs");
 
-      values = {'attributes' : event:attrs()
+      values = {'attributes' : other
                };
     }   
 
-    if( rid eq meta:rid() 
+    if( other{"error_rid"} eq meta:rid() 
      && other{"genus"} eq "test"
      && other{"species"} eq "handle_error"
      && other{"level"} eq "warn"
@@ -103,7 +103,7 @@ Checks to make sure error handler ruleset fires
       raise test event succeeds for b503129x0 with
         test_desc = test_desc and
         rulename = meta:ruleName() and
-	msg = "erro data is valid" and
+	msg = "error data is valid" and
 	details = values;
 
     } else {
