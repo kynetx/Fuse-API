@@ -53,5 +53,13 @@ ruleset fuse_error {
         {
             sendgrid:send(to_name, to_addr, subject, error_email);
         }
+	always {
+	  raise test event error_handled for b16x12 
+	    attributes
+	        {"rid": meta:rid(),
+   	         "attrs": event:attrs()
+		} 
+            if event:attr("_test")
+	}
     }
 }
