@@ -83,8 +83,9 @@ Check that headers are good
         "headers" : headers
       };
     }
-    if (headers{["credentials", "username"]} eq config_data{"apiKey"}
-       ) then {
+    if ( headers{["credentials", "username"]} eq config_data{"apiKey"}
+      && headers{["params","blah","flip"]} eq "flop"
+      ) then {
       show_test:diag("test check_header", values);
     }
 
