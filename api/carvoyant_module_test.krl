@@ -9,8 +9,6 @@ Test the Carvoyant module
 
     errors to a16x13
 
-    use module b16x10 alias fuse_keys
-
     use module b503129x0 alias show_test
 
     use module b16x11 alias carvoyant
