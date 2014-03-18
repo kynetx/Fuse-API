@@ -17,7 +17,7 @@ Test the Carvoyant module
 
   global {
 
-
+    f = 3 + 4;
   }
 
   rule get_config_test { 
@@ -140,6 +140,56 @@ Check that get_vehicle() works
     }
   }
 
+  // ---------- subscriptions ----------
+  rule get_subscription_test { 
+    select when test get_subscription
+
+    pre {
+      test_desc = <<
+Checks to make sure get_subscription() works
+>>;
+
+      config = carvoyant:get_subscription();
+
+      values = {'config_data' : config
+               };
+
+
+    }   
+
+    if( config{"apiKey"} && config{"secToken"} ) then {
+      show_test:diag("test get_config", values);
+    }
+
+    fired {
+      raise test event use_config with 
+        config_data = config;
+      raise test event succeeds for b503129x0 with
+        test_desc = test_desc and
+        rulename = meta:ruleName() and
+	msg = "config data is valid" and
+	details = values;
+
+    } else {
+      raise test event fails for b503129x0 with
+        test_desc = test_desc and
+        rulename = meta:ruleName() and
+	msg = "config data empty" and
+	details = values;
+
+      log "<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+      log "Config: " + config.encode();
+      log "<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+
+    }
+  }
+ 
+
+
+
+
+
+  // ---------- For error handling ----------
   // sets error handling check off
   rule test_handle_error_init {
     select when test handle_error

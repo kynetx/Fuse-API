@@ -129,7 +129,7 @@ b16x13: fuse_error.krl
 
     // subscription functions
     // subscription_id is optional, if left off, retrieves all subscriptions of given type
-    cavoyant_get_subscription = function(vehicle_id, subscription_type, subscription_id) {
+    get_subscription = function(vehicle_id, subscription_type, subscription_id) {
       config_data = get_config(vehicle_id);
       carvoyant_get(carvoyant_subscription_url(subscription_type, config_data, subscription_id),
    	            config_data)
@@ -137,7 +137,7 @@ b16x13: fuse_error.krl
 
 
     // subscription actions
-    cavoyant_add_subscription = defaction(vehicle_id, subscription_type, params) {
+    add_subscription = defaction(vehicle_id, subscription_type, params) {
       configure using autoraise = false;
       config_data = get_config(vehicle_id);
       carvoyant_post(carvoyant_subscription_url(subscription_type, config_data),
@@ -147,7 +147,7 @@ b16x13: fuse_error.krl
         with autoraise = autoraise;
     };
 
-    cavoyant_del_subscription = defaction(vehicle_id, subscription_type, subscription_id) {
+    del_subscription = defaction(vehicle_id, subscription_type, subscription_id) {
       configure using autoraise = false;
       config_data = get_config(vehicle_id);
       carvoyant_delete(carvoyant_subscription_url(subscription_type, config_data, subscription_id),
