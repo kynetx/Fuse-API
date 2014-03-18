@@ -17,7 +17,6 @@ Test the Carvoyant module
 
   global {
 
-    f = 3 + 4;
   }
 
   rule get_config_test { 
