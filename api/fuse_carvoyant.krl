@@ -119,7 +119,7 @@ b16x13: fuse_error.krl
 
     // ---------- subscriptions ----------
     carvoyant_subscription_url = function(subscription_type, config_data, subscription_id) {
-       base_url = config_data{"base_url"} + "/eventSubscription/" + subsciption_type;
+       base_url = config_data{"base_url"} + "/eventSubscription/" + subscription_type;
        subscription_id.isnull() => base_url 
 	                         | base_url + "/" + subscription_id
     };
@@ -147,7 +147,7 @@ b16x13: fuse_error.krl
     add_subscription = defaction(vehicle_id, subscription_type, params) {
       configure using autoraise = false;
       config_data = get_config(vehicle_id);
-      carvoyant_post(carvoyant_subscription_url("lowBattery", config_data),
+      carvoyant_post(carvoyant_subscription_url(subscription_type, config_data),
       		     params,
                      config_data
 		    )
