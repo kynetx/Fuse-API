@@ -161,7 +161,7 @@ Checks to make sure get_subscription() works
     }   
 
     // expect an empty subscription back
-    if( subscriptions{["subscription_data","status_code"]} eq "404" ) then {
+    if( subscriptions{"status_code"} eq "404" ) then {
       show_test:diag("test get_subscription empty", values);
     }
 
