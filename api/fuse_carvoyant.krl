@@ -147,7 +147,7 @@ b16x13: fuse_error.krl
     add_subscription = defaction(vehicle_id, subscription_type, params) {
       configure using autoraise = false;
       config_data = get_config(vehicle_id);
-      carvoyant_post(carvoyant_subscription_url(subscription_type, config_data),
+      carvoyant_post(carvoyant_subscription_url("lowBattery", config_data),
       		     params,
                      config_data
 		    )
