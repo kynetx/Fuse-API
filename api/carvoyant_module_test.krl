@@ -153,7 +153,8 @@ Checks to make sure get_subscription() works
       subscriptions = carvoyant:get_subscription(vehicleId);
 
       values = {'subscription_data' : subscriptions,
-                'vehicleId': vehicleId
+                'vehicleId': vehicleId,
+		"vehicle_data": vehicle_data
                };
 
 
