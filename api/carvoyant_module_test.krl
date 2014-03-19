@@ -152,10 +152,16 @@ Checks to make sure get_subscription() works
       vehicleId = get_vehicle_data(vehicle_data, 0, "vehicleId");
       subscriptions = carvoyant:get_subscription(vehicleId);
 
+      direct = vehicle_data{["content","vehicle"]};
+      direct1 = direct[0];
+      direct2 = direct1{"vehicleId"};
+
       values = {'subscription_data' : subscriptions,
                 'vehicleId': vehicleId,
 		"vehicle_data": vehicle_data,
-		"direct":  vehicle_data{["content","vehicle"]}
+		"direct": direct, 
+		"direct1": direct1,
+		"direct2": direct2
                };
 
 
