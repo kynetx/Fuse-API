@@ -147,13 +147,13 @@ b16x13: fuse_error.krl
 
     // subscription actions
     add_subscription = defaction(vehicle_id, subscription_type, params) {
-      configure using autoraise = false;
+      configure using ar_label = false;
       config_data = get_config(vehicle_id);
       carvoyant_post(carvoyant_subscription_url(subscription_type, config_data),
       		     params,
                      config_data
 		    )
-        with autoraise = autoraise;
+        with autoraise = ar_label;
     };
 
     del_subscription = defaction(vehicle_id, subscription_type, subscription_id) {

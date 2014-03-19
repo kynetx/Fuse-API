@@ -204,7 +204,7 @@ Add a subscription and then raise an event to test that it's there
     {
       show_test:diag("initializing subscription test", values);
       carvoyant:add_subscription(vid, "lowBattery", {"miniumumTime": "35"})
-        with autoraise = "subscription_added";
+        with ar_label = "subscription_added";
     }
   }
  
@@ -252,6 +252,39 @@ Checks to make sure subscription was added by add_subscription()
 
     }
   }
+
+
+
+  rule add_subscription_failed {
+    select when http post status_code re#([45]\d\d)# label "subscription_added" setting (status)
+    pre {
+      test_desc = <<
+Failed to successfully add subscription
+>>;
+
+	values = event:attrs();
+
+    }   
+
+    // expect an empty subscription back
+    {
+      show_test:diag("add_subscrition action failed", values);
+    }
+
+    always {
+      raise test event fails for b503129x0 with
+        test_desc = test_desc and
+        rulename = meta:ruleName() and
+	msg = "add_subscription action failed" and
+	details = values;
+
+      log "<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+      log "Values: " + values.encode();
+      log "<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+
+    }
+  }
+
 
 
 
