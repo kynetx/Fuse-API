@@ -149,7 +149,7 @@ Checks to make sure get_subscription() works
 >>;
 
       vehicle_data = carvoyant:carvoyant_vehicle_data();
-      vehicleId = get_Vehicle_data(vehicle_data, 0, "vehicleId");
+      vehicleId = get_vehicle_data(vehicle_data, 0, "vehicleId");
       subscriptions = carvoyant:get_subscription(vehicleId);
 
       values = {'subscription_data' : subscriptions,
