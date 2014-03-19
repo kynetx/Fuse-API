@@ -154,7 +154,8 @@ Checks to make sure get_subscription() works
 
       values = {'subscription_data' : subscriptions,
                 'vehicleId': vehicleId,
-		"vehicle_data": vehicle_data
+		"vehicle_data": vehicle_data,
+		"direct":  vehicle_data{["content","vehicle"]}
                };
 
 
