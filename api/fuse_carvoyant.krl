@@ -79,7 +79,6 @@ b16x13: fuse_error.krl
     // functions
     carvoyant_get = function(url, config_data) {
       raw_result = http:get(url, carvoyant_headers(config_data));
-
       (raw_result{"status_code"} eq "200") => {"content" : raw_result{"content"}.decode(),
                                                "status_code": raw_result{"status_code"}
                                               }
@@ -89,8 +88,11 @@ b16x13: fuse_error.krl
     // actions
     carvoyant_post = defaction(url, params, config_data) {
       configure using autoraise = false;
-      http:post(url, carvoyant_headers(config_data, params))
-        with autoraise = autoraise;
+      auth_data =  carvoyant_headers(config_data);
+      http:post(url)
+        with credentials = auth_data{"credentials"} 
+         and params = params
+         and autoraise = autoraise;
     };
 
     carvoyant_put = defaction(url, params, config_data) {
