@@ -87,12 +87,12 @@ b16x13: fuse_error.krl
 
     // actions
     carvoyant_post = defaction(url, params, config_data) {
-      configure using autoraise = false;
+      configure using ar_label = false;
       auth_data =  carvoyant_headers(config_data);
       http:post(url)
         with credentials = auth_data{"credentials"} 
          and params = params
-         and autoraise = autoraise;
+         and autoraise = ar_label;
     };
 
     carvoyant_put = defaction(url, params, config_data) {
@@ -153,7 +153,7 @@ b16x13: fuse_error.krl
       		     params,
                      config_data
 		    )
-        with autoraise = ar_label;
+        with ar_label = ar_label;
     };
 
     del_subscription = defaction(vehicle_id, subscription_type, subscription_id) {
