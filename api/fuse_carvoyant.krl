@@ -13,7 +13,8 @@ Provides rules for handling Carvoyant events
 
     errors to a16x13
 
-    provides get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, get_subscription
+    provides get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
+             get_subscription, add_subscription, del_subscription
 
 /* 
 

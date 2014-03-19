@@ -160,12 +160,13 @@ Checks to make sure get_subscription() works
 
     }   
 
-    if( false ) then {
-      show_test:diag("test get_config", values);
+    // expect an empty subscription back
+    if( subscriptions{["subscription_data","status_code"]} eq "404" ) then {
+      show_test:diag("test get_subscription empty", values);
     }
 
     fired {
-      raise test event add_subscription;
+      raise test event add_subscription with vehicleId = vehicleId;
       raise test event succeeds for b503129x0 with
         test_desc = test_desc and
         rulename = meta:ruleName() and
@@ -186,6 +187,70 @@ Checks to make sure get_subscription() works
     }
   }
  
+
+
+  rule add_subscription_init { 
+    select when test add_subscription
+    pre {
+      test_desc = <<
+Add a subscription and then raise an event to test that it's there
+>>;
+      vid = event:attr("vehicleId");
+      values = {
+        "vehicleId" : vid
+      };
+    }   
+    // expect an empty subscription back
+    {
+      carvoyant:add_subscription(vid, "LowBattery", {"miniumumTime": "35"})
+        with autoraise = "subscription_added"
+    }
+  }
+ 
+  rule subscription_added {
+    select when http post status_code re#(2\d\d)# label "subscription_added" setting (status)
+    pre {
+      test_desc = <<
+Checks to make sure subscription was added by add_subscription()
+>>;
+
+      vehicle_data = carvoyant:carvoyant_vehicle_data();
+      vehicleId = carvoyant:get_vehicle_data(vehicle_data, 0, "vehicleId");
+
+      subscriptions = carvoyant:get_subscription(vehicleId);
+
+      values = {'subscription_data' : subscriptions,
+                'vehicleId': vehicleId
+	       };
+
+
+    }   
+
+    // expect an empty subscription back
+    if(! subscriptions{["subscription_data","status_code"]} eq "404" ) then {
+      show_test:diag("test get_subscription not empty", values);
+    }
+
+    fired {
+      raise test event succeeds for b503129x0 with
+        test_desc = test_desc and
+        rulename = meta:ruleName() and
+	msg = "initial subscription data is valid" and
+	details = values;
+
+    } else {
+      raise test event fails for b503129x0 with
+        test_desc = test_desc and
+        rulename = meta:ruleName() and
+	msg = "initial subscription data not valid" and
+	details = values;
+
+      log "<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+      log "Values: " + values.encode();
+      log "<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+
+    }
+  }
 
 
 
