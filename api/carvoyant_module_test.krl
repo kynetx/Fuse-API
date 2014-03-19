@@ -148,36 +148,37 @@ Check that get_vehicle() works
 Checks to make sure get_subscription() works
 >>;
 
-      config = carvoyant:get_subscription();
+      vehicle_data = carvoyant:carvoyant_vehicle_data();
+      vehicleId = get_Vehicle_data(vehicle_data, 0, "vehicleId");
+      subscriptions = carvoyant:get_subscription(vehicleId);
 
-      values = {'config_data' : config
+      values = {'subscription_data' : subscription
                };
 
 
     }   
 
-    if( config{"apiKey"} && config{"secToken"} ) then {
+    if( false ) then {
       show_test:diag("test get_config", values);
     }
 
     fired {
-      raise test event use_config with 
-        config_data = config;
+      raise test event add_subscription;
       raise test event succeeds for b503129x0 with
         test_desc = test_desc and
         rulename = meta:ruleName() and
-	msg = "config data is valid" and
+	msg = "initial subscription data is valid" and
 	details = values;
 
     } else {
       raise test event fails for b503129x0 with
         test_desc = test_desc and
         rulename = meta:ruleName() and
-	msg = "config data empty" and
+	msg = "initial subscription data not valid" and
 	details = values;
 
       log "<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
-      log "Config: " + config.encode();
+      log "Values: " + values.encode();
       log "<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
 
     }

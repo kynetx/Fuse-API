@@ -13,7 +13,7 @@ Provides rules for handling Carvoyant events
 
     errors to a16x13
 
-    provides get_config, carvoyant_headers, carvoyant_vehicle_data
+    provides get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data
 
 /* 
 
@@ -108,7 +108,13 @@ b16x13: fuse_error.krl
     carvoyant_vehicle_data = function(vehicleID) {
       config_data = get_config(vehicle_id);
       carvoyant_get(config_data{"base_url"}, config_data);
-    }
+    };
+
+    get_vehicle_data = function (vehicle_data, vehicle_number, dkey) {
+      vda = vehicle_data{["content","vehicle"]};
+      vd = vehicle_number.isnull() => vda | vda[vehicle_number];
+      dkey.isnull() => vd | vd{dkey}
+    };
 
     // ---------- subscriptions ----------
     carvoyant_subscription_url = function(subscription_type, config_data, subscription_id) {
