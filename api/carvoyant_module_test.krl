@@ -202,8 +202,9 @@ Add a subscription and then raise an event to test that it's there
     }   
     // expect an empty subscription back
     {
-      carvoyant:add_subscription(vid, "LowBattery", {"miniumumTime": "35"})
-        with autoraise = "subscription_added"
+      show_test:diag("initializing subscription test", values);
+      carvoyant:add_subscription(vid, "lowBattery", {"miniumumTime": "35"})
+        with autoraise = "subscription_added";
     }
   }
  

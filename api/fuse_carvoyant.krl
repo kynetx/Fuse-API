@@ -125,11 +125,11 @@ b16x13: fuse_error.krl
     };
 
     valid_carvoyant_subscription = function(sub_type) {
-      valid_types = {"geofence": true,
-                     "lowbattery": true,
-		     "numericdatakey": true,
-		     "timeofday": true,
-		     "troublecode": true
+      valid_types = {"geoFence": true,
+                     "lowBattery": true,
+		     "numericDataKey": true,
+		     "timeOfDay": true,
+		     "troubleCode": true
       };
       not valid_types{sub_type}.isnull()
     }
