@@ -144,13 +144,19 @@ b16x13: fuse_error.krl
    	            config_data)
     };
 
+    mk_subscription_esl = function(event_name) {
+      eid = math:random(99999);
+      "https://#{meta:host()}/sky/event/#{meta:eci()}/#{eid}/carvoyant/#{event_name}";
+    };
 
     // subscription actions
     add_subscription = defaction(vehicle_id, subscription_type, params) {
       configure using ar_label = false;
       config_data = get_config(vehicle_id);
+      esl = mk_subscription_esl(subscription_type);
+      np = "STATECHANGE"; // see http://confluence.carvoyant.com/display/PUBDEV/NotificationPeriod
       carvoyant_post(carvoyant_subscription_url(subscription_type, config_data),
-      		     params,
+      		     params.put({"postUrl": esl, "notificationPeriod": np}),
                      config_data
 		    )
         with ar_label = ar_label;
