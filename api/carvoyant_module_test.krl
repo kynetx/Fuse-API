@@ -208,7 +208,7 @@ Add a subscription and then raise an event to test that it's there
     }
   }
  
-  rule subscription_added {
+  rule subscription_added_init {
     select when http post status_code re#(2\d\d)# label "subscription_added" setting (status)
     pre {
       test_desc = <<
@@ -220,6 +220,8 @@ Checks to make sure subscription was added by add_subscription()
 
       subscriptions = carvoyant:get_subscription(vehicleId);
 
+      
+
       values = {'subscription_data' : subscriptions,
                 'vehicleId': vehicleId
 	       };
@@ -228,22 +230,25 @@ Checks to make sure subscription was added by add_subscription()
     }   
 
     // expect an empty subscription back
-    if(! subscriptions{["subscription_data","status_code"]} eq "404" ) then {
-      show_test:diag("test get_subscription not empty", values);
+    if( subscriptions{"status_code"} eq "200" 
+     && subscriptions{["content","subscriptions","_type"]} eq "LOWBATTERY"
+      ) then {
+      show_test:diag("get_subscription not empty", values);
     }
 
     fired {
+      raise test event subscription_added attributes subscriptions{"content"};
       raise test event succeeds for b503129x0 with
         test_desc = test_desc and
         rulename = meta:ruleName() and
-	msg = "initial subscription data is valid" and
+	msg = "subscription created" and
 	details = values;
 
     } else {
       raise test event fails for b503129x0 with
         test_desc = test_desc and
         rulename = meta:ruleName() and
-	msg = "initial subscription data not valid" and
+	msg = "subscription creation failed" and
 	details = values;
 
       log "<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
@@ -253,6 +258,74 @@ Checks to make sure subscription was added by add_subscription()
     }
   }
 
+
+  rule subscription_added_final {
+    select when test subscription_added
+    pre { 
+
+     subscription = event:attr("subscriptions").head();
+     // delete subscription and ensure it's gone. 
+
+     values = {'subscription' : subscription
+              };
+
+
+    }   
+
+    // expect an empty subscription back
+    {
+      carvoyant:del_subscription(subscription{"vehicleId"}, "lowBattery", subscription{"id"})
+        with ar_label = "subscription_deleted";
+      show_test:diag("deleteing subscription", values);
+    }
+  }   
+
+  rule subscription_deleted_check {
+    select when http post status_code re#(2\d\d)# label "subscription_deleted" setting (status)
+    pre {
+      test_desc = <<
+Checks to make sure subscription was deleted by del_subscription()
+>>;
+
+      vehicle_data = carvoyant:carvoyant_vehicle_data();
+      vehicleId = carvoyant:get_vehicle_data(vehicle_data, 0, "vehicleId");
+
+      subscriptions = carvoyant:get_subscription(vehicleId);
+
+      
+
+      values = {'subscription_data' : subscriptions,
+                'vehicleId': vehicleId
+	       };
+
+
+    }   
+
+    // expect an empty subscription back
+    if( subscriptions{"status_code"} eq "404" 
+      ) then {
+      show_test:diag("get_subscription is empty", values);
+    }
+    fired {
+      raise test event succeeds for b503129x0 with
+        test_desc = test_desc and
+        rulename = meta:ruleName() and
+	msg = "subscription deleted" and
+	details = values;
+
+    } else {
+      raise test event fails for b503129x0 with
+        test_desc = test_desc and
+        rulename = meta:ruleName() and
+	msg = "subscription deletion failed" and
+	details = values;
+
+      log "<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+      log "Values: " + values.encode();
+      log "<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+
+    }
+  }  
 
 
   rule add_subscription_failed {

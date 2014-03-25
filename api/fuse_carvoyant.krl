@@ -146,7 +146,7 @@ b16x13: fuse_error.krl
 
     mk_subscription_esl = function(event_name) {
       eid = math:random(99999);
-      "https://#{meta:host()}/sky/event/#{meta:eci()}/#{eid}/carvoyant/#{event_name}";
+      "https://#{meta:host()}/sky/event/#{meta:eci()||'NO_ECI_FOUND'}/#{eid}/carvoyant/#{event_name}";
     };
 
     // subscription actions
