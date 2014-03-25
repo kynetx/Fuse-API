@@ -174,7 +174,7 @@ Checks to make sure get_subscription() works
 	details = values;
 
     } else {
-      raise test event del_subscription with vehicleId = vehicleId;
+      raise test event del_subscription attributes subscriptions{"content"};
       raise test event fails for b503129x0 with
         test_desc = test_desc and
         rulename = meta:ruleName() and
