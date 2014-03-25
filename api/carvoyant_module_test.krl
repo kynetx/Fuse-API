@@ -174,6 +174,7 @@ Checks to make sure get_subscription() works
 	details = values;
 
     } else {
+      raise test event del_subscription with vehicleId = vehicleId;
       raise test event fails for b503129x0 with
         test_desc = test_desc and
         rulename = meta:ruleName() and
@@ -260,7 +261,8 @@ Checks to make sure subscription was added by add_subscription()
 
 
   rule subscription_added_final {
-    select when test subscription_added
+    select when test subscription_added 
+             or test del_subscription
     pre { 
 
      subscription = event:attr("subscriptions").head();
