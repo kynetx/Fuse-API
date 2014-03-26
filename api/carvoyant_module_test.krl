@@ -283,7 +283,7 @@ Checks to make sure subscription was added by add_subscription()
   }   
 
   rule subscription_deleted_check {
-    select when http post status_code re#(2\d\d)# label "subscription_deleted" setting (status)
+    select when http delete status_code re#(2\d\d)# label "subscription_deleted" setting (status)
     pre {
       test_desc = <<
 Checks to make sure subscription was deleted by del_subscription()
