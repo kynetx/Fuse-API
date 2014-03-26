@@ -304,7 +304,8 @@ Checks to make sure subscription was deleted by del_subscription()
     }   
 
     // expect an empty subscription back
-    if( subscriptions{"status_code"} eq "404" 
+    if( subscriptions{"status_code"} eq "404" ||
+        subscriptions.pick("$..deletionTimestamp").length() > 0 // sometimes just marked for deletion
       ) then {
       show_test:diag("get_subscription is empty", values);
     }
