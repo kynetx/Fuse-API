@@ -96,15 +96,20 @@ b16x13: fuse_error.krl
     };
 
     carvoyant_put = defaction(url, params, config_data) {
-      configure using autoraise = false;
-      http:put(url, carvoyant_headers(config_data, params))
-        with autoraise = autoraise;
+      configure using ar_label = false;
+      auth_data =  carvoyant_headers(config_data);
+      http:put(url)
+        with credentials = auth_data{"credentials"} 
+         and params = params
+         and autoraise = ar_label;
     };
 
     carvoyant_delete = defaction(url, config_data) {
-      configure using autoraise = false;
-      http:delete(url, carvoyant_headers(config_data)) 
-        with autoraise = autoraise;
+      configure using ar_label = false;
+      auth_data =  carvoyant_headers(config_data);
+      http:delete(url) 
+        with credentials = auth_data{"credentials"} 
+         and autoraise = ar_label;
     };
 
     // ---------- vehicle data ----------
@@ -163,11 +168,11 @@ b16x13: fuse_error.krl
     };
 
     del_subscription = defaction(vehicle_id, subscription_type, subscription_id) {
-      configure using autoraise = false;
+      configure using ar_label = false;
       config_data = get_config(vehicle_id);
       carvoyant_delete(carvoyant_subscription_url(subscription_type, config_data, subscription_id),
                        config_data)
-        with autoraise = autoraise;
+        with ar_label = ar_label;
     }
 
     // ---------- internal functions ----------
