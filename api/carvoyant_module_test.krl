@@ -19,6 +19,7 @@ Test the Carvoyant module
 
   }
 
+  // ---------- test configuration function ----------
   rule get_config_test { 
     select when test get_config
 
@@ -63,6 +64,7 @@ Checks to make sure get_config() works
   }
  
 
+  // ---------- test headers function ----------
   rule use_config_headers {
     select when test use_config
     pre {
@@ -104,6 +106,7 @@ Check that headers are good
     }
   }
 
+  // ---------- test vehicle data function ----------
   rule get_vehicle_data {
     select when test use_config
     pre {
@@ -139,7 +142,7 @@ Check that get_vehicle() works
     }
   }
 
-  // ---------- subscriptions ----------
+  // ---------- test subscriptions ----------
   rule get_subscription_test { 
     select when test get_subscription
 
@@ -274,7 +277,6 @@ Checks to make sure subscription was added by add_subscription()
 
     }   
 
-    // expect an empty subscription back
     {
       carvoyant:del_subscription(subscription{"vehicleId"}, "lowBattery", subscription{"id"})
         with ar_label = "subscription_deleted";
@@ -294,12 +296,9 @@ Checks to make sure subscription was deleted by del_subscription()
 
       subscriptions = carvoyant:get_subscription(vehicleId);
 
-      
-
       values = {'subscription_data' : subscriptions,
                 'vehicleId': vehicleId
 	       };
-
 
     }   
 
@@ -360,11 +359,6 @@ Failed to successfully add subscription
 
     }
   }
-
-
-
-
-
 
   // ---------- For error handling ----------
   // sets error handling check off

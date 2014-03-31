@@ -1,0 +1,920 @@
+ruleset fuse_init {
+    meta {
+        name "Fuse Initiialize"
+        description <<
+Ruleset for initializing a Fuse account and managing vehicle picos
+        >>
+        author "AKO"
+
+	use module b16x10 alias fuse_keys
+
+
+        use module a169x625 alias CloudOS
+        use module a169x676 alias pds
+        use module a41x174 alias AWSS3
+            with AWSKeys = keys:aws()
+        use module a169x701 alias CloudRain
+        use module a16x129 version "dev" alias sendgrid with
+            api_user = keys:sendgrid("api_user") and 
+            api_key = keys:sendgrid("api_key") and
+            application = "Fuse"
+
+        errors to b16x13
+
+        sharing on
+        provides apps, schemas, initPico, initFleet, initVehicle, 
+                    initPicoProfile, updateVehicle, destroyVehicle,
+                    makeImageURLForPico, uploadPicoImage, updatePicoProfile, fleetChannel,
+                    subscribePicoToPico, unsubscribePicoFromPico, subscriptionsByChannelName, namespace, 
+                    division, dereference, invite, invites, users, factory
+    }
+
+    global {
+
+        /* =========================================================
+           PUBLIC FUNCTIONS & INDENTIFIERS
+           ========================================================= */
+
+           // rulesets we need installed in every Guard Tour Pico
+           apps = {
+               "core": [
+                   "a169x625.prod",  // CloudOS Service
+                   "a169x676.prod",  // PDS
+                   "a16x161.prod",   // Notification service
+                   "a169x672.prod",  // MyProfile
+                   "a41x174.prod",   // Amazon S3 module
+                   "a16x129.dev",    // SendGrid module
+                   "b16xXX.prod",    // Fuse Initialization
+		   "b16x13.prod"     // Fuse errors
+               ],
+               "indexPico": [
+                   "b501810x4.prod" // Fleet Index Pico
+               ],
+
+               "ownerPico": [
+                   "b501810x5.prod" // Fuse Owner Pico
+               ],
+               "unwanted": [ // ?? not sure what these are ??
+                   "a169x625.prod",
+                   "a169x664.prod",
+                   "a169x676.prod",
+                   "a169x667.prod",
+                   "a16x161.prod",
+                   "a41x178.prod",
+                   "a169x672.prod",
+                   "a169x669.prod",
+                   "a169x727.prod",
+                   "a169x695.prod",
+                   "b177052x7.prod"
+               ]
+           };
+
+        schemas = {
+            "Owner": {
+                "meta": {
+                    "schema": {
+                        "type": "string"
+                    },
+                    "namespace": {
+                        "type": "string"
+                    },
+                    "authChannel": {
+                        "type": "string"
+                    }
+                },
+                "profile": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "phone": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "division": {
+                        "type": "string"
+                    }
+                },
+                "data": {
+                    "notification": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Fleet": {
+                "meta": {
+                    "schema": {
+                        "type": "string"
+                    },
+                    "namespace": {
+                        "type": "string"
+                    },
+                    "authChannel": {
+                        "type": "string"
+                    }
+                },
+                "profile": {
+                    "role": {
+                        "type": "string"
+                    }
+                },
+                "data": {
+                    "index": {
+                        "type": "array",
+                        "element": {
+                            "type": "map",
+                            "data": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "keywords": {
+                                    "type": "string"
+                                },
+                                "division": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "idToECI": {
+                        "type": "entity"
+                    }
+                }
+            },
+            "Vehicle": {
+                "meta": {
+                    "schema": {
+                        "type": "string"
+                    },
+                    "namespace": {
+                        "type": "string"
+                    },
+                    "authChannel": {
+                        "type": "string"
+                    }
+                },
+                "profile": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "image": {
+                        "type": "string"
+                    },
+                    "vin": {
+                        "type": "string"
+                    }
+                },
+                "data": {
+                    "detail": {
+                        "type": "map",
+                        "data": {
+                            "tasks": {
+                                "type": "array",
+                                "element": {
+                                    "type": "string"
+                                }
+                            },
+                            "directions": {
+                                "type": "string"
+                            },
+                            "instructions": {
+                                "type": "string"
+                            },
+                            "problemInstructions": {
+                                "type": "string"
+                            },
+                            "keywords": {
+                                "type": "string"
+                            },
+                            "latitude": {
+                                "type": "number"
+                            },
+                            "longitude": {
+                                "type": "number"
+                            },
+                            "timeline": {
+                                "type": "map",
+                                "data": {
+                                    "timestamp": {
+                                        "type": "ISO8601"
+                                    },
+                                    "guard": {
+                                        "type": "string"
+                                    },
+                                    "status": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "tag": {
+                                "type": "string"
+                            },
+                            "url": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        S3Bucket = "k-mycloud";
+
+        initPico = defaction(pico_channel, attrs) {
+            namespace = attrs{"namespace"};
+            schema = attrs{"schema"};
+            pico = {
+                "cid": pico_channel
+            };
+
+            {
+                event:send(pico, "pds", "new_data_available")
+                    with attrs = {
+                        "namespace": "meta",
+                        "keyvalue": "namespace",
+                        "value": namespace
+                    };
+
+                event:send(pico, "pds", "new_data_available") 
+                    with attrs = {
+                        "namespace": "meta",
+                        "keyvalue": "schema",
+                        "value": schema
+                    };
+
+                event:send(pico, "pds", "new_data_available") 
+                    with attrs = {
+                        "namespace": "meta",
+                        "keyvalue": "authChannel",
+                        "value": pico_channel
+                    };
+            }
+        };
+
+        initFleet = defaction(pico_channel) {
+            pico = {
+                "cid": pico_channel
+            };
+
+            {
+                event:send(pico, "fuse", "new_pico");
+            }
+        };
+
+        initVehicle = defaction(vehicle_channel, vehicle_details) {
+            vehicle = {
+                "cid": vehicle_channel
+            };
+            
+            {
+                event:send(vehicle, "pds", "new_data_available")
+                    with attrs = {
+                        "namespace": "data",
+                        "keyvalue": "detail",
+                        "value": vehicle_details.delete(["eci"]).encode(),
+                        "shouldRaiseGTourDoneEvent": "YES"
+                    };
+
+                event:send(fleetChannel(), "fuse", "new_pico") // should this be the same as the event that initializes the pico? 
+                    with attrs = {
+                        "details": vehicle_details.encode()
+                    };
+            }
+        };
+
+        updateVehicle = defaction(vehicle_channel, vehicle_details) {
+            vehicle = {
+                "cid": vehicle_channel
+            };
+            stale_details = sky:cloud(vehicle{"cid"}, "b501810x6", "detail");
+            fresh_details = (not stale_details{"error"}) => stale_details.put(vehicle_details) | vehicle_details;
+            
+            {
+                event:send(vehicle, "pds", "new_data_available")
+                    with attrs = {
+                        "namespace": "data",
+                        "keyvalue": "detail",
+                        "value": fresh_details.encode(),
+                        "shouldRaiseGTourDoneEvent": "YES"
+                    };
+
+
+                event:send(fleetChannel(), "gtour", "did_amend_pico")
+                    with attrs = {
+                        "details": fresh_details.encode()
+                    };
+            }
+        };
+
+        destroyVehicle = defaction(lid) {
+            vehicle_channel = sky:cloud(fleetChannel().pick("$.cid"), "b501810x4", "translate", {
+                "id": lid
+            });
+            obilterated = CloudOS:cloudDestroy(vehicle_channel.pick("$.cid"));
+
+            {
+                event:send(fleetChannel(), "gtour", "did_destroy_pico")
+                    with attrs = {
+                        "id": lid
+                    };
+            }
+        };
+
+
+        initPicoProfile = defaction(pico_channel, profile) {
+            pico = {
+                "cid": pico_channel
+            };
+
+            {
+                event:send(pico, "pds", "new_profile_item_available")
+                    with attrs = profile;
+            }
+        };
+
+        makeImageURLForPico = function(pico_channel) {
+            image_seed = math:random(100000);
+
+            "https://s3.amazonaws.com/#{S3Bucket}/#{meta:rid()}/#{pico_channel}.img?q=#{image_seed}"
+        };
+
+        uploadPicoImage = defaction(pico_channel, image_url, image) {
+            pico = {
+                "cid": pico_channel
+            };
+            image_id = "#{meta:rid()}/#{pico_channel}.img";
+            image_value = this2that:base642string(AWSS3:getValue(image));
+            image_type = AWSS3:getType(image);
+            old_details = sky:cloud(pico_channel, "b501810x6", "detail");
+            details = old_details.put(["photo"], image_url);
+
+            {
+                event:send(pico, "pds", "updated_profile_item_available")
+                    with attrs = {
+                        "image": image_url
+                    };
+
+                event:send(pico, "pds", "new_data_available")
+                    with attrs = {
+                        "namespace": "data",
+                        "keyvalue": "detail",
+                        "value": details.encode()
+                    };
+
+                AWSS3:upload(S3Bucket, image_id, image_value)
+                    with object_type = image_type;
+            }
+        };
+
+        updatePicoProfile = defaction(pico_channel, profile) {
+            pico = {
+                "cid": pico_channel
+            };
+
+            {
+                event:send(pico, "pds", "updated_profile_item_available")
+                    with attrs = profile;
+            }
+        };
+
+        subscribePicoToPico = defaction(origin_channel, target_channel, attrs) {
+            origin = {
+                "cid": origin_channel
+            };
+
+            {
+                event:send(origin, "cloudos", "subscribe")
+                    with attrs = attrs.put(["targetChannel"], target_channel);
+            }
+        };
+
+        unsubscribePicoFromPico = defaction(origin_channel, target_channel) {
+            origin = {
+                "cid": origin_channel
+            };
+
+            {
+                event:send(origin, "cloudos", "unsubscribe")
+                    with attrs = {
+                        "targetChannel": target_channel
+                    };
+            }
+        };
+
+        subscriptionsByChannelName = function(namespace, channel_name) {
+            
+            subs = CloudOS:getAllSubscriptions().values().filter(function(sub) {
+                sub{"namespace"} eq namespace &&
+                sub{"channelName"} like "re/#{channel_name}/gi"
+            });
+
+            // if there is exactly one matching subscription, just pull it out of the 
+            // filter array and return it.
+            (subs.length() == 1) => subs.head() | subs
+        };
+
+        fleetChannel = function() {
+            cid = (ent:indexChannelCache{"vehicle"} || subscriptionsByChannelName(namespace(), "vehicle-index").pick("$.eventChannel"));
+
+            {"cid": cid}
+        };
+
+        namespace = function() {
+            this_namespace = pds:get_item("meta", "namespace");
+
+            (this_namespace.isnull()) => "NO_NAMESPACE" | this_namespace
+        };
+
+        vin = function() {
+            this_vin = pds:get_me("vin");
+
+            (this_vin.isnull()) => "NO_VIN" | this_vin
+        };
+
+	// not updated for Fuse
+        coupleTagWithVehicle = defaction(tid, lid) {
+            vehicle = sky:cloud(fleetChannel().pick("$.cid"), "b501810x4", "translate", {
+                "id": lid
+            });
+            vehicle_details = sky:cloud(vehicle{"cid"}, "b501810x6", "detail");
+            fresh_tags = (vehicle_details{"tags"} || []).append(tid);
+            vehicle_with_tags = vehicle_details.put(["tags"], fresh_tags);
+
+            {
+                event:send(vehicle, "pds", "new_data_available")
+                    with attrs = {
+                        "namespace": "data",
+                        "keyvalue": "detail",
+                        "value": vehicle_with_tags.encode()
+                    };
+            }
+        };
+
+	// not updated for Fuse
+        dereference = function(tag, identity) {
+            couplings = ent:tagCouplings;
+            lid = couplings{tag};
+            scanner = sky:cloud(identity, "a169x676", "get_all_me");
+            scanner_role = (scanner{"role"}.match(re/manager/i)) => "manager" | (scanner{"role"}.match(re/guard/i)) => "guard" | 0;
+            // if they have a role and there is a vehicle id associated with the tag, if they don't have a role, they aren't authorized
+            // to see anything for the tag anyway, and if we make it to the fallback, it means they have a role but there is no vehicle id
+            // associated with the tag.
+            page = (scanner_role && lid) => tagPages{scanner_role} + "?id=#{lid}" | (not scanner_role) => tagPages{"notAuthorized"} | tagPages{"notCoupled"};
+            uri = "#{GTOUR_URI}#{page}";
+            {"uri": uri, "couplings": couplings, "tag": tag, "lid": lid, "identity": identity}
+        };
+
+	// not updated for Fuse
+        factory = function(pico_namespace, pico_meta, password) {
+            pico_uuid = random:uuid();
+            pico_schema = pico_meta{"schema"};
+            pico_role = pico_meta{"role"};
+            username = pico_meta{"username"};
+            pico = (username) => CloudOS:cloudCreate(username, password) | 
+                                                CloudOS:cloudCreate("#{pico_namespace.uc()}_#{pico_schema.uc()}_#{pico_uuid}", password);
+            pico_auth_channel = pico{"token"};
+            remove_rulesets = CloudOS:rulesetRemoveChild(apps{"unwanted"}, pico_auth_channel);
+            install_rulesets = CloudOS:rulesetAddChild(apps{"core"}, pico_auth_channel);
+            install_manager_ruleset = (pico_role.match(re/manager|owner/gi)) => CloudOS:rulesetAddChild(apps{"managerPico"}, pico_auth_channel) | 0;
+            install_index_ruleset = (pico_schema.match(re/index|owner/gi)) => CloudOS:rulesetAddChild(apps{"indexPico"}, pico_auth_channel) | 0;
+
+            {
+                "schema": pico_schema,
+                "role": pico_role,
+                "authChannel": pico_auth_channel,
+                "uuid": pico_uuid
+            }
+        };
+    }
+
+    rule kickoff_new_fuse_instance {
+        select when fuse initialize
+        pre {
+            // strip off the spaces from the owner and application names
+            // and upppercase them.
+            owner = event:attr("owner").replace(re/\s/g, "").uc();
+            application = event:attr("application").replace(re/\s/g, "").uc();
+            namespace = "#{owner}-#{application}";
+        }
+
+        {
+            send_directive("didRequestNewFuseSetup");
+        }
+        
+        fired {
+            raise pds event "new_data_available"
+                with namespace = "meta"
+                and  keyvalue = "namespace"
+                and  value = namespace
+                and  fuseInit = "YES"
+                and  _api = "sky";
+        }
+        
+    }
+
+    // when the PDS tells us it has stored our namespace, it's time to continue with 
+    // the setup process.
+    rule man_your_battlestations {
+        select when fuse new_namespace_added
+        pre {
+            owner = pds:get_item("meta", "namespace").split(re/-/).head();
+        }
+
+        {
+            noop();
+        }
+
+        fired {
+            raise fuse event "need_new_owner"
+                with owner = owner
+                and  _api = "sky";
+        }
+    }
+
+    rule create_owner {
+        select when fuse need_new_owner
+        pre {
+            owner_name = event:attr("owner");
+            pico = factory(namespace(), {
+                "schema": "Owner"
+            }, "");
+            owner_channel = pico{"authChannel"};
+            owner = {
+                "cid": owner_channel
+            };
+        }
+
+        {
+            initPico(owner_channel, {
+                "namespace": namespace(),
+                "schema": "Owner"
+            });
+            
+            initPicoProfile(owner_channel, {
+                "name": owner_name
+            });
+
+            // tell the owner pico to take care of the rest of the 
+            // initialization.
+            event:send(owner, "gtour", "should_produce_indici")
+                with attrs = {
+                    "roles": ["Tour", "Vehicle", "Report"].encode(),
+                    "instantiatorOrigin": meta:eci()
+                };
+        }
+
+        fired {
+            log "AKO OWNER CHANNEL";
+            log owner_channel;
+        }
+    }
+
+    rule cache_index_channel {
+        select when gtour did_produce_index
+        pre {
+            index_role = event:attr("role").lc();
+        }
+
+        {
+            noop();
+        }
+
+        fired {
+            set ent:indexChannelCache{index_role} event:attr("indexChannel");
+        }
+    }
+
+    rule log_user {
+        select when gtour did_produce_user
+
+        {
+            noop();
+        }
+
+        fired {
+            log "AKO USER";
+            log event:attrs().encode();
+        }
+    }
+
+    // this rule listens for the event that is raised when a user has been created
+    // in this case, an overlord manager. In the case of an
+    // overloard manager creation, it means a new guard tour system
+    // has been created and we need to send the overloard manager's data back to the cloud
+    // from which the guard tour instantiation event was raised.
+    rule return_to_sender {
+        select when gtour did_produce_user
+            role re/abinitio/i
+        pre {
+            user_channel = event:attr("userChannel");
+            user_role = event:attr("role");
+            username = event:attr("username");
+            password = event:attr("password");
+
+            user = {
+                "userChannel": user_channel,
+                "role": user_role,
+                "username": username,
+                "password": password
+            };
+
+            origin = pds:get_item("temp", "origin").decode();
+        }
+
+        {
+            // raise an event into the initialization originator's cloud
+            // giving them the seed manager's info and telling them initialization
+            // is complete.
+            event:send(origin, "gtour", "did_produce_system")
+                with attrs = {
+                    "managerAbInitio": user.encode()
+                };
+        }
+
+        fired {
+            // log whats in the PDS
+            log "AKO ORIGIN";
+            log origin.encode();
+            log "AKO ManagerAbInitio";
+            log user.encode();
+            raise pds event "remove_namespace"
+                with namespace = "temp"
+                and  _api = "sky";
+        }
+    }
+
+    rule send_user_creation_email {
+        select when gtour did_produce_user
+        pre {
+            username = event:attr("username");
+            password = event:attr("password");
+
+            msg = <<
+                A new user was created with the following details:
+
+                username: #{username}
+                password: #{password}
+            >>;
+        }
+
+        {
+            sendgrid:send("Kynetx Guard Tour Team", "dev@kynetx.com", "New Guard Tour User", msg);
+        }
+    }
+
+    rule send_gtour_creation_notification {
+        select when gtour did_produce_system 
+        pre {
+            manager = event:attr("managerAbInitio").decode();
+            manager_username = manager{"username"};
+            manager_password = manager{"password"};
+            manager_channel = manager{"userChannel"};
+
+            msg = <<
+                A new guard tour system was initialized. The following seed manager
+                has been created:
+
+                username: #{manager_username}
+                password: #{manager_password}
+                
+                Authoritative Channel: #{manager_channel}
+            >>;
+        }
+
+        {
+            sendgrid:send("Kynetx Guard Tour Team", "dev@kynetx.com", "New Guard Tour System Created", msg);
+            send_directive("didProduceGuardTourSystem") 
+                with managerAbInitio = manager;
+        }
+    }
+
+    rule show_creation_form {
+        select when web cloudAppSelected
+        pre {
+            rids = apps{"core"}.append(apps{"indexPico"}).append(apps{"managerPico"});
+            install_rids = CloudOS:rulesetAddChild(rids, meta:eci());
+            env_select = <<
+                <select id = "gtour-creation-environment">
+                    <option>development</option>
+                    <option>production</option>
+                </select>
+            >>;
+            owner_input = <<
+                <input id = "gtour-owner" type = "text" placeholder = "Owner name" />
+            >>;
+            application_input = <<
+                <input id = "gtour-application" type = "text" placeholder = "Application name" />
+            >>;
+            eci_input = <<
+                <input id = "gtour-creation-origin" type = "hidden" value = "#{meta:eci()}" />
+            >>;
+            go_button = <<
+                <button id = "gtour-go-btn" type = "button">Go!</button>
+            >>;
+            check_email_alert = <<
+                <h3 id = "gtour-success-alert" style = "display:none;">A new guard tour system has been created! Check your email for further details.</h3>
+            >>;
+            app_panel = <<
+                #{env_select}
+                #{owner_input}
+                #{application_input}
+                #{eci_input}
+                #{go_button}
+                #{check_email_alert}
+            >>;
+        }
+
+        {
+            // oh legacy squaretag craziness...
+            SquareTag:inject_styling();
+            CloudRain:createLoadPanel("Guard Tour System Creation", {}, app_panel);
+            emit <<
+                KOBJ.GTour = KOBJ.GTour || {};
+                KOBJ.GTour.envToURI = {
+                    "development": "kibdev.kobj.net",
+                    "production": "cs.kobj.net"
+                };
+                $K("#gtour-go-btn").on("click", function(e) {
+                    $K("#modalSpinner").modal("show");
+                    e.stopPropagation();
+                    e.preventDefault();
+                    var environment = KOBJ.GTour.envToURI[$K("#gtour-creation-environment").val()];
+                    var owner = $K("#gtour-owner").val().replace(/\s/g, "");
+                    var application = $K("#gtour-application").val().replace(/\s/g, "");
+                    var creation_origin = $K("#gtour-creation-origin").val();
+                    var esl = "https://"+ environment +"/sky/event/"+ creation_origin +"/"+ Math.floor(Math.random() * 9999);
+
+                    $K.ajax({
+                        url: esl,
+                        type: "POST",
+                        data: {
+                            "_domain": "gtour",
+                            "_type": "initialize",
+                            "owner": owner,
+                            "application": application
+                        },
+                        success: function(kns_directive) {
+                            $K("#modalSpinner").modal("hide");
+                            $K("#gtour-success-alert").fadeIn();
+                        }
+                    });
+
+                });
+            >>;
+        }
+    }
+
+    rule store_tag_coupling {
+        select when gtour should_couple_tag
+        pre {
+            lid = event:attr("lid");
+            tid = event:attr("tid");
+        }
+
+        {
+            coupleTagWithVehicle(tid, lid);
+        }
+
+        fired {
+            set ent:tagCouplings {} if not ent:tagCouplings;
+            log "COUPLING TAG #{tid} WITH VEHICLE #{lid}";
+            set ent:tagCouplings{tid} lid;
+            log "###############[TAG COUPLINGS]####################";
+            log ent:tagCouplings;
+            log "###############[TAG COUPLINGS]####################";
+        }
+    }
+
+    rule store_invite {
+        select when gtour should_store_invite
+
+        {
+            noop();
+        }
+
+        fired {
+            set app:invites{event:attr("id")} event:attr("invite").decode();
+        }
+    }
+
+    rule destroy_invite {
+        select when gtour should_invalidate_invite
+
+        {
+            noop();
+        }
+
+        fired {
+            clear app:invites{event:attr("id")};
+        }
+    }
+
+    // cache the users in the owner pico.
+    rule cache_users {
+        select when gtour should_cache_users_now
+            or gtour should_cache_users_scheduled
+            or gtour did_produce_system
+            // when an invite is invalidated, it means a new user 
+            // has been added to the owner. Good time to 
+            // refresh the user cache.
+            or gtour should_invalidate_invite
+        foreach subscriptionsByChannelName(namespace(), "User") setting (sub)
+        pre {
+            user_profile = sky:cloud(sub{"eventChannel"}, "a169x676", "get_all_me");
+            stale_users = ent:tempUsers;
+            fresh_users = (stale_users || []).append(user_profile);
+        }
+
+        {
+            noop();
+        }
+
+        fired {
+            set ent:tempUsers fresh_users;
+            raise gtour event "should_set_user_cache"
+                with _api = "sky"
+                on final;
+        }
+    }
+
+    rule set_user_cache {
+        select when gtour should_set_user_cache
+
+        {
+            noop();
+        }
+
+        fired {
+            // at this point, tempUsers will now contain
+            // a complete fresh record of all users for 
+            // an owner, which we will now cache.
+            set ent:users ent:tempUsers;
+            clear ent:tempUsers;
+            schedule gtour event "should_cache_users_scheduled" at time:add(time:now(), {"minutes": 5});
+        }
+    }
+
+    rule log_all_the_things {
+        select when gtour var_dump
+        pre {
+            couplings = ent:tagCouplings;
+            subs = CloudOS:getAllSubscriptions();
+            gid = page:env("g_id");
+            meta_eci = meta:eci();
+            this_session = CloudOS:currentSession();
+            indici = ent:indexChannelCache;
+            lis = subscriptionsByChannelName(namespace(), "vehicle-index");
+            tis = subscriptionsByChannelName(namespace(), "tour-index");
+            ris = subscriptionsByChannelName(namespace(), "report-index");
+            invs = invites();
+            dump = {
+                "g_id": gid,
+                "metaECI": meta_eci,
+                "currentSession": this_session,
+                "couplings": couplings,
+                "subs": subs,
+                "indici": indici,
+                "indiciSubs": {
+                    "vehicle": lis,
+                    "tour": tis,
+                    "report": ris
+                },
+                "invitations": invs
+            };
+        }
+
+        {
+            send_directive("varDump")
+                with dump = dump;
+        }
+
+        fired {
+            log "########<LOG ALL THE THINGS>##########";
+            log "//////////+SESSION INFO+//////////////";
+            log "g_id: " + gid;
+            log "Meta ECI:" + meta_eci;
+            log "CloudOS Current Session:" + this_session;
+            log "/////////+END SESSION INFO+///////////";
+            log "########[TAG COUPLINGS]#########";
+            log couplings;
+            log "########[/TAG COUPLINGS]########";
+            log "########[ALL SUBSCRIPTIONS]#########";
+            log subs;
+            log "########[/ALL SUBSCRIPTIONS]########";
+            log "########[INDEX SUBSCRIPTIONS]#######";
+            log dump{"indiciSubs"};
+            log "########[/INDEX SUBSCRIPTIONS]######";
+            log "########[CACHED INDEX CHANNELS]#########";
+            log indici;
+            log "########[/CACHED INDEX CHANNELS]########";
+            log "##############[INVITATIONS]]############";
+            log invs;
+            log "##############[/INVITATIONS]############";
+            log "########</LOG ALL THE THINGS>##########";
+        }
+    }
+}

@@ -11,7 +11,7 @@ Provides rules for handling Carvoyant events
 
     use module a169x676 alias pds
 
-    errors to a16x13
+    errors to b16x13
 
     provides get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
              get_subscription, add_subscription, del_subscription
