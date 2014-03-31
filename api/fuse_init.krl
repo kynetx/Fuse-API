@@ -197,7 +197,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
                     with attrs = {
                         "namespace": namespace(),
                         "mapvalues": {"schema": schema,
-                    		      "authChannel":  pico_channel}
+                    		      "authChannel":  pico_channel}.encode()
                     };
             }
         };
@@ -435,7 +435,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
     }
 
     rule show_children {
-      select when fuse initialize
+      select when fuse show_children
       pre {
         myChildren = pci:list_children(); 
       }
@@ -471,7 +471,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         }
         
         fired {
-            raise fuse event "need_new_fleet" 
+            raise explicit event "need_new_fleet" 
               with _api = "sky"
  	       and fleet = event:attr("fleet") || "My Fleet"
               ;
@@ -479,7 +479,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
     }
 
     rule create_fleet {
-        select when fuse need_new_fleet
+        select when explicit need_new_fleet
         pre {
             fleet_name = event:attr("fleet");
             pico = factory({"schema": "Fleet", "role": "fleet"}, meta:eci());
@@ -495,20 +495,25 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	  send_directive("Fleet created") with
             cid = fleet_channel;
 
-          initPico(fleet_channel, {
-                "namespace": namespace(),
-                "schema": "Fleet"
-          });
-           
           // tell the fleet pico to take care of the rest of the 
           // initialization.
-          event:send(fleet, "fuse", "fleet_initialize") with 
-             fleet_name = fleet_name and
-             owner_channel = meta:eci()
+          event:send(fleet, "fuse", "fleet_uninitialized") with 
+            attrs = {"fleet_name": fleet_name,
+                     "owner_channel": meta:eci(),
+             	     "schema":  "Fleet",
+	             "_async": 0 	              // we want this to be complete before we try to subscribe below
+		    };
 
         }
 
         fired {
+
+	  raise pds event new_item_available 
+            with namespace = namespace() 
+             and keyvalue = "fleet_channel" 
+             and value = fleet_channel;
+
+
           raise cloudos event "subscribe"
             with namespace = namespace()
              and  relationship = "Owner-Fleet"

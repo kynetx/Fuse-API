@@ -61,7 +61,7 @@ Application that manages the fleet
     }
 
     rule create_id_to_eci_mapping {
-        select when fuse fleet_inialize
+        select when fuse fleet_uninitialized
 
         {
             noop();
@@ -70,6 +70,34 @@ Application that manages the fleet
         fired {
             set ent:idToECI {};
             set ent:inventory {};
+        }
+    }
+
+    rule initialize_fleet_pico {
+        select when fuse fleet_uninitialized
+
+	pre {
+	   fleet_name = event:attr("fleet_name");
+           my_owner = event:attr("owner_channel");
+           my_schema = event:attr("schema");
+
+	}
+
+        {
+            noop();
+        }
+
+        fired {
+	  // store meta info
+	  raise pds event new_map_available 
+            with namespace = FuseInit:namespace() 
+             and mapvalues = {"schema": my_schema,
+	                      "owner_channel": my_owner,
+			      "fleet_name": fleet_name
+	                     };
+
+          
+
         }
     }
 
