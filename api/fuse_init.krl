@@ -423,8 +423,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
           remove_rulesets = CloudOS:rulesetRemoveChild(apps{"unwanted"}, pico_auth_channel);
           install_rulesets = CloudOS:rulesetAddChild(apps{"core"}, pico_auth_channel);
           installed_rulesets = 
-             (pico_role.match(re/fleet/gi)) => CloudOS:rulesetAddChild(apps{"fleetPico"}, pico_auth_channel)
-                                             | CloudOS:rulesetAddChild(apps{"vehiclePico"}, pico_auth_channel);
+             (pico_role.match(re/fleet/gi)) => CloudOS:rulesetAddChild(apps{"fleet"}, pico_auth_channel)
+                                             | CloudOS:rulesetAddChild(apps{"vehicle"}, pico_auth_channel);
           {
              "schema": pico_schema,
              "role": pico_role,
@@ -432,6 +432,33 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	     "installed_rulesets": installed_rulesets
           }
         };
+    }
+
+    rule show_children {
+      select when fuse initialize
+      pre {
+        myChildren = pci:list_children(); 
+      }
+      {
+        send_directive("Dependent children") with
+          children = myChildren.encode();   
+
+      }
+      
+    }
+
+    rule delete_child {
+      select when fuse delete_child
+      pre {
+        eci = event:attr("child");
+	huh = pci:delete_cloud(eci,{"cascade" : 1})
+      }
+      {
+        send_directive("Deleted child" ) with
+          child = eci;
+
+      }
+      
     }
 
     rule kickoff_new_fuse_instance {
