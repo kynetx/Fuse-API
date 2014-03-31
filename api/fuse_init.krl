@@ -31,7 +31,6 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
     global {
 
-      meta_id = "fuse-meta";
 
         /* =========================================================
            PUBLIC FUNCTIONS & INDENTIFIERS
@@ -56,7 +55,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
                "ownerPico": [
                    "b16xYY.prod" // Fuse Owner Pico
                ],
-               "unwanted": [ // ?? not sure what these are ??
+               "unwanted": [ 
                    "a169x625.prod",
                    "a169x664.prod",
                    "a169x676.prod",
@@ -195,18 +194,11 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             };
 
             {
-                event:send(pico, "pds", "new_data_available") 
+                event:send(pico, "pds", "new_map_available") 
                     with attrs = {
-                        "namespace": meta_id,
-                        "keyvalue": "schema",
-                        "value": schema
-                    };
-
-                event:send(pico, "pds", "new_data_available") 
-                    with attrs = {
-                        "namespace": meta_id,
-                        "keyvalue": "authChannel",
-                        "value": pico_channel
+                        "namespace": namespace(),
+                        "mapvalues": {"schema": schema,
+                    		      "authChannel":  pico_channel}
                     };
             }
         };
@@ -379,11 +371,10 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             {"cid": cid}
         };
 
-         // namespace = function() {
-         //     this_namespace = pds:get_item(meta_id, "namespace");
-
-         //     (this_namespace.isnull()) => "NO_NAMESPACE" | this_namespace
-         // };
+         namespace = function() {
+           meta_id = "fuse-meta";
+	   meta_id    
+         };
 
         vin = function() {
             this_vin = pds:get_me("vin");
@@ -456,6 +447,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         fired {
             raise fuse event "need_new_fleet" 
               with _api = "sky"
+ 	       and fleet = event:attr("fleet") || "My Fleet"
               ;
         }
     }
@@ -469,61 +461,48 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             fleet = {
                 "cid": fleet_channel
             };
+	    
         }
 	if (pico{"authChannel"} neq "none") then
         {
 
-            initPico(fleet_channel, {
-                "namespace": meta_id,
-                "schema": "Fleet"
-            });
-            
-            initPicoProfile(fleet_channel, {
-                "name": fleet_name
-            });
+	  send_directive("Fleet created") with
+            cid = fleet_channel;
 
-            // tell the fleet pico to take care of the rest of the 
-            // initialization.
-            event:send(fleet, "fuse", "fleet_initialize")
-                with attrs = {
-                    "roles": ["Fleet", "Vehicle", "Report"].encode(),
-                    "instantiatorOrigin": meta:eci()
-                };
+          initPico(fleet_channel, {
+                "namespace": namespace(),
+                "schema": "Fleet"
+          });
+           
+          // tell the fleet pico to take care of the rest of the 
+          // initialization.
+          event:send(fleet, "fuse", "fleet_initialize") with 
+             fleet_name = fleet_name and
+             owner_channel = meta:eci()
+
         }
 
         fired {
-            log ">>> FLEET CHANNEL <<<<";
-            log "Pico created for fleet: " + pico.encode();
+          raise cloudos event "subscribe"
+            with namespace = namespace()
+             and  relationship = "Owner-Fleet"
+             and  channelName = "Owner-fleet-"+ random:uuid()
+             and  targetChannel = fleet_channel
+             and  _api = "sky";
+
+          log ">>> FLEET CHANNEL <<<<";
+          log "Pico created for fleet: " + pico.encode();
         }
     }
 
     rule cache_index_channel {
-        select when gtour did_produce_index
-        pre {
-            index_role = event:attr("role").lc();
-        }
-
-        {
-            noop();
-        }
-
+        select when fuse new_fleet
+        noop();
         fired {
-            set ent:indexChannelCache{index_role} event:attr("indexChannel");
+            set ent:fleet_channel event:attr("fleet_channel");
         }
     }
 
-    rule log_user {
-        select when gtour did_produce_user
-
-        {
-            noop();
-        }
-
-        fired {
-            log "AKO USER";
-            log event:attrs().encode();
-        }
-    }
 
     // this rule listens for the event that is raised when a user has been created
     // in this case, an overlord manager. In the case of an
@@ -710,75 +689,6 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             log "###############[TAG COUPLINGS]####################";
             log ent:tagCouplings;
             log "###############[TAG COUPLINGS]####################";
-        }
-    }
-
-    rule store_invite {
-        select when gtour should_store_invite
-
-        {
-            noop();
-        }
-
-        fired {
-            set app:invites{event:attr("id")} event:attr("invite").decode();
-        }
-    }
-
-    rule destroy_invite {
-        select when gtour should_invalidate_invite
-
-        {
-            noop();
-        }
-
-        fired {
-            clear app:invites{event:attr("id")};
-        }
-    }
-
-    // cache the users in the owner pico.
-    rule cache_users {
-        select when gtour should_cache_users_now
-            or gtour should_cache_users_scheduled
-            or gtour did_produce_system
-            // when an invite is invalidated, it means a new user 
-            // has been added to the owner. Good time to 
-            // refresh the user cache.
-            or gtour should_invalidate_invite
-        foreach subscriptionsByChannelName(namespace(), "User") setting (sub)
-        pre {
-            user_profile = sky:cloud(sub{"eventChannel"}, "a169x676", "get_all_me");
-            stale_users = ent:tempUsers;
-            fresh_users = (stale_users || []).append(user_profile);
-        }
-
-        {
-            noop();
-        }
-
-        fired {
-            set ent:tempUsers fresh_users;
-            raise gtour event "should_set_user_cache"
-                with _api = "sky"
-                on final;
-        }
-    }
-
-    rule set_user_cache {
-        select when gtour should_set_user_cache
-
-        {
-            noop();
-        }
-
-        fired {
-            // at this point, tempUsers will now contain
-            // a complete fresh record of all users for 
-            // an owner, which we will now cache.
-            set ent:users ent:tempUsers;
-            clear ent:tempUsers;
-            schedule gtour event "should_cache_users_scheduled" at time:add(time:now(), {"minutes": 5});
         }
     }
 

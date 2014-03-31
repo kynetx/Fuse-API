@@ -5,4 +5,7 @@
   - vehicle pico initializes itself
   - fleet pico stores
 
-- ```fuse:initialize``` &mdash; sent to ?? 
+- ```fuse:initialize``` &mdash;
+    - sent to owner pico
+	- creates a fleet pico
+	- 
