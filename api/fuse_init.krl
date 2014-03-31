@@ -45,15 +45,14 @@ Ruleset for initializing a Fuse account and managing vehicle picos
                    "a169x672.prod",  // MyProfile
                    "a41x174.prod",   // Amazon S3 module
                    "a16x129.dev",    // SendGrid module
-                   "b16x16.prod",    // Fuse Initialization
+                   "b16x16.prod",    // Fuse Fleet
 		   "b16x13.prod"     // Fuse errors
                ],
-               "indexPico": [
-                   "b16xYY.prod" // Fleet Index Pico
+               "fleet": [
+                   "b16x17.prod" // Fleet Pico
                ],
-
-               "ownerPico": [
-                   "b16xYY.prod" // Fuse Owner Pico
+               "vehicle": [
+                   "b16xYY.prod" // Fuse Vehicle Pico
                ],
                "unwanted": [ 
                    "a169x625.prod",
@@ -456,7 +455,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         select when fuse need_new_fleet
         pre {
             fleet_name = event:attr("fleet");
-            pico = factory({"schema": "Fleet"}, meta:eci());
+            pico = factory({"schema": "Fleet", "role": "fleet"}, meta:eci());
             fleet_channel = pico{"authChannel"};
             fleet = {
                 "cid": fleet_channel
