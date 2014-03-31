@@ -4,7 +4,7 @@ ruleset fuse_init {
         description <<
 Ruleset for initializing a Fuse account and managing vehicle picos
         >>
-        author "AKO"
+        author "PJW from AKO's Guard Tour code"
 
 	use module b16x10 alias fuse_keys
 
@@ -31,6 +31,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
     global {
 
+      meta_id = "fuse-meta";
+
         /* =========================================================
            PUBLIC FUNCTIONS & INDENTIFIERS
            ========================================================= */
@@ -44,15 +46,15 @@ Ruleset for initializing a Fuse account and managing vehicle picos
                    "a169x672.prod",  // MyProfile
                    "a41x174.prod",   // Amazon S3 module
                    "a16x129.dev",    // SendGrid module
-                   "b16xXX.prod",    // Fuse Initialization
+                   "b16x16.prod",    // Fuse Initialization
 		   "b16x13.prod"     // Fuse errors
                ],
                "indexPico": [
-                   "b501810x4.prod" // Fleet Index Pico
+                   "b16xYY.prod" // Fleet Index Pico
                ],
 
                "ownerPico": [
-                   "b501810x5.prod" // Fuse Owner Pico
+                   "b16xYY.prod" // Fuse Owner Pico
                ],
                "unwanted": [ // ?? not sure what these are ??
                    "a169x625.prod",
@@ -70,41 +72,6 @@ Ruleset for initializing a Fuse account and managing vehicle picos
            };
 
         schemas = {
-            "Owner": {
-                "meta": {
-                    "schema": {
-                        "type": "string"
-                    },
-                    "namespace": {
-                        "type": "string"
-                    },
-                    "authChannel": {
-                        "type": "string"
-                    }
-                },
-                "profile": {
-                    "name": {
-                        "type": "string"
-                    },
-                    "email": {
-                        "type": "string"
-                    },
-                    "phone": {
-                        "type": "string"
-                    },
-                    "role": {
-                        "type": "string"
-                    },
-                    "division": {
-                        "type": "string"
-                    }
-                },
-                "data": {
-                    "notification": {
-                        "type": "string"
-                    }
-                }
-            },
             "Fleet": {
                 "meta": {
                     "schema": {
@@ -132,9 +99,6 @@ Ruleset for initializing a Fuse account and managing vehicle picos
                                     "type": "string"
                                 },
                                 "keywords": {
-                                    "type": "string"
-                                },
-                                "division": {
                                     "type": "string"
                                 }
                             }
@@ -225,30 +189,22 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         S3Bucket = "k-mycloud";
 
         initPico = defaction(pico_channel, attrs) {
-            namespace = attrs{"namespace"};
             schema = attrs{"schema"};
             pico = {
                 "cid": pico_channel
             };
 
             {
-                event:send(pico, "pds", "new_data_available")
-                    with attrs = {
-                        "namespace": "meta",
-                        "keyvalue": "namespace",
-                        "value": namespace
-                    };
-
                 event:send(pico, "pds", "new_data_available") 
                     with attrs = {
-                        "namespace": "meta",
+                        "namespace": meta_id,
                         "keyvalue": "schema",
                         "value": schema
                     };
 
                 event:send(pico, "pds", "new_data_available") 
                     with attrs = {
-                        "namespace": "meta",
+                        "namespace": meta_id,
                         "keyvalue": "authChannel",
                         "value": pico_channel
                     };
@@ -423,11 +379,11 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             {"cid": cid}
         };
 
-        namespace = function() {
-            this_namespace = pds:get_item("meta", "namespace");
+         // namespace = function() {
+         //     this_namespace = pds:get_item(meta_id, "namespace");
 
-            (this_namespace.isnull()) => "NO_NAMESPACE" | this_namespace
-        };
+         //     (this_namespace.isnull()) => "NO_NAMESPACE" | this_namespace
+         // };
 
         vin = function() {
             this_vin = pds:get_me("vin");
@@ -468,108 +424,76 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             {"uri": uri, "couplings": couplings, "tag": tag, "lid": lid, "identity": identity}
         };
 
-	// not updated for Fuse
-        factory = function(pico_namespace, pico_meta, password) {
-            pico_uuid = random:uuid();
-            pico_schema = pico_meta{"schema"};
-            pico_role = pico_meta{"role"};
-            username = pico_meta{"username"};
-            pico = (username) => CloudOS:cloudCreate(username, password) | 
-                                                CloudOS:cloudCreate("#{pico_namespace.uc()}_#{pico_schema.uc()}_#{pico_uuid}", password);
-            pico_auth_channel = pico{"token"};
-            remove_rulesets = CloudOS:rulesetRemoveChild(apps{"unwanted"}, pico_auth_channel);
-            install_rulesets = CloudOS:rulesetAddChild(apps{"core"}, pico_auth_channel);
-            install_manager_ruleset = (pico_role.match(re/manager|owner/gi)) => CloudOS:rulesetAddChild(apps{"managerPico"}, pico_auth_channel) | 0;
-            install_index_ruleset = (pico_schema.match(re/index|owner/gi)) => CloudOS:rulesetAddChild(apps{"indexPico"}, pico_auth_channel) | 0;
-
-            {
-                "schema": pico_schema,
-                "role": pico_role,
-                "authChannel": pico_auth_channel,
-                "uuid": pico_uuid
-            }
+	// only ruleset installs are specific to fuse. Generalize? 
+        factory = function(pico_meta, parent_eci) {
+	  pico_schema = pico_meta{"schema"};
+          pico_role = pico_meta{"role"};
+          pico = CloudOS:cloudCreateChild(parent_eci);
+          pico_auth_channel = pico{"token"};
+          remove_rulesets = CloudOS:rulesetRemoveChild(apps{"unwanted"}, pico_auth_channel);
+          install_rulesets = CloudOS:rulesetAddChild(apps{"core"}, pico_auth_channel);
+          installed_rulesets = 
+             (pico_role.match(re/fleet/gi)) => CloudOS:rulesetAddChild(apps{"fleetPico"}, pico_auth_channel)
+                                             | CloudOS:rulesetAddChild(apps{"vehiclePico"}, pico_auth_channel);
+          {
+             "schema": pico_schema,
+             "role": pico_role,
+             "authChannel": pico_auth_channel,
+	     "installed_rulesets": installed_rulesets
+          }
         };
     }
 
     rule kickoff_new_fuse_instance {
         select when fuse initialize
         pre {
-            // strip off the spaces from the owner and application names
-            // and upppercase them.
-            owner = event:attr("owner").replace(re/\s/g, "").uc();
-            application = event:attr("application").replace(re/\s/g, "").uc();
-            namespace = "#{owner}-#{application}";
         }
 
         {
-            send_directive("didRequestNewFuseSetup");
+            send_directive("requsting new Fuse setup");
         }
         
         fired {
-            raise pds event "new_data_available"
-                with namespace = "meta"
-                and  keyvalue = "namespace"
-                and  value = namespace
-                and  fuseInit = "YES"
-                and  _api = "sky";
-        }
-        
-    }
-
-    // when the PDS tells us it has stored our namespace, it's time to continue with 
-    // the setup process.
-    rule man_your_battlestations {
-        select when fuse new_namespace_added
-        pre {
-            owner = pds:get_item("meta", "namespace").split(re/-/).head();
-        }
-
-        {
-            noop();
-        }
-
-        fired {
-            raise fuse event "need_new_owner"
-                with owner = owner
-                and  _api = "sky";
+            raise fuse event "need_new_fleet" 
+              with _api = "sky"
+              ;
         }
     }
 
-    rule create_owner {
-        select when fuse need_new_owner
+    rule create_fleet {
+        select when fuse need_new_fleet
         pre {
-            owner_name = event:attr("owner");
-            pico = factory(namespace(), {
-                "schema": "Owner"
-            }, "");
-            owner_channel = pico{"authChannel"};
-            owner = {
-                "cid": owner_channel
+            fleet_name = event:attr("fleet");
+            pico = factory({"schema": "Fleet"}, meta:eci());
+            fleet_channel = pico{"authChannel"};
+            fleet = {
+                "cid": fleet_channel
             };
         }
-
+	if (pico{"authChannel"} neq "none") then
         {
-            initPico(owner_channel, {
-                "namespace": namespace(),
-                "schema": "Owner"
+
+            initPico(fleet_channel, {
+                "namespace": meta_id,
+                "schema": "Fleet"
             });
             
-            initPicoProfile(owner_channel, {
-                "name": owner_name
+            initPicoProfile(fleet_channel, {
+                "name": fleet_name
             });
 
-            // tell the owner pico to take care of the rest of the 
+            // tell the fleet pico to take care of the rest of the 
             // initialization.
-            event:send(owner, "gtour", "should_produce_indici")
+            event:send(fleet, "fuse", "fleet_initialize")
                 with attrs = {
-                    "roles": ["Tour", "Vehicle", "Report"].encode(),
+                    "roles": ["Fleet", "Vehicle", "Report"].encode(),
                     "instantiatorOrigin": meta:eci()
                 };
         }
 
         fired {
-            log "AKO OWNER CHANNEL";
-            log owner_channel;
+            log ">>> FLEET CHANNEL <<<<";
+            log "Pico created for fleet: " + pico.encode();
         }
     }
 

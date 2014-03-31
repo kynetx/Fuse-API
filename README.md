@@ -15,8 +15,11 @@ The Fuse API will follow the [event-query model](http://www.windley.com/archives
 - ```b16x11```: ```fuse_carvoyant.krl```
 - ```b16x12```: ```carvoyant_module_test.krl```
 - ```b16x13```: ```fuse_error.krl```
-- ```b16x```: ```fuse_init.krl```
+- ```b16x16```: ```fuse_init.krl```
 - ```b16x```: ```.krl```
 
+## Install in Owner account
 
+- fuse_init.krl
+- fuse_error.krl
 
