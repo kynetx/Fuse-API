@@ -90,18 +90,22 @@ Application that manages the fleet
         fired {
 	  // store meta info
 	  raise pds event new_map_available 
-            with namespace = FuseInit:namespace() 
-             and mapvalues = {"schema": my_schema,
-	                      "owner_channel": my_owner,
-			      "fleet_name": fleet_name
-	                     };
+            attributes 
+              {"namespace": FuseInit:namespace(),
+               "mapvalues": {"schema": my_schema,
+	                     "owner_channel": my_owner,
+			     "fleet_name": fleet_name
+	                    },
+               "_api": "sky"
+              };
 
 	  // set my schema
 	  raise pds event new_data_available 
             attributes
               {"namespace": "myCloud",
                "keyvalue": "mySchemaName",
-	       "value": my_schema
+	       "value": my_schema,
+	       "_api": "sky"
               };
 
           // set my cloudType
@@ -109,14 +113,16 @@ Application that manages the fleet
             attributes
 	      {"setRID"   : "a169x695",
   	       "setAttr"  : "myCloudType",
-	       "setValue" : "cloudTypeThing"
+	       "setValue" : "cloudTypeThing",
+	       "_api": "sky"
               };
 	     
           // initialize my profile
 	  raise pds event new_profile_item_available 
             attributes
 	      {"myProfileName"  : fleet_name,
-	       "myProfilePhoto" : FuseInit:fleet_photo
+	       "myProfilePhoto" : FuseInit:fleet_photo,
+	       "_api": "sky"
 	      };
 
           
