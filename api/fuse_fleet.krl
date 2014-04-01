@@ -98,19 +98,19 @@ Application that manages the fleet
 
 	  // set my schema
 	  raise pds event new_data_available 
-            with namespace = "myCloud"
-             and mapvalues = {"mySchemaName": my_schema,
-	                      "owner_channel": my_owner,
-			      "fleet_name": fleet_name
-	                     };
+            attributes
+              {"namespace": "myCloud",
+               "keyvalue": "mySchemaName",
+	       "value": my_schema
+              };
 
           // set my cloudType
-	  raise pds event new_settings_data 
+	  raise pds event new_settings_attribute 
             attributes
 	      {"setRID"   : "a169x695",
   	       "setAttr"  : "myCloudType",
 	       "setValue" : "cloudTypeThing"
-              } ;
+              };
 	     
           // initialize my profile
 	  raise pds event new_profile_item_available 

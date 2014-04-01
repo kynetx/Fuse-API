@@ -478,6 +478,13 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
       }
       always {
+
+        // need to delete subscription...
+      
+        raise CloudOS event picoAttrsClear 
+          attributes
+            {"picoChannel": eci};
+
         raise pds event remove_old_data
             with namespace = namespace() 
              and keyvalue = "fleet_channel" ;
@@ -545,7 +552,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
            //    and keyvalue = "fleet_channel" 
            //    and value = fleet_channel;
 
-	  raise cloudos event picoAttrsSet
+	  raise CloudOS event picoAttrsSet
             with picoChannel = fleet_channel
              and picoName = fleet_name
              and picoPhoto = fleet_photo;
