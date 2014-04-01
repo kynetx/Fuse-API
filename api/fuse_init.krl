@@ -437,7 +437,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
     rule show_children {
       select when fuse show_children
       pre {
-        myChildren = pci:list_children(); 
+        myChildren = pci:list_children(meta:eci()); 
       }
       {
         send_directive("Dependent children") with
