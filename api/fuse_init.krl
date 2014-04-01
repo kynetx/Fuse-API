@@ -451,7 +451,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
       select when fuse delete_child
       pre {
         eci = event:attr("child");
-	huh = pci:delete_cloud(eci,{"cascade" : 1})
+	huh = CloudOS:cloudDestroy(eci)
       }
       {
         send_directive("Deleted child" ) with
