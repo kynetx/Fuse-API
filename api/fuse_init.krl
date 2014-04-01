@@ -22,7 +22,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         errors to b16x13
 
         sharing on
-        provides apps, schemas, initPico, initFleet, initVehicle, 
+        provides fleet_photo, apps, schemas, initPico, initFleet, initVehicle, 
                     initPicoProfile, updateVehicle, destroyVehicle,
                     makeImageURLForPico, uploadPicoImage, updatePicoProfile, fleetChannel,
                     subscribePicoToPico, unsubscribePicoFromPico, subscriptionsByChannelName, namespace, 
@@ -35,6 +35,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         /* =========================================================
            PUBLIC FUNCTIONS & INDENTIFIERS
            ========================================================= */
+
+       fleet_photo = "https://dl.dropboxusercontent.com/u/329530/fuse_fleet_pico_picture.png";
 
            // rulesets we need installed in every Guard Tour Pico
            apps = {
@@ -437,14 +439,31 @@ Ruleset for initializing a Fuse account and managing vehicle picos
     rule show_children {
       select when fuse show_children
       pre {
-        myChildren = pci:list_children(meta:eci()); 
+        myPicos = CloudOS:picoList();
       }
       {
         send_directive("Dependent children") with
-          children = myChildren.encode();   
+          children = myPicos.encode();   
 
       }
       
+    }
+
+    rule delete_subscription {
+      select when fuse delete_subscription
+      pre {
+        eci = event:attr("child");
+      }
+      {
+        send_directive("Deleting subscription" ) with
+          child = eci;
+
+      }
+
+      always {
+        raise cloudos event unsubscribe with 
+          backchannel = child;
+      }
     }
 
     rule delete_child {
@@ -458,14 +477,23 @@ Ruleset for initializing a Fuse account and managing vehicle picos
           child = eci;
 
       }
+      always {
+        raise pds event remove_old_data
+            with namespace = namespace() 
+             and keyvalue = "fleet_channel" ;
+
+      
+      }
       
     }
 
     rule kickoff_new_fuse_instance {
         select when fuse initialize
         pre {
+	  fleet_channel = pds:get_item(namespace(),"fleet_channel");
         }
 
+	if(fleet_channel.isnull()) then
         {
             send_directive("requsting new Fuse setup");
         }
@@ -475,7 +503,10 @@ Ruleset for initializing a Fuse account and managing vehicle picos
               with _api = "sky"
  	       and fleet = event:attr("fleet") || "My Fleet"
               ;
-        }
+        } else {
+	  log ">>>>>>>>>>> Fleet channel exists: " + fleet_channel;
+	  log ">> not creating new fleet ";
+	}
     }
 
     rule create_fleet {
@@ -508,11 +539,16 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
         fired {
 
-	  raise pds event new_item_available 
-            with namespace = namespace() 
-             and keyvalue = "fleet_channel" 
-             and value = fleet_channel;
+	// I don't think we need to do this since we're setting pico attributes
+	   // raise pds event new_item_available 
+           //   with namespace = namespace() 
+           //    and keyvalue = "fleet_channel" 
+           //    and value = fleet_channel;
 
+	  raise cloudos event picoAttrsSet
+            with picoChannel = fleet_channel
+             and picoName = fleet_name
+             and picoPhoto = fleet_photo;
 
           raise cloudos event "subscribe"
             with namespace = namespace()
