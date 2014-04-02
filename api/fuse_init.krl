@@ -440,62 +440,49 @@ Ruleset for initializing a Fuse account and managing vehicle picos
       select when fuse show_children
       pre {
         myPicos = CloudOS:picoList();
-	mySubs = CloudOS:getAllSubscriptions();
         fuseSubs = CloudOS:subscriptionList(namespace(),"Owner");
       }
       {
         send_directive("Dependent children") with
-          children = myPicos.encode() and
-          subscriptions = mySubs.encode() and
+          children = myPicos and
 	  just_fuse = fuseSubs;   
 
       }
       
     }
 
-    rule delete_subscription {
-      select when fuse delete_subscription
-      pre {
-        eci = event:attr("child");
-      }
-      {
-        send_directive("Deleting subscription" ) with
-          child = eci;
-      }
-      always {
-        raise cloudos event unsubscribe
-          attributes
-            {"backchannel": "child",
-	     "_api": "sky"
-            }
-          ;
-      }
-    }
-
-    // this is too general for this ruleset. 
+    // this is too general for this ruleset except for identifying subscriptions
     rule delete_child {
       select when fuse delete_child
       pre {
         eci = event:attr("child");
+        fuseSub = CloudOS:subscriptionList(namespace(),"Owner").head();
 	huh = CloudOS:cloudDestroy(eci)
       }
       {
         send_directive("Deleted child" ) with
           child = eci;
-
       }
       always {
 
-        // need to delete subscription...
-      
+        // not a pico I'm keeping track of anymore      
         raise cloudos event picoAttrsClear 
           with picoChannel = eci 
            and _api = "sky";
 
+	// get rid of the fleet_channel so we can initialize again
         raise pds event remove_old_data
             with namespace = namespace() 
              and keyvalue = "fleet_channel" 
              and _api = "sky";
+
+	// unsubscribe from the first subscription that matches
+	raise cloudos event unsubscribe
+            attributes
+                {"backchannel": fuseSub{"backChannel"},
+    	         "_api": "sky"
+                }
+              ;
 
       }
       
