@@ -109,7 +109,7 @@ Fuse ruleset for a vehicle pico
 
         fired {
 
-	  log ">>>>>>>>>>>>>>>>> initialize_vehicle_pico <<<<<<<<<<<<<<<<<<<<"
+	  log ">>>>>>>>>>>>>>>>> initialize_vehicle_pico <<<<<<<<<<<<<<<<<<<<";
 
 	  // store meta info
 	  raise pds event new_map_available 
