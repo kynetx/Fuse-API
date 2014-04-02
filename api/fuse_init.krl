@@ -440,10 +440,12 @@ Ruleset for initializing a Fuse account and managing vehicle picos
       select when fuse show_children
       pre {
         myPicos = CloudOS:picoList();
+	mySubs = CloudOS:getAllSubscriptions();
       }
       {
         send_directive("Dependent children") with
-          children = myPicos.encode();   
+          children = myPicos.encode() and
+          subscriptions = mySubs.encode();   
 
       }
       
@@ -457,9 +459,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
       {
         send_directive("Deleting subscription" ) with
           child = eci;
-
       }
-
       always {
         raise cloudos event unsubscribe
           attributes
@@ -470,6 +470,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
       }
     }
 
+    // this is too general for this ruleset. 
     rule delete_child {
       select when fuse delete_child
       pre {
@@ -550,11 +551,11 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
         fired {
 
-	// I don't think we need to do this since we're setting pico attributes
-	   // raise pds event new_item_available 
-           //   with namespace = namespace() 
-           //    and keyvalue = "fleet_channel" 
-           //    and value = fleet_channel;
+	  // put this in our own namespace so we can find it to enforce idempotency
+	  raise pds event new_item_available 
+            with namespace = namespace() 
+             and keyvalue = "fleet_channel" 
+             and value = fleet_channel;
 
 	  raise cloudos event picoAttrsSet
             with picoChannel = fleet_channel
