@@ -541,7 +541,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         fired {
 
 	  // put this in our own namespace so we can find it to enforce idempotency
-	  raise pds event new_item_available 
+	  raise pds event new_data_available 
             with namespace = namespace() 
              and keyvalue = "fleet_channel" 
              and value = fleet_channel
