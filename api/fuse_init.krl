@@ -46,14 +46,14 @@ Ruleset for initializing a Fuse account and managing vehicle picos
                    "a169x672.prod",  // MyProfile
                    "a41x174.prod",   // Amazon S3 module
                    "a16x129.dev",    // SendGrid module
-                   "b16x16.prod",    // Fuse Fleet
+//  don't think we really want this everywhere...                 "b16x16.prod",    // Fuse Fleet
 		   "b16x13.prod"     // Fuse errors
                ],
                "fleet": [
                    "b16x17.prod" // Fleet Pico
                ],
                "vehicle": [
-                   "b16xYY.prod" // Fuse Vehicle Pico
+                   "b16x9.prod" // Fuse Vehicle Pico
                ],
                "unwanted": [ 
                    "a169x625.prod",
