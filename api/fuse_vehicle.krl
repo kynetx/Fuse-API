@@ -114,7 +114,7 @@ Fuse ruleset for a vehicle pico
               {"namespace": FuseInit:namespace(),
                "mapvalues": {"schema": my_schema,
 	                     "fleet_channel": my_fleet,
-			     "vehicle_name": vehicle_name
+			     "vehicle_name": name
 	                    },
                "_api": "sky"
               };
