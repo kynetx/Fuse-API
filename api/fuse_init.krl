@@ -441,11 +441,13 @@ Ruleset for initializing a Fuse account and managing vehicle picos
       pre {
         myPicos = CloudOS:picoList();
 	mySubs = CloudOS:getAllSubscriptions();
+        fuseSubs = CloudOS:subscriptionList(namespace(),"Owner");
       }
       {
         send_directive("Dependent children") with
           children = myPicos.encode() and
-          subscriptions = mySubs.encode();   
+          subscriptions = mySubs.encode() and
+	  just_fuse = fuseSubs.encode();   
 
       }
       
