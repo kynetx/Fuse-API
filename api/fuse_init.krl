@@ -461,7 +461,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
       }
       {
         send_directive("Deleted child" ) with
-          child = eci;
+          child = eci and
+          fuseSub = fuseSub;
       }
       always {
 
@@ -479,7 +480,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	// unsubscribe from the first subscription that matches
 	raise cloudos event unsubscribe
             attributes
-                {"backchannel": fuseSub{"eventChannel"},
+                {"backchannel": fuseSub{"backChannel"},
     	         "_api": "sky"
                 }
               ;
