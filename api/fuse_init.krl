@@ -244,8 +244,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         };
 
         fleetChannel = function() {
-            cid =  (ent:indexChannelCache{"vehicle"} 
-                || CloudOS:subscriptionList(namespace(),"Fleet").head().pick("$.eventChannel"));
+            cid =  ent:fleet_channel
+                || CloudOS:subscriptionList(namespace(),"Fleet").head().pick("$.eventChannel");
 
             {"cid": cid}
         };
@@ -331,7 +331,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         eci = event:attr("child");
         fuseSub = CloudOS:subscriptionList(namespace(),"Fleet").head();
         subChannel = fuseSub{"backChannel"};
-	huh = CloudOS:cloudDestroy(eci)
+	huh = CloudOS:cloudDestroy(eci, {"cascade" : 1}); // destroy fleet children too
       }
       {
         send_directive("Deleted child" ) with
@@ -444,7 +444,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	}
     }
 
-    rule cache_index_channel {
+    rule cache_index_channel is inactive {
         select when fuse new_fleet
         noop();
         fired {
@@ -468,6 +468,25 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         }
     }
 
+
+    // ---------- fleet ----------
+
+    // sends event to fleet. Extend eventex to determine what can be sent to fleet
+    rule send_to_fleet {
+      select when fuse need_new_vehicle
+      pre {
+        channel = fleetChannel();
+	d = "fuse"; //event:domain();
+	t = event:type();
+      }
+      {
+        event:send({"cid": channel}, d, t) with
+          attrs = event:attrs();
+      }
+    }
+
+
+
     // not updated for Fuse
     rule store_tag_coupling {
         select when gtour should_couple_tag
@@ -490,15 +509,16 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         }
     }
 
+    // ---------- maintenance ----------
     rule log_all_the_things {
-        select when gtour var_dump
+        select when fuse var_dump
         pre {
             couplings = ent:tagCouplings;
             subs = CloudOS:getAllSubscriptions();
             gid = page:env("g_id");
             meta_eci = meta:eci();
             this_session = CloudOS:currentSession();
-            indici = ent:indexChannelCache;
+            indici = ent:fleet_channel;
             fleet = subscriptionsByChannelName(namespace(), "Fleet");
             dump = {
                 "g_id": gid,
@@ -517,4 +537,16 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         }
 
     }
+
+    rule catch_complete {
+      select when system send_complete
+        foreach event:attr('send_results').pick("$.result") setting (result)
+        send_directive("event:send status")
+	  with status = result{"status"}
+	   and reason = result{"reason"}
+	   and body = result{"body"}
+	  ;
+   }
+
+
 }

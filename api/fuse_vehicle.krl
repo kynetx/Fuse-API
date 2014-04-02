@@ -11,6 +11,9 @@ Fuse ruleset for a vehicle pico
       use module b16x10 alias fuse_keys
 
       use module a169x676 alias pds
+      use module b16x16 alias FuseInit
+
+      errors to b16x13
 	
       provides vin
 
@@ -86,6 +89,99 @@ Fuse ruleset for a vehicle pico
 
     }
 
+    // ---------- initialization ----------
+    rule initialize_vehicle_pico {
+        select when fuse vehicle_uninitialized
+
+	pre {
+	   name = event:attr("name");
+	   photo = event:attr("photo");
+           my_fleet = event:attr("fleet_channel");
+           my_schema = event:attr("schema");
+
+	   // need to take stuff from event attrs and fill our schema
+
+	}
+
+        {
+            noop();
+        }
+
+        fired {
+	  // store meta info
+	  raise pds event new_map_available 
+            attributes 
+              {"namespace": FuseInit:namespace(),
+               "mapvalues": {"schema": my_schema,
+	                     "fleet_channel": my_fleet,
+			     "vehicle_name": vehicle_name
+	                    },
+               "_api": "sky"
+              };
+
+	  // set my schema
+	  raise pds event new_data_available 
+            attributes
+              {"namespace": "myCloud",
+               "keyvalue": "mySchemaName",
+	       "value": my_schema,
+	       "_api": "sky"
+              };
+
+          // set my cloudType
+	  raise pds event new_settings_attribute 
+            attributes
+	      {"setRID"   : "a169x695",
+  	       "setAttr"  : "myCloudType",
+	       "setValue" : "cloudTypeThing",
+	       "_api": "sky"
+              };
+	     
+          // initialize my profile
+	  raise pds event new_profile_item_available 
+            attributes
+	      {"myProfileName"  : name,
+	       "myProfilePhoto" : photo,
+	       "_api": "sky"
+	      };
+
+	  raise fuse event new_vehicle 
+            attributes
+	      {"vehicle_name": name,
+	       "_api": "sky"
+	      };
+        }
+    }
+
+    // meant to generally route events to owner. Extend eventex to choose what gets routed
+    rule route_to_owner {
+      select when fuse new_vehicle
+      pre {
+        owner = CloudOS:subscriptionList(namespace(),"Fleet").head().pick("$.eventChannel");
+      }
+      {
+        send_directive("Routing to owner")
+          with channel = owner 
+           and attrs = event:attrs();
+        event:send({"cid": owner}, "fuse", "new_vehicle")
+          with attrs = event:attrs();
+      }
+    }
+
+    rule auto_approve_pending_subscriptions {
+        select when cloudos subscriptionRequestPending
+           namespace re/fuse-meta/gi
+
+        {
+            noop();
+        }
+
+        fired {
+            raise cloudos event subscriptionRequestApproved
+                with eventChannel = event:attr("eventChannel")
+                and  _api = "sky";
+        }
+    }
 
    
 

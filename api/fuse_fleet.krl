@@ -60,6 +60,7 @@ Application that manages the fleet
         };
     }
 
+    // ---------- respond to owner ----------
     rule create_id_to_eci_mapping {
         select when fuse fleet_uninitialized
 
@@ -162,5 +163,69 @@ Application that manages the fleet
                 and  _api = "sky";
         }
     }
+
+
+    // ---------- manage vehicle picos ----------
+    rule create_vehicle {
+        select when fuse need_new_vehicle
+        pre {
+	  name = event:attr("name") || "Vehicle-"+math:random(99999);
+          pico = FuseInit:factory({"schema": "Vehicle", "role": "vehicle"}, meta:eci());
+          channel = pico{"authChannel"};
+          vehicle = {
+            "cid": channel
+          };
+        }
+	if (pico{"authChannel"} neq "none") then
+        {
+
+	  send_directive("Vehicle created") with
+            cid = vehicle_channel;
+
+          // tell the vehicle pico to take care of the rest of the initialization.
+          event:send(fleet, "fuse", "vehicle_uninitialized") with 
+            attrs = (event:attrs()).put({"fleet_channel": meta:eci(),
+             	    			 "schema":  "Vehicle",
+	             			 "_async": 0    // we want this to be complete before we try to subscribe below
+		    			});
+
+        }
+
+        fired {
+
+	  // make it a "pico" in CloudOS eyes
+	  raise cloudos event picoAttrsSet
+            with picoChannel = channel
+             and picoName = name
+             and picoPhoto = event:attr("photo")
+             and _api = "sky";
+
+	  // subscribe to the new fleet
+          raise cloudos event "subscribe"
+            with namespace = namespace()
+             and  relationship = "Vehicle-Fleet"
+             and  channelName = "Fleet-vehicle"+ random:uuid()
+             and  targetChannel = channel
+             and  _api = "sky";
+
+          log ">>> VEHICLE CHANNEL <<<<";
+          log "Pico created for vehicle: " + pico.encode();
+
+        } else {
+          log "Pico NOT CREATED for vehicle " + name;
+	}
+    }
+
+
+    // ---------- maintainance rules ----------
+    rule catch_complete {
+      select when system send_complete
+        foreach event:attr('send_results').pick("$.result") setting (result)
+        send_directive("event:send status")
+	  with status = result{"status"}
+	   and reason = result{"reason"}
+	   and body = result{"body"}
+	  ;
+   }
 
 }
