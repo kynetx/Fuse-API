@@ -544,7 +544,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	  raise pds event new_item_available 
             with namespace = namespace() 
              and keyvalue = "fleet_channel" 
-             and value = fleet_channel;
+             and value = fleet_channel
+             and _api = "sky";
 
 	  raise cloudos event picoAttrsSet
             with picoChannel = fleet_channel
