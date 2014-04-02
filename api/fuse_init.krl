@@ -481,11 +481,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
 	// unsubscribe from the first subscription that matches
 	raise cloudos event unsubscribe
-            attributes
-                {"backchannel": subChannel,
-    	         "_api": "sky"
-                }
-              ;
+          with backchannel = subChannel
+           and _api = "sky";
 
       }
       
@@ -564,7 +561,9 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
           log ">>> FLEET CHANNEL <<<<";
           log "Pico created for fleet: " + pico.encode();
-        }
+        } else {
+          log "Pico NOT CREATED for fleet";
+	}
     }
 
     rule cache_index_channel {
