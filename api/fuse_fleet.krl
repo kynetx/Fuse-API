@@ -180,10 +180,10 @@ Application that manages the fleet
         {
 
 	  send_directive("Vehicle created") with
-            cid = vehicle_channel;
+            cid = channel;
 
           // tell the vehicle pico to take care of the rest of the initialization.
-          event:send(fleet, "fuse", "vehicle_uninitialized") with 
+          event:send(vehicle, "fuse", "vehicle_uninitialized") with 
             attrs = (event:attrs()).put({"fleet_channel": meta:eci(),
              	    			 "schema":  "Vehicle",
 	             			 "_async": 0    // we want this to be complete before we try to subscribe below
@@ -202,7 +202,7 @@ Application that manages the fleet
 
 	  // subscribe to the new fleet
           raise cloudos event "subscribe"
-            with namespace = namespace()
+            with namespace = FuseInit:namespace()
              and  relationship = "Vehicle-Fleet"
              and  channelName = "Fleet-vehicle"+ random:uuid()
              and  targetChannel = channel
