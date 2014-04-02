@@ -481,7 +481,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
 	// unsubscribe from the first subscription that matches
 	raise cloudos event unsubscribe
-          with backchannel = subChannel
+          with backChannel = subChannel
            and _api = "sky";
 
       }
