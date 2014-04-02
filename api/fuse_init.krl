@@ -22,11 +22,10 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         errors to b16x13
 
         sharing on
-        provides fleet_photo, apps, schemas, initPico, initFleet, initVehicle, 
-                    initPicoProfile, updateVehicle, destroyVehicle,
-                    makeImageURLForPico, uploadPicoImage, updatePicoProfile, fleetChannel,
-                    subscribePicoToPico, unsubscribePicoFromPico, subscriptionsByChannelName, namespace, 
-                    division, dereference, invite, invites, users, factory
+        provides fleet_photo, apps, schemas, 
+                 makeImageURLForPico, uploadPicoImage, updatePicoProfile, 
+                 fleetChannel, namespace, 
+                 dereference, factory
     }
 
     global {
@@ -188,92 +187,6 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
         S3Bucket = "k-mycloud";
 
-        initPico = defaction(pico_channel, attrs) {
-            schema = attrs{"schema"};
-            pico = {
-                "cid": pico_channel
-            };
-
-            {
-                event:send(pico, "pds", "new_map_available") 
-                    with attrs = {
-                        "namespace": namespace(),
-                        "mapvalues": {"schema": schema,
-                    		      "authChannel":  pico_channel}.encode()
-                    };
-            }
-        };
-
-        initFleet = defaction(pico_channel) {
-            pico = {
-                "cid": pico_channel
-            };
-
-            {
-                event:send(pico, "fuse", "new_pico");
-            }
-        };
-
-        initVehicle = defaction(vehicle_channel, vehicle_details) {
-            vehicle = {
-                "cid": vehicle_channel
-            };
-            
-            {
-                event:send(vehicle, "pds", "new_data_available")
-                    with attrs = {
-                        "namespace": "data",
-                        "keyvalue": "detail",
-                        "value": vehicle_details.delete(["eci"]).encode(),
-                        "shouldRaiseGTourDoneEvent": "YES"
-                    };
-
-                event:send(fleetChannel(), "fuse", "new_pico") // should this be the same as the event that initializes the pico? 
-                    with attrs = {
-                        "details": vehicle_details.encode()
-                    };
-            }
-        };
-
-        updateVehicle = defaction(vehicle_channel, vehicle_details) {
-            vehicle = {
-                "cid": vehicle_channel
-            };
-            stale_details = sky:cloud(vehicle{"cid"}, "b501810x6", "detail");
-            fresh_details = (not stale_details{"error"}) => stale_details.put(vehicle_details) | vehicle_details;
-            
-            {
-                event:send(vehicle, "pds", "new_data_available")
-                    with attrs = {
-                        "namespace": "data",
-                        "keyvalue": "detail",
-                        "value": fresh_details.encode(),
-                        "shouldRaiseGTourDoneEvent": "YES"
-                    };
-
-
-                event:send(fleetChannel(), "gtour", "did_amend_pico")
-                    with attrs = {
-                        "details": fresh_details.encode()
-                    };
-            }
-        };
-
-        destroyVehicle = defaction(lid) {
-            vehicle_channel = sky:cloud(fleetChannel().pick("$.cid"), "b501810x4", "translate", {
-                "id": lid
-            });
-            obilterated = CloudOS:cloudDestroy(vehicle_channel.pick("$.cid"));
-
-            {
-                event:send(fleetChannel(), "gtour", "did_destroy_pico")
-                    with attrs = {
-                        "id": lid
-                    };
-            }
-        };
-
-
         initPicoProfile = defaction(pico_channel, profile) {
             pico = {
                 "cid": pico_channel
@@ -330,44 +243,9 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             }
         };
 
-        subscribePicoToPico = defaction(origin_channel, target_channel, attrs) {
-            origin = {
-                "cid": origin_channel
-            };
-
-            {
-                event:send(origin, "cloudos", "subscribe")
-                    with attrs = attrs.put(["targetChannel"], target_channel);
-            }
-        };
-
-        unsubscribePicoFromPico = defaction(origin_channel, target_channel) {
-            origin = {
-                "cid": origin_channel
-            };
-
-            {
-                event:send(origin, "cloudos", "unsubscribe")
-                    with attrs = {
-                        "targetChannel": target_channel
-                    };
-            }
-        };
-
-        subscriptionsByChannelName = function(namespace, channel_name) {
-            
-            subs = CloudOS:getAllSubscriptions().values().filter(function(sub) {
-                sub{"namespace"} eq namespace &&
-                sub{"channelName"} like "re/#{channel_name}/gi"
-            });
-
-            // if there is exactly one matching subscription, just pull it out of the 
-            // filter array and return it.
-            (subs.length() == 1) => subs.head() | subs
-        };
-
         fleetChannel = function() {
-            cid = (ent:indexChannelCache{"vehicle"} || subscriptionsByChannelName(namespace(), "vehicle-index").pick("$.eventChannel"));
+            cid =  (ent:indexChannelCache{"vehicle"} 
+                || CloudOS:subscriptionList(namespace(),"Fleet").head().pick("$.eventChannel"));
 
             {"cid": cid}
         };
@@ -377,11 +255,6 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	   meta_id    
          };
 
-        vin = function() {
-            this_vin = pds:get_me("vin");
-
-            (this_vin.isnull()) => "NO_VIN" | this_vin
-        };
 
 	// not updated for Fuse
         coupleTagWithVehicle = defaction(tid, lid) {
@@ -440,7 +313,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
       select when fuse show_children
       pre {
         myPicos = CloudOS:picoList();
-        fuseSubs = CloudOS:subscriptionList(namespace(),"Owner");
+        fuseSubs = CloudOS:subscriptionList(namespace(),"Fleet");
       }
       {
         send_directive("Dependent children") with
@@ -456,7 +329,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
       select when fuse delete_child
       pre {
         eci = event:attr("child");
-        fuseSub = CloudOS:subscriptionList(namespace(),"Owner").head();
+        fuseSub = CloudOS:subscriptionList(namespace(),"Fleet").head();
         subChannel = fuseSub{"backChannel"};
 	huh = CloudOS:cloudDestroy(eci)
       }
@@ -494,6 +367,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	  fleet_channel = pds:get_item(namespace(),"fleet_channel");
         }
 
+	// protect against creating more than one fleet pico (singleton)
 	if(fleet_channel.isnull()) then
         {
             send_directive("requsting new Fuse setup");
@@ -547,21 +421,24 @@ Ruleset for initializing a Fuse account and managing vehicle picos
              and value = fleet_channel
              and _api = "sky";
 
+	  // make it a "pico" in CloudOS eyes
 	  raise cloudos event picoAttrsSet
             with picoChannel = fleet_channel
              and picoName = fleet_name
              and picoPhoto = fleet_photo 
              and _api = "sky";
 
+	  // subscribe to the new fleet
           raise cloudos event "subscribe"
             with namespace = namespace()
-             and  relationship = "Owner-Fleet"
+             and  relationship = "Fleet-FleetOwner"
              and  channelName = "Owner-fleet-"+ random:uuid()
              and  targetChannel = fleet_channel
              and  _api = "sky";
 
           log ">>> FLEET CHANNEL <<<<";
           log "Pico created for fleet: " + pico.encode();
+
         } else {
           log "Pico NOT CREATED for fleet";
 	}
@@ -575,174 +452,23 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         }
     }
 
-
-    // this rule listens for the event that is raised when a user has been created
-    // in this case, an overlord manager. In the case of an
-    // overloard manager creation, it means a new guard tour system
-    // has been created and we need to send the overloard manager's data back to the cloud
-    // from which the guard tour instantiation event was raised.
-    rule return_to_sender {
-        select when gtour did_produce_user
-            role re/abinitio/i
-        pre {
-            user_channel = event:attr("userChannel");
-            user_role = event:attr("role");
-            username = event:attr("username");
-            password = event:attr("password");
-
-            user = {
-                "userChannel": user_channel,
-                "role": user_role,
-                "username": username,
-                "password": password
-            };
-
-            origin = pds:get_item("temp", "origin").decode();
-        }
-
-        {
-            // raise an event into the initialization originator's cloud
-            // giving them the seed manager's info and telling them initialization
-            // is complete.
-            event:send(origin, "gtour", "did_produce_system")
-                with attrs = {
-                    "managerAbInitio": user.encode()
-                };
-        }
-
-        fired {
-            // log whats in the PDS
-            log "AKO ORIGIN";
-            log origin.encode();
-            log "AKO ManagerAbInitio";
-            log user.encode();
-            raise pds event "remove_namespace"
-                with namespace = "temp"
-                and  _api = "sky";
-        }
-    }
-
     rule send_user_creation_email {
-        select when gtour did_produce_user
+        select when fuse new_fleet
         pre {
-            username = event:attr("username");
-            password = event:attr("password");
 
-            msg = <<
-                A new user was created with the following details:
+	  me = pds:get_all_me();
+          msg = <<
+                A new fleet was created for me.encode();
 
-                username: #{username}
-                password: #{password}
             >>;
         }
 
         {
-            sendgrid:send("Kynetx Guard Tour Team", "dev@kynetx.com", "New Guard Tour User", msg);
+            sendgrid:send("Kynetx Fleet Team", "pjw@kynetx.com", "New Fuse Fleet", msg);
         }
     }
 
-    rule send_gtour_creation_notification {
-        select when gtour did_produce_system 
-        pre {
-            manager = event:attr("managerAbInitio").decode();
-            manager_username = manager{"username"};
-            manager_password = manager{"password"};
-            manager_channel = manager{"userChannel"};
-
-            msg = <<
-                A new guard tour system was initialized. The following seed manager
-                has been created:
-
-                username: #{manager_username}
-                password: #{manager_password}
-                
-                Authoritative Channel: #{manager_channel}
-            >>;
-        }
-
-        {
-            sendgrid:send("Kynetx Guard Tour Team", "dev@kynetx.com", "New Guard Tour System Created", msg);
-            send_directive("didProduceGuardTourSystem") 
-                with managerAbInitio = manager;
-        }
-    }
-
-    rule show_creation_form {
-        select when web cloudAppSelected
-        pre {
-            rids = apps{"core"}.append(apps{"indexPico"}).append(apps{"managerPico"});
-            install_rids = CloudOS:rulesetAddChild(rids, meta:eci());
-            env_select = <<
-                <select id = "gtour-creation-environment">
-                    <option>development</option>
-                    <option>production</option>
-                </select>
-            >>;
-            owner_input = <<
-                <input id = "gtour-owner" type = "text" placeholder = "Owner name" />
-            >>;
-            application_input = <<
-                <input id = "gtour-application" type = "text" placeholder = "Application name" />
-            >>;
-            eci_input = <<
-                <input id = "gtour-creation-origin" type = "hidden" value = "#{meta:eci()}" />
-            >>;
-            go_button = <<
-                <button id = "gtour-go-btn" type = "button">Go!</button>
-            >>;
-            check_email_alert = <<
-                <h3 id = "gtour-success-alert" style = "display:none;">A new guard tour system has been created! Check your email for further details.</h3>
-            >>;
-            app_panel = <<
-                #{env_select}
-                #{owner_input}
-                #{application_input}
-                #{eci_input}
-                #{go_button}
-                #{check_email_alert}
-            >>;
-        }
-
-        {
-            // oh legacy squaretag craziness...
-            SquareTag:inject_styling();
-            CloudRain:createLoadPanel("Guard Tour System Creation", {}, app_panel);
-            emit <<
-                KOBJ.GTour = KOBJ.GTour || {};
-                KOBJ.GTour.envToURI = {
-                    "development": "kibdev.kobj.net",
-                    "production": "cs.kobj.net"
-                };
-                $K("#gtour-go-btn").on("click", function(e) {
-                    $K("#modalSpinner").modal("show");
-                    e.stopPropagation();
-                    e.preventDefault();
-                    var environment = KOBJ.GTour.envToURI[$K("#gtour-creation-environment").val()];
-                    var owner = $K("#gtour-owner").val().replace(/\s/g, "");
-                    var application = $K("#gtour-application").val().replace(/\s/g, "");
-                    var creation_origin = $K("#gtour-creation-origin").val();
-                    var esl = "https://"+ environment +"/sky/event/"+ creation_origin +"/"+ Math.floor(Math.random() * 9999);
-
-                    $K.ajax({
-                        url: esl,
-                        type: "POST",
-                        data: {
-                            "_domain": "gtour",
-                            "_type": "initialize",
-                            "owner": owner,
-                            "application": application
-                        },
-                        success: function(kns_directive) {
-                            $K("#modalSpinner").modal("hide");
-                            $K("#gtour-success-alert").fadeIn();
-                        }
-                    });
-
-                });
-            >>;
-        }
-    }
-
+    // not updated for Fuse
     rule store_tag_coupling {
         select when gtour should_couple_tag
         pre {
@@ -773,10 +499,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             meta_eci = meta:eci();
             this_session = CloudOS:currentSession();
             indici = ent:indexChannelCache;
-            lis = subscriptionsByChannelName(namespace(), "vehicle-index");
-            tis = subscriptionsByChannelName(namespace(), "tour-index");
-            ris = subscriptionsByChannelName(namespace(), "report-index");
-            invs = invites();
+            fleet = subscriptionsByChannelName(namespace(), "Fleet");
             dump = {
                 "g_id": gid,
                 "metaECI": meta_eci,
@@ -784,12 +507,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
                 "couplings": couplings,
                 "subs": subs,
                 "indici": indici,
-                "indiciSubs": {
-                    "vehicle": lis,
-                    "tour": tis,
-                    "report": ris
-                },
-                "invitations": invs
+		"fleet": fleet
             };
         }
 
@@ -798,29 +516,5 @@ Ruleset for initializing a Fuse account and managing vehicle picos
                 with dump = dump;
         }
 
-        fired {
-            log "########<LOG ALL THE THINGS>##########";
-            log "//////////+SESSION INFO+//////////////";
-            log "g_id: " + gid;
-            log "Meta ECI:" + meta_eci;
-            log "CloudOS Current Session:" + this_session;
-            log "/////////+END SESSION INFO+///////////";
-            log "########[TAG COUPLINGS]#########";
-            log couplings;
-            log "########[/TAG COUPLINGS]########";
-            log "########[ALL SUBSCRIPTIONS]#########";
-            log subs;
-            log "########[/ALL SUBSCRIPTIONS]########";
-            log "########[INDEX SUBSCRIPTIONS]#######";
-            log dump{"indiciSubs"};
-            log "########[/INDEX SUBSCRIPTIONS]######";
-            log "########[CACHED INDEX CHANNELS]#########";
-            log indici;
-            log "########[/CACHED INDEX CHANNELS]########";
-            log "##############[INVITATIONS]]############";
-            log invs;
-            log "##############[/INVITATIONS]############";
-            log "########</LOG ALL THE THINGS>##########";
-        }
     }
 }

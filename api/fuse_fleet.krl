@@ -125,11 +125,28 @@ Application that manages the fleet
 	       "_api": "sky"
 	      };
 
-          
-
+	  raise fuse event new_fleet 
+            attributes
+	      {"fleet_name": fleet_name,
+	       "_api": "sky"
+	      };
         }
     }
 
+    // meant to generally route events to owner. Extend eventex to choose what gets routed
+    rule route_to_owner {
+      select when fuse new_fleet
+      pre {
+        owner = CloudOS:subscriptionList(namespace(),"FleetOwner").head().pick("$.eventChannel");
+      }
+      {
+        send_directive("Routing to owner")
+          with channel = owner 
+           and attrs = event:attrs();
+        event:send({"cid": owner}, "fuse", "new_fleet")
+          with attrs = event:attrs();
+      }
+    }
 
     rule auto_approve_pending_subscriptions {
         select when cloudos subscriptionRequestPending
