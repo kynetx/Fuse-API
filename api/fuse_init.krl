@@ -461,8 +461,12 @@ Ruleset for initializing a Fuse account and managing vehicle picos
       }
 
       always {
-        raise cloudos event unsubscribe with 
-          backchannel = child;
+        raise cloudos event unsubscribe
+          attributes
+            {"backchannel": "child",
+	     "_api": "sky"
+            }
+          ;
       }
     }
 
@@ -482,10 +486,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         // need to delete subscription...
       
         raise cloudos event picoAttrsClear 
-          attributes
-            {"picoChannel": eci,
-	     "_api": "sky"
-	    };
+          with picoChannel = eci 
+           and _api = "sky";
 
         raise pds event remove_old_data
             with namespace = namespace() 
