@@ -479,7 +479,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	// unsubscribe from the first subscription that matches
 	raise cloudos event unsubscribe
             attributes
-                {"backchannel": fuseSub{"backChannel"},
+                {"backchannel": fuseSub{"eventChannel"},
     	         "_api": "sky"
                 }
               ;
