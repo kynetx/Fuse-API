@@ -447,7 +447,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         send_directive("Dependent children") with
           children = myPicos.encode() and
           subscriptions = mySubs.encode() and
-	  just_fuse = fuseSubs.encode();   
+	  just_fuse = fuseSubs;   
 
       }
       
