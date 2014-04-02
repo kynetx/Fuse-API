@@ -11,8 +11,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
         use module a169x625 alias CloudOS
         use module a169x676 alias pds
-        use module a41x174 alias AWSS3
-            with AWSKeys = keys:aws()
+         // use module a41x174 alias AWSS3
+         //     with AWSKeys = keys:aws()
         use module a169x701 alias CloudRain
         use module a16x129 version "dev" alias sendgrid with
             api_user = keys:sendgrid("api_user") and 
@@ -481,7 +481,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
         // need to delete subscription...
       
-        raise CloudOS event picoAttrsClear 
+        raise cloudos event picoAttrsClear 
           attributes
             {"picoChannel": eci,
 	     "_api": "sky"
@@ -554,7 +554,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
            //    and keyvalue = "fleet_channel" 
            //    and value = fleet_channel;
 
-	  raise CloudOS event picoAttrsSet
+	  raise cloudos event picoAttrsSet
             with picoChannel = fleet_channel
              and picoName = fleet_name
              and picoPhoto = fleet_photo 
