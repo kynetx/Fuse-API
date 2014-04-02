@@ -329,7 +329,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
       select when fuse delete_child
       pre {
         eci = event:attr("child");
-        fuseSub = CloudOS:subscriptionList(namespace(),"Owner").head();
+        fuseSub = CloudOS:subscriptionList(namespace(),"Fleet").head();
         subChannel = fuseSub{"backChannel"};
 	huh = CloudOS:cloudDestroy(eci)
       }
@@ -355,7 +355,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	// unsubscribe from the first subscription that matches
 	raise cloudos event unsubscribe
           with backChannel = subChannel
-           and _api = "sky";
+           and _api = "sky" if not subChannel.isnull();
 
       }
       
