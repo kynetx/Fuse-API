@@ -138,7 +138,7 @@ Application that manages the fleet
     rule route_to_owner {
       select when fuse new_fleet
       pre {
-        owner = CloudOS:subscriptionList(namespace(),"FleetOwner").head().pick("$.eventChannel");
+        owner = CloudOS:subscriptionList(FuseInit:namespace(),"FleetOwner").head().pick("$.eventChannel");
       }
       {
         send_directive("Routing to owner")
@@ -222,7 +222,7 @@ Application that manages the fleet
       select when fuse show_vehicles
       pre {
         myPicos = CloudOS:picoList();
-        fuseSubs = CloudOS:subscriptionList(namespace(),"Vehicle");
+        fuseSubs = CloudOS:subscriptionList(FuseInit:namespace(),"Vehicle");
       }
       {
         send_directive("Dependent children") with
@@ -238,7 +238,7 @@ Application that manages the fleet
       select when fuse delete_vehicle
       pre {
         eci = event:attr("child");
-        fuseSub = CloudOS:subscriptionList(namespace(),"Fleet").head();
+        fuseSub = CloudOS:subscriptionList(FuseInit:namespace(),"Fleet").head();
         subChannel = fuseSub{"backChannel"};
 	huh = CloudOS:cloudDestroy(eci); 
       }
