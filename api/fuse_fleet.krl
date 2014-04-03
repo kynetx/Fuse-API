@@ -17,6 +17,10 @@ Application that manages the fleet
     }
 
     global {
+
+
+      S3Bucket = FuseInit:S3Bucket;
+
         inventory = function(filter) {
             index = ent:inventory;
             matches = (filter.isnull()) => index.values() | index.values().filter(function(record) {

@@ -13,7 +13,7 @@ Provides rules for handling Carvoyant events
 
     errors to b16x13
 
-    provides get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
+    provides namespace, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
              get_subscription, add_subscription, del_subscription
 
 /* 
@@ -43,11 +43,15 @@ b16x13: fuse_error.krl
     // [TODO] 
     //  vehicle ID can't be in config data. Has to match one of them, but is supplied
 
+    namespace = function() {
+      "fuse:carvoyant";
+    }
+
 
     // vehicle_id is optional if creating a new vehicle profile
     // key is optional, if missing, use default
     get_config = function(vehicle_id, key) {
-       carvoyant_config_key = key || "fuse:carvoyant";
+       carvoyant_config_key = key || carvoyant_namespace();
        config_data = pds:get_items(carvoyant_config_key) || {};
 
        hostname = "dash.carvoyant.com";
@@ -55,7 +59,7 @@ b16x13: fuse_error.krl
        config_data
          .put({"hostname": hostname,
 	       "base_url": url,
-	       "vehicle_id": vehicle_id,
+	       "vehicle_id": vehicle_id || config_data{"deviceID"},
 	       "apiKey" : config_data{"apiKey"} || keys:carvoyant_test("apiKey"),
 	       "secToken" : config_data{"secToken"} || keys:carvoyant_test("secToken")
 	      })

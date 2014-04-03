@@ -22,7 +22,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         errors to b16x13
 
         sharing on
-        provides fleet_photo, apps, schemas, 
+        provides fleet_photo, apps, S3Bucket, 
                  makeImageURLForPico, uploadPicoImage, updatePicoProfile, 
                  fleetChannel, namespace, 
                  dereference, factory
@@ -50,10 +50,11 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 		   "b16x13.prod"     // Fuse errors
                ],
                "fleet": [
-                   "b16x17.prod" // Fleet Pico
+                   "b16x17.prod"  // fuse_fleet.krl
                ],
                "vehicle": [
-                   "b16x9.prod" // Fuse Vehicle Pico
+                   "b16x9.prod",  // fuse_vehicle.krl
+		   "b16x11.prod"  // fuse_carvoyant.krl
                ],
                "unwanted": [ 
                    "a169x625.prod",
@@ -70,120 +71,6 @@ Ruleset for initializing a Fuse account and managing vehicle picos
                ]
            };
 
-        schemas = {
-            "Fleet": {
-                "meta": {
-                    "schema": {
-                        "type": "string"
-                    },
-                    "namespace": {
-                        "type": "string"
-                    },
-                    "authChannel": {
-                        "type": "string"
-                    }
-                },
-                "profile": {
-                    "role": {
-                        "type": "string"
-                    }
-                },
-                "data": {
-                    "index": {
-                        "type": "array",
-                        "element": {
-                            "type": "map",
-                            "data": {
-                                "name": {
-                                    "type": "string"
-                                },
-                                "keywords": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    },
-                    "idToECI": {
-                        "type": "entity"
-                    }
-                }
-            },
-            "Vehicle": {
-                "meta": {
-                    "schema": {
-                        "type": "string"
-                    },
-                    "namespace": {
-                        "type": "string"
-                    },
-                    "authChannel": {
-                        "type": "string"
-                    }
-                },
-                "profile": {
-                    "name": {
-                        "type": "string"
-                    },
-                    "image": {
-                        "type": "string"
-                    },
-                    "vin": {
-                        "type": "string"
-                    }
-                },
-                "data": {
-                    "detail": {
-                        "type": "map",
-                        "data": {
-                            "tasks": {
-                                "type": "array",
-                                "element": {
-                                    "type": "string"
-                                }
-                            },
-                            "directions": {
-                                "type": "string"
-                            },
-                            "instructions": {
-                                "type": "string"
-                            },
-                            "problemInstructions": {
-                                "type": "string"
-                            },
-                            "keywords": {
-                                "type": "string"
-                            },
-                            "latitude": {
-                                "type": "number"
-                            },
-                            "longitude": {
-                                "type": "number"
-                            },
-                            "timeline": {
-                                "type": "map",
-                                "data": {
-                                    "timestamp": {
-                                        "type": "ISO8601"
-                                    },
-                                    "guard": {
-                                        "type": "string"
-                                    },
-                                    "status": {
-                                        "type": "string"
-                                    }
-                                }
-                            },
-                            "tag": {
-                                "type": "string"
-                            },
-                            "url": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        };
 
         S3Bucket = "k-mycloud";
 

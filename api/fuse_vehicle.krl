@@ -12,6 +12,7 @@ Fuse ruleset for a vehicle pico
 
       use module a169x676 alias pds
       use module b16x16 alias FuseInit
+      use module b16x11 alias carvoyant
 
       errors to b16x13
 	
@@ -21,11 +22,15 @@ Fuse ruleset for a vehicle pico
 
     global {
 
-        vin = function() {
-            this_vin = pds:get_me("vin");
+      S3Bucket = FuseInit:S3Bucket;
+      
+      carvoyant_namespace = carvoyant:namespace();
 
-            (this_vin.isnull()) => "NO_VIN" | this_vin
-        };
+      vin = function() {
+        this_vin = pds:get_me("vin");
+
+        (this_vin.isnull()) => "NO_VIN" | this_vin
+      };
 
  
         initVehicle = defaction(vehicle_channel, vehicle_details) {
@@ -147,6 +152,17 @@ Fuse ruleset for a vehicle pico
 	       "myProfilePhoto" : photo,
 	       "_api": "sky"
 	      };
+
+	  // temporarily store the keys here...these will eventually have to come from Carovyant OAuth
+	  raise pds event new_map_available
+            attributes
+              {"namespace": carvoyant_namespace,
+               "mapvalues": {"apiKey": keys:carvoyant_test("apiKey"),
+	                     "secToken": keys:carvoyant_test("secToken"),
+			     "deviceID": "C201300398"
+	                    },
+               "_api": "sky"
+              };
 
 	  raise fuse event new_vehicle 
             attributes
