@@ -237,7 +237,7 @@ Application that manages the fleet
     rule delete_vehicle {
       select when fuse delete_vehicle
       pre {
-        eci = event:attr("child");
+        eci = event:attr("vehicle_eci");
 	this_pico =  CloudOS:picoList().pick("$."+eci);
 	this_pico_id = this_pico{"id"};
 
