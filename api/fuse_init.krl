@@ -213,9 +213,9 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
     // this is too general for this ruleset except for identifying subscriptions
     rule delete_child {
-      select when fuse delete_child
+      select when fuse delete_fleet
       pre {
-        eci = event:attr("child");
+        eci = event:attr("fleet_eci");
         fuseSub = CloudOS:subscriptionList(namespace(),"Fleet").head();
         subChannel = fuseSub{"backChannel"};
 	huh = CloudOS:cloudDestroy(eci, {"cascade" : 1}); // destroy fleet children too
@@ -359,7 +359,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
     // ---------- fleet ----------
 
     // sends event to fleet. Extend eventex to determine what can be sent to fleet
-    rule send_to_fleet {
+    rule send_to_fleet {   
       select when fuse need_new_vehicle
       pre {
         channel = fleetChannel();
