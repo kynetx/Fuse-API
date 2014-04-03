@@ -109,7 +109,8 @@ Fuse ruleset for a vehicle pico
 	}
 
         {
-            noop();
+            send_directive("initializing vehicle pico")
+	      with name = name;
         }
 
         fired {
@@ -241,13 +242,17 @@ Fuse ruleset for a vehicle pico
 
     rule update_config_for_vehicle {
       select when fuse updated_vehicle_configuration
+      send_directive("Updating config for vehicle")
+         with new_config = event:attrs();
       always {
         raise pds event updated_data_available
 	  attributes {
 	    "namespace": carvoyant_namespace,
 	    "keyvalue": "config",
 	    "value": event:attrs()
-	              .delete("_api")
+	              .delete("_api"),
+            "_api": "sky"
+ 		   
 	  };
       }
     }
