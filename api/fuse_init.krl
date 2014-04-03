@@ -196,58 +196,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         };
     }
 
-    rule show_children {
-      select when fuse show_children
-      pre {
-        myPicos = CloudOS:picoList();
-        fuseSubs = CloudOS:subscriptionList(namespace(),"Fleet");
-      }
-      {
-        send_directive("Dependent children") with
-          children = myPicos and
-	  just_fuse = fuseSubs;   
-
-      }
-      
-    }
-
-    // this is too general for this ruleset except for identifying subscriptions
-    rule delete_child {
-      select when fuse delete_fleet
-      pre {
-        eci = event:attr("fleet_eci");
-        fuseSub = CloudOS:subscriptionList(namespace(),"Fleet").head();
-        subChannel = fuseSub{"backChannel"};
-	huh = CloudOS:cloudDestroy(eci, {"cascade" : 1}); // destroy fleet children too
-      }
-      {
-        send_directive("Deleted child" ) with
-          child = eci and
-          fuseSub = fuseSub and
-          channel = subChannel;
-      }
-      always {
-
-        // not a pico I'm keeping track of anymore      
-        raise cloudos event picoAttrsClear 
-          with picoChannel = eci 
-           and _api = "sky";
-
-	// get rid of the fleet_channel so we can initialize again
-        raise pds event remove_old_data
-            with namespace = namespace() 
-             and keyvalue = "fleet_channel" 
-             and _api = "sky";
-
-	// unsubscribe from the first subscription that matches
-	raise cloudos event unsubscribe
-          with backChannel = subChannel
-           and _api = "sky" if not subChannel.isnull();
-
-      }
-      
-    }
-
+    // ---------- manage fleet singleton ----------
     rule kickoff_new_fuse_instance {
         select when fuse initialize
         pre {
@@ -330,6 +279,60 @@ Ruleset for initializing a Fuse account and managing vehicle picos
           log "Pico NOT CREATED for fleet";
 	}
     }
+
+    rule show_children {
+      select when fuse show_children
+      pre {
+        myPicos = CloudOS:picoList();
+        fuseSubs = CloudOS:subscriptionList(namespace(),"Fleet");
+      }
+      {
+        send_directive("Dependent children") with
+          children = myPicos and
+	  just_fuse = fuseSubs;   
+
+      }
+      
+    }
+
+    // this is too general for this ruleset except for identifying subscriptions
+    rule delete_child {
+      select when fuse delete_fleet
+      pre {
+        eci = event:attr("fleet_eci");
+        fuseSub = CloudOS:subscriptionList(namespace(),"Fleet").head() || {};
+        subChannel = fuseSub{"backChannel"};
+	huh = CloudOS:cloudDestroy(eci, {"cascade" : 1}); // destroy fleet children too
+      }
+      {
+        send_directive("Deleted child" ) with
+          child = eci and
+          fuseSub = fuseSub and
+          channel = subChannel;
+      }
+      always {
+
+        // not a pico I'm keeping track of anymore      
+        raise cloudos event picoAttrsClear 
+          with picoChannel = eci 
+           and _api = "sky";
+
+	// get rid of the fleet_channel so we can initialize again
+        raise pds event remove_old_data
+            with namespace = namespace() 
+             and keyvalue = "fleet_channel" 
+             and _api = "sky";
+
+	// unsubscribe from the first subscription that matches
+	raise cloudos event unsubscribe
+          with backChannel = subChannel
+           and _api = "sky" if not subChannel.isnull();
+
+      }
+      
+    }
+
+
 
     rule cache_index_channel is inactive {
         select when fuse new_fleet
