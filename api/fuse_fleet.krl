@@ -175,6 +175,7 @@ Application that manages the fleet
           vehicle = {
             "cid": channel
           };
+	  pico_id = "Fleet-vehicle"+ random:uuid();
         }
 	if (pico{"authChannel"} neq "none") then
         {
@@ -198,13 +199,14 @@ Application that manages the fleet
             with picoChannel = channel
              and picoName = name
              and picoPhoto = event:attr("photo")
+             and picoId = pico_id
              and _api = "sky";
 
 	  // subscribe to the new fleet
           raise cloudos event "subscribe"
             with namespace = FuseInit:namespace()
              and  relationship = "Vehicle-Fleet"
-             and  channelName = "Fleet-vehicle"+ random:uuid()
+             and  channelName = pico_id
              and  targetChannel = channel
              and  _api = "sky";
 
@@ -215,6 +217,53 @@ Application that manages the fleet
           log "Pico NOT CREATED for vehicle " + name;
 	}
     }
+
+    rule show_vehicles {
+      select when fuse show_vehicles
+      pre {
+        myPicos = CloudOS:picoList();
+        fuseSubs = CloudOS:subscriptionList(namespace(),"Vehicle");
+      }
+      {
+        send_directive("Dependent children") with
+          children = myPicos and
+	  just_fuse = fuseSubs;   
+
+      }
+      
+    }
+
+    // this is too general for this ruleset except for identifying subscriptions
+    rule delete_vehicle {
+      select when fuse delete_vehicle
+      pre {
+        eci = event:attr("child");
+        fuseSub = CloudOS:subscriptionList(namespace(),"Fleet").head();
+        subChannel = fuseSub{"backChannel"};
+	huh = CloudOS:cloudDestroy(eci); 
+      }
+      {
+        send_directive("Deleted child" ) with
+          child = eci and
+          fuseSub = fuseSub and
+          channel = subChannel;
+      }
+      always {
+
+        // not a pico I'm keeping track of anymore      
+        raise cloudos event picoAttrsClear 
+          with picoChannel = eci 
+           and _api = "sky";
+
+	// unsubscribe from the first subscription that matches
+	raise cloudos event unsubscribe
+          with backChannel = subChannel
+           and _api = "sky" if not subChannel.isnull();
+
+      }
+      
+    }
+
 
 
     // ---------- maintainance rules ----------
