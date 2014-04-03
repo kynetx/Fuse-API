@@ -10,7 +10,7 @@ The Fuse API will follow the [event-query model](http://www.windley.com/archives
 
 ## Dev RID bindings
 
-- ```b16x9```: ```fuse_main.krl```
+- ```b16x9```: ```fuse_vehicle.krl```
 - ```b16x10```: ```fuse_keys.krl``` &mdash; (in the CloudOS Keys Repo)
 - ```b16x11```: ```fuse_carvoyant.krl```
 - ```b16x12```: ```carvoyant_module_test.krl```

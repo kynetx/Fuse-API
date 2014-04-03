@@ -157,8 +157,8 @@ Fuse ruleset for a vehicle pico
 	  // temporarily store the keys here...these will eventually have to come from Carovyant OAuth
 	  raise fuse event updated_vehicle_configuration
             attributes
-              {"apiKey": keys:carvoyant_test("apiKey"),
-               "secToken": keys:carvoyant_test("secToken"),
+              {"apiKey": keys:carvoyant_test("apiKey") || "no API key available",
+               "secToken": keys:carvoyant_test("secToken") || "no security token available",
 	       "deviceID" : "C201300398",
 	       "_api": "sky"
               };
@@ -250,7 +250,8 @@ Fuse ruleset for a vehicle pico
 	    "namespace": carvoyant_namespace,
 	    "keyvalue": "config",
 	    "value": event:attrs()
-	              .delete(["_api"]),
+	              .delete(["_api"])
+		      .delete(["_generatedby"]),
             "_api": "sky"
  		   
 	  };
