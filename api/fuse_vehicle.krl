@@ -154,14 +154,12 @@ Fuse ruleset for a vehicle pico
 	      };
 
 	  // temporarily store the keys here...these will eventually have to come from Carovyant OAuth
-	  raise pds event new_map_available
+	  raise fuse event updated_vehicle_configuration
             attributes
-              {"namespace": carvoyant_namespace,
-               "mapvalues": {"apiKey": keys:carvoyant_test("apiKey"),
-	                     "secToken": keys:carvoyant_test("secToken"),
-			     "deviceID": "C201300398"
-	                    },
-               "_api": "sky"
+              {"apiKey": keys:carvoyant_test("apiKey"),
+               "secToken": keys:carvoyant_test("secToken"),
+	       "deviceID" : "C201300398",
+	       "_api": "sky"
               };
 
 	  raise fuse event new_vehicle 
@@ -202,6 +200,57 @@ Fuse ruleset for a vehicle pico
         }
     }
 
+
+    // ---------- configure me ----------
+
+    // not sure we need the full "settings framework"
+    rule load_app_config_settings is inactive {
+      select when web sessionLoaded 
+               or fuse initialize_config
+      pre {
+        schema = [
+          {"name"     : "deviceID",
+           "label"    : "Device ID",
+           "dtype"    : "text"
+          },
+          {"name"     : "apiKey",
+           "label"    : "Carvoyant API Key",
+           "dtype"    : "text"
+          },
+          {"name"     : "secToken",
+           "label"    : "Carvoyant security token (keep private)",
+           "dtype"    : "text"
+          }
+	  
+        ];
+        data = {
+	  "deviceID" : "C201300398",
+	  "apiKey": keys:carvoyant_test("apiKey"),
+	  "secToken": keys:carvoyant_test("secToken")
+        };
+      }
+      always {
+        raise pds event new_settings_schema
+          with setName   = "Carvoyant"
+          and  setRID    = carvoyant_namespace
+          and  setSchema = schema
+          and  setData   = data
+          and  _api = "sky";
+      }
+    }
+
+    rule update_config_for_vehicle {
+      select when fuse updated_vehicle_configuration
+      always {
+        raise pds event updated_data_available
+	  attributes {
+	    "namespace": carvoyant_namespace,
+	    "keyvalue": "config",
+	    "value": event:attrs()
+	              .delete("_api")
+	  };
+      }
+    }
    
 
 }

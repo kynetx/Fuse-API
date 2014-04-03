@@ -52,7 +52,7 @@ b16x13: fuse_error.krl
     // key is optional, if missing, use default
     get_config = function(vehicle_id, key) {
        carvoyant_config_key = key || carvoyant_namespace();
-       config_data = pds:get_items(carvoyant_config_key) || {};
+       config_data = pds:get_items(carvoyant_config_key).pick("$..config") || {};
 
        hostname = "dash.carvoyant.com";
        url = "https://#{hostname}/api/vehicle/#{vehicle_id}";
