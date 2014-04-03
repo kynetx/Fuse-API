@@ -238,15 +238,22 @@ Application that manages the fleet
       select when fuse delete_vehicle
       pre {
         eci = event:attr("child");
-        fuseSub = CloudOS:subscriptionList(FuseInit:namespace(),"Fleet").head();
-        subChannel = fuseSub{"backChannel"};
+	this_pico =  CloudOS:picoList().pick("$."+eci);
+	this_pico_id = this_pico{"id"};
+
+	// use the pico ID to look up the subscription to delete
+        this_sub = CloudOS:subscriptionList(FuseInit:namespace(),"Fleet")
+	           .filter(function(sub){sub{channelName} eq this_pico_id})
+		   .head();
+        this_sub_channel = this_sub{"backChannel"};
 	huh = CloudOS:cloudDestroy(eci); 
       }
       {
         send_directive("Deleted child" ) with
           child = eci and
-          fuseSub = fuseSub and
-          channel = subChannel;
+	  id = this_pico_id and
+          fuseSub = this_sub and
+          channel = this_sub_channel;
       }
       always {
 
@@ -257,8 +264,8 @@ Application that manages the fleet
 
 	// unsubscribe from the first subscription that matches
 	raise cloudos event unsubscribe
-          with backChannel = subChannel
-           and _api = "sky" if not subChannel.isnull();
+          with backChannel = this_sub_channel
+           and _api = "sky" if not this_sub_channel.isnull();
 
       }
       
