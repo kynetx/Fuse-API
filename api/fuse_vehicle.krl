@@ -250,7 +250,7 @@ Fuse ruleset for a vehicle pico
 	    "namespace": carvoyant_namespace,
 	    "keyvalue": "config",
 	    "value": event:attrs()
-	              .delete("_api"),
+	              .delete(["_api"]),
             "_api": "sky"
  		   
 	  };

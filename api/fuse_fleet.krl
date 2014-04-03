@@ -256,8 +256,7 @@ Application that manages the fleet
         send_directive("Deleted child" ) with
           child = eci and
 	  id = this_pico_id and
-          allSubs = CloudOS:subscriptionList(FuseInit:namespace(),"Vehicle") and
-          filtered = CloudOS:subscriptionList(FuseInit:namespace(),"Vehicle").filter(function(sub){sub{"channelName"} eq this_pico_id}) and
+//          allSubs = CloudOS:subscriptionList(FuseInit:namespace(),"Vehicle") and
           fuseSub = this_sub and
           channel = this_sub_channel;
       }
