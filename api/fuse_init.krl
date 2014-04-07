@@ -229,6 +229,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             fleet = {
                 "cid": fleet_channel
             };
+	    pico_id = "Owner-fleet-"+ random:uuid();
 	    
         }
 	if (pico{"authChannel"} neq "none") then
@@ -262,13 +263,14 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             with picoChannel = fleet_channel
              and picoName = fleet_name
              and picoPhoto = fleet_photo 
+	     and picoId = pico_id
              and _api = "sky";
 
 	  // subscribe to the new fleet
           raise cloudos event "subscribe"
             with namespace = namespace()
              and  relationship = "Fleet-FleetOwner"
-             and  channelName = "Owner-fleet-"+ random:uuid()
+             and  channelName = pico_id
              and  targetChannel = fleet_channel
              and  _api = "sky";
 

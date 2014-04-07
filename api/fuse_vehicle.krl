@@ -10,6 +10,7 @@ Fuse ruleset for a vehicle pico
 
       use module b16x10 alias fuse_keys
 
+      use module a169x625  alias CloudOS
       use module a169x676 alias pds
       use module b16x16 alias FuseInit
       use module b16x11 alias carvoyant
@@ -32,7 +33,17 @@ Fuse ruleset for a vehicle pico
         (this_vin.isnull()) => "NO_VIN" | this_vin
       };
 
- 
+      vehicle_id = function() {
+        config = get_item(carvoyant_namespace, "config");
+
+        config{"deviceID"} // old name remove once we are creating vehicles with new name
+       ||
+        config{"deviceId"}
+       ||
+	get_item(carvoyant_namespace, "vehicle_info").pick("$.vehicleId")
+      }
+
+ // not using
         initVehicle = defaction(vehicle_channel, vehicle_details) {
             vehicle = {
                 "cid": vehicle_channel
@@ -54,6 +65,7 @@ Fuse ruleset for a vehicle pico
             }
         };
 
+ // not using
         updateVehicle = defaction(vehicle_channel, vehicle_details) {
             vehicle = {
                 "cid": vehicle_channel
@@ -77,21 +89,6 @@ Fuse ruleset for a vehicle pico
                     };
             }
         };
-
-        destroyVehicle = defaction(lid) {
-            vehicle_channel = sky:cloud(fleetChannel().pick("$.cid"), "b501810x4", "translate", {
-                "id": lid
-            });
-            obilterated = CloudOS:cloudDestroy(vehicle_channel.pick("$.cid"));
-
-            {
-                event:send(fleetChannel(), "gtour", "did_destroy_pico")
-                    with attrs = {
-                        "id": lid
-                    };
-            }
-        };
-
     }
 
     // ---------- initialization ----------
@@ -181,7 +178,7 @@ Fuse ruleset for a vehicle pico
         send_directive("Routing to owner")
           with channel = owner 
            and attrs = event:attrs();
-        event:send({"cid": owner}, "fuse", "new_vehicle")
+        event:send({"cid": owner}, "fuse", event:type())
           with attrs = event:attrs();
       }
     }
@@ -225,7 +222,7 @@ Fuse ruleset for a vehicle pico
 	  
         ];
         data = {
-	  "deviceID" : "C201300398",
+	  "deviceId" : "C201300398",
 	  "apiKey": keys:carvoyant_test("apiKey"),
 	  "secToken": keys:carvoyant_test("secToken")
         };
@@ -257,6 +254,23 @@ Fuse ruleset for a vehicle pico
 	  };
       }
     }
+
+    // ---------- functional rules ----------
+
+    rule show_vehicle_data {
+      select when fuse show_vehicle_data
+      pre {
+
+        vehicle_id = vehicle_id();
+        vehicle_info = cavoyant:get_vehicle_data(vehicle_id);
+
+      }
+      {send_directive("Vehicle Data for #{vehicle_id}") with
+         values = vehicle_info;
+      }
+
+    }
+
    
 
 }

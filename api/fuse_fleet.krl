@@ -218,6 +218,7 @@ Application that manages the fleet
           log "Pico created for vehicle: " + pico.encode();
 
         } else {
+          log ">>> VEHICLE CHANNEL <<<<";
           log "Pico NOT CREATED for vehicle " + name;
 	}
     }
@@ -248,7 +249,8 @@ Application that manages the fleet
 	// use the pico ID to look up the subscription to delete
         this_sub = CloudOS:subscriptionList(FuseInit:namespace(),"Vehicle")
 	           .filter(function(sub){sub{"channelName"} eq this_pico_id})
-		   .head();
+		   .head() 
+                || {};   // tolerate lookup failures
         this_sub_channel = this_sub{"backChannel"};
 	huh = CloudOS:cloudDestroy(eci); 
       }

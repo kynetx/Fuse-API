@@ -1,11 +1,52 @@
 
-## Events
+# Events
 
-- ```fuse:new_pico``` &mdash; sent to vehicle and fleet picos.
-  - vehicle pico initializes itself
-  - fleet pico stores
+## Owner
 
-- ```fuse:initialize``` &mdash;
+- ```fuse:initialize``` &mdash; creates a fleet pico and a subscription (```Fleet-FleetOwner```)
     - sent to owner pico
-	- creates a fleet pico
-	- 
+	- no attributes
+	- supposed to be idempotent (only one fleet pico gets created, a singleton)
+
+- ```fuse:show_children``` &mdash;
+    - sent to owner pico
+    - shows child picos in directive
+
+- ```fuse:delete_fleet``` &mdash;
+    - send to owner pico
+	- attributes
+	    - fleet_eci: ECI of fleet to delete
+    - improvement: since the fleet is a singleton, technically the ECI is unnecessary, we should be able to look it up
+
+## Fleet
+
+- ```fuse:need_new_vehicle``` &mdash; create a new vehicle pico and a subscription (```Vehicle-Fleet```)
+    - sent to fleet pico
+	- attributes:
+	     - name: textual name (nickname) of new vehicle. Random name chosen if none given.
+		 - photo: URL of photo of vehicle
+		 
+- ```fuse:show_vehicles``` &mdash; show the vehicles that are in the fleet
+    - sent to fleet pico
+    - shows vehicle picos in directive
+	
+- ```fuse:delete_vehicle``` &mdash; delete vehicle and its subscriptions
+    - send to fleet pico
+	- attributes
+	    - vehicle_eci: ECI of vehicle to delete
+
+## Vehicle
+
+Vehicle's PDS (cavoyant namespace)
+
+In general, use Carvoyant CamelCase identifiers in vehicle PDS for sanity
+
+- ```config```
+    - ```deviceId``` &mdash; Carvoyant device ID
+    - ```apiKey``` &mdash; Carvoyant API Key
+	- ```secToken``` &mdash; Carvoyant Secret Token
+
+- ```vehicle_info```
+    - ```vehicleId``` &mdash; carvoyant vehicle identifier
+
+

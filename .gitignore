@@ -1,6 +1,9 @@
 CloudOS-config.js
 api/test_config.yml
 
+*.orig
+
+
 *.chls
 *.csproj
 *.csproj.user
