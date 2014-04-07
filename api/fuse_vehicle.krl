@@ -258,7 +258,7 @@ Fuse ruleset for a vehicle pico
     // ---------- functional rules ----------
 
     rule show_vehicle_data {
-      select when fuse show_vehicle_data
+      select when fuse need_vehicle_data
       pre {
 
         vehicle_id = vehicle_id();
