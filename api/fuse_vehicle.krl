@@ -203,7 +203,7 @@ Fuse ruleset for a vehicle pico
     }
 
 
-    // ---------- configure me ----------
+    // ---------- set up and configure me ----------
 
     // not sure we need the full "settings framework"
     rule load_app_config_settings is inactive {
@@ -257,6 +257,29 @@ Fuse ruleset for a vehicle pico
  		   
 	  };
       }
+    }
+
+    rule iniialize_subscriptions {
+      select when fuse initialize_carvoyant_subscriptions
+      foreach [{"type": "ignitionStatus",
+                "interval": 0},
+	       {"type": "lowBattery",
+	        "interval": 60}
+	      ] setting (sub)
+	pre {
+	  vid = vehicle_id();
+	  
+	}
+     	send_directive("Adding subscription for " + sub{"type"});
+        fired {	
+          raise carvoyant event new_subscription_needed 
+	    attributes
+	      {"vehicle_id": vid,
+	       "subscription_type": sub{"type"},
+	       "idempotent" : true,
+	       "minimumTime": sub{"interval"}
+	      }
+        }
     }
 
     // ---------- functional rules ----------

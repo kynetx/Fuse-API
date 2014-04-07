@@ -143,12 +143,14 @@ b16x17: fuse_fleet.krl
                      "lowBattery": true,
 		     "numericDataKey": true,
 		     "timeOfDay": true,
-		     "troubleCode": true
+		     "troubleCode": true,
+		     "ignitionStateis": true
       };
       not valid_types{sub_type}.isnull()
     }
 
     // subscription functions
+    // subscription_type is optional, if left off, retrieves all subscriptions for vehicle
     // subscription_id is optional, if left off, retrieves all subscriptions of given type
     get_subscription = function(vehicle_id, subscription_type, subscription_id) {
       config_data = get_config(vehicle_id);
@@ -266,11 +268,19 @@ b16x17: fuse_fleet.krl
       sub_type = event:attr("subscription_type");
       params = {"minimumTime": event:attr("minimumTime") || 60,
                 "postUrl": get_my_eci()
-	       }
+	       };
+      // if idempotent attribute is set, then check to make sure no subscription of this type exist
+      subscribe = not event:attr("idempotent") ||
+                  get_subscription(vid, sub_type).pick("$.status_code") eq "404"
     }
-    if valid_subscription_type(sub_type) then 
+    if( valid_subscription_type(sub_type) 
+     && subscribe
+      ) then {
         carvoyant_add_subscription(vid, sub_type, params) with
     	  autoraise = "add_subscription";
+        send_directive("Adding subscription") with
+	  attributes = event:attrs();
+    }
     notfired {
       error warn "Invalid Carvoyant event subscription type: #{sub_type}"
     }
@@ -282,7 +292,8 @@ b16x17: fuse_fleet.krl
       sub = event:attr('content').decode().pick("$.subscription");
       new_subs = ent:subscriptions.put([sub{"vehicleId"}], sub); // FIX
     }
-    noop()
+    send_directive("Subscription added") with
+      subscription = sub
     always {
       set ent:subscriptions new_subs
     }
