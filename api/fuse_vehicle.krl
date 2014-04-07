@@ -276,6 +276,11 @@ Fuse ruleset for a vehicle pico
 	 namespace = carvoyant_namespace;
       }
 
+      always {
+        raise fuse event update_vehicle_data attributes vehicle_info
+	 if cached_info.isnull(); // only update if we didn't cache
+      }
+
     }
 
   
@@ -284,7 +289,9 @@ Fuse ruleset for a vehicle pico
       pre {
 
         vid = vehicle_id();
-        vehicle_info = carvoyant:get_vehicle_data(carvoyant:carvoyant_vehicle_data(vid));
+	incoming = event:attrs();
+        vehicle_info = incoming{"vin"}.isnull() => carvoyant:get_vehicle_data(carvoyant:carvoyant_vehicle_data(vid))
+                                                 | incoming;
 
       }
       {send_directive("Uodated vehicle Data for #{vid}") with
