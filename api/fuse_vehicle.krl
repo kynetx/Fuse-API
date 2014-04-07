@@ -36,12 +36,11 @@ Fuse ruleset for a vehicle pico
       vehicle_id = function() {
         config = pds:get_item(carvoyant_namespace, "config");
 
-        //  config{"deviceID"} // old name remove once we are creating vehicles with new name
-        // ||
-        //  config{"deviceId"}
-        // ||
-        // 	pds:get_item(carvoyant_namespace, "vehicle_info").pick("$.vehicleId")
-	config
+         config{"deviceID"} // old name remove once we are creating vehicles with new name
+        ||
+         config{"deviceId"}
+        ||
+         pds:get_item(carvoyant_namespace, "vehicle_info").pick("$.vehicleId")
       };
 
  // not using
