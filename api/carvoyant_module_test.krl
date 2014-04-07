@@ -215,7 +215,7 @@ Add a subscription and then raise an event to test that it's there
     // expect an empty subscription back
     {
       show_test:diag("initializing subscription test", values);
-      carvoyant:add_subscription(vid, "lowBattery", {"miniumumTime": "35"})
+      carvoyant:add_subscription(vid, "lowBattery", {"minimumTime": "35"})
         with ar_label = "subscription_added";
     }
   }
@@ -235,13 +235,13 @@ Checks to make sure subscription was added by add_subscription()
       
 
       values = {'subscription_data' : subscriptions,
-                'vehicleId': vehicleId
+                'vehicleId': vehicleId,
+		'data_from_subscription_action': event:attrs()
 	       };
 
 
     }   
 
-    // expect an empty subscription back
     if( subscriptions{"status_code"} eq "200" 
      && subscriptions{["content","subscriptions","_type"]} eq "LOWBATTERY"
       ) then {
