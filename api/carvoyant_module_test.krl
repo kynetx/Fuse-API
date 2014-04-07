@@ -276,10 +276,11 @@ Checks to make sure subscription was added by add_subscription()
              or test del_subscription
     pre { 
 
-     subscription = event:attr("subscriptions").head();
+     subscription = event:attr("subscriptions").filter(function(s){ s{"deletionTimestamp"}.isnull() }).head();
      // delete subscription and ensure it's gone. 
 
-     values = {'subscription' : subscription
+     values = {'subscription' : subscription,
+               "attributes": event:attrs()
               };
 
 
