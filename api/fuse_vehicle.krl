@@ -17,7 +17,7 @@ Fuse ruleset for a vehicle pico
 
       errors to b16x13
 	
-      provides vin
+      provides vin, vehicle_info
 
     }
 
@@ -28,7 +28,7 @@ Fuse ruleset for a vehicle pico
       carvoyant_namespace = carvoyant:namespace();
 
       vin = function() {
-        this_vin = pds:get_me("vin");
+        this_vin = vehicle_info().pick("$.vin");
 
         (this_vin.isnull()) => "NO_VIN" | this_vin
       };
@@ -42,6 +42,10 @@ Fuse ruleset for a vehicle pico
         ||
          pds:get_item(carvoyant_namespace, "vehicle_info").pick("$.vehicleId")
       };
+
+      vehicle_info = function(){
+        pds:get_item(carvoyant_namespace, "vehicle_info");
+      }
 
  // not using
         initVehicle = defaction(vehicle_channel, vehicle_details) {
@@ -306,6 +310,7 @@ Fuse ruleset for a vehicle pico
 	    "namespace": carvoyant_namespace,
 	    "keyvalue": "vehicle_info",
 	    "value": vehicle_info
+	              .delete(["_generatedby"])
 	              .delete(["deviceId"]),
             "_api": "sky"
  		   
