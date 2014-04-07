@@ -261,14 +261,48 @@ Fuse ruleset for a vehicle pico
       select when fuse need_vehicle_data
       pre {
 
+
+        cached_info = pds:get_item(carvoyant_namespace, "vehicle_info");
+
         vid = vehicle_id();
-        vehicle_info = carvoyant:get_vehicle_data(carvoyant:carvoyant_vehicle_data(vid));
+	vehicle_info = cached_info.isnull() => carvoyant:get_vehicle_data(carvoyant:carvoyant_vehicle_data(vid))
+                                             | cached_info;
 
       }
       {send_directive("Vehicle Data for #{vid}") with
          id = vid and
+	 cached = not cached_info.isnull() and
          values = vehicle_info and
 	 namespace = carvoyant_namespace;
+      }
+
+    }
+
+  
+    rule update_vehicle_data {
+      select when fuse update_vehicle_data
+      pre {
+
+        vid = vehicle_id();
+        vehicle_info = carvoyant:get_vehicle_data(carvoyant:carvoyant_vehicle_data(vid));
+
+      }
+      {send_directive("Uodated vehicle Data for #{vid}") with
+         id = vid and
+         values = vehicle_info and
+	 namespace = carvoyant_namespace;
+      }
+
+      always {
+        raise pds event updated_data_available
+	  attributes {
+	    "namespace": carvoyant_namespace,
+	    "keyvalue": "vehicle_info",
+	    "value": vehicle_info
+	              .delete(["deviceId"]),
+            "_api": "sky"
+ 		   
+	  };
       }
 
     }
