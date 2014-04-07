@@ -160,11 +160,20 @@ Checks to make sure get_subscription() works
                 'vehicleId': vehicleId
 	       };
 
+      no_subscription = function(subs) {
+        // a subscription doesn't exist if...
+        subs{"status_code"} eq "404" ||
+        (subs{"status_code"} eq "200" &&
+	 subs{["content","subscriptions"]}.length() == 1 &&
+         not subs{["content","subscriptions","deletionTimestamp"]}.isnull()
+	)
+      }
+
 
     }   
 
     // expect an empty subscription back
-    if( subscriptions{"status_code"} eq "404" ) then {
+    if( no_subscription(subscriptions) ) then {
       show_test:diag("test get_subscription empty", values);
     }
 

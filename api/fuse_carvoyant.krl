@@ -188,8 +188,8 @@ b16x17: fuse_fleet.krl
 
     // this should be in a library somewhere
     // eci is optional
-    get_my_esl = function(eci){
-      use_eci = eci || meta:eci();
+    get_my_esl = function(eci) {
+      use_eci = eci || meta:eci() || "NO_ECI_AVAILABLE";
       eid = math:random("9999999")
       "https://#{meta:host}/sky/event/#{use_eci}/eid/"
     }
