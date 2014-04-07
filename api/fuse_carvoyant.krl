@@ -120,7 +120,7 @@ b16x17: fuse_fleet.krl
     };
 
     // ---------- vehicle data ----------
-    carvoyant_vehicle_data = function(vehicleID) {
+    carvoyant_vehicle_data = function(vehicle_id) {
       config_data = get_config(vehicle_id);
       carvoyant_get(config_data{"base_url"}, config_data);
     };
