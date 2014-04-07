@@ -10,7 +10,7 @@ Fuse ruleset for a vehicle pico
 
       use module b16x10 alias fuse_keys
 
-      use module a169x625  alias CloudOS
+      use module a169x625 alias CloudOS
       use module a169x676 alias pds
       use module b16x16 alias FuseInit
       use module b16x11 alias carvoyant
@@ -261,12 +261,15 @@ Fuse ruleset for a vehicle pico
       select when fuse need_vehicle_data
       pre {
 
+        config = pds:get_item(carvoyant_namespace, "config");
         vehicle_id = vehicle_id();
         vehicle_info = cavoyant:get_vehicle_data(vehicle_id);
 
       }
       {send_directive("Vehicle Data for #{vehicle_id}") with
-         values = vehicle_info;
+         values = vehicle_info and
+	 namespace = carvoyant_namespace and
+	 config = config;
       }
 
     }
