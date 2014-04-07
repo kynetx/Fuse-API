@@ -41,7 +41,7 @@ Fuse ruleset for a vehicle pico
         config{"deviceId"}
        ||
 	pds:get_item(carvoyant_namespace, "vehicle_info").pick("$.vehicleId")
-      }
+      };
 
  // not using
         initVehicle = defaction(vehicle_channel, vehicle_details) {
@@ -261,15 +261,14 @@ Fuse ruleset for a vehicle pico
       select when fuse need_vehicle_data
       pre {
 
-        config = pds:get_item(carvoyant_namespace, "config");
         vehicle_id = vehicle_id();
         vehicle_info = cavoyant:get_vehicle_data(vehicle_id);
 
       }
       {send_directive("Vehicle Data for #{vehicle_id}") with
+         id = vehicle_id and
          values = vehicle_info and
-	 namespace = carvoyant_namespace and
-	 config = config;
+	 namespace = carvoyant_namespace;
       }
 
     }
