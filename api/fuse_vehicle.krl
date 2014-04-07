@@ -266,7 +266,7 @@ Fuse ruleset for a vehicle pico
 
       }
       {send_directive("Vehicle Data for #{vid}") with
-         id = vid and
+         id = vehicle_id and
          values = vehicle_info and
 	 namespace = carvoyant_namespace;
       }
