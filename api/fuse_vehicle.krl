@@ -262,7 +262,7 @@ Fuse ruleset for a vehicle pico
       pre {
 
         vid = vehicle_id();
-        vehicle_info = carvoyant:get_vehicle_data(vid);
+        vehicle_info = carvoyant:carvoyant_vehicle_data(vid);
 
       }
       {send_directive("Vehicle Data for #{vid}") with
