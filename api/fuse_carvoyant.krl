@@ -54,7 +54,7 @@ b16x17: fuse_fleet.krl
     // vehicle_id is optional if creating a new vehicle profile
     // key is optional, if missing, use default
     get_config = function(vehicle_id, key) {
-       carvoyant_config_key = key || carvoyant_namespace();
+       carvoyant_config_key = key || namespace();
        config_data = pds:get_items(carvoyant_config_key).pick("$..config") || {};
 
        hostname = "dash.carvoyant.com";
