@@ -14,7 +14,7 @@ Provides rules for handling Carvoyant events
     errors to b16x13
 
     provides namespace, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
-             get_subscription, add_subscription, del_subscription
+             get_subscription,no_subscription, add_subscription, del_subscription
 
 /* 
 
@@ -148,6 +148,16 @@ b16x17: fuse_fleet.krl
       };
       not valid_types{sub_type}.isnull()
     }
+
+    // check that the subscription list is empty or all in it have been deleted
+    no_subscription = function(subs) {
+        // a subscription doesn't exist if...
+        subs{"status_code"} eq "404" ||
+        (subs{"status_code"} eq "200" &&
+	 subs{["content","subscriptions"]}.all(function(s){ not s{"deletionTimestamp"}.isnull() })
+	)
+    }
+
 
     // subscription functions
     // subscription_type is optional, if left off, retrieves all subscriptions for vehicle

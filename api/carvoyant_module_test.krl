@@ -160,19 +160,12 @@ Checks to make sure get_subscription() works
                 'vehicleId': vehicleId
 	       };
 
-      no_subscription = function(subs) {
-        // a subscription doesn't exist if...
-        subs{"status_code"} eq "404" ||
-        (subs{"status_code"} eq "200" &&
-	 subs{["content","subscriptions"]}.all(function(s){ not s{"deletionTimestamp"}.isnull() })
-	)
-      }
 
 
     }   
 
     // expect an empty subscription back
-    if( no_subscription(subscriptions) ) then {
+    if( carvoyant:no_subscription(subscriptions) ) then {
       show_test:diag("test get_subscription empty", values);
     }
 
@@ -243,7 +236,10 @@ Checks to make sure subscription was added by add_subscription()
     }   
 
     if( subscriptions{"status_code"} eq "200" 
-     && subscriptions{["content","subscriptions","_type"]} eq "LOWBATTERY"
+     && subscriptions{["content","subscriptions"]}
+           .filter(function(s){s{"deletionTimestamp"}.isnull()})
+	   .head()
+	   .pick("$.._type") eq "LOWBATTERY"
       ) then {
       show_test:diag("get_subscription not empty", values);
     }
@@ -312,9 +308,7 @@ Checks to make sure subscription was deleted by del_subscription()
     }   
 
     // expect an empty subscription back
-    if( subscriptions{"status_code"} eq "404" ||
-        subscriptions.pick("$..deletionTimestamp").length() > 0 // sometimes just marked for deletion
-      ) then {
+    if( carvoyant:no_subscription(subscriptions) ) then {
       show_test:diag("get_subscription is empty", values);
     }
     fired {
