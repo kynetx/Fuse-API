@@ -281,7 +281,7 @@ b16x17: fuse_fleet.krl
 	       };
       // if idempotent attribute is set, then check to make sure no subscription of this type exist
       subscribe = not event:attr("idempotent") ||
-                  get_subscription(vid, sub_type).pick("$.status_code") eq "404"
+                  no_subscription(get_subscription(vid, sub_type))
     }
     if( valid_subscription_type(sub_type) 
      && subscribe
@@ -311,13 +311,26 @@ b16x17: fuse_fleet.krl
 
   // ---------- rules for handling notifications ----------
 
+  rule ignition_status_changed is inactive { // just add select statements to appropriate rules
+    select when carvoyant IGNITIONSTATUS
+    pre {
+      
+    }
+    noop();
+    always {
+      raise fuse event update_vehicle_data;
+      raise fuse event update_trip_data if event:attr("ignitionStatus") eq "OFF"
+    }
+  }
+
 
   // ---------- error handling ----------
   rule carvoyant_http_fail {
     select when http post status_code re#([45]\d\d)# setting (status)
-//             or http put status_code re#([45]\d\d)# setting (status)
-//             or http delete status_code re#([45]\d\d)# setting (status)
-    noop()
+             or http put status_code re#([45]\d\d)# setting (status)
+             or http delete status_code re#([45]\d\d)# setting (status)
+    send_directive("Carvoyant subscription failed") with
+       sub_status = event:attrs();
     fired {
       error warn "Carvoyant HTTP Error (#{status}): ${event:attr('status_line')}. Autoraise label: #{event:attr('label')}."
     }

@@ -313,6 +313,7 @@ Fuse ruleset for a vehicle pico
   
     rule update_vehicle_data {
       select when fuse update_vehicle_data
+               or carvoyant IGNITIONSTATUS
       pre {
 
         vid = vehicle_id();
