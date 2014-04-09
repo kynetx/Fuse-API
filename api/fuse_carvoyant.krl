@@ -131,7 +131,7 @@ b16x17: fuse_fleet.krl
     // ---------- vehicle data ----------
     // vehicle ID is optional if already in pico
     carvoyant_vehicle_data = function(vehicle_id) {
-      vid = vehicle_id || vehicle:vehicle_id();
+      vid = vehicle_id || vehicle_id();
       config_data = get_config(vid);
       carvoyant_get(config_data{"base_url"}, config_data);
     };
@@ -282,7 +282,7 @@ b16x17: fuse_fleet.krl
   rule carvoyant_add_subscription {
     select when carvoyant new_subscription_needed
     pre {
-      vid = event:attr("vehicle_id") || vehicle:vehicle_id();
+      vid = event:attr("vehicle_id") || vehicle_id();
       sub_type = event:attr("subscription_type");
 
       params = event:attrs()
@@ -318,7 +318,7 @@ b16x17: fuse_fleet.krl
   rule subscription_show {
     select when carvoyant need_vehicle_subscriptions
     pre {
-      vid = event:attr("vehicle_id") || vehicle:vehicle_id();
+      vid = event:attr("vehicle_id") || vehicle_id();
       subscriptions = get_subscription(vid);
     }
     send_directive("Subscriptions for #{vid} (404 means no subscriptions)") with subscriptions = subscriptions;
