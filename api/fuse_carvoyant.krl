@@ -51,7 +51,7 @@ b16x17: fuse_fleet.krl
     }
 
     vehicle_id = function() {
-      config = pds:get_item(namespace, "config");
+      config = pds:get_item(namespace(), "config");
       config{"deviceID"} // old name remove once we are creating vehicles with new name
      ||
       config{"deviceId"}
