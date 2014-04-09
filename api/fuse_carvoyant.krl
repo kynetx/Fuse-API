@@ -185,7 +185,8 @@ b16x17: fuse_fleet.krl
       configure using ar_label = false;
       config_data = get_config(vehicle_id);
       esl = mk_subscription_esl(subscription_type);
-      np = "STATECHANGE"; // see http://confluence.carvoyant.com/display/PUBDEV/NotificationPeriod
+      // see http://confluence.carvoyant.com/display/PUBDEV/NotificationPeriod
+      np = params{"notification_period"} || "STATECHANGE";
       carvoyant_post(carvoyant_subscription_url(subscription_type, config_data),
       		     params.put({"postUrl": esl, "notificationPeriod": np}),
                      config_data
@@ -207,7 +208,7 @@ b16x17: fuse_fleet.krl
     mk_subscription_esl = function(event_name, eci) {
       use_eci = eci || meta:eci() || "NO_ECI_AVAILABLE";
       eid = math:random(99999);
-      "https://#{meta:host()}/sky/event/#{use_eci}||'NO_ECI_FOUND'}/#{eid}/carvoyant/#{event_name}";
+      "https://#{meta:host()}/sky/event/#{use_eci}/#{eid}/carvoyant/#{event_name}";
     };
 
 

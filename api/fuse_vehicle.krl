@@ -256,6 +256,7 @@ Fuse ruleset for a vehicle pico
 	       {"subscription_type": "lowBattery",
 	        "minimumTime": 60},
 	       {"subscription_type": "troubleCode",
+	        "notification_period": "INITIALSTATE",
 	        "minimumTime": 60},
 	       {"subscription_type": "numericDataKey",
 	        "minimumTime": 60,
@@ -263,7 +264,7 @@ Fuse ruleset for a vehicle pico
 		"thresholdValue": 20,
 		"relationship": "BELOW"}
 	      ] setting (subscription)
-     	send_directive("Adding subscription") with subscription = subscription;
+     	// send_directive("Adding initial subscription") with subscription = subscription;
         fired {	
           raise carvoyant event new_subscription_needed 
 	    attributes
