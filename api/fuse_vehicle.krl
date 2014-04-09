@@ -347,7 +347,7 @@ Fuse ruleset for a vehicle pico
 
         cached_info = pds:get_item(carvoyant_namespace, "last_trip_info");
 
-	trip_info = cached_info.isnull() => carvoyant:trip_info(event:attr("tripId")
+	trip_info = cached_info.isnull() => carvoyant:trip_info(event:attr("tripId"))
                                           | cached_info;
 
         tid = trip_info{"id"}
