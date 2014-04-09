@@ -387,6 +387,7 @@ b16x17: fuse_fleet.krl
       raise fuse event updated_trip_info with tripId = tid if status eq "OFF";
       log "<<<<<<<<<<< just a test >>>>>>>>>>>>>>>>>";
       log "Ignition status: " + event:attr("ignitionStatus");
+      log "From variable: " + status;
       log "Trip ID: " + event:attr("tripId");
     }
   }
