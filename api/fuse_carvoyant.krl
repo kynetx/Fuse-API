@@ -150,7 +150,7 @@ b16x17: fuse_fleet.krl
       config_data = get_config(vid);
       trip_url = config_data{"base_url"} + "/trip/#{tid}";
       result = carvoyant_get(trip_url, config_data);
-      result{"status_code"} eq "200" => result{["content"]}
+      result{"status_code"} eq "200" => result{["content","trip_data","trip"]}
                                       | mk_error(result)
     }
 
