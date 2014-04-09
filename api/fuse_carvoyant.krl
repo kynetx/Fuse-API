@@ -319,9 +319,9 @@ b16x17: fuse_fleet.krl
     select when carvoyant need_vehicle_subscriptions
     pre {
       vid = event:attr("vehicle_id") || vehicle:vehicle_id();
-      subscriptions = get_subscription(vid)
+      subscriptions = get_subscription(vid);
     }
-    send_directive("Subscriptions for #{vid}") with subscriptions = subscriptions;
+    send_directive("Subscriptions for #{vid} (404 means no subscriptions)") with subscriptions = subscriptions;
   }
 
   rule subscription_ok {

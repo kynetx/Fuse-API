@@ -250,7 +250,7 @@ Fuse ruleset for a vehicle pico
     }
 
     rule iniialize_subscriptions {
-      select when fuse initialize_carvoyant_subscriptions
+      select when fuse need_initial_carvoyant_subscriptions
       foreach [{"subscription_type": "ignitionStatus",
                 "minimumTime": 0},
 	       {"subscription_type": "lowBattery",
