@@ -17,7 +17,7 @@ Fuse ruleset for a vehicle pico
 
       errors to b16x13
 	
-      provides vin, vehicle_info, vehicle_id
+      provides vin, vehicle_info
 
     }
 
@@ -31,16 +31,6 @@ Fuse ruleset for a vehicle pico
         this_vin = vehicle_info().pick("$.vin");
 
         (this_vin.isnull()) => "NO_VIN" | this_vin
-      };
-
-      vehicle_id = function() {
-        config = pds:get_item(carvoyant_namespace, "config");
-
-         config{"deviceID"} // old name remove once we are creating vehicles with new name
-        ||
-         config{"deviceId"}
-        ||
-         pds:get_item(carvoyant_namespace, "vehicle_info").pick("$.vehicleId")
       };
 
       vehicle_info = function(){
@@ -291,7 +281,7 @@ Fuse ruleset for a vehicle pico
 
         cached_info = pds:get_item(carvoyant_namespace, "vehicle_info");
 
-        vid = vehicle_id();
+        vid = carvoyant:vehicle_id();
 	vehicle_info = cached_info.isnull() => carvoyant:get_vehicle_data(carvoyant:carvoyant_vehicle_data(vid))
                                              | cached_info;
 
@@ -316,7 +306,7 @@ Fuse ruleset for a vehicle pico
                or carvoyant IGNITIONSTATUS
       pre {
 
-        vid = vehicle_id();
+        vid = carvoyant:vehicle_id();
 	incoming = event:attrs();
         vehicle_info = incoming{"vin"}.isnull() => carvoyant:get_vehicle_data(carvoyant:carvoyant_vehicle_data(vid))
                                                  | incoming;

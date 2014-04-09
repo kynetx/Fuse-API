@@ -10,11 +10,10 @@ Provides rules for handling Carvoyant events
       with foo = 1
 
     use module a169x676 alias pds
-    use module b16x9 alias vehicle
 
     errors to b16x13
 
-    provides namespace, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
+    provides namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
              get_subscription,no_subscription, add_subscription, del_subscription
 
 /* 
@@ -50,6 +49,15 @@ b16x17: fuse_fleet.krl
     namespace = function() {
       "fuse:carvoyant";
     }
+
+    vehicle_id = function() {
+      config = pds:get_item(carvoyant_namespace, "config");
+      config{"deviceID"} // old name remove once we are creating vehicles with new name
+     ||
+      config{"deviceId"}
+     ||
+      pds:get_item(carvoyant_namespace, "vehicle_info").pick("$.vehicleId")
+    };
 
 
     // vehicle_id is optional if creating a new vehicle profile
