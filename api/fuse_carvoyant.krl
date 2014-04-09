@@ -327,7 +327,7 @@ b16x17: fuse_fleet.krl
     {
       del_subscription(event:attr("vehicleId") || vehicle_id(), event:attr("subscription_type"), event:attr("id"))
         with ar_label = "subscription_deleted";
-      send_directive("deleteing subscription") with attributes = event:attr();
+      send_directive("Deleting subscription") with attributes = event:attrs();
     }
   }   
 
@@ -336,6 +336,8 @@ b16x17: fuse_fleet.krl
     pre {
       vid = event:attr("vehicle_id") || vehicle_id();
       subscriptions = get_subscription(vid, event:attr("subscription_type"));
+      subs = event:attr("filter") => subscriptions.filter(function(s){ not s{deletionTimestamp}.isnull() })
+                                   | subscriptions;
     }
     send_directive("Subscriptions for #{vid} (404 means no subscriptions)") with subscriptions = subscriptions;
   }
