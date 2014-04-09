@@ -63,11 +63,11 @@ b16x17: fuse_fleet.krl
 
     // vehicle_id is optional if creating a new vehicle profile
     // key is optional, if missing, use default
-    get_config = function(vehicle_id, key) {
+    get_config = function(vid, key) {
        carvoyant_config_key = key || namespace();
        config_data = pds:get_item(carvoyant_config_key, "config") || {};
 
-       vid = vehicle_id
+       vid = vid
           || config_data{"deviceID"} // old name remove once we are creating vehicles with new name
           || config_data{"deviceId"};
        hostname = "dash.carvoyant.com";
@@ -135,8 +135,8 @@ b16x17: fuse_fleet.krl
 
     // ---------- vehicle data ----------
     // vehicle ID is optional if already in pico
-    carvoyant_vehicle_data = function(vehicle_id) {
-      vid = vehicle_id || vehicle_id();
+    carvoyant_vehicle_data = function(vid) {
+      vid = vid || vehicle_id();
       config_data = get_config(vid);
       carvoyant_get(config_data{"base_url"}, config_data);
     };
@@ -200,9 +200,9 @@ b16x17: fuse_fleet.krl
 
 
     // subscription actions
-    add_subscription = defaction(vehicle_id, subscription_type, params) {
+    add_subscription = defaction(vid, subscription_type, params) {
       configure using ar_label = false;
-      config_data = get_config(vehicle_id);
+      config_data = get_config(vid);
       esl = mk_subscription_esl(subscription_type);
       // see http://confluence.carvoyant.com/display/PUBDEV/NotificationPeriod
       np = params{"notification_period"} || "STATECHANGE";
@@ -213,9 +213,9 @@ b16x17: fuse_fleet.krl
         with ar_label = ar_label;
     };
 
-    del_subscription = defaction(vehicle_id, subscription_type, subscription_id) {
+    del_subscription = defaction(vid, subscription_type, subscription_id) {
       configure using ar_label = false;
-      config_data = get_config(vehicle_id);
+      config_data = get_config(vid);
       carvoyant_delete(carvoyant_subscription_url(subscription_type, config_data, subscription_id),
                        config_data)
         with ar_label = ar_label;
