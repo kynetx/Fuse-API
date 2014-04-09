@@ -17,7 +17,7 @@ Fuse ruleset for a vehicle pico
 
       errors to b16x13
 	
-      provides vin, vehicle_info
+      provides vin, vehicle_info, last_trip
 
     }
 
@@ -35,6 +35,10 @@ Fuse ruleset for a vehicle pico
 
       vehicle_info = function(){
         pds:get_item(carvoyant_namespace, "vehicle_info");
+      }
+
+      last_trip = function() {
+        pds:get_item(carvoyant_namespace, "last_trip_info");
       }
 
  // not using
@@ -334,8 +338,38 @@ Fuse ruleset for a vehicle pico
     }
 
     // ---------- trips ----------
+
+
+    rule show_late_trip {
+      select when fuse need_last_trip
+      pre {
+
+
+        cached_info = pds:get_item(carvoyant_namespace, "last_trip_info");
+
+	trip_info = cached_info.isnull() => carvoyant:trip_info(event:attr("tripId")
+                                          | cached_info;
+
+        tid = trip_info{"id"}
+
+      }
+      {send_directive("Last trip data for #{tid}") with
+         id = tid and
+	 cached = not cached_info.isnull() and
+         values = trip_info;
+      }
+
+      always {
+        raise fuse event updated_trip_info attributes trip_info
+	 if cached_info.isnull(); // only update if we didn't cache
+      }
+
+    }
+
+
+
     rule update_trips {
-      select when fuse updated_trip_data
+      select when fuse updated_trip_info
       pre {
 	incoming = event:attrs();
         trip_info = incoming{"mileage"}.isnull() => carvoyant:trip_info(incoming{"tripId"})

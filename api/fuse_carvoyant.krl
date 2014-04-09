@@ -382,7 +382,7 @@ b16x17: fuse_fleet.krl
     noop();
     always {
       raise fuse event updated_vehicle_data;
-      raise fuse event updated_trip_data with tripId = event:attr("tripId") if event:attr("ignitionStatus") eq "OFF"
+      raise fuse event updated_trip_info with tripId = event:attr("tripId") if event:attr("ignitionStatus") eq "OFF"
     }
   }
 
