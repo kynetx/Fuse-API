@@ -344,7 +344,7 @@ Fuse ruleset for a vehicle pico
         tid = trip_info{"id"};
 
       }
-      {send_directive("Updated trip data for trip #{tid} on vehicle #{vid}") with
+      {send_directive("Updated trip data for trip #{tid}") with
          values = trip_info and
 	 namespace = carvoyant_namespace;
       }
