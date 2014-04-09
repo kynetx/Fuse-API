@@ -121,8 +121,10 @@ b16x17: fuse_fleet.krl
     };
 
     // ---------- vehicle data ----------
+    // vehicle ID is optional if already in pico
     carvoyant_vehicle_data = function(vehicle_id) {
-      config_data = get_config(vehicle_id);
+      vid = vehicle_id || vehicle:vehicle_id();
+      config_data = get_config(vid);
       carvoyant_get(config_data{"base_url"}, config_data);
     };
 
