@@ -155,7 +155,7 @@ b16x17: fuse_fleet.krl
 		     "numericDataKey": true,
 		     "timeOfDay": true,
 		     "troubleCode": true,
-		     "ignitionStateis": true
+		     "ignitionStatus": true
       };
       not valid_types{sub_type}.isnull()
     }
@@ -303,8 +303,8 @@ b16x17: fuse_fleet.krl
 	  attributes = event:attrs();
     }
     notfired {
-      error info valid_subscription(sub_type) => "Invalid Carvoyant subscription type: #{sub_type}"
-                                               | "Already subscribed; saw " + subs.encode();
+      error info valid_subscription_type(sub_type) => "Already subscribed; saw " + subs.encode()
+                                        	    | "Invalid Carvoyant subscription type: #{sub_type}";
     }
   }
 
