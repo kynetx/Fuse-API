@@ -312,7 +312,7 @@ Fuse ruleset for a vehicle pico
                                                  | incoming;
 
       }
-      {send_directive("Uodated vehicle Data for #{vid}") with
+      {send_directive("Updated vehicle Data for #{vid}") with
          id = vid and
          values = vehicle_info and
 	 namespace = carvoyant_namespace;
@@ -351,7 +351,7 @@ Fuse ruleset for a vehicle pico
       }
 
       fired {
-        raise pds event updated_data_available
+        raise pds event new_data_available
 	  attributes {
 	    "namespace": carvoyant_namespace,
 	    "keyvalue": "last_trip_info",
