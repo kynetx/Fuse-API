@@ -267,7 +267,7 @@ b16x17: fuse_fleet.krl
   
   
 
-  // ---------- rules for creating subscriptions ----------
+  // ---------- rules for managing subscriptions ----------
   rule carvoyant_add_subscription {
     select when carvoyant new_subscription_needed
     pre {
@@ -294,18 +294,39 @@ b16x17: fuse_fleet.krl
     }
   }
 
+
+  rule subscription_delete {
+    select when carvoyant subscription_not_needed
+    {
+      carvoyant:del_subscription(event:attr("vehicleId"), event:attr("subscription_type"), event:attr("id"))
+        with ar_label = "subscription_deleted";
+      send_directive("deleteing subscription") with attributes = event:attr();
+    }
+  }   
+
+  rule subscription_show {
+    select when carvoyant show_subscriptions
+    pre {
+      vid = event:attr("vehicle_id");
+      subscriptions = get_subscription(vid)
+    }
+    send_directive("Subscriptions for #{vid}") with subscriptions = subscriptions;
+  }
+
   rule subscription_ok {
     select when http post status_code re#(2\d\d)# label "add_subscription" setting (status)
     pre {
       sub = event:attr('content').decode().pick("$.subscription");
-      new_subs = ent:subscriptions.put([sub{"id"}], sub); // FIX
+     // new_subs = ent:subscriptions.put([sub{"id"}], sub);  // FIX
     }
     send_directive("Subscription added") with
       subscription = sub
-    always {
-      set ent:subscriptions new_subs
-    }
+     // always {
+     //   set ent:subscriptions new_subs
+     // }
   }
+
+
 
   // ---------- rules for handling notifications ----------
 
