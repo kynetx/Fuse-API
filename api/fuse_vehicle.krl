@@ -273,7 +273,7 @@ Fuse ruleset for a vehicle pico
         }
     }
 
-    // ---------- functional rules ----------
+    // ---------- vehicle data rules ----------
 
     rule show_vehicle_data {
       select when fuse need_vehicle_data
@@ -295,7 +295,7 @@ Fuse ruleset for a vehicle pico
       }
 
       always {
-        raise fuse event update_vehicle_data attributes vehicle_info
+        raise fuse event updated_vehicle_data attributes vehicle_info
 	 if cached_info.isnull(); // only update if we didn't cache
       }
 
@@ -303,8 +303,7 @@ Fuse ruleset for a vehicle pico
 
   
     rule update_vehicle_data {
-      select when fuse update_vehicle_data
-               or carvoyant IGNITIONSTATUS
+      select when fuse updated_vehicle_data
       pre {
 
         vid = carvoyant:vehicle_id();
@@ -334,6 +333,33 @@ Fuse ruleset for a vehicle pico
 
     }
 
-   
+    // ---------- trips ----------
+    rule update_trips {
+      select when fuse updated_trip_data
+      pre {
+	incoming = event:attrs();
+        trip_info = incoming{"mileage"}.isnull() => carvoyant:trip_data(incoming{"tripId"})
+                                                  | incoming;
+
+        tid = trip_info{"id"};
+
+      }
+      {send_directive("Updated trip data for trip #{tid} on vehicle #{vid}") with
+         values = trip_info and
+	 namespace = carvoyant_namespace;
+      }
+
+      always {
+        raise pds event updated_data_available
+	  attributes {
+	    "namespace": carvoyant_namespace,
+	    "keyvalue": "last_trip_info",
+	    "value": trip_info
+	              .delete(["_generatedby"]),
+            "_api": "sky"
+ 		   
+	  };
+      }
+    }
 
 }

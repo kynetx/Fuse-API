@@ -14,6 +14,7 @@ Provides rules for handling Carvoyant events
     errors to b16x13
 
     provides namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
+             trip_info,
              get_subscription,no_subscription, add_subscription, del_subscription
 
 /* 
@@ -64,7 +65,7 @@ b16x17: fuse_fleet.krl
     // key is optional, if missing, use default
     get_config = function(vehicle_id, key) {
        carvoyant_config_key = key || namespace();
-       config_data = pds:get_items(carvoyant_config_key).pick("$..config") || {};
+       config_data = pds:get_item(carvoyant_config_key, "config") || {};
 
        hostname = "dash.carvoyant.com";
        url = "https://#{hostname}/api/vehicle/#{vehicle_id}";
@@ -128,6 +129,7 @@ b16x17: fuse_fleet.krl
          and autoraise = ar_label;
     };
 
+
     // ---------- vehicle data ----------
     // vehicle ID is optional if already in pico
     carvoyant_vehicle_data = function(vehicle_id) {
@@ -141,6 +143,20 @@ b16x17: fuse_fleet.krl
       vd = vehicle_number.isnull() => vda | vda[vehicle_number];
       dkey.isnull() => vd | vd{dkey}
     };
+
+    // ---------- trips ----------
+    trip_info = function(tid, vid) {
+      vid = vehicle_id || vehicle_id();
+      config_data = get_config(vid);
+      trip_url = config_data{"base_url"} + "/trip/#{tid}";
+      result = carvoyant_get(trip_url, config_data);
+      result{"status_code"} eq "200" => result{["content"]}
+                                      | mk_error(result)
+    }
+
+    mk_error = function(res) { // let's try the simple approach first
+      res
+    }
 
     // ---------- subscriptions ----------
     carvoyant_subscription_url = function(subscription_type, config_data, subscription_id) {
@@ -355,15 +371,15 @@ b16x17: fuse_fleet.krl
 
   // ---------- rules for handling notifications ----------
 
-  rule ignition_status_changed is inactive { // just add select statements to appropriate rules
-    select when carvoyant IGNITIONSTATUS
+  rule ignition_status_changed  { 
+    select when carvoyant ignitionStatus
     pre {
       
     }
     noop();
     always {
-      raise fuse event update_vehicle_data;
-      raise fuse event update_trip_data if event:attr("ignitionStatus") eq "OFF"
+      raise fuse event updated_vehicle_data;
+      raise fuse event updated_trip_data with tripId = event:attr("tripId") if event:attr("ignitionStatus") eq "OFF"
     }
   }
 

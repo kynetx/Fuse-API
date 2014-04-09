@@ -424,4 +424,44 @@ Checks to make sure error handler ruleset fires
   }
  
 
+  // ---------- test trip_info function ----------
+  rule trip_info_test { 
+    select when test trip_info
+
+    pre {
+      test_desc = <<
+Checks to make sure trip_info() works
+>>;
+
+      trip = carvoyant:trip_info(event:attr("tripId"));
+
+      values = {'trip_data' : trip
+               };
+
+
+    }   
+
+    if( trip{"mileage"} ) then {
+      show_test:diag("test trip_info", values);
+    }
+
+    fired {
+      raise test event succeeds for b503129x0 with
+        test_desc = test_desc and
+        rulename = meta:ruleName() and
+	msg = "trip data is valid" and
+	details = values;
+
+    } else {
+      raise test event fails for b503129x0 with
+        test_desc = test_desc and
+        rulename = meta:ruleName() and
+	msg = "trip data empty" and
+	details = values;
+
+    }
+  }
+ 
+
+
 }
