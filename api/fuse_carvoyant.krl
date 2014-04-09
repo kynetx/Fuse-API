@@ -377,12 +377,14 @@ b16x17: fuse_fleet.krl
   rule ignition_status_changed  { 
     select when carvoyant ignitionStatus
     pre {
+
+      status = event:attr("ignitionStatus");
       
     }
     noop();
     always {
       raise fuse event updated_vehicle_data;
-      raise fuse event updated_trip_info with tripId = event:attr("tripId") if event:attr("ignitionStatus") eq "OFF"
+      raise fuse event updated_trip_info with tripId = event:attr("tripId") if status eq "OFF"
     }
   }
 
