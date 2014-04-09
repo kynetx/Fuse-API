@@ -324,10 +324,18 @@ b16x17: fuse_fleet.krl
 
   rule subscription_delete {
     select when carvoyant subscription_not_needed
+    pre {
+      sub_type =  event:attr("subscription_type");
+      id = event:attr("id");
+    }
+    if valid_subscription_type(sub_type) then
     {
-      del_subscription(event:attr("vehicleId") || vehicle_id(), event:attr("subscription_type"), event:attr("id"))
+      del_subscription(event:attr("vehicleId") || vehicle_id(),sub_type, id)
         with ar_label = "subscription_deleted";
       send_directive("Deleting subscription") with attributes = event:attrs();
+    }
+    notfired {
+      error info "Invalid Carvoyant subscription type: #{sub_type} for #{id}";
     }
   }   
 
