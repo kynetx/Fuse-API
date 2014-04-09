@@ -51,7 +51,7 @@ b16x17: fuse_fleet.krl
     }
 
     vehicle_id = function() {
-      config = pds:get_item(carvoyant_namespace, "config");
+      config = pds:get_item(namespace, "config");
       config{"deviceID"} // old name remove once we are creating vehicles with new name
      ||
       config{"deviceId"}
@@ -295,13 +295,13 @@ b16x17: fuse_fleet.krl
     if( valid_subscription_type(sub_type) 
      && subscribe
       ) then {
-        carvoyant_add_subscription(vid, sub_type, params) with
+        add_subscription(vid, sub_type, params) with
     	  autoraise = "add_subscription";
         send_directive("Adding subscription") with
 	  attributes = event:attrs();
     }
     notfired {
-      error warn "Invalid Carvoyant subscription type: #{sub_type} or already subscribed"
+      error info "Invalid Carvoyant subscription type: #{sub_type} or already subscribed"
     }
   }
 
