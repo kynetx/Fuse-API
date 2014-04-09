@@ -305,7 +305,7 @@ b16x17: fuse_fleet.krl
   }   
 
   rule subscription_show {
-    select when carvoyant show_subscriptions
+    select when carvoyant need_vehicle_subscriptions
     pre {
       vid = event:attr("vehicle_id");
       subscriptions = get_subscription(vid)
