@@ -7,12 +7,11 @@ Fuse ruleset for a vehicle pico
       author "PJW"
       logging off
       sharing on
-  
+
       use module b16x10 alias fuse_keys
 
       use module a169x625 alias CloudOS
       use module a169x676 alias pds
-      use module b16x16 alias FuseInit
       use module b16x11 alias carvoyant
 
       errors to b16x13
@@ -23,8 +22,8 @@ Fuse ruleset for a vehicle pico
 
     global {
 
-      S3Bucket = FuseInit:S3Bucket;
-      
+      S3Bucket = "??";
+
       carvoyant_namespace = carvoyant:namespace();
 
       vin = function() {
@@ -340,7 +339,7 @@ Fuse ruleset for a vehicle pico
     // ---------- trips ----------
 
 
-    rule show_late_trip {
+    rule show_last_trip {
       select when fuse need_last_trip
       pre {
 
