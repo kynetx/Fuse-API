@@ -325,7 +325,7 @@ b16x17: fuse_fleet.krl
   rule subscription_delete {
     select when carvoyant subscription_not_needed
     {
-      carvoyant:del_subscription(event:attr("vehicleId"), event:attr("subscription_type"), event:attr("id"))
+      carvoyant:del_subscription(event:attr("vehicleId") || vehicle_id(), event:attr("subscription_type"), event:attr("id"))
         with ar_label = "subscription_deleted";
       send_directive("deleteing subscription") with attributes = event:attr();
     }
