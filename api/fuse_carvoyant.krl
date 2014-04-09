@@ -302,7 +302,8 @@ b16x17: fuse_fleet.krl
 	  attributes = event:attrs();
     }
     notfired {
-      error info "Invalid Carvoyant subscription type: #{sub_type} or already subscribed; saw " + subs.encode();
+      error info valid_subscription(sub_type) => "Invalid Carvoyant subscription type: #{sub_type}"
+                                               | "Already subscribed; saw " + subs.encode();
     }
   }
 
