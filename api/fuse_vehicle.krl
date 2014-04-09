@@ -7,7 +7,7 @@ Fuse ruleset for a vehicle pico
       author "PJW"
       logging off
       sharing on
-
+  
       use module b16x10 alias fuse_keys
 
       use module a169x625 alias CloudOS
