@@ -17,7 +17,7 @@ Fuse ruleset for a vehicle pico
 
       errors to b16x13
 	
-      provides vin, vehicle_info
+      provides vin, vehicle_info, vehicle_id
 
     }
 
@@ -160,7 +160,7 @@ Fuse ruleset for a vehicle pico
             attributes
               {"apiKey": keys:carvoyant_test("apiKey") || "no API key available",
                "secToken": keys:carvoyant_test("secToken") || "no security token available",
-	       "deviceID" : "C201300398",
+	       "deviceId" : "C201300398",
 	       "_api": "sky"
               };
 
@@ -211,7 +211,7 @@ Fuse ruleset for a vehicle pico
                or fuse initialize_config
       pre {
         schema = [
-          {"name"     : "deviceID",
+          {"name"     : "deviceId",
            "label"    : "Device ID",
            "dtype"    : "text"
           },
@@ -273,15 +273,11 @@ Fuse ruleset for a vehicle pico
 		"thresholdValue": 20,
 		"relationship": "BELOW"}
 	      ] setting (subscription)
-	pre {
-	  vid = vehicle_id();
-	}
      	send_directive("Adding subscription") with subscription = subscription;
         fired {	
           raise carvoyant event new_subscription_needed 
 	    attributes
 	      subscription
-	        .put(["vehicle_id"], vid)
 	        .put(["idempotent"], true);
         }
     }

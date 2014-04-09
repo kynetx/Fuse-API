@@ -10,6 +10,7 @@ Provides rules for handling Carvoyant events
       with foo = 1
 
     use module a169x676 alias pds
+    use module b16x9 alias vehicle
 
     errors to b16x13
 
@@ -39,7 +40,7 @@ b16x17: fuse_fleet.krl
   global {
 
     // config data contains
-    //   deviceID - Carvoyant device ID
+    //   deviceId - Carvoyant device ID
     //   apiKey - API Key in http://confluence.carvoyant.com/display/PUBDEV/Authentication+Mechanism
     //   secToken - Access Token in http://confluence.carvoyant.com/display/PUBDEV/Authentication+Mechanism 
 
@@ -229,7 +230,7 @@ b16x17: fuse_fleet.krl
     pre {
       config_data = get_config(event:attr("vehicleId"));
       // will update any of the updatable data that appears in attrs() and leave the rest alone
-      params = event:attrs().delete("vehicleID");
+      params = event:attrs().delete("vehicleId");
     }
     {
       carvoyant_post(config_data{"base_url"},
@@ -271,7 +272,7 @@ b16x17: fuse_fleet.krl
   rule carvoyant_add_subscription {
     select when carvoyant new_subscription_needed
     pre {
-      vid = event:attr("vehicle_id");
+      vid = event:attr("vehicle_id") || vehicle:vehicle_id();
       sub_type = event:attr("subscription_type");
 
       params = event:attrs()
@@ -307,7 +308,7 @@ b16x17: fuse_fleet.krl
   rule subscription_show {
     select when carvoyant need_vehicle_subscriptions
     pre {
-      vid = event:attr("vehicle_id");
+      vid = event:attr("vehicle_id") || vehicle:vehicle_id();
       subscriptions = get_subscription(vid)
     }
     send_directive("Subscriptions for #{vid}") with subscriptions = subscriptions;
