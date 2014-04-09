@@ -340,7 +340,7 @@ b16x17: fuse_fleet.krl
                                        .filter(function(s){ not s{"deletionTimestamp"}.isnull() })
                                    | subscriptions;
     }
-    send_directive("Subscriptions for #{vid} (404 means no subscriptions)") with subscriptions = subscriptions;
+    send_directive("Subscriptions for #{vid} (404 means no subscriptions)") with subscriptions = subs;
   }
 
 
