@@ -168,10 +168,6 @@ b16x17: fuse_fleet.krl
    	            config_data)
     };
 
-    mk_subscription_esl = function(event_name) {
-      eid = math:random(99999);
-      "https://#{meta:host()}/sky/event/#{meta:eci()||'NO_ECI_FOUND'}/#{eid}/carvoyant/#{event_name}";
-    };
 
     // subscription actions
     add_subscription = defaction(vehicle_id, subscription_type, params) {
@@ -195,14 +191,15 @@ b16x17: fuse_fleet.krl
     }
 
     // ---------- internal functions ----------
-
     // this should be in a library somewhere
     // eci is optional
-    get_my_esl = function(eci) {
+    mk_subscription_esl = function(event_name, eci) {
       use_eci = eci || meta:eci() || "NO_ECI_AVAILABLE";
-      eid = math:random("9999999")
-      "https://#{meta:host}/sky/event/#{use_eci}/eid/"
-    }
+      eid = math:random(99999);
+      "https://#{meta:host()}/sky/event/#{use_eci}||'NO_ECI_FOUND'}/#{eid}/carvoyant/#{event_name}";
+    };
+
+
 
   }
 
@@ -276,9 +273,10 @@ b16x17: fuse_fleet.krl
     pre {
       vid = event:attr("vehicle_id");
       sub_type = event:attr("subscription_type");
-      params = {"minimumTime": event:attr("minimumTime") || 60,
-                "postUrl": get_my_eci()
-	       };
+
+      params = event:attrs()
+                  .delete(["vehicle_id"])
+                  .delete(["idempotent"]);
       // if idempotent attribute is set, then check to make sure no subscription of this type exist
       subscribe = not event:attr("idempotent") ||
                   no_subscription(get_subscription(vid, sub_type))
@@ -292,7 +290,7 @@ b16x17: fuse_fleet.krl
 	  attributes = event:attrs();
     }
     notfired {
-      error warn "Invalid Carvoyant event subscription type: #{sub_type}"
+      error warn "Invalid Carvoyant subscription type: #{sub_type} or already subscribed"
     }
   }
 
@@ -300,7 +298,7 @@ b16x17: fuse_fleet.krl
     select when http post status_code re#(2\d\d)# label "add_subscription" setting (status)
     pre {
       sub = event:attr('content').decode().pick("$.subscription");
-      new_subs = ent:subscriptions.put([sub{"vehicleId"}], sub); // FIX
+      new_subs = ent:subscriptions.put([sub{"id"}], sub); // FIX
     }
     send_directive("Subscription added") with
       subscription = sub

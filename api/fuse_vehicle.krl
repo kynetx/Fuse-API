@@ -261,24 +261,28 @@ Fuse ruleset for a vehicle pico
 
     rule iniialize_subscriptions {
       select when fuse initialize_carvoyant_subscriptions
-      foreach [{"type": "ignitionStatus",
-                "interval": 0},
-	       {"type": "lowBattery",
-	        "interval": 60}
-	      ] setting (sub)
+      foreach [{"subscription_type": "ignitionStatus",
+                "minimumTime": 0},
+	       {"subscription_type": "lowBattery",
+	        "minimumTime": 60},
+	       {"subscription_type": "troubleCode",
+	        "minimumTime": 60},
+	       {"subscription_type": "numericDataKey",
+	        "minimumTime": 60,
+		"dataKey": "GEN_FUELLEVEL",
+		"thresholdValue": 20,
+		"relationship": "BELOW"}
+	      ] setting (subscription)
 	pre {
 	  vid = vehicle_id();
-	  
 	}
-     	send_directive("Adding subscription for " + sub{"type"});
+     	send_directive("Adding subscription") with subscription = subscription;
         fired {	
           raise carvoyant event new_subscription_needed 
 	    attributes
-	      {"vehicle_id": vid,
-	       "subscription_type": sub{"type"},
-	       "idempotent" : true,
-	       "minimumTime": sub{"interval"}
-	      }
+	      subscription
+	        .put(["vehicle_id"], vid)
+	        .put(["idempotent"], true);
         }
     }
 
