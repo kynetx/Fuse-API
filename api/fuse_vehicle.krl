@@ -338,7 +338,7 @@ Fuse ruleset for a vehicle pico
       select when fuse updated_trip_data
       pre {
 	incoming = event:attrs();
-        trip_info = incoming{"mileage"}.isnull() => carvoyant:trip_data(incoming{"tripId"})
+        trip_info = incoming{"mileage"}.isnull() => carvoyant:trip_info(incoming{"tripId"})
                                                   | incoming;
 
         tid = trip_info{"id"};
