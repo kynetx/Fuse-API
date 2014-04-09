@@ -67,12 +67,15 @@ b16x17: fuse_fleet.krl
        carvoyant_config_key = key || namespace();
        config_data = pds:get_item(carvoyant_config_key, "config") || {};
 
+       vid = vehicle_id
+          || config_data{"deviceID"} // old name remove once we are creating vehicles with new name
+          || config_data{"deviceId"};
        hostname = "dash.carvoyant.com";
-       url = "https://#{hostname}/api/vehicle/#{vehicle_id}";
+       url = "https://#{hostname}/api/vehicle/#{vid}";
        config_data
          .put({"hostname": hostname,
 	       "base_url": url,
-	       "vehicle_id": vehicle_id || config_data{"deviceID"},
+	       "vehicle_id": vid,
 	       "apiKey" : config_data{"apiKey"} || keys:carvoyant_test("apiKey"),
 	       "secToken" : config_data{"secToken"} || keys:carvoyant_test("secToken")
 	      })
@@ -145,8 +148,8 @@ b16x17: fuse_fleet.krl
     };
 
     // ---------- trips ----------
-    trip_info = function(tid, vehicle_id) {
-      vid = vehicle_id || vehicle_id();
+    // vid is optional
+    trip_info = function(tid, vid) {
       config_data = get_config(vid);
       trip_url = config_data{"base_url"} + "/trip/#{tid}";
       result = carvoyant_get(trip_url, config_data);

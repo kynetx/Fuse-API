@@ -344,12 +344,13 @@ Fuse ruleset for a vehicle pico
         tid = trip_info{"id"};
 
       }
+      if(trip_info{"status_code"}.isnull()) then
       {send_directive("Updated trip data for trip #{tid}") with
          values = trip_info and
 	 namespace = carvoyant_namespace;
       }
 
-      always {
+      fired {
         raise pds event updated_data_available
 	  attributes {
 	    "namespace": carvoyant_namespace,
