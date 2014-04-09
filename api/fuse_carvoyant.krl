@@ -289,8 +289,9 @@ b16x17: fuse_fleet.krl
                   .delete(["vehicle_id"])
                   .delete(["idempotent"]);
       // if idempotent attribute is set, then check to make sure no subscription of this type exist
+      subs = get_subscription(vid, sub_type);
       subscribe = not event:attr("idempotent") ||
-                  no_subscription(get_subscription(vid, sub_type))
+                  no_subscription(subs)
     }
     if( valid_subscription_type(sub_type) 
      && subscribe
@@ -301,8 +302,21 @@ b16x17: fuse_fleet.krl
 	  attributes = event:attrs();
     }
     notfired {
-      error info "Invalid Carvoyant subscription type: #{sub_type} or already subscribed"
+      error info "Invalid Carvoyant subscription type: #{sub_type} or already subscribed; saw " + subs.encode();
     }
+  }
+
+  rule subscription_ok {
+    select when http post status_code re#(2\d\d)# label "add_subscription" setting (status)
+    pre {
+      sub = event:attr('content').decode().pick("$.subscription");
+     // new_subs = ent:subscriptions.put([sub{"id"}], sub);  // FIX
+    }
+    send_directive("Subscription added") with
+      subscription = sub
+     // always {
+     //   set ent:subscriptions new_subs
+     // }
   }
 
 
@@ -319,22 +333,9 @@ b16x17: fuse_fleet.krl
     select when carvoyant need_vehicle_subscriptions
     pre {
       vid = event:attr("vehicle_id") || vehicle_id();
-      subscriptions = get_subscription(vid);
+      subscriptions = get_subscription(vid, event:attr("subscription_type"));
     }
     send_directive("Subscriptions for #{vid} (404 means no subscriptions)") with subscriptions = subscriptions;
-  }
-
-  rule subscription_ok {
-    select when http post status_code re#(2\d\d)# label "add_subscription" setting (status)
-    pre {
-      sub = event:attr('content').decode().pick("$.subscription");
-     // new_subs = ent:subscriptions.put([sub{"id"}], sub);  // FIX
-    }
-    send_directive("Subscription added") with
-      subscription = sub
-     // always {
-     //   set ent:subscriptions new_subs
-     // }
   }
 
 
