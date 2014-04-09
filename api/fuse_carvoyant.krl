@@ -145,7 +145,7 @@ b16x17: fuse_fleet.krl
     };
 
     // ---------- trips ----------
-    trip_info = function(tid, vid) {
+    trip_info = function(tid, vehicle_id) {
       vid = vehicle_id || vehicle_id();
       config_data = get_config(vid);
       trip_url = config_data{"base_url"} + "/trip/#{tid}";
