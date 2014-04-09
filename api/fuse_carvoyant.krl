@@ -149,7 +149,7 @@ b16x17: fuse_fleet.krl
 	                         | base_url + "/" + subscription_id
     };
 
-    valid_carvoyant_subscription = function(sub_type) {
+    valid_subscription_type = function(sub_type) {
       valid_types = {"geoFence": true,
                      "lowBattery": true,
 		     "numericDataKey": true,
@@ -165,7 +165,7 @@ b16x17: fuse_fleet.krl
         // a subscription doesn't exist if...
         subs{"status_code"} eq "404" ||
         (subs{"status_code"} eq "200" &&
-	 subs{["content","subscriptions"]}.any(function(s){ not s{"deletionTimestamp"}.isnull() })
+	 subs{["content","subscriptions"]}.all(function(s){ not s{"deletionTimestamp"}.isnull() })
 	)
     }
 
