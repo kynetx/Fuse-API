@@ -433,9 +433,14 @@ Checks to make sure error handler ruleset fires
 Checks to make sure trip_info() works
 >>;
 
-      trip = carvoyant:trip_info(event:attr("tripId"));
+      vid = event:attr("vehicleId");
+      tid = event:attr("tripId");
+      trip = carvoyant:trip_info(tid,vid);
 
-      values = {'trip_data' : trip
+      values = {
+      	        'trip_id' : tid,
+		'vehicle_id' : vid,
+      	        'trip_data' : trip
                };
 
 
