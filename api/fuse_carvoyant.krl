@@ -236,10 +236,10 @@ b16x17: fuse_fleet.krl
 
     get_eci_for_carvoyant = function() {
 
-      carvoyant_channel_name = "carvoyant-channel";
+      carvoyant_channel_name = "carvoyant-channel_1";
       current_channels = CloudOS:channelList();
       carvoyant_channel = current_channels{"channels"}.filter(function(x){x{"name"} eq carvoyant_channel_name});
-      carvoyant_channel.length() > 0 => carvoyant_channel.head()
+      carvoyant_channel.length() > 0 => carvoyant_channel.head().pick("$.cid")
                                       | CloudOS:channelCreate(carvoyant_channel_name)
     }
 
