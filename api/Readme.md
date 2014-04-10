@@ -23,8 +23,8 @@
 - ```fuse:need_new_vehicle``` &mdash; create a new vehicle pico and a subscription (```Vehicle-Fleet```)
     - sent to fleet pico
 	- attributes:
-	     - name: textual name (nickname) of new vehicle. Random name chosen if none given.
-		 - photo: URL of photo of vehicle
+	     - ```name```: textual name (nickname) of new vehicle. Random name chosen if none given.
+		 - ```photo```: URL of photo of vehicle
 		 
 - ```fuse:show_vehicles``` &mdash; show the vehicles that are in the fleet
     - sent to fleet pico
@@ -33,7 +33,7 @@
 - ```fuse:delete_vehicle``` &mdash; delete vehicle and its subscriptions
     - send to fleet pico
 	- attributes
-	    - vehicle_eci: ECI of vehicle to delete
+	    - ```vehicle_eci```: ECI of vehicle to delete
 
 ## Vehicle
 

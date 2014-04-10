@@ -6,11 +6,14 @@ Application that manages the fleet
         >>
         author "PJW from AKO GTour code"
 
-        use module a169x625  alias CloudOS
-        use module a169x676  alias pds
-        use module b16x16 alias FuseInit
+
 
         errors to b16x13
+
+        use module a169x625  alias CloudOS
+        use module a169x676  alias pds
+	use module b16x19 alias common
+        use module b16x16 alias FuseInit
 
         sharing on
         provides inventory, translate, internalID
@@ -96,7 +99,7 @@ Application that manages the fleet
 	  // store meta info
 	  raise pds event new_map_available 
             attributes 
-              {"namespace": FuseInit:namespace(),
+              {"namespace": common:namespace(),
                "mapvalues": {"schema": my_schema,
 	                     "owner_channel": my_owner,
 			     "fleet_name": fleet_name
@@ -142,7 +145,7 @@ Application that manages the fleet
     rule route_to_owner {
       select when fuse new_fleet
       pre {
-        owner = CloudOS:subscriptionList(FuseInit:namespace(),"FleetOwner").head().pick("$.eventChannel");
+        owner = CloudOS:subscriptionList(common:namespace(),"FleetOwner").head().pick("$.eventChannel");
       }
       {
         send_directive("Routing to owner")
@@ -208,7 +211,7 @@ Application that manages the fleet
 
 	  // subscribe to the new fleet
           raise cloudos event "subscribe"
-            with namespace = FuseInit:namespace()
+            with namespace = common:namespace()
              and  relationship = "Vehicle-Fleet"
              and  channelName = pico_id
              and  targetChannel = channel
@@ -227,7 +230,7 @@ Application that manages the fleet
       select when fuse show_vehicles
       pre {
         myPicos = CloudOS:picoList();
-        fuseSubs = CloudOS:subscriptionList(FuseInit:namespace(),"Vehicle");
+        fuseSubs = CloudOS:subscriptionList(common:namespace(),"Vehicle");
       }
       {
         send_directive("Dependent children") with
@@ -247,7 +250,7 @@ Application that manages the fleet
 	this_pico_id = this_pico{"id"};
 
 	// use the pico ID to look up the subscription to delete
-        this_sub = CloudOS:subscriptionList(FuseInit:namespace(),"Vehicle")
+        this_sub = CloudOS:subscriptionList(common:namespace(),"Vehicle")
 	           .filter(function(sub){sub{"channelName"} eq this_pico_id})
 		   .head() 
                 || {};   // tolerate lookup failures
@@ -258,7 +261,7 @@ Application that manages the fleet
         send_directive("Deleted child" ) with
           child = eci and
 	  id = this_pico_id and
-//          allSubs = CloudOS:subscriptionList(FuseInit:namespace(),"Vehicle") and
+//          allSubs = CloudOS:subscriptionList(common:namespace(),"Vehicle") and
           fuseSub = this_sub and
           channel = this_sub_channel;
       }

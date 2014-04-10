@@ -21,10 +21,12 @@ Manage trips. PDS is not well-suited to these operations
 
   global {
 
+    // external decls
     trips = function(){
       ent:trips
     }
 
+    // internal decls
     endTime = function(trip) {
       trip{"endTime"} || 
       trip{["endWaypoint","timestamp"]} || 

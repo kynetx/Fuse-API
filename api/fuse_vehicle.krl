@@ -12,6 +12,7 @@ Fuse ruleset for a vehicle pico
 
       use module b16x10 alias fuse_keys
 
+      use module ba6x19 alias common
       use module a169x625 alias CloudOS
       use module a169x676 alias pds
       use module b16x11 alias carvoyant
@@ -52,8 +53,7 @@ Fuse ruleset for a vehicle pico
                     with attrs = {
                         "namespace": "data",
                         "keyvalue": "detail",
-                        "value": vehicle_details.delete(["eci"]).encode(),
-                        "shouldRaiseGTourDoneEvent": "YES"
+                        "value": vehicle_details.delete(["eci"]).encode()
                     };
 
                 event:send(fleetChannel(), "fuse", "new_pico") // should this be the same as the event that initializes the pico? 
@@ -76,8 +76,7 @@ Fuse ruleset for a vehicle pico
                     with attrs = {
                         "namespace": "data",
                         "keyvalue": "detail",
-                        "value": fresh_details.encode(),
-                        "shouldRaiseGTourDoneEvent": "YES"
+                        "value": fresh_details.encode()
                     };
 
 
@@ -115,7 +114,7 @@ Fuse ruleset for a vehicle pico
 	  // store meta info
 	  raise pds event new_map_available 
             attributes 
-              {"namespace": FuseInit:namespace(),
+              {"namespace": common:namespace(),
                "mapvalues": {"schema": my_schema,
 	                     "fleet_channel": my_fleet,
 			     "vehicle_name": name
@@ -170,7 +169,7 @@ Fuse ruleset for a vehicle pico
     rule route_to_owner {
       select when fuse new_vehicle
       pre {
-        owner = CloudOS:subscriptionList(namespace(),"Fleet").head().pick("$.eventChannel");
+        owner = CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel");
       }
       {
         send_directive("Routing to owner")

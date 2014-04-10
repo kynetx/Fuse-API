@@ -13,18 +13,18 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         use module a169x676 alias pds
          // use module a41x174 alias AWSS3
          //     with AWSKeys = keys:aws()
-        use module a169x701 alias CloudRain
         use module a16x129 version "dev" alias sendgrid with
             api_user = keys:sendgrid("api_user") and 
             api_key = keys:sendgrid("api_key") and
             application = "Fuse"
+	use module b16x19 alias common
 
         errors to b16x13
 
         sharing on
         provides fleet_photo, apps, S3Bucket, 
                  makeImageURLForPico, uploadPicoImage, updatePicoProfile, 
-                 fleetChannel, namespace, 
+                 fleetChannel, 
                  dereference, factory
     }
 
@@ -54,7 +54,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
                ],
                "vehicle": [
                    "b16x9.prod",  // fuse_vehicle.krl
-		   "b16x11.prod"  // fuse_carvoyant.krl
+		   "b16x11.prod", // fuse_carvoyant.krl
+		   "b16x18.prod"  // fuse_trips.krl
                ],
                "unwanted": [ 
                    "a169x625.prod",
@@ -132,16 +133,10 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
         fleetChannel = function() {
             cid =  ent:fleet_channel
-                || CloudOS:subscriptionList(namespace(),"Fleet").head().pick("$.eventChannel");
+                || CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel");
 
             {"cid": cid}
         };
-
-         namespace = function() {
-           meta_id = "fuse-meta";
-	   meta_id    
-         };
-
 
 	// not updated for Fuse
         coupleTagWithVehicle = defaction(tid, lid) {
