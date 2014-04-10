@@ -8,13 +8,14 @@ Fuse ruleset for a vehicle pico
       logging off
       sharing on
 
+      errors to b16x13
+
       use module b16x10 alias fuse_keys
 
       use module a169x625 alias CloudOS
       use module a169x676 alias pds
       use module b16x11 alias carvoyant
 
-      errors to b16x13
 	
       provides vin, vehicle_info, last_trip
 
@@ -332,6 +333,9 @@ Fuse ruleset for a vehicle pico
             "_api": "sky"
  		   
 	  };
+	raise fuse event updated_mileage
+	  with new_mileage = vehicle_info{"mileage"}
+	   and timestamp = vehicle_info{"lastRunningTimestamp"};
       }
 
     }
