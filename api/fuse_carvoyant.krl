@@ -229,13 +229,13 @@ b16x17: fuse_fleet.krl
     // this should be in a library somewhere
     // eci is optional
     mk_subscription_esl = function(event_name, eci) {
-      use_eci = eci || meta:eci() || "NO_ECI_AVAILABLE";
+      use_eci = eci || get_eci_for_carvoyant() || "NO_ECI_AVAILABLE"; 
       eid = math:random(99999);
       "https://#{meta:host()}/sky/event/#{use_eci}/#{eid}/carvoyant/#{event_name}";
     };
 
+    // creates a new ECI (once) for carvoyant
     get_eci_for_carvoyant = function() {
-
       carvoyant_channel_name = "carvoyant-channel";
       current_channels = CloudOS:channelList();
       carvoyant_channel = current_channels{"channels"}.filter(function(x){x{"name"} eq carvoyant_channel_name});
@@ -382,6 +382,20 @@ b16x17: fuse_fleet.krl
     send_directive("Subscriptions for #{vid} (404 means no subscriptions)") with subscriptions = subs;
   }
 
+  rule clean_up_subscriptions {
+    select when carvoyant dirty_subscriptions
+    foreach get_subscription().pick("$..subscriptions").filter(function(s){ s{"deletionTimestamp"}.isnull() }) setting(sub)
+    pre {
+      id = sub{"id"};	
+      postUrl = sub{"postUrl"};
+      my_current_eci = get_eci_for_carvoyant();
+    }
+    if(not postUrl like my_current_eci) then
+    {
+      send_directive("Will delete subscription #{id}") with
+        sub_value = sub;
+    }
+  }
 
 
   // ---------- rules for handling notifications ----------
