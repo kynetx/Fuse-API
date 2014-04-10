@@ -6,16 +6,19 @@ ruleset fuse_carvoyant {
 Provides rules for handling Carvoyant events
 >>
 
+    sharing on   // turn off after debugging
+
     use module b16x10 alias fuse_keys
       with foo = 1
 
     use module a169x676 alias pds
+    use module b16x19 alias common
 
     errors to b16x13
 
     provides namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
              trip_info,
-             get_subscription,no_subscription, add_subscription, del_subscription
+             get_subscription,no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
 
 /* 
 
@@ -230,6 +233,11 @@ b16x17: fuse_fleet.krl
       "https://#{meta:host()}/sky/event/#{use_eci}/#{eid}/carvoyant/#{event_name}";
     };
 
+    get_eci_for_carvoyant = function() {
+
+      current_channels = CloudOS:channelList();
+      current_channels;
+    }
 
 
   }
