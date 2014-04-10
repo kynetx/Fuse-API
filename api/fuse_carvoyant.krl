@@ -397,6 +397,16 @@ b16x17: fuse_fleet.krl
     noop();
     always {
       log "Recorded battery level: " + recorded;
+      raise pds event new_data_available
+	  attributes {
+	    "namespace": carvoyant_namespace,
+	    "keyvalue": "lowBattery_fired",
+	    "value": event:attrs()
+	              .delete(["_generatedby"]),
+            "_api": "sky"
+ 		   
+	  };
+
     }
   }
 
@@ -408,6 +418,15 @@ b16x17: fuse_fleet.krl
     noop();
     always {
       log "Recorded trouble codes: " + codes.encode();
+      raise pds event new_data_available
+	  attributes {
+	    "namespace": carvoyant_namespace,
+	    "keyvalue": "troubleCode_fired",
+	    "value": event:attrs()
+	              .delete(["_generatedby"]),
+            "_api": "sky"
+ 		   
+	  };
     }
   }
 
@@ -421,6 +440,16 @@ b16x17: fuse_fleet.krl
     noop();
     always {
       log "Fuel level of #{recorded}% is #{relationship.lc()} threshold value of #{threshold}%";
+      raise pds event new_data_available
+	  attributes {
+	    "namespace": carvoyant_namespace,
+	    "keyvalue": "fuelLevel_fired",
+	    "value": event:attrs()
+	              .delete(["_generatedby"]),
+            "_api": "sky"
+ 		   
+	  };
+
     }
   }
 
