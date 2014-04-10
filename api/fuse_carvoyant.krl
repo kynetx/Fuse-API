@@ -390,7 +390,7 @@ b16x17: fuse_fleet.krl
       postUrl = sub{"postUrl"};
       my_current_eci = get_eci_for_carvoyant();
     }
-    if(not postUrl like my_current_eci) then
+    if(not postUrl.match("re#/#{my_current_eci}/#".as("regexp")) then
     {
       send_directive("Will delete subscription #{id}") with
         sub_value = sub;
