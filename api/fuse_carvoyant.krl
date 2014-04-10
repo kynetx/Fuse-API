@@ -420,7 +420,7 @@ b16x17: fuse_fleet.krl
     }
     noop();
     always {
-      log "Fuel level #{relationship.lc()} #{threshold}%: #{recorded}";
+      log "Fuel level of #{recorded}% is #{relationship.lc()} threshold value of #{threshold}%";
     }
   }
 
