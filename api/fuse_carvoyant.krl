@@ -361,7 +361,7 @@ b16x17: fuse_fleet.krl
     }
     if valid_subscription_type(sub_type) then
     {
-      del_subscription(sub_type, id)
+      del_subscription(sub_type, id, null)
         with ar_label = "subscription_deleted";
       send_directive("Deleting subscription") with attributes = event:attrs();
     }
@@ -395,7 +395,7 @@ b16x17: fuse_fleet.krl
     {
       send_directive("Will delete subscription #{id} with type #{sub_type}") with
         sub_value = sub;
-      del_subscription(sub_type, id)
+      del_subscription(sub_type, id, null)
         with ar_label = "subscription_deleted";
     }
   }

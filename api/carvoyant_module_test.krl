@@ -283,7 +283,7 @@ Checks to make sure subscription was added by add_subscription()
     }   
 
     {
-      carvoyant:del_subscription(subscription{"vehicleId"}, "lowBattery", subscription{"id"})
+      carvoyant:del_subscription("lowBattery", subscription{"id"}, subscription{"vehicleId"})
         with ar_label = "subscription_deleted";
       show_test:diag("deleteing subscription", values);
     }
