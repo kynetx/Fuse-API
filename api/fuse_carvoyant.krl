@@ -57,7 +57,7 @@ b16x17: fuse_fleet.krl
      ||
       config{"deviceId"}
      ||
-      pds:get_item(carvoyant_namespace, "vehicle_info").pick("$.vehicleId")
+      pds:get_item(namespace(), "vehicle_info").pick("$.vehicleId")
     };
 
 
@@ -399,7 +399,7 @@ b16x17: fuse_fleet.krl
       log "Recorded battery level: " + recorded;
       raise pds event new_data_available
 	  attributes {
-	    "namespace": carvoyant_namespace,
+	    "namespace": namespace(),
 	    "keyvalue": "lowBattery_fired",
 	    "value": event:attrs()
 	              .delete(["_generatedby"]),
@@ -420,7 +420,7 @@ b16x17: fuse_fleet.krl
       log "Recorded trouble codes: " + codes.encode();
       raise pds event new_data_available
 	  attributes {
-	    "namespace": carvoyant_namespace,
+	    "namespace": namespace(),
 	    "keyvalue": "troubleCode_fired",
 	    "value": event:attrs()
 	              .delete(["_generatedby"]),
@@ -442,7 +442,7 @@ b16x17: fuse_fleet.krl
       log "Fuel level of #{recorded}% is #{relationship.lc()} threshold value of #{threshold}%";
       raise pds event new_data_available
 	  attributes {
-	    "namespace": carvoyant_namespace,
+	    "namespace": namespace(),
 	    "keyvalue": "fuelLevel_fired",
 	    "value": event:attrs()
 	              .delete(["_generatedby"]),
