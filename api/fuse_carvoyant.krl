@@ -239,7 +239,8 @@ b16x17: fuse_fleet.krl
       carvoyant_channel_name = "carvoyant-channel";
       current_channels = CloudOS:channelList();
       carvoyant_channel = current_channels{"channels"}.filter(function(x){x{"name"} eq carvoyant_channel_name});
-      carvoyant_channel
+      carvoyant_channel.length() > 0 => carvoyant_channel.head()
+                                      | CloudOS:channelCreate(carvoyant_channel_name)
     }
 
 
