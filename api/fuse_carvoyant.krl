@@ -217,7 +217,7 @@ b16x17: fuse_fleet.krl
         with ar_label = ar_label;
     };
 
-    del_subscription = defaction(vid, subscription_type, subscription_id) {
+    del_subscription = defaction(subscription_type, subscription_id, vid) {
       configure using ar_label = false;
       config_data = get_config(vid);
       carvoyant_delete(carvoyant_subscription_url(subscription_type, config_data, subscription_id),
@@ -361,7 +361,7 @@ b16x17: fuse_fleet.krl
     }
     if valid_subscription_type(sub_type) then
     {
-      del_subscription(event:attr("vehicleId") || vehicle_id(),sub_type, id)
+      del_subscription(sub_type, id)
         with ar_label = "subscription_deleted";
       send_directive("Deleting subscription") with attributes = event:attrs();
     }
@@ -387,13 +387,16 @@ b16x17: fuse_fleet.krl
     foreach get_subscription().pick("$..subscriptions").filter(function(s){ s{"deletionTimestamp"}.isnull() }) setting(sub)
     pre {
       id = sub{"id"};	
+      sub_type = sub{"_type"};
       postUrl = sub{"postUrl"};
       my_current_eci = get_eci_for_carvoyant();
     }
     if(not postUrl.match("re#/#{my_current_eci}/#".as("regexp"))) then
     {
-      send_directive("Will delete subscription #{id}") with
+      send_directive("Will delete subscription #{id} with type #{sub_type}") with
         sub_value = sub;
+      del_subscription(sub_type, id)
+        with ar_label = "subscription_deleted";
     }
   }
 
