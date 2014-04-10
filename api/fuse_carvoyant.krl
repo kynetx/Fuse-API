@@ -391,7 +391,8 @@ b16x17: fuse_fleet.krl
   rule lowBattery_status_changed  { 
     select when carvoyant lowBattery
     pre {
-      codes = event:attr("troubleCodes");
+      threshold = event:attr("thresholdVoltage");
+      recorded = event:attr("recordedVoltage");
     }
     noop();
     always {
@@ -402,8 +403,7 @@ b16x17: fuse_fleet.krl
   rule dtc_status_changed  { 
     select when carvoyant troubleCode
     pre {
-      threshold = event:attr("thresholdVoltage");
-      recorded = event:attr("recordedVoltage");
+      codes = event:attr("troubleCodes");
     }
     noop();
     always {
