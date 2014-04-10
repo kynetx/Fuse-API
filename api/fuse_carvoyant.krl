@@ -385,10 +385,42 @@ b16x17: fuse_fleet.krl
     always {
       raise fuse event updated_vehicle_data;
       raise fuse event updated_trip_info with tripId = tid if status eq "OFF";
-      log "<<<<<<<<<<< just a test >>>>>>>>>>>>>>>>>";
-      log "Ignition status: " + event:attr("ignitionStatus");
-      log "From variable: " + status;
-      log "Trip ID: " + event:attr("tripId");
+    }
+  }
+
+  rule lowBattery_status_changed  { 
+    select when carvoyant lowBattery
+    pre {
+      codes = event:attr("troubleCodes");
+    }
+    noop();
+    always {
+      log "Recorded battery level: " + recorded;
+    }
+  }
+
+  rule dtc_status_changed  { 
+    select when carvoyant troubleCode
+    pre {
+      threshold = event:attr("thresholdVoltage");
+      recorded = event:attr("recordedVoltage");
+    }
+    noop();
+    always {
+      log "Recorded trouble codes: " + codes.encode();
+    }
+  }
+
+  rule fuel_level_low  { 
+    select when carvoyant numericDataKey dataKey "GEN_FUELLEVEL"
+    pre {
+      threshold = event:attr("thresholdValue");
+      recorded = event:attr("recordedValue");
+      relationship = event:attr("relationship");
+    }
+    noop();
+    always {
+      log "Fuel level #{relationship.lc()} #{threshold}%: #{recorded}";
     }
   }
 
