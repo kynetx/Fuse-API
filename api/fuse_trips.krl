@@ -48,7 +48,7 @@ Manage trips. PDS is not well-suited to these operations
       end_time = endTime(trip_info);
       time_split = time:strftime(end_time, "%Y:%m:%d:%H:%M%S").split(re/:/);
     }
-    if(end_time eq "ERROR_NO_TIMESTAMP_AVAILABLE") then
+    if(end_time neq "ERROR_NO_TIMESTAMP_AVAILABLE") then
     {send_directive("Adding trip #{tid}") with 
       end_time = end_time and
       time_split = time_split
