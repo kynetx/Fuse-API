@@ -56,6 +56,9 @@ Manage trips. PDS is not well-suited to these operations
     }
     fired {
       set ent:trips{time_split} trip_info
+    } else {
+      log ">>>>>>>>>>>>>>>>>>>>>>>>> save_trip <<<<<<<<<<<<<<<<<<<<<<<<<";
+      log "End time: #{end_time}";
     }
   }
 

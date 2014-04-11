@@ -1,7 +1,8 @@
 
-# Events
 
-## Owner
+# Owner
+
+## Events
 
 - ```fuse:initialize``` &mdash; creates a fleet pico and a subscription (```Fleet-FleetOwner```)
     - sent to owner pico
@@ -18,7 +19,9 @@
 	    - fleet_eci: ECI of fleet to delete
     - improvement: since the fleet is a singleton, technically the ECI is unnecessary, we should be able to look it up
 
-## Fleet
+# Fleet
+
+## Events
 
 - ```fuse:need_new_vehicle``` &mdash; create a new vehicle pico and a subscription (```Vehicle-Fleet```)
     - sent to fleet pico
@@ -35,7 +38,9 @@
 	- attributes
 	    - ```vehicle_eci```: ECI of vehicle to delete
 
-## Vehicle
+# Vehicle
+
+## PDS
 
 Vehicle's PDS (cavoyant namespace)
 
@@ -49,4 +54,9 @@ In general, use Carvoyant CamelCase identifiers in vehicle PDS for sanity
 - ```vehicle_info```
     - ```vehicleId``` &mdash; carvoyant vehicle identifier
 
+## Events
 
+- ```carvoyant:dirty_subscriptions``` &mdash; signals the possible presence of subscriptions in the carvoyant account that don't point at the current pico
+    - ```clean_up_subscriptions``` rule deletes any subscriptions in account that don't match current pico's carvoyant channel
+	- Note that two picos connected to the same Carvoyant account would battle to get subscriptions created and delete the other's. I don't know how realistic this possibility is. 
+	
