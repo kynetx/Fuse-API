@@ -36,6 +36,13 @@ Manage trips. PDS is not well-suited to these operations
   
   }
 
+  rule clear_trip {
+    select when fuse clear_trip
+    always {
+      clear ent:trips;
+    }
+  }
+
   rule save_trip {
     select when fuse new_trip
     pre {
