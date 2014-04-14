@@ -343,9 +343,7 @@ Fuse ruleset for a vehicle pico
     rule update_vehicle_status {
       select when fuse need_vehicle_status
       pre {
-        vehicle_status = carvoyant:vehicleStatus()
-	                   .collect(function(v){v{"key"}}) // turn array into map of arrays
-                           .map(function(k,v){v[0]}); // get rid of arrays and replace with value
+        vehicle_status = carvoyant:vehicleStatus(); 
       }
       {send_directive("Updated vehicle status") with
          values = vehicle_status and
@@ -356,7 +354,7 @@ Fuse ruleset for a vehicle pico
         raise pds event new_data_available 
             attributes
               {"namespace": carvoyant_namespace,
-               "keyvalue": "vehicle_stats",
+               "keyvalue": "vehicle_status",
 	       "value": vehicle_status
 	              	 .delete(["_generatedby"])
 	              	 .delete(["deviceId"]),

@@ -18,7 +18,7 @@ Provides rules for handling Carvoyant events
     errors to b16x13
 
     provides namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
-             vehicleStatus, trip_info,
+             vehicleStatus, keyToLabel, trip_info,
              get_subscription,no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
 
 /* 
@@ -51,9 +51,27 @@ b16x17: fuse_fleet.krl
     // [TODO] 
     //  vehicle ID can't be in config data. Has to match one of them, but is supplied
 
+    data_labels = {
+		  "GEN_DTC"          : "Diagnostic Trouble Codes" ,
+		  "GEN_VOLTAGE"      : "Battery Voltage" ,
+		  "GEN_TRIP_MILEAGE" : "Trip Mileage (last trip)" ,
+		  "GEN_ODOMETER"     : "Vehicle Reported Odometer" ,
+		  "GEN_WAYPOINT"     : "GPS Location" ,
+		  "GEN_HEADING"      : "Heading" ,
+		  "GEN_RPM"          : "Engine Speed" ,
+		  "GEN_FUELLEVEL"    : "% Fuel Remaining" ,
+		  "GEN_FUELRATE"     : "Rate of Fuel Consumption" ,
+		  "GEN_ENGINE_COOLANT_TEMP" : "Engine Coolant Temperature" ,
+		  "GEN_SPEED"        : "Maximum Speed Recorded (last trip)"
+		};
+
+    keyToLabel = function(key) {
+      data_labels{key};
+    };
+
     namespace = function() {
       "fuse:carvoyant";
-    }
+    };
 
     vehicle_id = function() {
       config = pds:get_item(namespace(), "config");
@@ -156,7 +174,10 @@ b16x17: fuse_fleet.krl
       config_data = get_config(vid);
       result = carvoyant_get(config_data{"base_url"}+"/data?mostRecentOnly=true", config_data);
       result{"status_code"} eq "200" => result{["content","data"]}
-                                      | mk_error(result)
+       			       	     	  .collect(function(v){v{"key"}}) // turn array into map of arrays
+					  // get rid of arrays and replace with value plus label
+                           		  .map(function(k,v){v[0].put(["label"],keyToLabel(k))})
+                                      | mk_error(result);
     };
 
     // ---------- trips ----------
