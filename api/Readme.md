@@ -57,6 +57,13 @@ In general, use Carvoyant CamelCase identifiers in vehicle PDS for sanity
 ## Events
 
 - ```carvoyant:dirty_subscriptions``` &mdash; signals the possible presence of subscriptions in the carvoyant account that don't point at the current pico
-    - ```clean_up_subscriptions``` rule deletes any subscriptions in account that don't match current pico's carvoyant channel
+    - ```clean_up_subscriptions``` &mdash; rule deletes any subscriptions in account that don't match current pico's carvoyant channel
 	- Note that two picos connected to the same Carvoyant account would battle to get subscriptions created and delete the other's. I don't know how realistic this possibility is. 
-	
+- ```fuse:updated_mileage```&mdash; raised whenever there is a new mileage figure.  Rules interested in mileage should listen for this event.
+    - attributes:
+	    - ```mileage``` &mdash; most recent odometer reading
+		- ```timestamp``` &mdash; timestamp of reading
+- ```fuse:updated_fuellevel```&mdash; raised whenever there is a new fuel level figure.  Rules interested in fuel level should listen for this event. Not fired if fuel level is 0 since this most often indicates no reading. 
+    - attributes:
+	    - ```fuel_level``` &mdash; most recent fuel level reading
+		- ```timestamp``` &mdash; timestamp of reading

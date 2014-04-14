@@ -151,6 +151,14 @@ b16x17: fuse_fleet.krl
       dkey.isnull() => vd | vd{dkey}
     };
 
+    vehicleStatus = function(vid) {
+      vid = vid || vehicle_id();
+      config_data = get_config(vid);
+      result = carvoyant_get(config_data{"base_url"}+"/data?mostRecentOnly=true", config_data);
+      result{"status_code"} eq "200" => result{["content","data"]}
+                                      | mk_error(result)
+    };
+
     // ---------- trips ----------
     // vid is optional
     trip_info = function(tid, vid) {
@@ -413,7 +421,7 @@ b16x17: fuse_fleet.krl
     noop();
     always {
       raise fuse event updated_vehicle_data;
-      raise fuse event updated_trip_info with tripId = tid if status eq "OFF";
+      raise fuse event new_trip with tripId = tid if status eq "OFF";
     }
   }
 

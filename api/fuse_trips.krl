@@ -16,7 +16,7 @@ Manage trips. PDS is not well-suited to these operations
     use module b16x11 alias carvoyant
 
 	
-    provides trips
+    provides trips, lastTrip
   }
 
   global {
@@ -24,7 +24,12 @@ Manage trips. PDS is not well-suited to these operations
     // external decls
     trips = function(){
       ent:trips
-    }
+    };
+
+    lastTrip = function(with_data){
+      with_data => ent:trips(ent:last_trip)
+                 | ent:trip_summaries(ent:last_trip)
+    };
 
     // internal decls
     endTime = function(trip) {
@@ -32,17 +37,32 @@ Manage trips. PDS is not well-suited to these operations
       trip{["endWaypoint","timestamp"]} || 
       trip{["data"]}.head().pick("$..timestamp").head() || 
       "ERROR_NO_TIMESTAMP_AVAILABLE"
-    }
+    };
+
+    tripSummary = function(trip) {
+      summary =  {
+        "startWaypoint" : trip{"startWaypoint"},
+        "endWaypoint" : trip{"endWaypoint"},
+	"mileage": trip{"mileage"},
+	"id": trip{"id"},
+	"endTime": endTime(trip),
+	"startTime": trip{"startTime"}
+      };
+      summary
+    };
   
   }
 
   rule clear_trip {
     select when fuse clear_trip
     always {
-      clear ent:trips;
+      clear ent:trips_by_id;
+      clear ent:trip_summaries;
+      clear ent:trips_by_week;
     }
   }
 
+  // workhorse rule, saves and indexes trips and trip summaries
   rule save_trip {
     select when fuse new_trip
     pre {
@@ -53,7 +73,9 @@ Manage trips. PDS is not well-suited to these operations
                                                 | incoming;
       tid = trip_info{"id"};
       end_time = endTime(trip_info);
-      time_split = time:strftime(end_time, "%Y:%m:%d:%H:%M%S").split(re/:/);
+      trip_summary = tripSummary(trip_info);
+      time_split = time:strftime(end_time, "%Y_:%m_:%d_:%H_:%M%S_").split(re/:/);
+      week_number = time:strftime(end_time, "%U_")
     }
     if(end_time neq "ERROR_NO_TIMESTAMP_AVAILABLE") then
     {send_directive("Adding trip #{tid}") with 
@@ -62,12 +84,16 @@ Manage trips. PDS is not well-suited to these operations
       ;
     }
     fired {
-      set ent:trips{[time_split[0], time_split[1]]} trip_info
+      set ent:last_trip tid;
+      set ent:trips_by_id{tid} trip_info;
+      set ent:trip_summaires{tid} trip_summary;
+      // set ent:trips_by_week{week_number} = (ent:trips_by_week{week_number} || []).append(tid);
     } else {
-      log ">>>>>>>>>>>>>>>>>>>>>>>>> save_trip <<<<<<<<<<<<<<<<<<<<<<<<<";
+      log ">>>>>>>>>>>>>>>>>>>>>>>>> save_trip failed <<<<<<<<<<<<<<<<<<<<<<<<<";
       log "End time: #{end_time}";
     }
   }
-
+  // daily summaries (TZs, ugh)
+  // trip summaries (easier)
 
 }

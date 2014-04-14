@@ -339,64 +339,37 @@ Fuse ruleset for a vehicle pico
 
     }
 
-    // ---------- trips ----------
 
-
-    rule show_last_trip {
-      select when fuse need_last_trip
+    rule update_vehicle_status {
+      select when fuse need_vehicle_status
       pre {
-
-
-        cached_info = pds:get_item(carvoyant_namespace, "last_trip_info");
-
-	trip_info = cached_info.isnull() => carvoyant:trip_info(event:attr("tripId"))
-                                          | cached_info;
-
-        tid = trip_info{"id"}
-
+        vehicle_status = carvoyant:vehicleStatus().collect(function(v){v{"key"}});
       }
-      {send_directive("Last trip data for #{tid}") with
-         id = tid and
-	 cached = not cached_info.isnull() and
-         values = trip_info;
-      }
-
-      always {
-        raise fuse event updated_trip_info attributes trip_info
-	 if cached_info.isnull(); // only update if we didn't cache
-      }
-
-    }
-
-
-
-    rule update_trips {
-      select when fuse updated_trip_info
-      pre {
-	incoming = event:attrs();
-        trip_info = incoming{"mileage"}.isnull() => carvoyant:trip_info(incoming{"tripId"})
-                                                  | incoming;
-
-        tid = trip_info{"id"};
-
-      }
-      if(trip_info{"status_code"}.isnull()) then
-      {send_directive("Updated trip data for trip #{tid}") with
-         values = trip_info and
+      {send_directive("Updated vehicle status") with
+         values = vehicle_status and
 	 namespace = carvoyant_namespace;
       }
 
-      fired {
-        raise pds event new_data_available
-	  attributes {
-	    "namespace": carvoyant_namespace,
-	    "keyvalue": "last_trip_info",
-	    "value": trip_info
-	              .delete(["_generatedby"]),
-            "_api": "sky"
- 		   
-	  };
+      always {
+        raise pds event new_data_available 
+            attributes
+              {"namespace": carvoyant_namespace,
+               "keyvalue": "vehicle_stats",
+	       "value": vehicle_info
+	              	 .delete(["_generatedby"])
+	              	 .delete(["deviceId"]),
+	       "_api": "sky"
+              };
+	raise fuse event updated_mileage
+	  with mileage = vehicle_status{["GEN_ODOMETER","value"]}
+	   and timestamp = vehicle_status{["GEN_ODOMETER","timestamp"]};
+	raise fuse event updated_fuel_level
+	  with fuel_level = vehicle_status{["GEN_FUELLEVEL","value"]}
+	   and timestamp = vehicle_status{["GEN_FUELLEVEL","timestamp"]} if vehicle_status{["GEN_FUELLEVEL","value"]};
       }
+
     }
+
+
 
 }
