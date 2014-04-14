@@ -18,7 +18,7 @@ Provides rules for handling Carvoyant events
     errors to b16x13
 
     provides namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
-             trip_info,
+             vehicleStatus, trip_info,
              get_subscription,no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
 
 /* 
