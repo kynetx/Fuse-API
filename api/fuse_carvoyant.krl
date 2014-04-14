@@ -18,7 +18,7 @@ Provides rules for handling Carvoyant events
     errors to b16x13
 
     provides namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
-             vehicleStatus, keyToLabel, trip_info,
+             vehicleStatus, keyToLabel, tripInfo,
              get_subscription,no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
 
 /* 
@@ -182,7 +182,7 @@ b16x17: fuse_fleet.krl
 
     // ---------- trips ----------
     // vid is optional
-    trip_info = function(tid, vid) {
+    tripInfo = function(tid, vid) {
       config_data = get_config(vid);
       trip_url = config_data{"base_url"} + "/trip/#{tid}";
       result = carvoyant_get(trip_url, config_data);
@@ -441,7 +441,7 @@ b16x17: fuse_fleet.krl
     }
     noop();
     always {
-      raise fuse event updated_vehicle_data;
+      raise fuse event need_vehicle_data;
       raise fuse event new_trip with tripId = tid if status eq "OFF";
     }
   }
@@ -464,6 +464,10 @@ b16x17: fuse_fleet.krl
             "_api": "sky"
  		   
 	  };
+      raise fuse event updated_battery
+	  with threshold = threshold
+	   and recorded = recorded
+	   and timestamp = event:attr("_timestamp");
 
     }
   }
@@ -485,6 +489,9 @@ b16x17: fuse_fleet.krl
             "_api": "sky"
  		   
 	  };
+     raise fuse event updated_dtc
+	  with dtc = codes
+	   and timestamp = event:attr("_timestamp");
     }
   }
 
@@ -506,8 +513,11 @@ b16x17: fuse_fleet.krl
 	              .delete(["_generatedby"]),
             "_api": "sky"
  		   
-	  };
-
+     };
+     raise fuse event updated_fuel_level
+       with threshold = threshold
+	and recorded = recorded
+	and timestamp = event:attr("_timestamp");
     }
   }
 

@@ -435,7 +435,7 @@ Checks to make sure trip_info() works
 
       vid = event:attr("vehicleId");
       tid = event:attr("tripId");
-      trip = carvoyant:trip_info(tid,vid);
+      trip = carvoyant:tripInfo(tid,vid);
 
       values = {
       	        'trip_id' : tid,

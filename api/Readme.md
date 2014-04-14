@@ -65,5 +65,15 @@ In general, use Carvoyant CamelCase identifiers in vehicle PDS for sanity
 		- ```timestamp``` &mdash; timestamp of reading
 - ```fuse:updated_fuellevel```&mdash; raised whenever there is a new fuel level figure.  Rules interested in fuel level should listen for this event. Not fired if fuel level is 0 since this most often indicates no reading. 
     - attributes:
-	    - ```fuel_level``` &mdash; most recent fuel level reading
+	    - ```threshold``` &mdash; set threshold (note this is always 12V for now)
+		- ```recorded``` &mdash; recorded value should be below threshold, but check since vehicle sometimes mistakenly reports
+		- ```timestamp``` &mdash; timestamp of reading
+- ```fuse:updated_battery``` &mdash; raised when vehicle reports battery level below set threshold.
+    - attributes:
+	    - ```threshold``` &mdash; set threshold (note this is always 12V for now)
+		- ```recorded``` &mdash; recorded value should be below threshold, but check since vehicle sometimes mistakenly reports
+		- ```timestamp``` &mdash; timestamp of reading
+- ```fuse:updated_dtc``` &mdash; raised when vehicle reports diagnostic trouble codes'
+    - attributes:
+	    - ```codes``` &mdash; array of reported codes
 		- ```timestamp``` &mdash; timestamp of reading

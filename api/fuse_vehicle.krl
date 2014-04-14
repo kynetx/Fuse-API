@@ -363,9 +363,6 @@ Fuse ruleset for a vehicle pico
 	raise fuse event updated_mileage
 	  with mileage = vehicle_status{["GEN_ODOMETER","value"]}
 	   and timestamp = vehicle_status{["GEN_ODOMETER","timestamp"]};
-	raise fuse event updated_fuel_level
-	  with fuel_level = vehicle_status{["GEN_FUELLEVEL","value"]}
-	   and timestamp = vehicle_status{["GEN_FUELLEVEL","timestamp"]} if vehicle_status{["GEN_FUELLEVEL","value"]};
       }
 
     }
