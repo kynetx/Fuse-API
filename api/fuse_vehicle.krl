@@ -16,17 +16,21 @@ Fuse ruleset for a vehicle pico
       use module a169x625 alias CloudOS
       use module a169x676 alias pds
       use module b16x11 alias carvoyant
-
+      // don't load trips
 	
-      provides vin, vehicle_info, last_trip
+      provides vin, vehicleInfo, lastTrip
 
     }
 
     global {
 
-      S3Bucket = "??";
+      S3Bucket = common:S3Bucket;
 
       carvoyant_namespace = carvoyant:namespace();
+
+      fleetChannel = function () {
+          CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel");
+      };
 
       vin = function() {
         this_vin = vehicle_info().pick("$.vin");
@@ -34,12 +38,20 @@ Fuse ruleset for a vehicle pico
         (this_vin.isnull()) => "NO_VIN" | this_vin
       };
 
-      vehicle_info = function(){
+      vehicleInfo = function(){
         pds:get_item(carvoyant_namespace, "vehicle_info");
       }
 
-      last_trip = function() {
-        pds:get_item(carvoyant_namespace, "last_trip_info");
+      lastTrip = function(key) {
+        trip = pds:get_item(carvoyant_namespace, "last_trip_info");
+	key => trip{key}
+             | trip
+      }
+
+      vehicleStatus = function(key) {
+        status = pds:get_item(carvoyant_namespace, "vehicle_status");
+	key => status{key} 
+             | status
       }
 
  // not using
@@ -169,7 +181,7 @@ Fuse ruleset for a vehicle pico
     rule route_to_owner {
       select when fuse new_vehicle
       pre {
-        owner = CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel");
+        owner = fleetChannel();
       }
       {
         send_directive("Routing to owner")
@@ -319,6 +331,8 @@ Fuse ruleset for a vehicle pico
          id = vid and
          values = vehicle_info and
 	 namespace = carvoyant_namespace;
+       event:send({"cid": fleetChannel()}, "fuse", "updated_vehicle") with
+         attrs = vehicle_info.put(["keyvalue"], "vehicle_info");
       }
 
       always {
@@ -348,6 +362,8 @@ Fuse ruleset for a vehicle pico
       {send_directive("Updated vehicle status") with
          values = vehicle_status and
 	 namespace = carvoyant_namespace;
+       event:send({"cid": fleetChannel()}, "fuse", "updated_vehicle") with
+         attrs = vehicle_status.put(["keyvalue"], "vehicle_status");
       }
 
       always {

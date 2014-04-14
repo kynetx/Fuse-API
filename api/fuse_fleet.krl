@@ -16,55 +16,29 @@ Application that manages the fleet
         use module b16x16 alias FuseInit
 
         sharing on
-        provides inventory, translate, internalID
+        provides vehicleSummary, vehicleStatus
     }
 
     global {
 
+     S3Bucket = FuseInit:S3Bucket;
 
-      S3Bucket = FuseInit:S3Bucket;
+     vehicleChannels = function() {
+     	// use the pico ID to look up the subscription to delete
+        vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle")
+                    || [];   // tolerate lookup failures
+        vehicle_ecis
+     };
 
-        inventory = function(filter) {
-            index = ent:inventory;
-            matches = (filter.isnull()) => index.values() | index.values().filter(function(record) {
-                // if the record has a "status" attribute, IE is a report, then we also need to apply our
-                // given filter against it.
-                this_filter = (record{"status"}) => 
-                    (record{"status"} like "re/#{filter}/gi" ||
-                    record{"name"} like "re/#{filter}/gi" ||
-                    record{"keywords"} like "re/#{filter}/gi" ||
-                    record{"division"} like "re/#{filter}/gi" ||
-                    record{"id"} eq filter) | 
-                    (record{"name"} like "re/#{filter}/gi" ||
-                    record{"keywords"} like "re/#{filter}/gi" ||
-                    record{"division"} like "re/#{filter}/gi" ||
-                    record{"id"} eq filter)
+      // summaryByEci = function(eci) {
+       
+      // }
 
-                this_filter
-            });
+      // vehicleSummary = function() {
+      //   ecis = vehicleChannel();
+      //   ecis.map()
+      // }
 
-            (not index || not matches) => [] |
-            (matches.length() == 1) => matches.head() |
-            this2that:transform(matches, {
-                "path": ["startTime"],
-                "reverse": 1,
-                "compare": "datetime"
-            })
-        };
-
-        internalID = function() {
-            index = ent:inventory;
-
-            (not index) => math:random(10) | index.decode().values().length()
-        };
-
-        // return an ECI given an ID.
-        translate = function(id) {
-            debug = ent:idToECI;
-            cid_map = ent:idToECI{id};
-
-            (cid_map) => cid_map | {"error": "no index record for #{id}"}
-        };
     }
 
     // ---------- respond to owner ----------
@@ -279,6 +253,35 @@ Application that manages the fleet
 
       }
       
+    }
+
+
+    // ---------- cache vehicle data ----------
+
+    rule update_vehicle_data {
+      select when fuse updated_vehicle
+      pre {
+
+        vid = event:attrs("vehicleId");
+	keyvalue = event:attrs("keyvalue");
+        vehicle_info = event:attrs()
+	                 .delete(["keyvalue"])
+ 			 .delete(["_generatedby"]);
+
+      }
+      {send_directive("Updated vehicle Data for #{vid}") with
+         id = vid and
+         values = vehicle_info and
+	 keyvalue = keyvalue and
+	 namespace = carvoyant_namespace;
+      }
+
+      always {
+
+        set ent:fleet{[keyvalue, vid]} vehicle_info
+
+      }
+
     }
 
 

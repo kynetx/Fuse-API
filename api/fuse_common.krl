@@ -6,10 +6,13 @@ Common definitions
         >>
         author "PJW"
 
-	provides namespace
+	provides S3Bucket, namespace
     }
 
     global {
+
+
+      S3Bucket = "k-fuse-01";
 
       namespace = function(type) {
         meta_id = "fuse-meta";

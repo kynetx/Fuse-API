@@ -73,8 +73,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
            };
 
 
-        S3Bucket = "k-mycloud";
-
+        S3Bucket = common:S3Bucket;
+  
         initPicoProfile = defaction(pico_channel, profile) {
             pico = {
                 "cid": pico_channel

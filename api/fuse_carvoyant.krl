@@ -441,6 +441,7 @@ b16x17: fuse_fleet.krl
     }
     noop();
     always {
+      raise fuse event need_vehicle_data;
       raise fuse event need_vehicle_status;
       raise fuse event new_trip with tripId = tid if status eq "OFF";
     }

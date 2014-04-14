@@ -54,6 +54,30 @@ In general, use Carvoyant CamelCase identifiers in vehicle PDS for sanity
 - ```vehicle_info```
     - ```vehicleId``` &mdash; carvoyant vehicle identifier
 
+## Functions
+
+- ```vin()``` &mdash; return vehicle reported VIN
+- ```vehicleInfo()``` &mdash; return all vehicle info including name, vin, last reported mileage, owner nickname, current location, and current ignition status
+- ```lastTrip(<with_data>)``` &mdash; return last trip information
+    - ```startWaypoint``` &mdash; latitude, longitude, and timestamp
+	- ```endWaypoint``` &mdash; latitude, longitude, and timestamp
+    - ```endTime``` &mdash; time the trip ends
+	- ```startTime``` &mdash; time the trip starts
+    - ```id``` &mdash; unique trip identifier
+    - ```data``` &mdash; array of detailed trip data, only returned if ```with_data``` is ```true```
+- ```vehicleStatus(<key>)``` &mdash; return last reported operating status for 10 key values. ```<key>``` can be one of:
+    - ```GEN_DTC``` &mdash;  Diagnostic Trouble Codes
+	- ```GEN_VOLTAGE``` &mdash;  Battery Voltage
+	- ```GEN_TRIP_MILEAGE``` &mdash;  Trip Mileage (last trip)
+	- ```GEN_ODOMETER``` &mdash;  Vehicle Reported Odometer
+	- ```GEN_WAYPOINT``` &mdash;  GPS Location
+	- ```GEN_HEADING``` &mdash;  Heading
+	- ```GEN_RPM``` &mdash;  Engine Speed
+	- ```GEN_FUELLEVEL``` &mdash;  % Fuel Remaining
+	- ```GEN_FUELRATE``` &mdash;  Rate of Fuel Consumption
+	- ```GEN_ENGINE_COOLANT_TEMP``` &mdash;  Engine Coolant Temperature
+	- ```GEN_SPEED``` &mdash;  Maximum Speed Recorded (last trip)
+
 ## Events
 
 - ```carvoyant:dirty_subscriptions``` &mdash; signals the possible presence of subscriptions in the carvoyant account that don't point at the current pico

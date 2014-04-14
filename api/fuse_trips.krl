@@ -14,6 +14,7 @@ Manage trips. PDS is not well-suited to these operations
     use module a169x625 alias CloudOS
     use module a169x676 alias pds
     use module b16x11 alias carvoyant
+    use module b16x9 alias vehicle
 
 	
     provides trips, lastTrip
@@ -40,14 +41,15 @@ Manage trips. PDS is not well-suited to these operations
     };
 
     tripSummary = function(trip) {
-      summary =  {
-        "startWaypoint" : trip{"startWaypoint"},
-        "endWaypoint" : trip{"endWaypoint"},
-	"mileage": trip{"mileage"},
-	"id": trip{"id"},
-	"endTime": endTime(trip),
-	"startTime": trip{"startTime"}
-      };
+       // summary =  {
+       //   "startWaypoint" : trip{"startWaypoint"},
+       //   "endWaypoint" : trip{"endWaypoint"},
+       // 	"mileage": trip{"mileage"},
+       // 	"id": trip{"id"},
+       // 	"endTime": endTime(trip),
+       // 	"startTime": trip{"startTime"}
+       // };
+      summary = trip.delete(["data"]);
       summary
     };
   
@@ -82,6 +84,8 @@ Manage trips. PDS is not well-suited to these operations
       end_time = end_time and
       time_split = time_split
       ;
+     event:send({"cid": vehicle:fleetChannel()}, "fuse", "updated_vehicle") with
+         attrs = trip_info.put(["keyvalue"], "last_trip_info");
     }
     fired {
       set ent:last_trip tid;
