@@ -87,9 +87,10 @@ Manage trips. PDS is not well-suited to these operations
       time_split = time_split
       ;
      event:send({"cid": vehicle:fleetChannel()}, "fuse", "updated_vehicle") with
-         attrs = trip_info
-	              .put(["vehicleId"], vid)
-		      .put(["keyvalue"], "last_trip_info");
+         attrs = {"keyvalue": "last_trip_info",
+	          "vehicleId": vid,
+	          "value": trip_info.encode()
+		 }
     }
     fired {
       set ent:last_trip tid;

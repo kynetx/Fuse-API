@@ -268,14 +268,9 @@ Application that manages the fleet
     rule update_vehicle_data {
       select when fuse updated_vehicle
       pre {
-
         vid = event:attr("vehicleId");
 	keyvalue = event:attr("keyvalue");
-        vehicle_info = event:attrs()
-	                 .delete(["keyvalue"])
-	                 .delete(["_async"])
- 			 .delete(["_generatedby"]);
-
+        vehicle_info = event:attr("value").decode();
       }
       {send_directive("Updated vehicle data for #{keyvalue} in fleet") with
          id = vid and
