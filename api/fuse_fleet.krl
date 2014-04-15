@@ -16,7 +16,7 @@ Application that manages the fleet
         use module b16x16 alias FuseInit
 
         sharing on
-        provides vehicleSummary, vehicleStatus
+        provides seeFleetData, vehicleSummary, vehicleStatus
     }
 
     global {
@@ -33,6 +33,10 @@ Application that manages the fleet
       // summaryByEci = function(eci) {
        
       // }
+
+      seeFleetData = function(){
+        ent:fleet
+      }
 
       vehicleSummary = function() {
         ent:fleet{["vehicle_info"]}
