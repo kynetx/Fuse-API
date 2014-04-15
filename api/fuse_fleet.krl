@@ -21,7 +21,7 @@ Application that manages the fleet
 
     global {
 
-     S3Bucket = FuseInit:S3Bucket;
+     S3Bucket = common:S3Bucket();
 
      vehicleChannels = function() {
      	// use the pico ID to look up the subscription to delete

@@ -12,7 +12,7 @@ Common definitions
     global {
 
 
-      S3Bucket = "k-fuse-01";
+      S3Bucket = function(){"k-fuse-01"};
 
       namespace = function(type) {
         meta_id = "fuse-meta";
