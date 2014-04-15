@@ -17,7 +17,7 @@ Manage trips. PDS is not well-suited to these operations
     use module b16x9 alias vehicle
 
 	
-    provides trips, lastTrip
+    provides S3Bucket, trips, lastTrip
   }
 
   global {

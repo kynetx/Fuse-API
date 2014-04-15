@@ -18,7 +18,7 @@ Fuse ruleset for a vehicle pico
       use module b16x11 alias carvoyant
       // don't load trips
 	
-      provides vin, vehicleInfo, lastTrip
+      provides vin, fleetChannel, vehicleInfo, lastTrip
 
     }
 
