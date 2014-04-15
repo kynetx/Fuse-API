@@ -292,6 +292,12 @@ Application that manages the fleet
 
     }
 
+    rule clear_fleet_cache {
+      select when fuse clear_fleet_cache
+      always {
+        clear ent:fleet
+      }
+    }
 
 
     // ---------- maintainance rules ----------
