@@ -69,6 +69,7 @@ Manage trips. PDS is not well-suited to these operations
   rule save_trip {
     select when fuse new_trip
     pre {
+      vid = carvoyant:vehicle_id();
 
       // accept either the trip as a set of attributes or just an ID that requires us to ping Carvoyant API
       incoming = event:attrs();
@@ -86,7 +87,9 @@ Manage trips. PDS is not well-suited to these operations
       time_split = time_split
       ;
      event:send({"cid": vehicle:fleetChannel()}, "fuse", "updated_vehicle") with
-         attrs = trip_info.put(["keyvalue"], "last_trip_info");
+         attrs = trip_info
+	              .put(["vehicleId"], vid)
+		      .put(["keyvalue"], "last_trip_info");
     }
     fired {
       set ent:last_trip tid;

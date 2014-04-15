@@ -332,7 +332,9 @@ Fuse ruleset for a vehicle pico
          values = vehicle_info and
 	 namespace = carvoyant_namespace;
        event:send({"cid": fleetChannel()}, "fuse", "updated_vehicle") with
-         attrs = vehicle_info.put(["keyvalue"], "vehicle_info");
+         attrs = vehicle_info
+                    .put(["vehicleId"], vid)
+	            .put(["keyvalue"], "vehicle_info");
       }
 
       always {
@@ -357,13 +359,16 @@ Fuse ruleset for a vehicle pico
     rule update_vehicle_status {
       select when fuse need_vehicle_status
       pre {
+        vid = carvoyant:vehicle_id();
         vehicle_status = carvoyant:vehicleStatus(); 
       }
       {send_directive("Updated vehicle status") with
          values = vehicle_status and
 	 namespace = carvoyant_namespace;
        event:send({"cid": fleetChannel()}, "fuse", "updated_vehicle") with
-         attrs = vehicle_status.put(["keyvalue"], "vehicle_status");
+         attrs = vehicle_status
+	              .put(["vehicleId"], vid)
+	              .put(["keyvalue"], "vehicle_status");
       }
 
       always {
@@ -382,6 +387,18 @@ Fuse ruleset for a vehicle pico
       }
 
     }
+
+
+    // ---------- maintainance rules ----------
+    rule catch_complete {
+      select when system send_complete
+        foreach event:attr('send_results').pick("$.result") setting (result)
+        send_directive("event:send status")
+	  with status = result{"status"}
+	   and reason = result{"reason"}
+	   and body = result{"body"}
+	  ;
+   }
 
 
 
