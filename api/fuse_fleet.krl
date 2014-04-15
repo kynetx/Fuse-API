@@ -269,10 +269,11 @@ Application that manages the fleet
       select when fuse updated_vehicle
       pre {
 
-        vid = event:attrs("vehicleId");
-	keyvalue = event:attrs("keyvalue");
+        vid = event:attr("vehicleId");
+	keyvalue = event:attr("keyvalue");
         vehicle_info = event:attrs()
 	                 .delete(["keyvalue"])
+	                 .delete(["_async"])
  			 .delete(["_generatedby"]);
 
       }
