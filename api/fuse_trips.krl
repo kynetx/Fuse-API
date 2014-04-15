@@ -13,6 +13,7 @@ Manage trips. PDS is not well-suited to these operations
 
     use module a169x625 alias CloudOS
     use module a169x676 alias pds
+    use module ba6x19 alias common
     use module b16x11 alias carvoyant
     use module b16x9 alias vehicle
 

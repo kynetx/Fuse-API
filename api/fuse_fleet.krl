@@ -34,10 +34,13 @@ Application that manages the fleet
        
       // }
 
-      // vehicleSummary = function() {
-      //   ecis = vehicleChannel();
-      //   ecis.map()
-      // }
+      vehicleSummary = function() {
+        ent:fleet{["vehicle_info"]}
+      }
+
+      vehicleStatus = function() {
+        ent:fleet{["vehicle_status"]}
+      }
 
     }
 
@@ -269,7 +272,7 @@ Application that manages the fleet
  			 .delete(["_generatedby"]);
 
       }
-      {send_directive("Updated vehicle Data for #{vid}") with
+      {send_directive("Updated vehicle data for #{keyvalue} in fleet") with
          id = vid and
          values = vehicle_info and
 	 keyvalue = keyvalue and
