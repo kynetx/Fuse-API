@@ -327,14 +327,15 @@ Fuse ruleset for a vehicle pico
                                                  | incoming;
 
       }
-      {send_directive("Updated vehicle Data for #{vid}") with
+      {send_directive("Updated vehicle data for #{vid}") with
          id = vid and
          values = vehicle_info and
 	 namespace = carvoyant_namespace;
        event:send({"cid": fleetChannel()}, "fuse", "updated_vehicle") with
-         attrs = vehicle_info
-                    .put(["vehicleId"], vid)
-	            .put(["keyvalue"], "vehicle_info");
+         attrs = {"keyvalue": "vehicle_info",
+	          "vehicleId": vid,
+	          "value": vehicle_info.encode()
+		 };
       }
 
       always {
@@ -363,12 +364,14 @@ Fuse ruleset for a vehicle pico
         vehicle_status = carvoyant:vehicleStatus(); 
       }
       {send_directive("Updated vehicle status") with
+         id = vid and
          values = vehicle_status and
 	 namespace = carvoyant_namespace;
        event:send({"cid": fleetChannel()}, "fuse", "updated_vehicle") with
-         attrs = vehicle_status
-	              .put(["vehicleId"], vid)
-	              .put(["keyvalue"], "vehicle_status");
+         attrs = {"keyvalue": "vehicle_status",
+	          "vehicleId": vid,
+	          "value": vehicle_status.encode()
+		 };
       }
 
       always {

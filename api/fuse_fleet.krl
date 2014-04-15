@@ -280,9 +280,7 @@ Application that manages the fleet
       }
 
       always {
-
         set ent:fleet{[keyvalue, vid]} vehicle_info
-
       }
 
     }
