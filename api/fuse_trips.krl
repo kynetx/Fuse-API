@@ -157,8 +157,8 @@ Manage trips. PDS is not well-suited to these operations
       start =reducePrecision(trip{"startWaypoint"});
       end = reducePrecision(trip{"endWaypoint"});
     }
-    if(not trip{"startWaypoint"}.isnull() && not trip{"endWaypoint"}.isnull()) then {
-      send_directive("Named trip") with
+//    if(not trip{"startWaypoint"}.isnull() && not trip{"endWaypoint"}.isnull()) then {
+  {    send_directive("Named trip") with
         tripId = tid and
         tripName = tname and
 	trips = ent:trip_summaries;
