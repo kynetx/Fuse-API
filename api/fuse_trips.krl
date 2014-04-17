@@ -94,6 +94,8 @@ Manage trips. PDS is not well-suited to these operations
       summary = trip.delete(["data"]);
       summary
     };
+
+    mkTid = function(tid){"T"+tid};
   
   }
 
@@ -116,7 +118,7 @@ Manage trips. PDS is not well-suited to these operations
       incoming = event:attrs();
       trip_info = incoming{"mileage"}.isnull() => carvoyant:tripInfo(incoming{"tripId"})
                                                 | incoming;
-      tid = trip_info{"id"};
+      tid = mkTid(trip_info{"id"});
       end_time = endTime(trip_info);
       trip_info = trip_info.put(["endTime"], end_time);
       trip_summary = tripSummary(trip_info);
@@ -151,7 +153,7 @@ Manage trips. PDS is not well-suited to these operations
   rule name_trip {
     select when fuse name_trip
     pre {
-      tid = event:attr("tripId");
+      tid = mktid(event:attr("tripId"));
       tname = event:attr("tripName");	
       trip = ent:trip_summaries{tid} || {};
       start =reducePrecision(trip{"startWaypoint"});
