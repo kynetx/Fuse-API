@@ -163,7 +163,8 @@ Manage trips. PDS is not well-suited to these operations
   {    send_directive("Named trip") with
         tripId = tid and
         tripName = tname and
-	trips = ent:trip_summaries and
+	start = start and
+	end = end and
 	trip = trip
 	;
 	
