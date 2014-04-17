@@ -96,6 +96,7 @@ Manage trips. PDS is not well-suited to these operations
     };
 
     mkTid = function(tid){"T"+tid};
+    mkCarvoyantTid = function(tid){tid.extract(re/T(\d+)/).head()};
   
   }
 
@@ -153,7 +154,8 @@ Manage trips. PDS is not well-suited to these operations
   rule name_trip {
     select when fuse name_trip
     pre {
-      tid = mkTid(event:attr("tripId"));
+      carvoyant_tid = event:attr("tripId");
+      tid = mkTid(carvoyant_tid);
       tname = event:attr("tripName");	
       trip = ent:trip_summaries{tid} || {};
       start =reducePrecision(trip{"startWaypoint"});
@@ -162,6 +164,7 @@ Manage trips. PDS is not well-suited to these operations
 //    if(not trip{"startWaypoint"}.isnull() && not trip{"endWaypoint"}.isnull()) then {
   {    send_directive("Named trip") with
         tripId = tid and
+	anotherId = mkCarvoyantTid(tid) and
         tripName = tname and
 	start = start and
 	end = end and
@@ -170,7 +173,7 @@ Manage trips. PDS is not well-suited to these operations
 	
     }
     fired {
-      set ent:trip_names{[end, start]} {"tripId" : tid, "tripName": tname}
+      set ent:trip_names{[end, start]} {"tripId" : carvoyant_tid, "tripName": tname}
     } else {
       log "===========================================================================";
       log "Bad trip: " + trip.encode();
