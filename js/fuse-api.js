@@ -86,7 +86,7 @@
 		});
 	    } else {
 		cb(Fuse.fleet_eci);
-		return null;
+		return Fuse.fleet_eci;
 	    }
 	},
 
@@ -107,7 +107,7 @@
 		}
 	    } else {
 		cb(Fuse.vehicle_ecis);
-		return null;
+		return Fuse.vehicle_ecis;
 	    }
 	},
 

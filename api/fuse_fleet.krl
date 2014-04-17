@@ -28,7 +28,8 @@ Application that manages the fleet
         picos = CloudOS:picoList() || []; // tolerate lookup failures
         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle")
                     || [];   
-        vehicle_ecis_by_name = vehicle_ecis.collect(function(x){x{"channelName"}});
+        // collect returns arrays as values, and we only have one, so map head()
+        vehicle_ecis_by_name = vehicle_ecis.collect(function(x){x{"channelName"}}).map(function(k,v){v.head()});
 	res = picos.map(function(k,p){
 	  id = p{"id"};
 	  p.put(["channel"],vehicle_ecis_by_name{["id","eventChannel"]});
