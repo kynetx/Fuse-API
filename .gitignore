@@ -2,7 +2,7 @@ CloudOS-config.js
 api/test_config.yml
 
 *.orig
-
+fuse-api-test.js
 
 *.chls
 *.csproj

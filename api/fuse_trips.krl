@@ -25,7 +25,7 @@ Manage trips. PDS is not well-suited to these operations
 
     // external decls
     trips = function(){
-      ent:trips
+      ent:trips_by_id
     };
 
     lastTrip = function(with_data){

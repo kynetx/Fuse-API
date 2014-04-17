@@ -393,6 +393,7 @@ Fuse ruleset for a vehicle pico
 
 
     // ---------- maintainance rules ----------
+    // doesn't do anything since the system forces event:send() to async mode
     rule catch_complete {
       select when system send_complete
         foreach event:attr('send_results').pick("$.result") setting (result)
