@@ -33,6 +33,43 @@ Manage trips. PDS is not well-suited to these operations
                  | ent:trip_summaries(ent:last_trip)
     };
 
+
+    waypointToArray = function(wp) {
+      wp.typeof() eq "hash" => [wp{"latitude"}, wp{"longitude"}]
+                             | wp.split(re/,/)
+    };
+
+    // find latlong within 365 feet
+    within_365 = function(latlong) {
+      ll_array = waypointToArray(latlong);
+      // 1 decimal place - 7 miles 
+      // 2 decimal places - 0.7 miles 
+      // 3 decimal places - 365 feet 
+      // 4 decimal places - 37 feet 
+      ll_array.map(function(x){x.sprintf("%.3f")}).join(",");
+    };
+
+
+    // find if two points, a and b, are within radius distance in meters
+    close = function(a, b, radius) {
+      a_array = waypointToArray(a);
+      b_array = waypointToArray(b);
+
+      r90   = math:pi()/2;      
+      rEm   = 6378100;         // radius of the Earth in meters
+      rEf   = 20925524.9;      // radius of Earth in feet
+  
+      // convert co-ordinates to radians
+      rlata = math:deg2rad(a_array[0]);
+      rlnga = math:deg2rad(a_array[1]);
+      rlatb = math:deg2rad(b_array[0]);
+      rlngb = math:deg2rad(b_array[1]);
+ 
+      // distance between two co-ordinates on earth in meters
+      dE = math:great_circle_distance(rlnga, r90 - rlata, rlngb, r90 - rlatb, rEm);
+      dE < radius
+    };
+
     // internal decls
     endTime = function(trip) {
       trip{"endTime"} || 
@@ -51,7 +88,6 @@ Manage trips. PDS is not well-suited to these operations
        // 	"startTime": trip{"startTime"}
        // };
       summary = trip.delete(["data"]);
-      a = trip.klog(">>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<");
       summary
     };
   
