@@ -51,6 +51,7 @@ Manage trips. PDS is not well-suited to these operations
        // 	"startTime": trip{"startTime"}
        // };
       summary = trip.delete(["data"]);
+      a = trip.klog(">>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<");
       summary
     };
   
@@ -77,6 +78,7 @@ Manage trips. PDS is not well-suited to these operations
                                                 | incoming;
       tid = trip_info{"id"};
       end_time = endTime(trip_info);
+      trip_info = trip_info.put(["endTime"], end_time);
       trip_summary = tripSummary(trip_info);
       time_split = time:strftime(end_time, "%Y_:%m_:%d_:%H_:%M%S_").split(re/:/);
       week_number = time:strftime(end_time, "%U_")
@@ -84,7 +86,8 @@ Manage trips. PDS is not well-suited to these operations
     if(end_time neq "ERROR_NO_TIMESTAMP_AVAILABLE") then
     {send_directive("Adding trip #{tid}") with 
       end_time = end_time and
-      time_split = time_split
+      time_split = time_split and
+      trip_summary = trip_summary
       ;
      event:send({"cid": vehicle:fleetChannel()}, "fuse", "updated_vehicle") with
          attrs = {"keyvalue": "last_trip_info",
