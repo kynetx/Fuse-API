@@ -153,7 +153,7 @@ Manage trips. PDS is not well-suited to these operations
   rule name_trip {
     select when fuse name_trip
     pre {
-      tid = mktid(event:attr("tripId"));
+      tid = mkTid(event:attr("tripId"));
       tname = event:attr("tripName");	
       trip = ent:trip_summaries{tid} || {};
       start =reducePrecision(trip{"startWaypoint"});
