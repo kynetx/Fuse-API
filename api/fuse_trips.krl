@@ -98,7 +98,7 @@ Manage trips. PDS is not well-suited to these operations
     fired {
       set ent:last_trip tid;
       set ent:trips_by_id{tid} trip_info;
-      set ent:trip_summaires{tid} trip_summary;
+      set ent:trip_summaries{tid} trip_summary;
       // set ent:trips_by_week{week_number} = (ent:trips_by_week{week_number} || []).append(tid);
     } else {
       log ">>>>>>>>>>>>>>>>>>>>>>>>> save_trip failed <<<<<<<<<<<<<<<<<<<<<<<<<";
