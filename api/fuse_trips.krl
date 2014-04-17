@@ -165,6 +165,9 @@ Manage trips. PDS is not well-suited to these operations
     }
     fired {
       set ent:trip_names{[end, start]} {"tripId" : tid, "tripName": tname}
+    } else {
+      log "===========================================================================";
+      log "Bad trip: " + trip.encode();
     }
   }
 
