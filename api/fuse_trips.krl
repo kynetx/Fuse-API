@@ -153,11 +153,14 @@ Manage trips. PDS is not well-suited to these operations
     pre {
       tid = event:attr("tripId");
       tname = event:attr("tripName");	
-      trip = ent:trip_summaris{tid};
+      trip = ent:trip_summaries{tid};
       start =reducePrecision(trip{"startWaypoint"});
       end = reducePrecision(trip{"endWaypoint"});
     }
-    always {
+    if(not trip{"startWaypoint"}.isnull() && not trip{"endWaypoint"}.isnull()) then {
+      noop();
+    }
+    fired {
       set ent:trip_names{[end, start]} {"tripId" : tid, "tripName": tname}
     }
   }
