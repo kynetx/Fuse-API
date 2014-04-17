@@ -15,10 +15,29 @@
 	    production: false
         },
 
-        owner_rid: function(){return this.defaults.production ? "b16x16" : "b16x16";},
-        fleet_rid: function(){return this.defaults.production ? "b16x17" : "b16x17";},
+	get_rid : function(name) {
 
-	fleet_eci: "", // we'll retrieve the fleet ECI later and put it here for use...
+	    rids = {
+		"owner": {"prod": "b16x16",
+			  "dev":  "b16x16"
+			 },
+		"fleet": {"prod": "b16x17",
+			  "dev":  "b16x17"
+			 },
+		"vehicle": {"prod": "b16x9",
+			    "dev":  "b16x9"
+			   },
+		"trips": {"prod": "b16x18",
+			  "dev":  "b16x18"
+			 }
+	    };
+
+	    return this.defaults.production ? rids[name].prod :  rids[name].dev;
+	},
+
+	// we'll retrieve the fleet and vehicle ECIs later and put them here...
+	fleet_eci: "", 
+	vehicle_ecis: "",
 
         init: function(cb)
         {
@@ -28,10 +47,10 @@
 		Fuse.get_profile(),
 		Fuse.fleet_channel()
 	    ).done(function(profile, eci){
-		Fuse.log("Done initializing...");
 		Fuse.log("Stored fleet channel", eci[0]);
 		Fuse.log("Retrieved user profile", profile[0]);
 		cb(profile[0], eci[0]);
+		Fuse.log("Done initializing...");
 	    }).fail(function(res){
 		Fuse.log("Initialization failed...", res);
 	    });
@@ -60,13 +79,34 @@
 	    cb = cb || function(){};
 	    if (typeof Fuse.fleet_eci === "undefined" || Fuse.fleet_eci === "") {
                 Fuse.log("Retrieving fleet channel");
-		return CloudOS.skyCloud(this.owner_rid(), "fleetChannel", {}, function(json) {
+		return CloudOS.skyCloud(Fuse.get_rid("owner"), "fleetChannel", {}, function(json) {
 		    Fuse.fleet_eci = json.cid;
 		    Fuse.log("Retrieved fleet channel", json);
 		    cb(json);
 		});
 	    } else {
 		cb(Fuse.fleet_eci);
+		return null;
+	    }
+	},
+
+	vehicle_channels: function(cb){
+	    cb = cb || function(){};
+	    if (typeof Fuse.vehicle_ecis === "undefined" || Fuse.vehicle_ecis === "") {
+                Fuse.log("Retrieving vehicle channels");
+		if(Fuse.fleet_eci !== "none") {
+		    return CloudOS.skyCloud(Fuse.get_rid("fleet"), "vehicleChannels", {}, function(json) {
+			Fuse.vehicle_ecis = json;
+			Fuse.log("Retrieve vehicle channels", json);
+			cb(json);
+  		       },
+		       {"eci": Fuse.fleet_eci});
+		} else {
+		    Fuse.log("fleet_eci is undefined, you must get the fleet channel first");
+		    return null;
+		}
+	    } else {
+		cb(Fuse.vehicle_ecis);
 		return null;
 	    }
 	},

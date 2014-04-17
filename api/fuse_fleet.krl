@@ -16,7 +16,7 @@ Application that manages the fleet
         use module b16x16 alias FuseInit
 
         sharing on
-        provides seeFleetData, vehicleSummary, vehicleStatus
+        provides vehicleChannels, seeFleetData, vehicleSummary, vehicleStatus
     }
 
     global {

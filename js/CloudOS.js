@@ -4,130 +4,144 @@
 
     // ------------------------------------------------------------------------
 
-    CloudOS.sessionToken = "none";
+    CloudOS.defaultECI = "none";
+
+    var mkEci = function(cid) {
+	var res = cid || CloudOS.defaultECI;
+        if (res === "none") {
+	    throw "No CloudOS event channel identifier (ECI) defined";
+        }
+	return res;
+    };
+
+    var mkEsl = function(parts) {
+        if (CloudOS.host === "none") {
+            throw "No CloudOS host defined";
+        }
+	parts.unshift(CloudOS.host);
+	var res = 'https://'+ parts.join("/");
+	return res;
+    };
 
     // ------------------------------------------------------------------------
     // Raise Sky Event
-    CloudOS.raiseEvent = function(eventDomain, eventType, eventAttributes, eventParameters, postFunction)
+    CloudOS.raiseEvent = function(eventDomain, eventType, eventAttributes, eventParameters, postFunction, options)
     {
+	try {
 
+	    options = options || {};
 
-        if (CloudOS.host === "none") {
-            console.error("No CloudOS host defined");
-            return;
-        }
+	    var eci = mkEci(options.eci);
+            var eid = Math.floor(Math.random() * 9999999);
+            var esl = mkEsl(['sky/event',
+			     eci,
+			     eid,
+			     eventDomain,
+			     eventType
+			    ]);
 
-        if (CloudOS.sessionToken === "none") {
-            console.error("No CloudOS session token defined");
-            return;
-        }
+            if (typeof eventParameters !== "undefined" &&
+		eventParameters !== null &&
+		eventParameters !== ""
+	       ) {
+		   console.log("Attaching event parameters ", eventParameters);
+		   var param_string = $.param(eventParameters);
+		   if (param_string.length > 0) {
+                       esl = esl + "?" + param_string;
+		   }
+               }
 
+            console.log("CloudOS.raise ESL: ", esl);
+            console.log("event attributes: ", eventAttributes);
 
-
-        var eid = Math.floor(Math.random() * 9999999);
-        var esl = 'https://' + CloudOS.host + '/sky/event/' +
-            CloudOS.sessionToken + '/' + eid + '/' +
-	     eventDomain + '/' + eventType;
-
-        if (typeof eventParameters !== "undefined" &&
-	       eventParameters !== null &&
-	       eventParameters !== ""
-	      ) {
-            console.log("Attaching event parameters ", eventParameters);
-            var param_string = $.param(eventParameters);
-            if (param_string.length > 0) {
-                esl = esl + "?" + param_string;
-            }
-        }
-
-        console.log("CloudOS.raise ESL: ", esl);
-        console.log("event attributes: ", eventAttributes);
-
-        return $.ajax({
-            type: 'POST',
-            url: esl,
-            data: $.param(eventAttributes),
-            dataType: 'json',
-            headers: { 'Kobj-Session': CloudOS.sessionToken }, // not sure needed since eci in URL
-            success: postFunction,
-            error: function(res) { console.error(res) }
-        });
+            return $.ajax({
+		type: 'POST',
+		url: esl,
+		data: $.param(eventAttributes),
+		dataType: 'json',
+		headers: { 'Kobj-Session': eci }, // not sure needed since eci in URL
+		success: postFunction,
+		error: options.errorFunc || function(res) { console.error(res) }
+            });
+	} catch(error) {
+	    console.error("[raise]", error);
+	    return null;
+	}
     };
 
-    CloudOS.skyCloud = function(Module, FuncName, parameters, getSuccess, getError, repeats)
+    CloudOS.skyCloud = function(module, func_name, parameters, getSuccess, options)
     {
+	try {
 
-	var retries = 2;
+	    var retries = 2;
+	    
+	    options = options || {};
 
-        if (typeof repeats !== "undefined") {
-            console.warn("This is a repeated request: ", repeats);
-            if (repeats > retries) {
-                console.error("terminating repeating request due to consistent failure.");
-		if (typeof getError === "function") {
-                    getError();
-		    return;
-		} else {
-		    // no error function defined...
-                    console.error("Something went wrong! If the problem persists, contact the kynetx development team.");
+            if (typeof options.repeats !== "undefined") {
+		console.warn("This is a repeated request: ", options.repeats);
+		if (options.repeats > retries) {
+                    throw "terminating repeating request due to consistent failure.";
 		}
-                return;
             }
-        }
 
-        if (CloudOS.host === "none") {
-            console.error("No CloudOS host defined");
-            return;
-        }
+	    var eci = mkEci(options.eci);
 
-        if (CloudOS.sessionToken === "none") {
-            console.error("No CloudOS session token defined");
-            return;
-        }
+            var esl = mkEsl(['sky/cloud',
+			     module,
+			     func_name
+			    ]);
 
-        var esl = 'https://' +
-                   CloudOS.host +
-                   '/sky/cloud/' +
-	               Module + '/' + FuncName;
+            $.extend(parameters, { "_eci": eci });
 
-        $.extend(parameters, { "_eci": CloudOS.sessionToken });
+            // console.log("Attaching event parameters ", parameters);
+            esl = esl + "?" + $.param(parameters);
 
-        // console.log("Attaching event parameters ", parameters);
-        esl = esl + "?" + $.param(parameters);
+            var process_error = function(res)
+            {
+		console.error("skyCloud Server Error with esl ", esl, res);
+		if (typeof options.errorFunc === "function") {
+                    options.errorFunc(res);
+		}
+            };
 
-        var process_error = function(res)
-        {
-            console.error("skyCloud Server Error with esl ", esl, res);
-            if (typeof getError === "function") {
-                getError(res);
-            }
-        };
+            var process_result = function(res)
+            {
+		//        console.log("Seeing res ", res, " for ", esl);
+		if (typeof res.skyCloudError === 'undefined') {
+                    getSuccess(res);
+		} else {
+                    console.error("skyCloud Error (", res.skyCloudError, "): ", res.skyCloudErrorMsg);
+                    if (!!res.httpStatus && 
+			!!res.httpStatus.code && 
+			(parseInt(res.httpStatus.code) === 400 || parseInt(res.httpStatus.code) === 500)) 
+		    {
+			console.error("The request failed due to an ECI error. Going to repeat the request.");
+			var repeat_num = (typeof options.repeats !== "undefined") ? ++options.repeats : 0;
+			options.repeats = repeat_num;
+			// I don't think this will support promises; not sure how to fix
+			CloudOS.skyCloud(module, func_name, parameters, getSuccess, options);
+                    }
+		}
+            };
 
-        var process_result = function(res)
-        {
-            //        console.log("Seeing res ", res, " for ", esl);
-            if (typeof res.skyCloudError === 'undefined') {
-                getSuccess(res);
-            } else {
-                console.error("skyCloud Error (", res.skyCloudError, "): ", res.skyCloudErrorMsg);
-                if (!!res.httpStatus && !!res.httpStatus.code && (parseInt(res.httpStatus.code) === 400 || parseInt(res.httpStatus.code) === 500)) {
-                    console.error("The request failed due to an ECI error. Going to repeat the request.");
-                    var repeat_num = (typeof repeats !== "undefined") ? ++repeats : 0;
-                    CloudOS.skyCloud(Module, FuncName, parameters, getSuccess, getError, repeat_num);
-                }
-            }
-        };
+            console.log("sky cloud call to ", module+':'+func_name, " on ", esl, " with token ", eci);
 
-        console.log("sky cloud call to ", FuncName, " on ", esl, " with token ", CloudOS.sessionToken);
-
-        return $.ajax({
-            type: 'GET',
-            url: esl,
-            dataType: 'json',
-            // try this as an explicit argument
-            //		headers: {'Kobj-Session' : CloudOS.sessionToken},
-            success: process_result
-            // error: process_error
-        });
+            return $.ajax({
+		type: 'GET',
+		url: esl,
+		dataType: 'json',
+		// try this as an explicit argument
+		//		headers: {'Kobj-Session' : eci},
+		success: process_result
+		// error: process_error
+            });
+	} catch(error) {
+	    console.error("[skyCloud]", error);
+	    if (typeof options.errorFunc === "function") {
+		options.errorFunc();
+	    } 
+	    return null;
+	}
     };
 
 
@@ -245,56 +259,22 @@
     CloudOS.login = function(username, password, success, failure) {
 
 
-        if (typeof CloudOS.host === "undefined") {
-	    console.error("CloudOS.host undefined. Configure CloudOS.js in CloudOS-config.js; failing...");
-	    return;
+	var parameters = {"email": username, "pass": password};
+
+        if (typeof CloudOS.anonECI === "undefined") {
+	    console.error("CloudOS.anonECI undefined. Configure CloudOS.js in CloudOS-config.js; failing...");
+	    return null;
         }
 
-	var esl = 'https://' + CloudOS.host + '/sky/cloud/cloudos/cloudAuth';
+	return CloudOS.skyCloud("cloudos",
+				"cloudAuth", 
+				parameters, 
+				function(res){CloudOS.saveSession(res.token); success(res);}, 
+				{eci: CloudOS.anonECI,
+				 errorFunc: failure
+				}
+			       );
 
-        if (typeof CloudOS.anonSessionToken === "undefined") {
-	    console.error("CloudOS.anonSessionToken undefined. Configure CloudOS.js in CloudOS-config.js; failing...");
-	    return;
-        }
-
-	var parameters = {"email": username, "pass": password, "_eci": CloudOS.anonSessionToken };
-
-        console.log("Attaching event parameters ", parameters);
-        esl = esl + "?" + $.param(parameters);
-
-        var process_error = function(res)
-        {
-            console.error("skyCloud Server Error with esl ", esl, res);
-            if (typeof failure === "function") {
-                failure(res);
-            }
-        };
-
-        var process_result = function(res)
-        {
-            //        console.log("Seeing res ", res, " for ", esl);
-            if (typeof res.skyCloudError === 'undefined') {
-		if(res.status) { // got back good _LOGIN eci
-		    CloudOS.saveSession(res.token);
-		}
-                success(res);
-            } else {
-                console.error("skyCloud Error (", res.skyCloudError, "): ", res.skyCloudErrorMsg);
-		process_error(res);
-            }
-        };
-
-        console.log("sky cloud auth call to ", esl);
-
-        return $.ajax({
-            type: 'GET',
-            url: esl,
-            dataType: 'json',
-            // try this as an explicit argument
-            //		headers: {'Kobj-Session' : CloudOS.sessionToken},
-            success: process_result,
-            error: process_error
-        });
 
     };
 
@@ -380,45 +360,45 @@
 
         console.log("Retrieving session ", SessionCookie);
         if (SessionCookie != "undefined") {
-            CloudOS.sessionToken = SessionCookie;
+            CloudOS.defaultECI = SessionCookie;
         } else {
-            CloudOS.sessionToken = "none";
+            CloudOS.defaultECI = "none";
         }
-	return CloudOS.sessionToken;
+	return CloudOS.defaultECI;
     };
 
     // ------------------------------------------------------------------------
     CloudOS.saveSession = function(Session_ECI)
     {
         console.log("Saving session for ", Session_ECI);
-        CloudOS.sessionToken = Session_ECI;
+        CloudOS.defaultECI = Session_ECI;
         kookie_create(Session_ECI);
     };
     // ------------------------------------------------------------------------
     CloudOS.removeSession = function(hard_reset)
     {
-        console.log("Removing session ", CloudOS.sessionToken);
+        console.log("Removing session ", CloudOS.defaultECI);
         if (hard_reset) {
             var cache_breaker = Math.floor(Math.random() * 9999999);
             var reset_url = 'https://' + CloudOS.login_server + "/login/logout?" + cache_breaker;
             $.ajax({
                 type: 'POST',
                 url: reset_url,
-                headers: { 'Kobj-Session': CloudOS.sessionToken },
+                headers: { 'Kobj-Session': CloudOS.defaultECI },
                 success: function(json)
                 {
                     console.log("Hard reset on " + CloudOS.login_server + " complete");
                 }
             });
         }
-        CloudOS.sessionToken = "none";
+        CloudOS.defaultECI = "none";
         kookie_delete();
     };
 
     // ------------------------------------------------------------------------
     CloudOS.authenticatedSession = function()
     {
-        var authd = CloudOS.sessionToken != "none";
+        var authd = CloudOS.defaultECI != "none";
         if (authd) {
             console.log("Authenicated session");
         } else {
