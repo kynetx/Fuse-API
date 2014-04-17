@@ -28,11 +28,11 @@ Application that manages the fleet
         picos = CloudOS:picoList() || []; // tolerate lookup failures
         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle")
                     || [];   
-        vehicle_ecis_by_name = vehicle_ecis.collect(function(x){x{"channelName"}}).klog(">>>>>>>>>> <<<<<<<<<<<<<<");
+        vehicle_ecis_by_name = vehicle_ecis.collect(function(x){x{"channelName"}});
 	res = picos.map(function(k,p){
 	  id = p{"id"};
-	  p.put(["channel"],vehicle_ecis_by_name{id})
-	}).values();
+	  p.put(["channel"],vehicle_ecis_by_name{["id","eventChannel"]});
+	}).values().klog(">>>>>>>>>> <<<<<<<<<<<<<<");
 	res
      };
 
