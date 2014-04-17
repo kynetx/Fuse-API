@@ -161,7 +161,10 @@ Manage trips. PDS is not well-suited to these operations
   {    send_directive("Named trip") with
         tripId = tid and
         tripName = tname and
-	trips = ent:trip_summaries;
+	trips = ent:trip_summaries and
+	trip = trip
+	;
+	
     }
     fired {
       set ent:trip_names{[end, start]} {"tripId" : tid, "tripName": tname}
