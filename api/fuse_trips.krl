@@ -18,7 +18,7 @@ Manage trips. PDS is not well-suited to these operations
     use module b16x9 alias vehicle
 
 	
-    provides trips, lastTrip
+    provides trips, lastTrip, tripName
   }
 
   global {
@@ -33,6 +33,9 @@ Manage trips. PDS is not well-suited to these operations
                  | ent:trip_summaries(ent:last_trip)
     };
 
+    tripName = function(start, end) {
+      ent:trip_names{[reducePrecision(end), reducePrecision(start)]}
+    }
 
     waypointToArray = function(wp) {
       wp.typeof() eq "hash" => [wp{"latitude"}, wp{"longitude"}]
@@ -40,13 +43,14 @@ Manage trips. PDS is not well-suited to these operations
     };
 
     // find latlong within 365 feet
-    within_365 = function(latlong) {
-      ll_array = waypointToArray(latlong);
+    reducePrecision = function(a) {
+      a_array = waypointToArray(a);
       // 1 decimal place - 7 miles 
       // 2 decimal places - 0.7 miles 
       // 3 decimal places - 365 feet 
       // 4 decimal places - 37 feet 
-      ll_array.map(function(x){x.sprintf("%.3f")}).join(",");
+      nearest = 1000; // 3 decimal places
+      a_array.map(function(n){math:round(n * nearest)/nearest}).join(",");
     };
 
 
@@ -143,5 +147,19 @@ Manage trips. PDS is not well-suited to these operations
   }
   // daily summaries (TZs, ugh)
   // trip summaries (easier)
+
+  rule name_trip {
+    select when fuse name_trip
+    pre {
+      tid = event:attr("tripId");
+      tname = event:attr("tripName");	
+      trip = ent:trip_summaris{tid};
+      start =reducePrecision(trip{"startWaypoint"});
+      end = reducePrecision(trip{"endWaypoint"});
+    }
+    always {
+      set ent:trip_names{[end, start]} {"tripId" : tid, "tripName": tname}
+    }
+  }
 
 }
