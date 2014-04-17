@@ -24,10 +24,16 @@ Application that manages the fleet
      S3Bucket = common:S3Bucket();
 
      vehicleChannels = function() {
-     	// use the pico ID to look up the subscription to delete
+
+        picos = CloudOS:picoList() || []; // tolerate lookup failures
         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle")
-                    || [];   // tolerate lookup failures
-        vehicle_ecis
+                    || [];   
+        vehicle_ecis_by_name = vehicle_ecis.collect(function(x){x{"channelName"}}).klog(">>>>>>>>>> <<<<<<<<<<<<<<");
+	res = picos.map(function(k,p){
+	  id = p{"id"};
+	  p.put(["channel"],vehicle_ecis_by_name{id})
+	}).values();
+	res
      };
 
       // summaryByEci = function(eci) {
@@ -190,7 +196,7 @@ Application that manages the fleet
              and picoId = pico_id
              and _api = "sky";
 
-	  // subscribe to the new fleet
+	  // subscribe to the new vehicle
           raise cloudos event "subscribe"
             with namespace = common:namespace()
              and  relationship = "Vehicle-Fleet"
