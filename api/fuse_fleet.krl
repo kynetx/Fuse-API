@@ -282,7 +282,7 @@ Application that manages the fleet
 	keyvalue = event:attr("keyvalue");
         vehicle_info = event:attr("value").decode();
 
-	vehicle_channel = findBackchannel(meta:eci).klog(">>>>>>>> vehicle channel <<<<<<<<<<<<<");
+	vehicle_channel = findBackchannel(meta:eci()).klog(">>>>>>>> vehicle channel <<<<<<<<<<<<<");
 
 
       }
