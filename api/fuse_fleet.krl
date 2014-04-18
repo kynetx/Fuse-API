@@ -21,25 +21,22 @@ Application that manages the fleet
 
     global {
 
-     S3Bucket = common:S3Bucket();
+      S3Bucket = common:S3Bucket();
 
-     vehicleChannels = function() {
+      // this is complicated cause we want to return the subscription channel for the vehicle, not the _LOGIN channel
+      vehicleChannels = function() {
 
-        picos = CloudOS:picoList() || []; // tolerate lookup failures
-        vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle")
-                    || [];   
-        // collect returns arrays as values, and we only have one, so map head()
-        vehicle_ecis_by_name = vehicle_ecis.collect(function(x){x{"channelName"}}).map(function(k,v){v.head()}).klog(">>>>>>>>>> <<<<<<<<<<<<<<");
-	res = picos.map(function(k,p){
-	  id = p{"id"};
-	  p.put(["channel"],vehicle_ecis_by_name{[id,"eventChannel"]});
-	}).values().klog(">>>>>>>>>> <<<<<<<<<<<<<<");
-	res
-     };
-
-      // summaryByEci = function(eci) {
-       
-      // }
+         picos = CloudOS:picoList() || []; // tolerate lookup failures
+         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle")
+                     || [];   
+         // collect returns arrays as values, and we only have one, so map head()
+         vehicle_ecis_by_name = vehicle_ecis.collect(function(x){x{"channelName"}}).map(function(k,v){v.head()});
+	 res = picos.map(function(k,p){
+	   id = p{"id"};
+	   p.put(["channel"],vehicle_ecis_by_name{[id,"eventChannel"]});
+	 }).values();
+	 res
+      };
 
       seeFleetData = function(){
         ent:fleet
@@ -51,6 +48,12 @@ Application that manages the fleet
 
       vehicleStatus = function() {
         ent:fleet{["vehicle_status"]}
+      }
+
+      findBackchannel = function (bc) {
+        vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle");
+	vehicle_ecis_by_event_channel = vehicle_ecis.collect(function(x){x{"eventChannel"}}).map(function(k,v){v.head()});
+	vehicle_ecis_by_event_channel{bc}
       }
 
     }
@@ -278,12 +281,18 @@ Application that manages the fleet
         vid = event:attr("vehicleId");
 	keyvalue = event:attr("keyvalue");
         vehicle_info = event:attr("value").decode();
+
+	vehicle_channel = findBackchannel(meta:eci).klog(">>>>>>>> vehicle channel <<<<<<<<<<<<<");
+
+
       }
       {send_directive("Updated vehicle data for #{keyvalue} in fleet") with
          id = vid and
          values = vehicle_info and
 	 keyvalue = keyvalue and
-	 namespace = carvoyant_namespace;
+	 namespace = carvoyant_namespace and 
+	 vehicle_channel = vehicle_channel
+	 ;
       }
 
       always {

@@ -32,6 +32,10 @@ Fuse ruleset for a vehicle pico
           CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel");
       };
 
+      myIncomingChannel = function () {
+          CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.backChannel");
+      };
+
       vin = function() {
         this_vin = vehicle_info().pick("$.vin");
 
@@ -55,7 +59,7 @@ Fuse ruleset for a vehicle pico
       }
 
  // not using
-        initVehicle = defaction(vehicle_channel, vehicle_details) {
+      initVehicle = defaction(vehicle_channel, vehicle_details) {
             vehicle = {
                 "cid": vehicle_channel
             };
@@ -101,14 +105,15 @@ Fuse ruleset for a vehicle pico
     }
 
     // ---------- initialization ----------
-    rule initialize_vehicle_pico {
-        select when fuse vehicle_uninitialized
+    rule setup_vehicle_pico {
+        select when fuse new_vehicle
 
 	pre {
 	   name = event:attr("name");
 	   photo = event:attr("photo");
            my_fleet = event:attr("fleet_channel");
            my_schema = event:attr("schema");
+	   device_id = event:attr("device_id");
 
 	   // need to take stuff from event attrs and fill our schema
 
@@ -165,11 +170,11 @@ Fuse ruleset for a vehicle pico
             attributes
               {"apiKey": keys:carvoyant_test("apiKey") || "no API key available",
                "secToken": keys:carvoyant_test("secToken") || "no security token available",
-	       "deviceId" : "C201300398",
+	       "deviceId" : device_id,
 	       "_api": "sky"
               };
 
-	  raise fuse event new_vehicle 
+	  raise fuse event new_vehicle_added 
             attributes
 	      {"vehicle_name": name,
 	       "_api": "sky"
@@ -179,7 +184,8 @@ Fuse ruleset for a vehicle pico
 
     // meant to generally route events to owner. Extend eventex to choose what gets routed
     rule route_to_owner {
-      select when fuse new_vehicle
+      select when fuse new_vehicle_added
+               or fuse vehicle_initialzed
       pre {
         owner = fleetChannel();
       }
@@ -251,7 +257,7 @@ Fuse ruleset for a vehicle pico
       send_directive("Updating config for vehicle")
          with new_config = event:attrs();
       always {
-        raise pds event updated_data_available
+        raise pds event new_data_available
 	  attributes {
 	    "namespace": carvoyant_namespace,
 	    "keyvalue": "config",
@@ -261,6 +267,28 @@ Fuse ruleset for a vehicle pico
             "_api": "sky"
  		   
 	  };
+      }
+    }
+
+    rule initialize_vehicle {
+      select when fuse vehicle_uninitialized
+      pre {
+        config = pds:get_item(carvoyant_namespace, "config");
+      }
+      if (not config{"deviceId"}.isnull() ) then {
+        send_directive("initializing vehicle " + config{"deviceId"});
+      }
+      fired {
+        raise fuse event need_initial_carvoyant_subscriptions;
+
+	raise fuse event need_vehicle_data;
+
+	raise fuse event need_vehicle_status;
+
+	raise fuse event vehicle_initialized;
+      } else {
+        log ">>>>>>>>>>>>>>>>>>>>>>>>> vehicle not configure <<<<<<<<<<<<<<<<<<<<<<<<<";
+        raise fuse event vehicle_not_configured ;
       }
     }
 
@@ -290,7 +318,7 @@ Fuse ruleset for a vehicle pico
 
     // ---------- vehicle data rules ----------
 
-    rule show_vehicle_data {
+    rule show_vehicle_data  is inactive {
       select when fuse need_vehicle_data
       pre {
 
@@ -318,7 +346,7 @@ Fuse ruleset for a vehicle pico
 
   
     rule update_vehicle_data {
-      select when fuse updated_vehicle_data
+      select when fuse need_vehicle_data
       pre {
 
         vid = carvoyant:vehicle_id();
@@ -339,7 +367,9 @@ Fuse ruleset for a vehicle pico
       }
 
       always {
-        raise pds event updated_data_available
+        raise fuse event updated_vehicle_data attributes vehicle_info;
+
+        raise pds event new_data_available
 	  attributes {
 	    "namespace": carvoyant_namespace,
 	    "keyvalue": "vehicle_info",
@@ -375,6 +405,7 @@ Fuse ruleset for a vehicle pico
       }
 
       always {
+        raise fuse event updated_vehicle_status attributes vehicle_status;
         raise pds event new_data_available 
             attributes
               {"namespace": carvoyant_namespace,

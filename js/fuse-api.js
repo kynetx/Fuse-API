@@ -37,7 +37,9 @@
 
 	// we'll retrieve the fleet and vehicle ECIs later and put them here...
 	fleet_eci: "", 
-	vehicle_ecis: "",
+	vehicles: "",
+	vehicle_status: "",
+	vehicle_summary: "",
 
         init: function(cb)
         {
@@ -90,25 +92,44 @@
 	    }
 	},
 
-	vehicle_channels: function(cb){
+	ask_fleet: function(funcName, cache, cb) {
 	    cb = cb || function(){};
-	    if (typeof Fuse.vehicle_ecis === "undefined" || Fuse.vehicle_ecis === "") {
-                Fuse.log("Retrieving vehicle channels");
+	    if (typeof cache === "undefined" || cache === "") {
+                Fuse.log("Calling " + funcName);
 		if(Fuse.fleet_eci !== "none") {
-		    return CloudOS.skyCloud(Fuse.get_rid("fleet"), "vehicleChannels", {}, function(json) {
-			Fuse.vehicle_ecis = json;
-			Fuse.log("Retrieve vehicle channels", json);
-			cb(json);
-  		       },
-		       {"eci": Fuse.fleet_eci});
+		    return CloudOS.skyCloud(Fuse.get_rid("fleet"), funcName, {}, cb, {"eci": Fuse.fleet_eci});
 		} else {
 		    Fuse.log("fleet_eci is undefined, you must get the fleet channel first");
 		    return null;
 		}
 	    } else {
-		cb(Fuse.vehicle_ecis);
-		return Fuse.vehicle_ecis;
+		cb(cache);
+		return cache
 	    }
+	},
+
+	vehicleChannels: function(cb){
+	    return Fuse.ask_fleet("vehicleChannels", Fuse.vehicles, function(json) {
+			Fuse.vehicles = json;
+			Fuse.log("Retrieve vehicle channels", json);
+			cb(json);
+  		       });
+	},
+
+	vehicleStatus: function(cb) {
+	    return Fuse.ask_fleet("vehicleStatus", Fuse.vehicle_status, function(json) {
+			Fuse.vehicles = json;
+			Fuse.log("Retrieve vehicle status", json);
+			cb(json);
+  		       });
+	},
+
+	vehicleSummary: function(cb) {
+	    return Fuse.ask_fleet("vehicleSummary", Fuse.vehicle_summary, function(json) {
+			Fuse.vehicles = json;
+			Fuse.log("Retrieve vehicle summary", json);
+			cb(json);
+  		       });
 	},
 
         get_profile: function(cb)

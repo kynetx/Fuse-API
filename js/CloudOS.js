@@ -106,8 +106,9 @@
 
             var process_result = function(res)
             {
-		//        console.log("Seeing res ", res, " for ", esl);
-		if (typeof res.skyCloudError === 'undefined') {
+		//       console.log("Seeing res ", res, " for ", esl);
+		var sky_cloud_error = typeof res === 'Object' && typeof res.skyCloudError !== 'undefined';
+		if (! sky_cloud_error ) {
                     getSuccess(res);
 		} else {
                     console.error("skyCloud Error (", res.skyCloudError, "): ", res.skyCloudErrorMsg);

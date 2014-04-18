@@ -172,13 +172,16 @@ b16x17: fuse_fleet.krl
     vehicleStatus = function(vid) {
       vid = vid || vehicle_id();
       config_data = get_config(vid);
-      result = carvoyant_get(config_data{"base_url"}+"/data?mostRecentOnly=true", config_data);
-      result{"status_code"} eq "200" => result{["content","data"]}
-       			       	     	  .collect(function(v){v{"key"}}) // turn array into map of arrays
-					  // get rid of arrays and replace with value plus label
-                           		  .map(function(k,v){v[0].put(["label"],keyToLabel(k))})
-                                      | mk_error(result);
+      most_recent = carvoyant_get(config_data{"base_url"}+"/data?mostRecentOnly=true", config_data);
+      status = 
+        most_recent{"status_code"} eq "200" => result{["content","data"]}
+         			       	     	  .collect(function(v){v{"key"}}) // turn array into map of arrays
+ 					          // get rid of arrays and replace with value plus label
+                           		          .map(function(k,v){v[0].put(["label"],keyToLabel(k))})
+                                             | mk_error(result);
+      status
     };
+
 
     // ---------- trips ----------
     // vid is optional
