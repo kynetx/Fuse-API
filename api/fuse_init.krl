@@ -195,7 +195,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
     rule kickoff_new_fuse_instance {
         select when fuse need_fleet
         pre {
-	  fleet_channel = pds:get_item(namespace(),"fleet_channel");
+	  fleet_channel = pds:get_item(common:namespace(),"fleet_channel");
         }
 
 	// protect against creating more than one fleet pico (singleton)
@@ -248,7 +248,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
 	  // put this in our own namespace so we can find it to enforce idempotency
 	  raise pds event new_data_available 
-            with namespace = namespace() 
+            with namespace = common:namespace() 
              and keyvalue = "fleet_channel" 
              and value = fleet_channel
              and _api = "sky";
@@ -263,7 +263,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
 	  // subscribe to the new fleet
           raise cloudos event "subscribe"
-            with namespace = namespace()
+            with namespace = common:namespace()
              and  relationship = "Fleet-FleetOwner"
              and  channelName = pico_id
              and  targetChannel = fleet_channel
@@ -281,7 +281,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
       select when fuse show_children
       pre {
         myPicos = CloudOS:picoList();
-        fuseSubs = CloudOS:subscriptionList(namespace(),"Fleet");
+        fuseSubs = CloudOS:subscriptionList(common:namespace(),"Fleet");
       }
       {
         send_directive("Dependent children") with
@@ -297,7 +297,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
       select when fuse delete_fleet
       pre {
         eci = event:attr("fleet_eci");
-        fuseSub = CloudOS:subscriptionList(namespace(),"Fleet").head() || {};
+        fuseSub = CloudOS:subscriptionList(common:namespace(),"Fleet").head() || {};
         subChannel = fuseSub{"backChannel"};
 	huh = CloudOS:cloudDestroy(eci, {"cascade" : 1}); // destroy fleet children too
       }
@@ -316,7 +316,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
 	// get rid of the fleet_channel so we can initialize again
         raise pds event remove_old_data
-            with namespace = namespace() 
+            with namespace = common:namespace() 
              and keyvalue = "fleet_channel" 
              and _api = "sky";
 
@@ -406,7 +406,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             meta_eci = meta:eci();
             this_session = CloudOS:currentSession();
             indici = ent:fleet_channel;
-            fleet = subscriptionsByChannelName(namespace(), "Fleet");
+            fleet = subscriptionsByChannelName(common:namespace(), "Fleet");
             dump = {
                 "g_id": gid,
                 "metaECI": meta_eci,

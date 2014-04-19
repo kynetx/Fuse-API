@@ -391,7 +391,7 @@ Fuse ruleset for a vehicle pico
       select when fuse need_vehicle_status
       pre {
         vid = carvoyant:vehicle_id();
-        vehicle_status = carvoyant:vehicleStatus(); 
+        vehicle_status = carvoyant:vehicleStatus() || {}; 
       }
       {send_directive("Updated vehicle status") with
          id = vid and
