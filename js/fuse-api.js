@@ -158,16 +158,15 @@
 
         create_fleet: function(json, callback)
         {
-            Fuse.log("creating fleet");
-            //                this.log(json, {raw: true});
-            Fuse.log("Create params ", json);
-            // CloudOS.raiseEvent("fuse", "should_make_fleet", json, {}, function(response)
-            // {
-            //     Fuse.log("fleet created");
-            //     if (typeof (callback) !== "undefined") {
-            //         callback(response);
-            //     }
-            // });
+            Fuse.log("Creating fleet with attributes ", json);
+            CloudOS.raiseEvent("fuse", "need_fleet", {}, json, function(response)
+            {
+		var fleet_channel = Fuse.fleetChannel();
+                Fuse.log("Fleet created with channel ", fleet_channel);
+                if (typeof (callback) !== "undefined") {
+                    callback(response);
+                }
+            });
         },
 
         get_fleet: function(id, callback, error_callback, retry)
@@ -175,9 +174,6 @@
 
             Fuse.log("retrieving fleet ", id);
             var params = { "id": id };
-
-	    var retries = 1;
-	    retry = retry || 0;
 
             // CloudOS.skyCloud(this.Guard_Tour_API_RID, "fleet", params, function(json) {
 	    // 	if (json.id !== id) {

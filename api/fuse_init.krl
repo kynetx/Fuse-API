@@ -193,7 +193,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
     // ---------- manage fleet singleton ----------
     rule kickoff_new_fuse_instance {
-        select when fuse initialize
+        select when fuse need_fleet
         pre {
 	  fleet_channel = pds:get_item(namespace(),"fleet_channel");
         }

@@ -27,6 +27,8 @@ Application that manages the fleet
       vehicleChannels = function() {
 
          picos = CloudOS:picoList() || []; // tolerate lookup failures
+
+	 // the rest of this is to return subscription ECIs rather than _LOGIN ECIs. Ought to be easier. 
          vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle")
                      || [];   
          // collect returns arrays as values, and we only have one, so map head()
@@ -233,6 +235,7 @@ Application that manages the fleet
     }
 
     // this is too general for this ruleset except for identifying subscriptions
+    // FIXME: this doesn't (yet) delete the vehicle data from the fleet entity variable
     rule delete_vehicle {
       select when fuse delete_vehicle
       pre {
