@@ -174,11 +174,11 @@ b16x17: fuse_fleet.krl
       config_data = get_config(vid);
       most_recent = carvoyant_get(config_data{"base_url"}+"/data?mostRecentOnly=true", config_data);
       status = 
-        most_recent{"status_code"} eq "200" => result{["content","data"]}
+        most_recent{"status_code"} eq "200" => most_recent{["content","data"]}
          			       	     	  .collect(function(v){v{"key"}}) // turn array into map of arrays
  					          // get rid of arrays and replace with value plus label
                            		          .map(function(k,v){v[0].put(["label"],keyToLabel(k))})
-                                             | mk_error(result);
+                                             | mk_error(most_recent);
       status
     };
 

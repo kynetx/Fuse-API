@@ -156,10 +156,10 @@
             return CloudOS.raiseEvent("fuse", "should_update_user", json, {}, cb);
         },
 
-        create_fleet: function(json, callback)
+        createFleet: function(json, callback)
         {
             Fuse.log("Creating fleet with attributes ", json);
-            CloudOS.raiseEvent("fuse", "need_fleet", {}, json, function(response)
+            return CloudOS.raiseEvent("fuse", "need_fleet", {}, json, function(response)
             {
 		var fleet_channel = Fuse.fleetChannel();
                 Fuse.log("Fleet created with channel ", fleet_channel);
@@ -169,29 +169,7 @@
             });
         },
 
-        get_fleet: function(id, callback, error_callback, retry)
-        {
-
-            Fuse.log("retrieving fleet ", id);
-            var params = { "id": id };
-
-            // CloudOS.skyCloud(this.Guard_Tour_API_RID, "fleet", params, function(json) {
-	    // 	if (json.id !== id) {
-	    // 	    Fuse.log("ID Mismatch! Asked for " + id + " and got " + json.id);
-	    // 	    // try again
-	    // 	    if (retry < retries) {
-	    // 		Fuse.get_fleet(id, callback, error_callback, retry+1);
-	    // 	    }
-	    // 	} else {
-	    // 	    Fuse.log("IDs match! Asked for " + id + " and got " + json.id);
-	    // 	}
-	    // 	if (typeof (callback) !== "undefined") {
-            //         callback(json);
-            //     }	
-	    // }, error_callback);
-        },
-
-        update_fleet: function(updated_attrs, id, callback)
+        updateFleet: function(updated_attrs, id, callback)
         {
             updated_attrs.id = id;
             // Fuse.log("Updating fleet with params ", params);
@@ -208,17 +186,17 @@
             // });
         },
 
-        delete_fleet: function(id, callback)
+        deleteFleet: function(id, callback)
         {
-            var params = { "id": id };
-            // CloudOS.raiseEvent("fuse", "should_delete_fleet", params, {}, function(response)
-            // {
-            //     Fuse.log("Fleet deleted with ID: " + id);
-            //     Fuse.log(response, { raw: true });
-            //     if (typeof (callback) !== "undefined") {
-            //         callback(response);
-            //     }
-            // });
+            var params = { "fleet_eci": id };
+            return CloudOS.raiseEvent("fuse", "delete_fleet", params, {}, function(json)
+            {
+                Fuse.log("Fleet deleted with ECI: " + id);
+                Fuse.log(json);
+                if (typeof (callback) !== "undefined") {
+                    callback(json);
+                }
+            });
         }
 
 
