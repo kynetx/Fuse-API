@@ -47,7 +47,7 @@
 	    Fuse.log("Initializing...");
 	    $.when(
 		Fuse.get_profile(),
-		Fuse.fleet_channel()
+		Fuse.fleetChannel()
 	    ).done(function(profile, eci){
 		Fuse.log("Stored fleet channel", eci[0]);
 		Fuse.log("Retrieved user profile", profile[0]);
@@ -76,7 +76,7 @@
             }
         },
 
-	fleet_channel: function(cb) 
+	fleetChannel: function(cb) 
 	{
 	    cb = cb || function(){};
 	    if (typeof Fuse.fleet_eci === "undefined" || Fuse.fleet_eci === "") {

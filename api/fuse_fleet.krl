@@ -153,13 +153,17 @@ Application that manages the fleet
         select when cloudos subscriptionRequestPending
            namespace re/fuse-meta/gi
 
+	pre {
+	  fleet_channel = event:attr("eventChannel");
+	}
+
         {
             noop();
         }
 
         fired {
             raise cloudos event subscriptionRequestApproved
-                with eventChannel = event:attr("eventChannel")
+                with eventChannel = fleet_channel
                 and  _api = "sky";
         }
     }
