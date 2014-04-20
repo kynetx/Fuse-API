@@ -79,7 +79,7 @@
 	fleetChannel: function(cb) 
 	{
 	    cb = cb || function(){};
-	    if (typeof Fuse.fleet_eci === "undefined" || Fuse.fleet_eci === "") {
+	    if (typeof Fuse.fleet_eci === "undefined" || Fuse.fleet_eci === "" || Fuse.fleet_eci === "null") {
                 Fuse.log("Retrieving fleet channel");
 		return CloudOS.skyCloud(Fuse.get_rid("owner"), "fleetChannel", {}, function(json) {
 		    Fuse.fleet_eci = json.cid;

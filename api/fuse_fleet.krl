@@ -53,8 +53,9 @@ Application that manages the fleet
       }
 
       findBackchannel = function (bc) {
+        garbage = bc.klog(">>>> back channel <<<<<");
         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle");
-	vehicle_ecis_by_event_channel = vehicle_ecis.collect(function(x){x{"eventChannel"}}).map(function(k,v){v.head()});
+	vehicle_ecis_by_event_channel = vehicle_ecis.collect(function(x){x{"eventChannel"}}).map(function(k,v){v.head()}).klog(">>> vehicle_ecis_by_event_channel <<<<<");
 	vehicle_ecis_by_event_channel{bc}
       }
 
@@ -289,7 +290,7 @@ Application that manages the fleet
 	keyvalue = event:attr("keyvalue");
         vehicle_info = event:attr("value").decode();
 
-	vehicle_channel = findBackchannel(meta:eci()).klog(">>>>>>>> vehicle channel <<<<<<<<<<<<<");
+	vehicle_channel = findBackchannel(meta:eci()).klog(">>>>>>>>>>>> vehicle channel <<<<<<<<<<<<<");
 
 
       }
