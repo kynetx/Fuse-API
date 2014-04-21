@@ -253,11 +253,11 @@ Application that manages the fleet
                 || {};   // tolerate lookup failures
 
 
-	pico = common:find_pico_by_id(this_sub{"channelName"});
+	this_pico = common:find_pico_by_id(this_sub{"channelName"}).klog(">>>>>>>>>>> pico <<<<<<<<<<<<<<<");
 
-	this_pico_id = this_sub{"channelName"};
+	this_pico_id = this_sub{"channelName"}.klog(">>>>>>>>>>>>>> pico ID <<<<<<<<<<<<");
 
-        this_sub_channel = this_sub{"backChannel"};
+        this_sub_channel = this_sub{"backChannel"}.klog(">>>>>>>>>>>> sub channel <<<<<<<<<<<<<<<<");
 	huh = CloudOS:cloudDestroy(eci); 
       }
       {
@@ -272,7 +272,7 @@ Application that manages the fleet
 
         // not a pico I'm keeping track of anymore      
         raise cloudos event picoAttrsClear 
-          with picoChannel = pico{"channel"}
+          with picoChannel = this_pico{"channel"}
            and _api = "sky";
 
 	raise cloudos event unsubscribe
