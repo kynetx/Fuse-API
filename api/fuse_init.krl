@@ -300,14 +300,14 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
         fuseSub = CloudOS:subscriptionList(common:namespace(),"Fleet").head() || {};
 
-	find_pico_by_name = function(name) {
+	find_pico_by_id = function(id) {
 
 	   picos = CloudOS:picoList().klog(">>>>>> picos <<<<<<<<<<");
-	   picos_by_name = picos.collect(function(x){x{"id"}}).map(function(k,v){v.head()}).klog(">>>>>> picos_by_name <<<<<");
-	   picos_by_name{name};
+	   picos_by_id = picos.collect(function(x){x{"id"}}).map(function(k,v){v.head()}).klog(">>>>>> picos_by_id <<<<<");
+	   picos_by_id{id};
 	};
 
-	pico = find_pico_by_name(fuseSub{"channelName"}.klog(">>>>>>> channel name <<<<<<<<<<<<"));
+	pico = find_pico_by_id(fuseSub{"channelName"});
 
 
         subChannel = fuseSub{"backChannel"};
