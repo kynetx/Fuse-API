@@ -163,11 +163,13 @@
             Fuse.log("Creating fleet with attributes ", json);
             return CloudOS.raiseEvent("fuse", "need_fleet", {}, json, function(response)
             {
-		var fleet_channel = Fuse.fleetChannel(function(){}, {"force": true});
-                Fuse.log("Fleet created with channel ", fleet_channel);
-                if (typeof (callback) !== "undefined") {
-                    callback(response);
-                }
+		setTimeout(function(){
+		    var fleet_channel = Fuse.fleetChannel(function(){}, {"force": true});
+                    Fuse.log("Fleet created with channel ", fleet_channel);
+                    if (typeof (callback) !== "undefined") {
+			callback(response);
+                    }},
+		    3000); // wait three seconds for the subscription to propagate. Not ideal...
             });
         },
 

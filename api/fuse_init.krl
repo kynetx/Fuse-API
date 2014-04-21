@@ -302,8 +302,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
 	find_pico_by_id = function(id) {
 
-	   picos = CloudOS:picoList().klog(">>>>>> picos <<<<<<<<<<");
-	   picos_by_id = picos.values().collect(function(x){x{"id"}}).map(function(k,v){v.head()}).klog(">>>>>> picos_by_id <<<<<");
+	   picos = CloudOS:picoList();
+	   picos_by_id = picos.values().collect(function(x){x{"id"}}).map(function(k,v){v.head()});
 	   picos_by_id{id};
 	};
 
@@ -343,6 +343,22 @@ Ruleset for initializing a Fuse account and managing vehicle picos
       
     }
 
+    rule clear_out_pico {
+      select when test clear_out_pico
+      pre {
+        picos = CloudOS:picoList();
+	eci = picos.keys().head(); // clear the first one
+      }	   
+      send_directive("Clearing pico #{eci}") ;
+      always {
+
+        // not a pico I'm keeping track of anymore      
+        raise cloudos event picoAttrsClear 
+          with picoChannel = eci  // created with _LOGIN, not subscriber ECI, so look it up
+           and _api = "sky";
+     }
+
+    }
 
 
     rule cache_index_channel is inactive {
