@@ -155,8 +155,9 @@
 	    }
 	},
 
-	ask_fleet: function(funcName, cache, cb) {
+	ask_fleet: function(funcName, cache, cb, options) {
 	    cb = cb || function(){};
+	    options = options || {};
 	    if (typeof cache === "undefined" 
 	      || cache === "" 
 	      || cache === null
@@ -183,25 +184,27 @@
 		          Fuse.vehicles = json;
 		          Fuse.log("Retrieved vehicles", json);
 			  cb(json);
-  		       });
+  		       }, options);
 	},
 
-	vehicleStatus: function(cb) {
+	vehicleStatus: function(cb, options) {
 	    cb = cb || function(){};
+	    options = options || {};
 	    return Fuse.ask_fleet("vehicleStatus", Fuse.vehicle_status, function(json) {
 			Fuse.vehicles = json;
 			Fuse.log("Retrieve vehicle status", json);
 			cb(json);
-  		       });
+  		       }, options);
 	},
 
-	vehicleSummary: function(cb) {
+	vehicleSummary: function(cb, options) {
 	    cb = cb || function(){};
+	    options = options || {};
 	    return Fuse.ask_fleet("vehicleSummary", Fuse.vehicle_summary, function(json) {
 			Fuse.vehicles = json;
 			Fuse.log("Retrieve vehicle summary", json);
 			cb(json);
-  		       });
+  		       }, options);
 	},
 
 	// ---------- manage and use vehicle picos ----------
@@ -244,6 +247,7 @@
             return CloudOS.raiseEvent("fuse", "delete_vehicle", {}, attrs, function(response)
             {
                 Fuse.log("Fleet deleted with ECI: " + fleet_channel);
+		Fuse.vehicles = []; // reset so that the next call to vehicleChannels() is forced to update
 		if(response.length < 1) {
 		    throw "Vehicle deletion failed";
 		}

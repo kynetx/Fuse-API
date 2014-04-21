@@ -253,11 +253,11 @@ Application that manages the fleet
                 || {};   // tolerate lookup failures
 
 
-	this_pico = common:find_pico_by_id(this_sub{"channelName"}.klog(">>>>>>>channel name <<<<<<<<<<<")).klog(">>>>>>>>>>> pico <<<<<<<<<<<<<<<");
+	this_pico = common:find_pico_by_id(this_sub{"channelName"}).klog(">>>>>>>>>>> pico <<<<<<<<<<<<<<<");
 
-	this_pico_id = this_sub{"channelName"}.klog(">>>>>>>>>>>>>> pico ID <<<<<<<<<<<<");
+	this_pico_id = this_sub{"channelName"};
 
-        this_sub_channel = this_sub{"backChannel"}.klog(">>>>>>>>>>>> sub channel <<<<<<<<<<<<<<<<");
+        this_sub_channel = this_sub{"backChannel"};
 	huh = CloudOS:cloudDestroy(eci); 
       }
       {
@@ -282,6 +282,25 @@ Application that manages the fleet
       }
       
     }
+
+    rule clear_out_pico is active {  // dangerous...
+      select when test clear_out_pico
+      pre {
+        picos = CloudOS:picoList();
+	eci = picos.keys().head(); // clear the first one
+      }	   
+      send_directive("Clearing pico #{eci}") ;
+      always {
+
+        // not a pico I'm keeping track of anymore      
+        raise cloudos event picoAttrsClear 
+          with picoChannel = eci  // created with _LOGIN, not subscriber ECI, so look it up
+           and _api = "sky";
+     }
+
+    }
+
+
 
 
     // ---------- cache vehicle data ----------
