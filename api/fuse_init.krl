@@ -297,18 +297,22 @@ Ruleset for initializing a Fuse account and managing vehicle picos
       select when fuse delete_fleet
       pre {
         eci = event:attr("fleet_eci");
+
         fuseSub = CloudOS:subscriptionList(common:namespace(),"Fleet").head() || {};
-        subChannel = fuseSub{"backChannel"};
-	huh = CloudOS:cloudDestroy(eci, {"cascade" : 1}); // destroy fleet children too
 
 	find_pico_by_name = function(name) {
 
-	   picos = CloudOS:picoList();
+	   picos = CloudOS:picoList().klog(">>>>>> picos <<<<<<<<<<");
 	   picos_by_name = picos.collect(function(x){x{"id"}}).map(function(k,v){v.head()}).klog(">>>>>> picos_by_name <<<<<");
 	   picos_by_name{name};
 	};
 
 	pico = find_pico_by_name(fuseSub{"channelName"}.klog(">>>>>>> channel name <<<<<<<<<<<<"));
+
+
+        subChannel = fuseSub{"backChannel"};
+	huh = CloudOS:cloudDestroy(eci, {"cascade" : 1}); // destroy fleet children too
+
 
       }
       {
