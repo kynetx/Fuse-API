@@ -119,7 +119,11 @@ You should be able to ask the fleet for the vehicle channels:
 
 *run ```clean_up_subscriptions```*
 
-Your now set up. Installing the vehicles set up notifications from your Fuse device so that it will raise events into the vehicle. These events will automatically update trips, vehicle info, vehicle status, and so on. 
+Your now set up. Installing the vehicles set up notifications from your Fuse device so that it will raise events into the vehicle. These events will automatically update trips, vehicle info, vehicle status, and so on.
+
+# Configure the Vehicle
+
+
 
 # Notes
 

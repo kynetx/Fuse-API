@@ -191,7 +191,7 @@ Application that manages the fleet
             cid = channel;
 
           // tell the vehicle pico to take care of the rest of the initialization.
-          event:send(vehicle, "fuse", "vehicle_uninitialized") with 
+          event:send(vehicle, "fuse", "new_vehicle") with 
             attrs = (event:attrs()).put({"fleet_channel": meta:eci(),
              	    			 "schema":  "Vehicle",
 	             			 "_async": 0    // we want this to be complete before we try to subscribe below
