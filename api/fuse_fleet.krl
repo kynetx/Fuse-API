@@ -26,10 +26,10 @@ Application that manages the fleet
       // this is complicated cause we want to return the subscription channel for the vehicle, not the _LOGIN channel
       vehicleChannels = function() {
 
-         picos = CloudOS:picoList() || []; // tolerate lookup failures
+         picos = CloudOS:picoList() || {}; // tolerate lookup failures
 
 	 // the rest of this is to return subscription ECIs rather than _LOGIN ECIs. Ought to be easier. 
-         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle").klog(">>>> subscriptions <<<")
+         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle")
                      || [];   
 
          // collect returns arrays as values, and we only have one, so map head()
