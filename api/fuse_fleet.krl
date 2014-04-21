@@ -253,7 +253,7 @@ Application that manages the fleet
                 || {};   // tolerate lookup failures
 
 
-	this_pico = common:find_pico_by_id(this_sub{"channelName"}).klog(">>>>>>>>>>> pico <<<<<<<<<<<<<<<");
+	this_pico = common:find_pico_by_id(this_sub{"channelName"}.klog(">>>>>>>channel name <<<<<<<<<<<")).klog(">>>>>>>>>>> pico <<<<<<<<<<<<<<<");
 
 	this_pico_id = this_sub{"channelName"}.klog(">>>>>>>>>>>>>> pico ID <<<<<<<<<<<<");
 
