@@ -29,10 +29,12 @@ Application that manages the fleet
          picos = CloudOS:picoList() || []; // tolerate lookup failures
 
 	 // the rest of this is to return subscription ECIs rather than _LOGIN ECIs. Ought to be easier. 
-         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle")
+         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle").klog(">>>> subscriptions <<<")
                      || [];   
+
          // collect returns arrays as values, and we only have one, so map head()
          vehicle_ecis_by_name = vehicle_ecis.collect(function(x){x{"channelName"}}).map(function(k,v){v.head()});
+
 	 res = picos.map(function(k,p){
 	   id = p{"id"};
 	   p.put(["channel"],vehicle_ecis_by_name{[id,"eventChannel"]});
@@ -42,22 +44,22 @@ Application that manages the fleet
 
       seeFleetData = function(){
         ent:fleet
-      }
+      };
 
       vehicleSummary = function() {
         ent:fleet{["vehicle_info"]}
-      }
+      };
 
       vehicleStatus = function() {
         ent:fleet{["vehicle_status"]}
-      }
+      };
 
       findBackchannel = function (bc) {
         garbage = bc.klog(">>>> back channel <<<<<");
         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle");
 	vehicle_ecis_by__backchannel = vehicle_ecis.collect(function(x){x{"backChannel"}}).map(function(k,v){v.head()}).klog(">>> vehicle_ecis_by_backchannel <<<<<");
 	vehicle_ecis_by_event_channel{bc}
-      }
+      };
 
     }
 
@@ -283,8 +285,8 @@ Application that manages the fleet
       
     }
 
-    rule clear_out_pico is active {  // dangerous...
-      select when test clear_out_pico
+    rule clear_out_pico is inactive {  // dangerous...
+      select when maintenance clear_out_pico
       pre {
         picos = CloudOS:picoList();
 	eci = picos.keys().head(); // clear the first one

@@ -338,7 +338,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
     }
 
     rule clear_out_pico is inactive {  // dangerous...
-      select when test clear_out_pico
+      select when maintenance clear_out_pico
       pre {
         picos = CloudOS:picoList();
 	eci = picos.keys().head(); // clear the first one

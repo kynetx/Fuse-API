@@ -164,8 +164,9 @@
 	      || (typeof cache === "object" && typeof cache.length === "number" && cache.length < 1)
 	       ) {
                 Fuse.log("Calling " + funcName);
-		if(Fuse.fleet_eci !== "none") {
-		    return CloudOS.skyCloud(Fuse.get_rid("fleet"), funcName, {}, cb, {"eci": Fuse.fleet_eci});
+		var fc = Fuse.fleetChannel();
+		if(fc !== "none") {
+		    return CloudOS.skyCloud(Fuse.get_rid("fleet"), funcName, {}, cb, {"eci": fc});
 		} else {
 		    Fuse.log("fleet_eci is undefined, you must get the fleet channel first");
 		    return null;
