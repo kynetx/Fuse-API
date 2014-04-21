@@ -6,6 +6,10 @@ Common definitions
         >>
         author "PJW"
 
+        use module a169x625  alias CloudOS
+        use module a169x676  alias pds
+
+
 	provides S3Bucket, namespace, find_pico_by_id
     }
 
