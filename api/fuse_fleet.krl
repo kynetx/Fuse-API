@@ -55,7 +55,7 @@ Application that manages the fleet
       findBackchannel = function (bc) {
         garbage = bc.klog(">>>> back channel <<<<<");
         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle");
-	vehicle_ecis_by_event_channel = vehicle_ecis.collect(function(x){x{"eventChannel"}}).map(function(k,v){v.head()}).klog(">>> vehicle_ecis_by_event_channel <<<<<");
+	vehicle_ecis_by__backchannel = vehicle_ecis.collect(function(x){x{"backChannel"}}).map(function(k,v){v.head()}).klog(">>> vehicle_ecis_by_backchannel <<<<<");
 	vehicle_ecis_by_event_channel{bc}
       }
 
@@ -290,6 +290,7 @@ Application that manages the fleet
 	keyvalue = event:attr("keyvalue");
         vehicle_info = event:attr("value").decode();
 
+	// why am I gettting this?  Oh, yeah, we need to made vehicle_id and vehicle channel so we'll do that here...
 	vehicle_channel = findBackchannel(meta:eci()).klog(">>>>>>>>>>>> vehicle channel <<<<<<<<<<<<<");
 
 
