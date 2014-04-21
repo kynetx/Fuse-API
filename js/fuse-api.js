@@ -1,7 +1,7 @@
 
 /* jshint undef: true, unused: true */
-/* global console:false, CloudOS:false  */
-/* global console, CloudOS */
+/* globals console:false, CloudOS:false  */
+/* globals console, CloudOS, Fuse */
 
 (function($)
 {
@@ -17,7 +17,7 @@
 
 	get_rid : function(name) {
 
-	    rids = {
+	    var rids = {
 		"owner": {"prod": "b16x16",
 			  "dev":  "b16x16"
 			 },
@@ -76,10 +76,11 @@
             }
         },
 
-	fleetChannel: function(cb) 
+	fleetChannel: function(cb, options) 
 	{
 	    cb = cb || function(){};
-	    if (typeof Fuse.fleet_eci === "undefined" || Fuse.fleet_eci === "" || Fuse.fleet_eci === "null") {
+	    options = options || {};
+	    if (typeof Fuse.fleet_eci === "undefined" || Fuse.fleet_eci === "" || Fuse.fleet_eci === "null" || options.force) {
                 Fuse.log("Retrieving fleet channel");
 		return CloudOS.skyCloud(Fuse.get_rid("owner"), "fleetChannel", {}, function(json) {
 		    Fuse.fleet_eci = json.cid;
@@ -132,6 +133,7 @@
   		       });
 	},
 
+	// ---------- profile ----------
         get_profile: function(cb)
         {
 	    cb = cb || function(){};
@@ -152,16 +154,16 @@
 
         save_profile: function(json, cb)
         {
-            Fuse.log("Updating profile: ", json);
-            return CloudOS.raiseEvent("fuse", "should_update_user", json, {}, cb);
+            return CloudOS.updateMyProfile(json, cb);
         },
 
+	// ---------- manage fleet pico ----------
         createFleet: function(json, callback)
         {
             Fuse.log("Creating fleet with attributes ", json);
             return CloudOS.raiseEvent("fuse", "need_fleet", {}, json, function(response)
             {
-		var fleet_channel = Fuse.fleetChannel();
+		var fleet_channel = Fuse.fleetChannel(function(){}, {"force": true});
                 Fuse.log("Fleet created with channel ", fleet_channel);
                 if (typeof (callback) !== "undefined") {
                     callback(response);
@@ -169,30 +171,14 @@
             });
         },
 
-        updateFleet: function(updated_attrs, id, callback)
+        deleteFleet: function(callback)
         {
-            updated_attrs.id = id;
-            // Fuse.log("Updating fleet with params ", params);
-            // CloudOS.raiseEvent("fuse", "should_update_fleet", updated_attrs, {}, function(response)
-            // {
-            //     //                    Fuse.log(response, {raw:true});
-            //     check_directive("Fleet", response, "didRequestFleetUpdate");
-
-            //     // what if I want a callback even if I'm not testing? Therefore I'd rather check if callback
-            //     // is defined, and if so then call it.
-            //     if (typeof (callback) !== "undefined") {
-            //         callback(response);
-            //     }
-            // });
-        },
-
-        deleteFleet: function(id, callback)
-        {
-            var params = { "fleet_eci": id };
-            return CloudOS.raiseEvent("fuse", "delete_fleet", params, {}, function(json)
+	    var fleet_channel = Fuse.fleetChannel();
+            var attrs = { "fleet_eci": fleet_channel };
+            return CloudOS.raiseEvent("fuse", "delete_fleet", {}, attrs, function(json)
             {
-                Fuse.log("Fleet deleted with ECI: " + id);
-                Fuse.log(json);
+                Fuse.log("Fleet deleted with ECI: " + fleet_channel);
+		var fleet_channel = Fuse.fleetChannel(function(){}, {"force": true});
                 if (typeof (callback) !== "undefined") {
                     callback(json);
                 }

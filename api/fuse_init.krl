@@ -255,7 +255,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
 	  // make it a "pico" in CloudOS eyes
 	  raise cloudos event picoAttrsSet
-            with picoChannel = fleet_channel
+            with picoChannel = fleet_channel // really ought to be using subscriber channel, but don't have it...
              and picoName = fleet_name
              and picoPhoto = fleet_photo 
 	     and picoId = pico_id
@@ -300,6 +300,16 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         fuseSub = CloudOS:subscriptionList(common:namespace(),"Fleet").head() || {};
         subChannel = fuseSub{"backChannel"};
 	huh = CloudOS:cloudDestroy(eci, {"cascade" : 1}); // destroy fleet children too
+
+	find_pico_by_name = function(name) {
+
+	   picos = CloudOS:picoList();
+	   picos_by_name = picos.collect(function(x){x{"id"}}).map(function(k,v){v.head()}).klog(">>> picos_by_name <<<<<");
+	   picos_by_name{name};
+	};
+
+	pico = find_pico_by_name(fuseSub{"channelName"});
+
       }
       {
         send_directive("Deleted child" ) with
@@ -311,7 +321,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
         // not a pico I'm keeping track of anymore      
         raise cloudos event picoAttrsClear 
-          with picoChannel = eci 
+          with picoChannel = pico{"channel"}
            and _api = "sky";
 
 	// get rid of the fleet_channel so we can initialize again
