@@ -171,17 +171,17 @@
             });
         },
 
-        deleteFleet: function(callback)
+        deleteFleet: function(cb, options)
         {
-	    var fleet_channel = Fuse.fleetChannel();
+	    cb = cb || function(){};
+	    options = options || {};
+	    var fleet_channel = options.fleet_channel || Fuse.fleetChannel();
             var attrs = { "fleet_eci": fleet_channel };
             return CloudOS.raiseEvent("fuse", "delete_fleet", {}, attrs, function(json)
             {
                 Fuse.log("Fleet deleted with ECI: " + fleet_channel);
 		var fleet_channel = Fuse.fleetChannel(function(){}, {"force": true});
-                if (typeof (callback) !== "undefined") {
-                    callback(json);
-                }
+                cb(json);
             });
         }
 

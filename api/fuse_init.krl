@@ -304,11 +304,11 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	find_pico_by_name = function(name) {
 
 	   picos = CloudOS:picoList();
-	   picos_by_name = picos.collect(function(x){x{"id"}}).map(function(k,v){v.head()}).klog(">>> picos_by_name <<<<<");
+	   picos_by_name = picos.collect(function(x){x{"id"}}).map(function(k,v){v.head()}).klog(">>>>>> picos_by_name <<<<<");
 	   picos_by_name{name};
 	};
 
-	pico = find_pico_by_name(fuseSub{"channelName"});
+	pico = find_pico_by_name(fuseSub{"channelName"}.klog(">>>>>>> channel name <<<<<<<<<<<<"));
 
       }
       {
@@ -321,7 +321,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
         // not a pico I'm keeping track of anymore      
         raise cloudos event picoAttrsClear 
-          with picoChannel = pico{"channel"}
+          with picoChannel = pico{"channel"}  // created with _LOGIN, not subscriber ECI, so look it up
            and _api = "sky";
 
 	// get rid of the fleet_channel so we can initialize again
