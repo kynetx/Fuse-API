@@ -6,7 +6,7 @@ Common definitions
         >>
         author "PJW"
 
-	provides S3Bucket, namespace
+	provides S3Bucket, namespace, find_pico_by_id
     }
 
     global {
@@ -19,11 +19,11 @@ Common definitions
 	meta_id    
       };
 
-	find_pico_by_id = function(id) {
-	   picos = CloudOS:picoList();
-	   picos_by_id = picos.values().collect(function(x){x{"id"}}).map(function(k,v){v.head()});
-	   picos_by_id{id};
-	};
+      find_pico_by_id = function(id) {
+	picos = CloudOS:picoList();
+	picos_by_id = picos.values().collect(function(x){x{"id"}}).map(function(k,v){v.head()});
+	picos_by_id{id};
+      };
 
 
 
