@@ -245,19 +245,23 @@ Application that manages the fleet
       select when fuse delete_vehicle
       pre {
         eci = event:attr("vehicle_eci");
-	this_pico =  CloudOS:picoList().pick("$."+eci);
-	this_pico_id = this_pico{"id"};
 
-	// use the pico ID to look up the subscription to delete
+	// use the eci to look up the subscription to delete
         this_sub = CloudOS:subscriptionList(common:namespace(),"Vehicle")
-	           .filter(function(sub){sub{"channelName"} eq this_pico_id})
+	           .filter(function(sub){sub{"eventChannel"} eq eci})
 		   .head() 
                 || {};   // tolerate lookup failures
+
+
+	pico = common:find_pico_by_id(this_sub{"channelName"});
+
+	this_pico_id = this_sub{"channelName"};
+
         this_sub_channel = this_sub{"backChannel"};
 	huh = CloudOS:cloudDestroy(eci); 
       }
       {
-        send_directive("Deleted child" ) with
+        send_directive("Deleted vehicle" ) with
           child = eci and
 	  id = this_pico_id and
 //          allSubs = CloudOS:subscriptionList(common:namespace(),"Vehicle") and
@@ -268,10 +272,9 @@ Application that manages the fleet
 
         // not a pico I'm keeping track of anymore      
         raise cloudos event picoAttrsClear 
-          with picoChannel = eci 
+          with picoChannel = pico{"channel"}
            and _api = "sky";
 
-	// unsubscribe from the first subscription that matches
 	raise cloudos event unsubscribe
           with backChannel = this_sub_channel
            and _api = "sky" if not this_sub_channel.isnull();

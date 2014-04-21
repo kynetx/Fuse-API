@@ -65,13 +65,17 @@ If you click into the directives object, you should see three directives:
 	2. "Fleet created"
 	3. "picoAttrSet"
 
+While the number of directives might change over time, getting back an empty directive list (length === 0) means that creation failed
+
 Note that you also have a fleet channel:
 
 	Fuse.fleetChannel()
 
 ```Fuse.fleetChannel()``` will return the cached copy of the fleet ECI from the JavaScript unless you give it the ```force``` option which forces it to go to the API to reacquire the fleet channel. Note that the fleet channel is unlikely to change once a fleet has been created and is in use. 
 
-Setting up the fleet is idempotent. That is, the code is written such that there will only ever by one fleet pico attached to a given owner.  Try running the ```fleetCreate()``` command again, you should get the same channel. 
+Setting up the fleet is idempotent. That is, the code is written such that there will only ever by one fleet pico attached to a given owner.  Try running the ```fleetCreate()``` command again, you should get the same channel.
+
+Creating a fleet creates a subscription to the fleet pico asynchronously. This means that the fleet channel isn't immidiately available for use. You should check ```Fuse.fleetChannel()``` to ensure it's not null before using it and wait if it's null. 
 
 2. You can delete the fleet. 
 
@@ -87,7 +91,30 @@ You should see something like this:
 	Showing: 
 	Object {directives: Array[3]}
 
+While the number of directives might change over time, getting back an empty directive list (length === 0) means that deletion failed
+
+Now, ```Fuse.fleetChannel()``` will return ```null```.
+
 # Install One or More Vehicles
+
+Now we can add some vehicles.
+
+1. Add a vehicle with a name and photo
+```createVehicle``` takes the following paramters:
+      - name of vehicle
+	  - URL of a profile photo for the vehicle
+
+Here's an example:
+
+		Fuse.addVehicle("Ford F-150", "https://s3.amazonaws.com/k-mycloud/a169x672/7BD0B300-7DDF-11E2-AB3A-B9D7E71C24E1.img?q=97013", show_res);
+
+You should see a non-empty array of directives returned.
+
+You should be able to ask the fleet for the vehicle channels:
+
+	   Fuse.vehicleChannels(show_res)
+
+2. You can delete a vehicle:
 
 
 *run ```clean_up_subscriptions```*

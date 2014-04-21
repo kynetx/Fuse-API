@@ -293,21 +293,15 @@ Ruleset for initializing a Fuse account and managing vehicle picos
     }
 
     // this is too general for this ruleset except for identifying subscriptions
-    rule delete_child {
+    rule delete_fleet {
       select when fuse delete_fleet
       pre {
         eci = event:attr("fleet_eci");
 
         fuseSub = CloudOS:subscriptionList(common:namespace(),"Fleet").head() || {};
 
-	find_pico_by_id = function(id) {
 
-	   picos = CloudOS:picoList();
-	   picos_by_id = picos.values().collect(function(x){x{"id"}}).map(function(k,v){v.head()});
-	   picos_by_id{id};
-	};
-
-	pico = find_pico_by_id(fuseSub{"channelName"});
+	pico = common:find_pico_by_id(fuseSub{"channelName"});
 
 
         subChannel = fuseSub{"backChannel"};
@@ -316,7 +310,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
       }
       {
-        send_directive("Deleted child" ) with
+        send_directive("Deleted fleet" ) with
           child = eci and
           fuseSub = fuseSub and
           channel = subChannel;
@@ -343,7 +337,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
       
     }
 
-    rule clear_out_pico {
+    rule clear_out_pico is inactive {  // dangerous...
       select when test clear_out_pico
       pre {
         picos = CloudOS:picoList();

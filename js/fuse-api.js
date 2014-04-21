@@ -1,7 +1,7 @@
 
 /* jshint undef: true, unused: true */
 /* globals console:false, CloudOS:false  */
-/* globals console, CloudOS, Fuse */
+/* globals console, setTimeout, CloudOS, Fuse */
 
 (function($)
 {
@@ -37,7 +37,7 @@
 
 	// we'll retrieve the fleet and vehicle ECIs later and put them here...
 	fleet_eci: "", 
-	vehicles: "",
+	vehicles: [],
 	vehicle_status: "",
 	vehicle_summary: "",
 
@@ -76,63 +76,6 @@
             }
         },
 
-	fleetChannel: function(cb, options) 
-	{
-	    cb = cb || function(){};
-	    options = options || {};
-	    if (typeof Fuse.fleet_eci === "undefined" || Fuse.fleet_eci === "" || Fuse.fleet_eci === null || options.force) {
-                Fuse.log("Retrieving fleet channel");
-		return CloudOS.skyCloud(Fuse.get_rid("owner"), "fleetChannel", {}, function(json) {
-		    Fuse.fleet_eci = json.cid;
-		    Fuse.log("Retrieved fleet channel", json);
-		    cb(json);
-		});
-	    } else {
-		cb(Fuse.fleet_eci);
-		return Fuse.fleet_eci;
-	    }
-	},
-
-	ask_fleet: function(funcName, cache, cb) {
-	    cb = cb || function(){};
-	    if (typeof cache === "undefined" || cache === "") {
-                Fuse.log("Calling " + funcName);
-		if(Fuse.fleet_eci !== "none") {
-		    return CloudOS.skyCloud(Fuse.get_rid("fleet"), funcName, {}, cb, {"eci": Fuse.fleet_eci});
-		} else {
-		    Fuse.log("fleet_eci is undefined, you must get the fleet channel first");
-		    return null;
-		}
-	    } else {
-		cb(cache);
-		return cache
-	    }
-	},
-
-	vehicleChannels: function(cb){
-	    return Fuse.ask_fleet("vehicleChannels", Fuse.vehicles, function(json) {
-			Fuse.vehicles = json;
-			Fuse.log("Retrieve vehicle channels", json);
-			cb(json);
-  		       });
-	},
-
-	vehicleStatus: function(cb) {
-	    return Fuse.ask_fleet("vehicleStatus", Fuse.vehicle_status, function(json) {
-			Fuse.vehicles = json;
-			Fuse.log("Retrieve vehicle status", json);
-			cb(json);
-  		       });
-	},
-
-	vehicleSummary: function(cb) {
-	    return Fuse.ask_fleet("vehicleSummary", Fuse.vehicle_summary, function(json) {
-			Fuse.vehicles = json;
-			Fuse.log("Retrieve vehicle summary", json);
-			cb(json);
-  		       });
-	},
-
 	// ---------- profile ----------
         get_profile: function(cb)
         {
@@ -157,19 +100,21 @@
             return CloudOS.updateMyProfile(json, cb);
         },
 
-	// ---------- manage fleet pico ----------
-        createFleet: function(json, callback)
+	// ---------- manage and use fleet pico ----------
+        createFleet: function(attrs, cb, options)
         {
-            Fuse.log("Creating fleet with attributes ", json);
-            return CloudOS.raiseEvent("fuse", "need_fleet", {}, json, function(response)
+	    cb = cb || function(){};
+	    options = options || {};
+            Fuse.log("Creating fleet with attributes ", attrs);
+            return CloudOS.raiseEvent("fuse", "need_fleet", {}, attrs, function(response)
             {
-		setTimeout(function(){
-		    var fleet_channel = Fuse.fleetChannel(function(){}, {"force": true});
-                    Fuse.log("Fleet created with channel ", fleet_channel);
-                    if (typeof (callback) !== "undefined") {
-			callback(response);
-                    }},
-		    3000); // wait three seconds for the subscription to propagate. Not ideal...
+		// note that because the channel is create asynchronously, processing callback does
+		// NOT mean the channel exists. 
+                Fuse.log("Fleet created");
+		if(response.length < 1) {
+		    throw "Fleet creation failed";
+		}
+		cb(response);
             });
         },
 
@@ -182,13 +127,132 @@
 		throw "Fleet ECI is null; can't delete";
 	    };
             var attrs = { "fleet_eci": fleet_channel };
-            return CloudOS.raiseEvent("fuse", "delete_fleet", {}, attrs, function(json)
+            return CloudOS.raiseEvent("fuse", "delete_fleet", {}, attrs, function(response)
             {
                 Fuse.log("Fleet deleted with ECI: " + fleet_channel);
 		var fleet_channel = Fuse.fleetChannel(function(){}, {"force": true});
-                cb(json);
+		if(response.length < 1) {
+		    throw "Fleet deletion failed";
+		}
+                cb(response);
             });
-        }
+        },
+
+	fleetChannel: function(cb, options) 
+	{
+	    cb = cb || function(){};
+	    options = options || {};
+	    if (typeof Fuse.fleet_eci === "undefined" || Fuse.fleet_eci === "" || Fuse.fleet_eci === null || options.force) {
+                Fuse.log("Retrieving fleet channel");
+		return CloudOS.skyCloud(Fuse.get_rid("owner"), "fleetChannel", {}, function(json) {
+		    Fuse.fleet_eci = json.cid;
+		    Fuse.log("Retrieved fleet channel", json);
+		    cb(json);
+		});
+	    } else {
+		cb(Fuse.fleet_eci);
+		return Fuse.fleet_eci;
+	    }
+	},
+
+	ask_fleet: function(funcName, cache, cb) {
+	    cb = cb || function(){};
+	    if (typeof cache === "undefined" 
+	      || cache === "" 
+	      || cache === null
+	      || (typeof cache === "object" && typeof cache.length === "number" && cache.length < 1)
+	       ) {
+                Fuse.log("Calling " + funcName);
+		if(Fuse.fleet_eci !== "none") {
+		    return CloudOS.skyCloud(Fuse.get_rid("fleet"), funcName, {}, cb, {"eci": Fuse.fleet_eci});
+		} else {
+		    Fuse.log("fleet_eci is undefined, you must get the fleet channel first");
+		    return null;
+		}
+	    } else {
+		cb(cache);
+		return cache
+	    }
+	},
+
+	vehicleChannels: function(cb, options){
+	    cb = cb || function(){};
+	    options = options || {};
+            Fuse.log("Retrieving vehicles");
+	    return Fuse.ask_fleet("vehicleChannels", Fuse.vehicles, function(json) {
+		          Fuse.vehicles = json;
+		          Fuse.log("Retrieved vehicles", json);
+			  cb(json);
+  		       });
+	},
+
+	vehicleStatus: function(cb) {
+	    cb = cb || function(){};
+	    return Fuse.ask_fleet("vehicleStatus", Fuse.vehicle_status, function(json) {
+			Fuse.vehicles = json;
+			Fuse.log("Retrieve vehicle status", json);
+			cb(json);
+  		       });
+	},
+
+	vehicleSummary: function(cb) {
+	    cb = cb || function(){};
+	    return Fuse.ask_fleet("vehicleSummary", Fuse.vehicle_summary, function(json) {
+			Fuse.vehicles = json;
+			Fuse.log("Retrieve vehicle summary", json);
+			cb(json);
+  		       });
+	},
+
+	// ---------- manage and use vehicle picos ----------
+        createVehicle: function(name, photo_url, cb, options)
+        {
+	    cb = cb || function(){}; // prophilaxis
+	    options = options || {};
+	    var json = {"name": name,
+			"photo": photo_url
+		       };
+	    var fleet_channel = options.fleet_channel || Fuse.fleetChannel();
+	    if(fleet_channel === null ) {
+		throw "Fleet channel is null; can't add vehicle";
+	    };
+            Fuse.log("Creating vehicle with attributes ", json);
+            return CloudOS.raiseEvent("fuse", "need_new_vehicle", {}, json, function(response)
+            {
+		// note that because the channel is create asynchronously, processing callback does
+		// NOT mean the channel exists. 
+                Fuse.log("Vehicle added");
+		cb(response);
+            },
+	    {"eci": fleet_channel
+	    }
+	    );
+        },
+
+        deleteVehicle: function(vehicle_channel, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    var fleet_channel = options.fleet_channel || Fuse.fleetChannel();
+	    if(fleet_channel === null ) {
+		throw "Fleet channel is null; can't delete vehicle";
+	    };
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't delete vehicle";
+	    };
+            var attrs = { "vehicle_eci": vehicle_channel };
+            return CloudOS.raiseEvent("fuse", "delete_vehicle", {}, attrs, function(response)
+            {
+                Fuse.log("Fleet deleted with ECI: " + fleet_channel);
+		if(response.length < 1) {
+		    throw "Vehicle deletion failed";
+		}
+                cb(response);
+            },
+	    {"eci": fleet_channel
+	    } 
+            );
+        },
 
 
 
