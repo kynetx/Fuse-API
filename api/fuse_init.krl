@@ -303,7 +303,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	find_pico_by_id = function(id) {
 
 	   picos = CloudOS:picoList().klog(">>>>>> picos <<<<<<<<<<");
-	   picos_by_id = picos.collect(function(x){x{"id"}}).map(function(k,v){v.head()}).klog(">>>>>> picos_by_id <<<<<");
+	   picos_by_id = picos.values().collect(function(x){x{"id"}}).map(function(k,v){v.head()}).klog(">>>>>> picos_by_id <<<<<");
 	   picos_by_id{id};
 	};
 

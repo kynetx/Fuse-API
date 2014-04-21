@@ -80,7 +80,7 @@
 	{
 	    cb = cb || function(){};
 	    options = options || {};
-	    if (typeof Fuse.fleet_eci === "undefined" || Fuse.fleet_eci === "" || Fuse.fleet_eci === "null" || options.force) {
+	    if (typeof Fuse.fleet_eci === "undefined" || Fuse.fleet_eci === "" || Fuse.fleet_eci === null || options.force) {
                 Fuse.log("Retrieving fleet channel");
 		return CloudOS.skyCloud(Fuse.get_rid("owner"), "fleetChannel", {}, function(json) {
 		    Fuse.fleet_eci = json.cid;
@@ -176,6 +176,9 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    var fleet_channel = options.fleet_channel || Fuse.fleetChannel();
+	    if(fleet_channel === null ) {
+		throw "Fleet ECI is null; can't delete";
+	    };
             var attrs = { "fleet_eci": fleet_channel };
             return CloudOS.raiseEvent("fuse", "delete_fleet", {}, attrs, function(json)
             {
