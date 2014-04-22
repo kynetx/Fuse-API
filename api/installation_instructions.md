@@ -133,6 +133,7 @@ For now, the configuration object looks like this:
 	 "secToken": "<carvoyan security token>",
 	 "deviceId": "<device id>"}
 
+Now, let's see if the configuration is working. 
 
 
 Your now set up. Installing the vehicles set up notifications from your Fuse device so that it will raise events into the vehicle. These events will automatically update trips, vehicle info, vehicle status, and so on.
