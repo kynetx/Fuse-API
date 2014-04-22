@@ -54,7 +54,7 @@ Application that manages the fleet
         ent:fleet{["vehicle_status"]}
       };
 
-      findVehicleByBackChannel = function (bc) {
+      findVehicleByBackchannel = function (bc) {
         garbage = bc.klog(">>>> back channel <<<<<");
         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle");
 	vehicle_ecis_by__backchannel = vehicle_ecis.collect(function(x){x{"backChannel"}}).map(function(k,v){v.head()}).klog(">>> vehicle_ecis_by_backchannel <<<<<");
