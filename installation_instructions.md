@@ -185,6 +185,8 @@ When we initialize a vehicle, we set up four initial subscriptions:
 
 We have taken care to ensure that these are idempotent so that the vehicle pico never sees multiple events for the same state change.
 
+The ```ignitionStatus``` (when if goes to ```OFF```) causes the trip that just ended to be downloaded and made available in the vehicle and fleet picos. 
+
 Initialize the vehicle:
 ```Fuse.updateVehicleDataCarvoyant(<vehicle_id>, <callback>, <options>);``` takes the following parameters
 	  - vehicle channel
