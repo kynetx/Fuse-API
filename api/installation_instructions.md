@@ -35,7 +35,7 @@ These are instructions for alpha stage users of the Fuse API.
 
 2. Install and configure ```CloudOS-config.js``` from the template.  You can ignore the appKey for now. 
 
-3. Install and configure ```fuse-api-test.js``` from the template. You'll need to set the ```username``` and ```password``` fields to the values you used when you created the SquareTag account above. 
+3. Install and configure ```fuse-console-config.js``` from the template. You'll need to set the ```username``` and ```password``` fields to the values you used when you created the SquareTag account above.  You might also want to put test device configurations in this file to save having to type them over and over. 
 
 When you load ```Fuse-console.html``` in a browser and open the console for the window. You should now type
 
@@ -100,9 +100,10 @@ Now, ```Fuse.fleetChannel()``` will return ```null```.
 Now we can add some vehicles.
 
 1. Add a vehicle with a name and photo
-```createVehicle``` takes the following paramters:
+```createVehicle(<name>, <photo_url>,<callback>)``` takes the following paramters:
       - name of vehicle
 	  - URL of a profile photo for the vehicle
+	  - optional callback
 
 Here's an example:
 
@@ -115,13 +116,30 @@ You should be able to ask the fleet for the vehicle channels:
 	   Fuse.vehicleChannels(show_res)
 
 2. You can delete a vehicle:
+```Fuse.deleteVehicle(<vehicle_channel>, <callback>)``` takes the following parameters
+	 - channel of vehicle to delete
+	 - optional callback
+
+# Configure the Vehicle
+
+```Fuse.configureVehicle(<vehicle_channel>,<test_device_config>,<callback>)``` takes the following parameters
+	 - vehicle channel to configure
+	 - configuration values for device
+	 - optional callback
+
+For now, the configuration object looks like this:
+
+	{"apiKey": "<carvoyant api key>",
+	 "secToken": "<carvoyan security token>",
+	 "deviceId": "<device id>"}
 
 
-*run ```clean_up_subscriptions```*
 
 Your now set up. Installing the vehicles set up notifications from your Fuse device so that it will raise events into the vehicle. These events will automatically update trips, vehicle info, vehicle status, and so on.
 
-# Configure the Vehicle
+
+
+*run ```clean_up_subscriptions```*
 
 
 

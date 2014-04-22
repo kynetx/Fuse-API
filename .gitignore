@@ -1,6 +1,7 @@
 js/CloudOS-config.js
+js/fuse-console-config.js
+
 api/test_config.yml
-js/fuse-api-test.js
 
 *.orig
 

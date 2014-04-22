@@ -259,6 +259,27 @@
             );
         },
 
+	configureVehicle: function(vehicle_channel, config, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't configure vehicle";
+	    };
+	    var attrs = config;
+            return CloudOS.raiseEvent("fuse", "updated_vehicle_configuration", {}, attrs, function(response)
+            {
+                Fuse.log("Updated vehicle configuration for: " + vehicle_channel);
+		if(response.length < 1) {
+		    throw "Vehicle configuration failed";
+		}
+                cb(response);
+            },
+	    {"eci": vehicle_channel
+	    } 
+            );
+        },
+
 
 
     };
