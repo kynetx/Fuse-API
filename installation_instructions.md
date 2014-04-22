@@ -151,12 +151,15 @@ If your configuration is connected to a real device in the Carvoyant system, you
 | ```trip``` | ```tripId```|
 
 This command updates the vehicle status for a vehicle with channel "ABC"
+
 	  Fuse.updateVehicleDataCarvoyant("ABC", "status", show_res);
 
 This command updates the vehicle summary for a vehicle with channel "ABC"
+
 	  Fuse.updateVehicleDataCarvoyant("ABC", "summary", show_res);
 
 This command updates the trip for trip "271563" on the same vehicle
+
 	Fuse.updateVehicleDataCarvoyant("ABC", "trip", show_res,{"tripId": "271563"});
 
 You can use the following commands to see this data.
