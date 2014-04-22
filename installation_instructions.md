@@ -6,7 +6,7 @@ _These instructions are pre-release. The final released version of the API will 
 
 # Set up the Owner Pico
 
-**If you're unfamiliar with SquareTag and some of the activities you'll undertake as a developer, the [Quickstart](http://developer.kynetx.com/display/docs/Quickstart) has instructions about how to install rulesets, etc. 
+_If you're unfamiliar with SquareTag and some of the activities you'll undertake as a developer, the [Quickstart](http://developer.kynetx.com/display/docs/Quickstart) has instructions about how to install rulesets, etc._
 
 1. Create a Carvoyant account, if necessary and configure it:
 	- create a vehicle

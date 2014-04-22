@@ -4,6 +4,9 @@
 // KDK calls this the token of app ECI
 CloudOS.appKey = "<app key goes here>";
 
+// anon ECI (probably no need to change this)
+CloudOS.anonECI = "85255500-0b65-0130-243c-00163ebcdddd";
+
 // you can likely leave these alone
 CloudOS.host = "cs.kobj.net";
 CloudOS.login_server = "login.kynetx.com";
