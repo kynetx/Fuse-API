@@ -46,7 +46,7 @@ at the console prompt and see the profile information for the owner profile you 
 
 1. From the console prompt type
 
-	Fuse.createFleet({}, show_res)
+		Fuse.createFleet({}, show_res)
 
 You should see something like this:
 
@@ -78,7 +78,7 @@ Creating a fleet creates a subscription to the fleet pico asynchronously. This m
 
 2. You can delete the fleet. 
 
-	Fuse.deleteFleet(show_res)
+		Fuse.deleteFleet(show_res)
 
 You should see something like this:
 
