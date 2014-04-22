@@ -350,7 +350,7 @@ Fuse ruleset for a vehicle pico
       pre {
 
         vid = carvoyant:vehicle_id();
-	incoming = event:attrs();
+	incoming = event:attrs() || {};
         vehicle_info = incoming{"vin"}.isnull() => carvoyant:get_vehicle_data(carvoyant:carvoyant_vehicle_data(vid))
                                                  | incoming;
 

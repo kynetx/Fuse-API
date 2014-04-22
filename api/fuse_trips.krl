@@ -116,7 +116,7 @@ Manage trips. PDS is not well-suited to these operations
       vid = carvoyant:vehicle_id();
 
       // accept either the trip as a set of attributes or just an ID that requires us to ping Carvoyant API
-      incoming = event:attrs();
+      incoming = event:attrs() || {};
       trip_info = incoming{"mileage"}.isnull() => carvoyant:tripInfo(incoming{"tripId"})
                                                 | incoming;
       tid = mkTid(trip_info{"id"});

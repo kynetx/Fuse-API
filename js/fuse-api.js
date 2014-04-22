@@ -280,15 +280,26 @@
             );
         },
 
-	setVehicleDataFromCarvoyant: function(vehicle_channel, cb, options)
+	updateVehicleDataCarvoyant: function(vehicle_channel, data_type, cb, options)
         {
 	    cb = cb || function(){};
 	    options = options || {};
+	    var event_map = {"summary" : {"event" : "need_vehicle_data",
+					  "attributes": []},
+			     "status" : {"event":"need_vehicle_status",
+					  "attributes": []},
+			     "trip": {"event": "new_trip",
+				      "attributes": ["tripId"]}
+			    };
+	    
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
 		throw "Vehicle channel is null; can't update vehicle";
 	    };
-	    var attrs = {}
-            return CloudOS.raiseEvent("fuse", "need_vehicle_data", {}, attrs, function(response)
+	    var attrs = {};
+	    $.each(event_map[data_type].attributes,function(i,v){
+		attrs[v] = options[v];
+	    });
+            return CloudOS.raiseEvent("fuse", event_map[data_type].event, {}, attrs, function(response)
             {
                 Fuse.log("Updated vehicle data for: " + vehicle_channel);
 		if(response.length < 1) {
