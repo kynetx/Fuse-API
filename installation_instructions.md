@@ -1,8 +1,7 @@
 
 These are instructions for alpha stage users of the Fuse API.
 
-**These instructions are pre-release. The final released version of the API will likely be drastically different.  In addition, you're being required to complete a number of steps below (like installing certain rulesets, configuring Carvoyant, etc..) that will be automated for users. **
-
+_These instructions are pre-release. The final released version of the API will likely be drastically different.  In addition, you're being required to complete a number of steps below (like installing certain rulesets, configuring Carvoyant, etc..) that will be automated for users._
 
 
 # Set up the Owner Pico
@@ -122,6 +121,7 @@ You should be able to ask the fleet for the vehicle channels:
 
 # Configure the Vehicle
 
+1. Install the Carvoyant keys and device ID
 ```Fuse.configureVehicle(<vehicle_channel>,<test_device_config>,<callback>)``` takes the following parameters
 	 - vehicle channel to configure
 	 - configuration values for device
@@ -135,17 +135,66 @@ For now, the configuration object looks like this:
 
 Now, let's see if the configuration is working. 
 
+2. Test the configuration
+If your configuration is connected to a real device in the Carvoyant system, you can tell Fuse to update the vehicle data from Carvoyant:
+```Fuse.updateVehicleDataCarvoyant(<vehicle_id>, <update_type>, <callback>, <options>);``` takes the following parameters
+	  - vehicle channel
+	  - the type of update (one of "summary", "status", or "trip")
+	  - an optional callback function
+	  - event attributes.
 
-Your now set up. Installing the vehicles set up notifications from your Fuse device so that it will raise events into the vehicle. These events will automatically update trips, vehicle info, vehicle status, and so on.
 
+| Update Type | Attributes |
+|-----------|---------|
+| ```summary``` | none|
+| ```status``` | none|
+| ```trip``` | ```tripId```|
 
+This command updates the vehicle status for a vehicle with channel "ABC"
+	  Fuse.updateVehicleDataCarvoyant("ABC", "status", show_res);
 
-*run ```clean_up_subscriptions```*
+This command updates the vehicle summary for a vehicle with channel "ABC"
+	  Fuse.updateVehicleDataCarvoyant("ABC", "summary", show_res);
 
+This command updates the trip for trip "271563" on the same vehicle
+	Fuse.updateVehicleDataCarvoyant("ABC", "trip", show_res,{"tripId": "271563"});
 
+You can use the following commands to see this data.
+
+	Fuse.vehicleStatus()
+
+	Fuse vehicleSummary()
+
+*Trips are still incomplete waiting for searching*
+
+# Initializing a Vehicle
+
+You may have noticed that the update commands in the last section don't return data. If the API design succeeds, you will rarely need to call them and when you do, you will update the vehicle data pre-emptively, before it's needed.
+
+For the most part, we rely on subscriptions to the vehicle itself to raise events into the Fuse system and thus automatically update critical vehicle information as events in the vehicle dictate.
+
+When we initialize a vehicle, we set up four initial subscriptions:
+
+- ```ignitionStatus``` &mdash; on or off
+- ```lowBattery``` &mdash; below 12v
+- ```troubleCode``` &mdash; any diagnostic trouble code
+- ```fuelLevel```  &mdash; below 20%
+
+We have taken care to ensure that these are idempotent so that the vehicle pico never sees multiple events for the same state change.
+
+Initialize the vehicle:
+```Fuse.updateVehicleDataCarvoyant(<vehicle_id>, <callback>, <options>);``` takes the following parameters
+	  - vehicle channel
+	  - an optional callback function
+
+It doesn't hurt to do this more than once, but you should avoid it if possible since it's an involved process with many API calls to Carvoyant.
+
+Also, if you do it for multiple vehicle picos, Carvoyant will be raising events into each of those picos for the same car which puts a load on their system. There is a way, not exposed in the JavaScript yet, to clean up subscriptions and tell Carvoyant to delete all of them except for those pointing at the current pico (i.e. the pico talking to Carvoyant at the time). Automating this could lead to a dueling picos situation where multiple picos think they each represent the same car and steal subscriptions from Carvoyant from the others. Avoid this. 
 
 # Notes
 
 1. This initial test uses direct login via user credentials. This will be allowed for mobile apps, but not from server-based cloud apps which will have to use OAuth.
+
+2.  ```fuse:clean_up_subscriptions``` cleans up Carvoyant subscriptions, deleting any that don't point at the current vehicle pico.
 
 

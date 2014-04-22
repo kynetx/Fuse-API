@@ -280,6 +280,27 @@
             );
         },
 
+	initializeVehicle: function(vehicle_channel, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't initialize vehicle";
+	    };
+	    var attrs = {};
+            return CloudOS.raiseEvent("fuse", "vehicle_uninitialized", {}, attrs, function(response)
+            {
+                Fuse.log("Initialized vehicle for: " + vehicle_channel);
+		if(response.length < 1) {
+		    throw "Vehicle initialization failed";
+		}
+                cb(response);
+            },
+	    {"eci": vehicle_channel
+	    } 
+            );
+        },
+
 	updateVehicleDataCarvoyant: function(vehicle_channel, data_type, cb, options)
         {
 	    cb = cb || function(){};
