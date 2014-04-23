@@ -46,7 +46,7 @@ Manage trips. PDS is not well-suited to these operations
       t = trips(search) // eventutally need to limit this
               .values()
               .map(function(e) {
-	        start = waypointToArray(e{"startWaypoint"}.klog(">>>>>> startWP <<<<<<<")).klog(">>>>> after waypoingToArray <<<<<").join(",");
+	        start = waypointToArray(e{"startWaypoint"}.klog(">>>>>> startWP <<<<<<<")).klog(">>>>> after waypoingToArray <<<<<").join(",").klog(">>>>>> with join <<<<<<");
 	        dest = waypointToArray(e{"endWaypoint"}).join(",");
 	        url = "http://maps.google.com/maps?saddr=#{start}&daddr=#{dest}";
 	        {"dtstart" : e{"startTime"},
@@ -57,7 +57,7 @@ Manage trips. PDS is not well-suited to these operations
 		}
 	      });
       vdata = vehicle:vehicleSummary();
-      ical:from_array(t, {"name": vdata{"label"}, "description": "Calendar of trips for " + vdata{"lable"}});
+      ical:from_array(t, {"name": vdata{"label"}, "desc": "Calendar of trips for " + vdata{"lable"}});
     };
 
     // find latlong within 365 feet
