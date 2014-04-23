@@ -48,7 +48,7 @@ Manage trips. PDS is not well-suited to these operations
         "path" : ["endTime"],
 	"compare" : "datetime"
       };
-      sorted_keys = this2that:transform(ent:trip_summaries, sort_opt)
+      sorted_keys = this2that:transform(ent:trip_summaries, sort_opt).klog(">>>> ALL TRIPS <<<<")
                       .slice(num_trips) 
 		      ;
       t = sorted_keys
