@@ -46,6 +46,7 @@ Manage trips. PDS is not well-suited to these operations
       num_trips = 10; // return last 50 trips
       sort_opt = {
         "path" : ["endTime"],
+	"reverse": true,
 	"compare" : "datetime"
       };
       sorted_keys = this2that:transform(ent:trip_summaries, sort_opt).klog(">>>> ALL TRIPS <<<<")
