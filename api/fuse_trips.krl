@@ -54,11 +54,12 @@ Manage trips. PDS is not well-suited to these operations
 		 "dtend" : e{"endTime"},
 		 "summary" : "Trip of #{miles} miles",
 		 "url": url,
-		 "description": "Trip ID: " + e{"id"}
+		 "description": "Trip ID: " + e{"id"},
+		 "uid": "http://fuse.to/ical/trips/" + $e{"id"}  // should be the same each time generated
 		}
 	      });
       vdata = vehicle:vehicleSummary();
-      ical:from_array(t, {"name": vdata{"label"}, "desc": "Calendar of trips for " + vdata{"lable"}});
+      ical:from_array(t, {"name": vdata{"label"}, "desc": "Calendar of trips for " + vdata{"label"}});
     };
 
     // find latlong within 365 feet
