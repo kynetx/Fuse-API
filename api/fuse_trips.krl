@@ -55,7 +55,7 @@ Manage trips. PDS is not well-suited to these operations
 		 "summary" : "Trip of #{miles} miles",
 		 "url": url,
 		 "description": "Trip ID: " + e{"id"},
-		 "uid": "http://fuse.to/ical/trips/" + $e{"id"}  // should be the same each time generated
+		 "uid": "http://fuse.to/ical/v1/trip/" + $e{"id"}  // should be the same each time generated
 		}
 	      });
       vdata = vehicle:vehicleSummary();
