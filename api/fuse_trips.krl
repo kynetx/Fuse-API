@@ -43,7 +43,7 @@ Manage trips. PDS is not well-suited to these operations
     };
 
     ical_for_vehicle = function(search){
-      trips = trips(search) // eventutally need to limit this
+      t = trips(search) // eventutally need to limit this
               .map(function(e) {
 	        start = waypointToArray(e{"startWaypoint"}).join(",");
 	        dest = waypointToArray(e{"endWaypoint"}).join(",");
@@ -55,7 +55,7 @@ Manage trips. PDS is not well-suited to these operations
 		 "comment": "Trip ID: " + e{"id"}
 		}
 	      })
-      ical:from_array(trips);
+      ical:from_array(t);
     };
 
     // find latlong within 365 feet
