@@ -43,9 +43,17 @@ Manage trips. PDS is not well-suited to these operations
     };
 
     ical_for_vehicle = function(search){
-      t = trips(search) // eventutally need to limit this
-              .values()
-              .map(function(e) {
+      num_trips = 50; // return last 50 trips
+      sort_opt = {
+        "path" : ["endTime"],
+	"compare" : "datetime"
+      };
+      sorted_keys = this2that:transform(ent:trip_summaries, sort_opt)
+                      .slice(num_trips) 
+		      ;
+      t = sorted_keys
+              .map(function(k) {
+	        e = ent:trip_summaries{k};
 	        start = waypointToArray(e{"startWaypoint"}.klog(">>>>>> startWP <<<<<<<")).klog(">>>>> after waypoingToArray <<<<<").join(",").klog(">>>>>> with join <<<<<<");
 	        dest = waypointToArray(e{"endWaypoint"});
 		miles = e{"mileage"} || "unknown";
