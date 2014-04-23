@@ -48,12 +48,13 @@ Manage trips. PDS is not well-suited to these operations
               .map(function(e) {
 	        start = waypointToArray(e{"startWaypoint"}.klog(">>>>>> startWP <<<<<<<")).klog(">>>>> after waypoingToArray <<<<<").join(",").klog(">>>>>> with join <<<<<<");
 	        dest = waypointToArray(e{"endWaypoint"});
+		miles = e{"mileage"} || "unknown";
 	        url = "http://maps.google.com/maps?saddr=#{start}&daddr="+dest[0]+","+dest[1];
 	        {"dtstart" : e{"startTime"},
 		 "dtend" : e{"endTime"},
-		 "summary" : "Trip of " + e{"mileage"} + " miles",
+		 "summary" : "Trip of #{miles} miles",
 		 "url": url,
-		 "comment": "Trip ID: " + e{"id"}
+		 "description": "Trip ID: " + e{"id"}
 		}
 	      });
       vdata = vehicle:vehicleSummary();
