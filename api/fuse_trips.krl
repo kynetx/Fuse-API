@@ -44,7 +44,7 @@ Manage trips. PDS is not well-suited to these operations
 
     ical_for_vehicle = function(search){
       t = trips(search) // eventutally need to limit this
-              .klog(">>>> trips <<<<<")
+              .values()
               .map(function(e) {
 	        start = waypointToArray(e{"startWaypoint"}).join(",");
 	        dest = waypointToArray(e{"endWaypoint"}).join(",");
