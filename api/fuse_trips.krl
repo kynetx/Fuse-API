@@ -43,14 +43,14 @@ Manage trips. PDS is not well-suited to these operations
     };
 
     ical_for_vehicle = function(search){
-      num_trips = 10; // return last 50 trips
+      num_trips = 25; // return last 50 trips
       sort_opt = {
         "path" : ["endTime"],
 	"reverse": true,
 	"compare" : "datetime"
       };
-      sorted_keys = this2that:transform(ent:trip_summaries, sort_opt).klog(">>>> ALL TRIPS <<<<")
-                      .slice(0,num_trips).klog(">>>>> sliced trips <<<<<<<<<")
+      sorted_keys = this2that:transform(ent:trip_summaries, sort_opt)
+                      .slice(0,num_trips-1)
 		      ;
       t = sorted_keys
               .map(function(k) {
