@@ -24,7 +24,7 @@ Manage trips. PDS is not well-suited to these operations
   global {
 
     // external decls
-    trips = function(){
+    trips = function(search){
       ent:trip_summaries
     };
 
@@ -40,6 +40,22 @@ Manage trips. PDS is not well-suited to these operations
     waypointToArray = function(wp) {
       wp.typeof() eq "hash" => [wp{"latitude"}, wp{"longitude"}]
                              | wp.split(re/,/)
+    };
+
+    ical_for_vehicle = function(search){
+      trips = trips(search) // eventutally need to limit this
+              .map(function(e) {
+	        start = waypointToArray(e{"startWaypoint"}).join(",");
+	        dest = waypointToArray(e{"endWaypoint"}).join(",");
+	        url = "http://maps.google.com/maps?saddr=#{start}&daddr=#{dest}";
+	        {"dtstart" : e{"startTime"},
+		 "dtend" : e{"endTime"},
+		 "summary" : "Trip of " + e{"mileage"} + " miles",
+		 "url": url,
+		 "comment": "Trip ID: " + e{"id"}
+		}
+	      })
+      ical:from_array(trips);
     };
 
     // find latlong within 365 feet
