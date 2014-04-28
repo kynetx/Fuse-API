@@ -10,7 +10,7 @@ Common definitions
         use module a169x676  alias pds
 
 
-	provides S3Bucket, namespace, find_pico_by_id
+	provides S3Bucket, namespace, find_pico_by_id, fuel_namespace, trips_namespace, maint_namespace
     }
 
     global {
@@ -27,6 +27,23 @@ Common definitions
 	picos = CloudOS:picoList();
 	picos_by_id = picos.values().collect(function(x){x{"id"}}).map(function(k,v){v.head()});
 	picos_by_id{id};
+      };
+
+      fuel_namespace = function(type) {
+        namespace_id = "fuse-fuel";
+	namespace_id    
+      };
+
+
+      trips_namespace = function(type) {
+        namespace_id = "fuse-trips";
+	namespace_id    
+      };
+
+
+     maint_namespace = function(type) {
+        namespace_id = "fuse-maint";
+	namespace_id    
       };
 
 

@@ -28,7 +28,8 @@ Manage trips. PDS is not well-suited to these operations
       ent:trip_summaries
     };
 
-    lastTrip = function(with_data){
+    lastTrip = function(options){
+      with_data = options{"with_data"};
       with_data => ent:trips(ent:last_trip)
                  | ent:trip_summaries(ent:last_trip)
     };
@@ -54,7 +55,7 @@ Manage trips. PDS is not well-suited to these operations
 		      ;
       t = sorted_keys
               .map(function(k) {
-	        e = ent:trip_summaries{k}.klog(">>>> endWayPoint <<<<<");
+	        e = ent:trip_summaries{k};
 	        start = waypointToArray(e{"startWaypoint"}).join(",");
 	        dest = waypointToArray(e{"endWaypoint"}).join(",");
 		miles = e{"mileage"} || "unknown";
