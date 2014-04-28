@@ -62,7 +62,7 @@ Operations for fuel
 	"unit_price": unit_price,
 	"location": location,
 	"odometer": odometer,
-	"timestamp": time:now("Europe/London")
+	"timestamp": time:now({"tz": "Europe/London"})
       }.klog(">>>>>>> fuel record <<<<<<<<");
     }
     if( not volume.isnull() 

@@ -383,7 +383,7 @@
 		throw "Bad data; can't record fuel fillup for vehicle", fillup_obj;
 	    }
 
-            return CloudOS.raiseEvent("fuse", "new_fuel_fillup", {}, fillup_obj, function(response)
+            return CloudOS.raiseEvent("fuse", "new_fuel_purchase", {}, fillup_obj, function(response)
             {
                 Fuse.log("Recorded fillup for vehicle: " + vehicle_channel);
 		if(response.length < 1) {
