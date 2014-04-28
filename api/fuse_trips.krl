@@ -24,7 +24,7 @@ Manage trips. PDS is not well-suited to these operations
   global {
 
     // external decls
-    trips = function(searchicall){
+    trips = function(search){
       ent:trip_summaries
     };
 
@@ -56,7 +56,7 @@ Manage trips. PDS is not well-suited to these operations
               .map(function(k) {
 	        e = ent:trip_summaries{k};
 	        start = waypointToArray(e{"startWaypoint"}).join(",");
-	        dest = waypointToArray(e{"endWaypoint"});
+	        dest = waypointToArray(e{"endWaypoint"}).join(",");
 		miles = e{"mileage"} || "unknown";
 	        url = "http://maps.google.com/maps?saddr=#{start}&daddr="+dest[0]+","+dest[1];
 	        {"dtstart" : e{"startTime"},
