@@ -46,7 +46,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
                    "a169x672.prod",  // MyProfile
                    "a41x174.prod",   // Amazon S3 module
                    "a16x129.dev",    // SendGrid module
-//  don't think we really want this everywhere...                 "b16x16.prod",    // Fuse Fleet
+//  don't think we really want this everywhere...                 "b16x16.prod",    // Fuse Init (owner)
 		   "b16x13.prod"     // Fuse errors
                ],
                "fleet": [

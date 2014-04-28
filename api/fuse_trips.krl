@@ -54,11 +54,11 @@ Manage trips. PDS is not well-suited to these operations
 		      ;
       t = sorted_keys
               .map(function(k) {
-	        e = ent:trip_summaries{k};
+	        e = ent:trip_summaries{k}.klog(">>>> endWayPoint <<<<<");
 	        start = waypointToArray(e{"startWaypoint"}).join(",");
 	        dest = waypointToArray(e{"endWaypoint"}).join(",");
 		miles = e{"mileage"} || "unknown";
-	        url = "http://maps.google.com/maps?saddr=#{start}&daddr="+dest[0]+","+dest[1];
+	        url = "http://maps.google.com/maps?saddr=#{start}&daddr=#{dest}";
 	        {"dtstart" : e{"startTime"},
 		 "dtend" : e{"endTime"},
 		 "summary" : "Trip of #{miles} miles",
