@@ -18,13 +18,13 @@ Operations for fuel
     use module b16x9 alias vehicle
 
 	
-    provides last_fillup
+    provides lastFillup
   }
 
   global {
 
     // external decls
-    last_fillup = function(){
+    lastFillup = function(){
       pds:get_item(common:fuel_namspace(), ent:last_fuel_purchase);
     };
 
@@ -57,6 +57,7 @@ Operations for fuel
       location = event:attr("location");
       key = event:attr("key");
       rec = {
+        "key": key,	    // don't assume key is timestamp here...
         "volume": volume,
 	"unit_price": unit_price,
 	"location": location,

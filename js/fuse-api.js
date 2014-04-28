@@ -162,6 +162,7 @@
 	      || cache === "" 
 	      || cache === null
 	      || (typeof cache === "object" && typeof cache.length === "number" && cache.length < 1)
+	      || options.force
 	       ) {
                 Fuse.log("Calling " + funcName);
 		var fc = Fuse.fleetChannel();
@@ -332,6 +333,94 @@
 	    } 
             );
         },
+
+	ask_vehicle: function(vehicle_channel, funcName, cache, cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if (typeof cache[vehicle_channel] === "undefined" 
+	      || cache[vehicle_channel] === "" 
+	      || cache[vehicle_channel] === null
+	      || (typeof cache[vehicle_channel] === "object" && typeof cache[vehicle_channel].length === "number" && cache[vehicle_channel].length < 1)
+	      || options.force
+	       ) {
+                Fuse.log("Calling " + funcName);
+		if(vehicle_channel !== "none") {
+		    return CloudOS.skyCloud(Fuse.get_rid("fleet"), funcName, {}, cb, {"eci": vehicle_channel});
+		} else {
+		    Fuse.log("vehicle_channel is undefined, you must get the vehicle channel first");
+		    return null;
+		}
+	    } else {
+		Fuse.log("Using cached ")
+		cb(cache[vehicle_channel]);
+		return cache[vehicle_channel]
+	    }
+	},
+
+
+	// ---------- Fuel ----------
+	lastFillup: function(vehicle_channel, cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    return Fuse.ask_vehicle(vehicle_channel, "lastFillup", Fuse.last_fillup, function(json) {
+			Fuse.vehicles = json;
+			Fuse.log("Retrieve vehicle status", json);
+			cb(json);
+  		       }, options);
+	},
+
+	recordFillUp: function(vehicle_channel, fillup_obj, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record fuel fillup for vehicle";
+	    };
+	    if( typeof fillup_obj === "undefined" 
+             || typeof fillup_obj.volume === "undefined"
+             || typeof fillup_obj.unit_price === "undefined"
+	      ){
+		throw "Bad data; can't record fuel fillup for vehicle", fillup_obj;
+	    }
+
+            return CloudOS.raiseEvent("fuse", "new_fuel_fillup", {}, fillup_obj, function(response)
+            {
+                Fuse.log("Recorded fillup for vehicle: " + vehicle_channel);
+		if(response.length < 1) {
+		    throw "Fuel fillup record failed for vehicle: "  + vehicle_channel;
+		}
+                cb(response);
+            },
+	    {"eci": vehicle_channel
+	    } 
+            );
+        },
+
+	deleteFillUp: function(vehicle_channel, key, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record fuel fillup for vehicle";
+	    };
+	    if( typeof key === "undefined" 
+	      ){
+		throw "Bad key; can't delete fuel fillup record for vehicle", fillup_obj;
+	    }
+
+            return CloudOS.raiseEvent("fuse", "new_fuel_fillup", {}, fillup_obj, function(response)
+            {
+                Fuse.log("Deleted fillup for vehicle: " + vehicle_channel);
+		if(response.length < 1) {
+		    throw "Fuel fillup record delete failed for vehicle: "  + vehicle_channel;
+		}
+                cb(response);
+            },
+	    {"eci": vehicle_channel
+	    } 
+            );
+        },
+
 
     };
 
