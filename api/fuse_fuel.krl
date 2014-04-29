@@ -66,7 +66,7 @@ Operations for fuel
       key = event:attr("key");
       current_time = time:now({"tz": "UTC"});
 
-      fillup = lastFillup() || {"odometer": 0, "timestamp": current_time};
+      fillup = lastFillup().klog(">>>> last fill up <<<<<<<") || {"odometer": 0, "timestamp": current_time};
       distance = odometer - fillup{"odometer"};
       mpg = distance/volume;
 
@@ -78,8 +78,8 @@ Operations for fuel
         "volume": volume,
 	"unit_price": unit_price,
 	"location": location,
-	"odometer": odometer,
-	"distance": distance,
+	"odometer": odometer.sprintf("%.1f"),
+	"distance": distance.sprintf("%.2f"),
 	"mpg": mpg,
 	"interval": days,
 	"timestamp": current_time
