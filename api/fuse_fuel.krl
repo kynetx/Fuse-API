@@ -25,7 +25,7 @@ Operations for fuel
 
     // external decls
     lastFillup = function(){
-      pds:get_item(common:fuel_namspace(), ent:last_fuel_purchase);
+      pds:get_item(common:fuel_namespace(), ent:last_fuel_purchase);
     };
 
   }
