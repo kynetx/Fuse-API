@@ -72,7 +72,7 @@ Operations for fuel
       distance = odometer - fillup{"odometer"};
       mpg = distance/volume;
 
-      days = (time:strftime(current_time, "%s") - time:strftime(fillup{"timestamp"}, "%s"))/84600;
+      seconds = (time:strftime(current_time, "%s") - time:strftime(fillup{"timestamp"}, "%s"));
 
 
       rec = {
@@ -83,7 +83,7 @@ Operations for fuel
 	"odometer": odometer.sprintf("%.1f"),
 	"distance": distance.sprintf("%.1f"),
 	"mpg": mpg.sprintf("%.2f"),
-	"interval": days,
+	"interval": seconds,
 	"timestamp": current_time
       }.klog(">>>>>>> fuel record <<<<<<<<");
     }
@@ -130,19 +130,18 @@ Operations for fuel
             "_api": "sky"
  		   
 	  };
-      raise explicit event last_entry_key_wrong // in case we removed the most recent item
     }
   }
 
   rule reset_last_fuel_entry {
-    select when explicit last_entry_key_wrong
+    select when pds data_updated namespace "fuse-fuel"
     pre {
       sort_opt = {
         "path" : ["timestamp"],
 	"reverse": true,
 	"compare" : "datetime"
       };
-      last_key = pds:get_keys(common:fuel_namespace(), sort_opt, 1).head().klog(">>>> retrieved pds key <<<<");
+      last_key = pds:get_keys(common:fuel_namespace(), sort_opt, 1).head().klog(">>>> resetting pds key <<<<");
     }
     always {
       set ent:last_fuel_purchase last_key;
