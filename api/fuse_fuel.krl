@@ -30,11 +30,11 @@ Operations for fuel
 	"reverse": true,
 	"compare" : "datetime"
       };
-      last_key = not key.isnull()                    => key 
-               | not ent:last_fuel_purchase.isnull() => ent:last_fuel_purchase
+      last_key = not key.isnull()                    => key.klog(">>>> using the parameter key <<<<<") 
+               | not ent:last_fuel_purchase.isnull() => ent:last_fuel_purchase.klog(">>>> using entity var key <<<<")
 		                                      | pds:get_keys(common:fuel_namespace(), sort_opt, 1)
                                                           .head()
- 							  .klog(">>>>> had to punt on key for last furl entry <<<<<<");
+ 							  .klog(">>>>> had to punt on key for last fuel entry <<<<<<");
       pds:get_item(common:fuel_namespace(), last_key.klog(">>>>> using this key <<<<<<<<<"));
     };
 
