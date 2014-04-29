@@ -32,7 +32,9 @@ Operations for fuel
       };
       last_key = not key.isnull()                    => key 
                | not ent:last_fuel_purchase.isnull() => ent:last_fuel_purchase
-		                                      | pds:get_keys(common:fuel_namespace(), sort_opt, 1).head().klog(">>>> pds key <<<<")
+		                                      | pds:get_keys(common:fuel_namespace(), sort_opt, 1)
+                                                          .head()
+ 							  .klog(">>>>> had to punt on key for last furl entry <<<<<<");
       pds:get_item(common:fuel_namespace(), last_key.klog(">>>>> using this key <<<<<<<<<"));
     };
 
@@ -44,7 +46,7 @@ Operations for fuel
     pre {
       rec = event:attrs()
               .delete(["key"]) // new records can't have key
-	      .klog(">>>>>> new record <<<<<<<<"); 
+	      ; 
     }      
     {
       send_directive("Recording fill up") with rec = rec
@@ -68,7 +70,7 @@ Operations for fuel
       location = event:attr("location");
       current_time = time:now({"tz": "UTC"});
 
-      fillup = lastFillup().klog(">>>> last fill up <<<<<<<") || {"odometer": 0, "timestamp": current_time};
+      fillup = lastFillup() || {"odometer": 0, "timestamp": current_time};
       distance = odometer - fillup{"odometer"};
       mpg = distance/volume;
 
