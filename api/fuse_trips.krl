@@ -158,7 +158,7 @@ Manage trips. PDS is not well-suited to these operations
                                                 | incoming;
       tid = mkTid(trip_info{"id"});
       end_time = endTime(trip_info);
-      trip_info = trip_info.put(["endTime"], end_time);
+      trip_info = trip_info.put(["endTime"], end_time).klog(">>>> storing trip <<<<< ");
       trip_summary = tripSummary(trip_info);
       time_split = time:strftime(end_time, "%Y_:%m_:%d_:%H_:%M%S_").split(re/:/);
       week_number = time:strftime(end_time, "%U_")
