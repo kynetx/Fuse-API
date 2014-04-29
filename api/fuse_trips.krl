@@ -123,7 +123,7 @@ Manage trips. PDS is not well-suited to these operations
        // 	"startTime": trip{"startTime"}
        // };
       fillup = fuel:lastFillup() || {"mpg": 1, "unit_price": 0};
-      mileage = trip{"mileage"} < 0.1 =>  1
+      mileage = trip{"mileage"} < 0.1 =>  0.01
                                        |  trip{"mileage"};
       cost = math:round((mileage.klog(">>>> mileage <<<<<") / fillup{"mpg"}) * fillup{"unit_price"} * 1000) / 1000;
       summary = trip
@@ -165,7 +165,7 @@ Manage trips. PDS is not well-suited to these operations
       week_number = time:strftime(end_time, "%U_")
     }
     if( end_time neq "ERROR_NO_TIMESTAMP_AVAILABLE" 
-     && trip_info{"mileage"} < 0.01
+     && trip_info{"mileage"} > 0.01
       ) then
     {send_directive("Adding trip #{tid}") with 
       end_time = end_time and
