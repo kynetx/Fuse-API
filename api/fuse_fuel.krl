@@ -32,7 +32,7 @@ Operations for fuel
       };
       last_key = not key.isnull()                    => key 
                | not ent:last_fuel_purchase.isnull() => ent:last_fuel_purchase
-		                                      | pds:get_keys(common:fuel_namespace(), sort_opt, 1).klog(">>>> pds key <<<<")
+		                                      | pds:get_keys(common:fuel_namespace(), sort_opt, 1).head().klog(">>>> pds key <<<<")
       pds:get_item(common:fuel_namespace(), last_key.klog(">>>>> using this key <<<<<<<<<"));
     };
 
@@ -118,7 +118,7 @@ Operations for fuel
 	"reverse": true,
 	"compare" : "datetime"
       };
-      last_key = pds:get_keys(common:fuel_namespace(), sort_opt, 1).klog(">>>> retrieved pds key <<<<");
+      last_key = pds:get_keys(common:fuel_namespace(), sort_opt, 1).head().klog(">>>> retrieved pds key <<<<");
     }
     if( not key.isnull() 
       ) then
