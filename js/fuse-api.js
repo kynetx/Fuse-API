@@ -405,10 +405,10 @@
 	    };
 	    if( typeof key === "undefined" 
 	      ){
-		throw "Bad key; can't delete fuel fillup record for vehicle", fillup_obj;
+		throw "Bad key; can't delete fuel fillup record for vehicle";
 	    }
-
-            return CloudOS.raiseEvent("fuse", "new_fuel_fillup", {}, fillup_obj, function(response)
+	    var attrs = {"key": key};
+            return CloudOS.raiseEvent("fuse", "unneeded_fuel_purchase", {}, attrs, function(response)
             {
                 Fuse.log("Deleted fillup for vehicle: " + vehicle_channel);
 		if(response.length < 1) {

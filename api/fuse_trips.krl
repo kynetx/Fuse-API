@@ -16,6 +16,7 @@ Manage trips. PDS is not well-suited to these operations
     use module b16x19 alias common
     use module b16x11 alias carvoyant
     use module b16x9 alias vehicle
+    use module b16x20 alias fuel
 
 	
     provides trips, lastTrip, tripName, ical_for_vehicle
