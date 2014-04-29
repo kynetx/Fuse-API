@@ -164,7 +164,9 @@ Manage trips. PDS is not well-suited to these operations
       time_split = time:strftime(end_time, "%Y_:%m_:%d_:%H_:%M%S_").split(re/:/);
       week_number = time:strftime(end_time, "%U_")
     }
-    if(end_time neq "ERROR_NO_TIMESTAMP_AVAILABLE") then
+    if( end_time neq "ERROR_NO_TIMESTAMP_AVAILABLE" 
+     && trip_info{"mileage"} < 0.01
+      ) then
     {send_directive("Adding trip #{tid}") with 
       end_time = end_time and
       time_split = time_split and
@@ -183,7 +185,7 @@ Manage trips. PDS is not well-suited to these operations
       // set ent:trips_by_week{week_number} = (ent:trips_by_week{week_number} || []).append(tid);
     } else {
       log ">>>>>>>>>>>>>>>>>>>>>>>>> save_trip failed <<<<<<<<<<<<<<<<<<<<<<<<<";
-      log "End time: #{end_time}";
+      log "End time: #{end_time}; mileage: " + trip_info{"mileage"};
     }
   }
   // daily summaries (TZs, ugh)
