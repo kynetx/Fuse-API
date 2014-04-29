@@ -25,7 +25,15 @@ Operations for fuel
 
     // external decls
     lastFillup = function(key){
-      pds:get_item(common:fuel_namespace(), key || ent:last_fuel_purchase);
+      sort_opt = {
+        "path" : ["timestamp"],
+	"reverse": true,
+	"compare" : "datetime"
+      };
+      last_key = not key.isnull()                    => key 
+               | not ent:last_fuel_purchase.isnull() => ent:last_fuel_purchase
+		                                      | pds:get_keys(common:fuel_namespace(), sort_opt, 1).klog(">>>> pds key <<<<")
+      pds:get_item(common:fuel_namespace(), last_key);
     };
 
   }

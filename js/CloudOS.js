@@ -93,7 +93,7 @@
 
             $.extend(parameters, { "_eci": eci });
 
-            // console.log("Attaching event parameters ", parameters);
+            console.log("Attaching event parameters ", parameters);
             esl = esl + "?" + $.param(parameters);
 
             var process_error = function(res)
