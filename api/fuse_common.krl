@@ -29,6 +29,7 @@ Common definitions
 	picos_by_id{id};
       };
 
+      // used as string in fuse_fuel.krl for event filtering
       fuel_namespace = function() {
         namespace_id = "fuse-fuel";
 	namespace_id    

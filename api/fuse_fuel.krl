@@ -134,7 +134,7 @@ Operations for fuel
   }
 
   rule reset_last_fuel_entry {
-    select when pds data_updated namespace "fuse-fuel"
+    select when pds data_deleted namespace "fuse-fuel"
     pre {
       sort_opt = {
         "path" : ["timestamp"],
