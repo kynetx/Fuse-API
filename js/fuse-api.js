@@ -29,6 +29,9 @@
 			   },
 		"trips": {"prod": "b16x18",
 			  "dev":  "b16x18"
+			 },
+		"fuel":  {"prod": "b16x20",
+			  "dev":  "b16x20"
 			 }
 	    };
 
@@ -337,6 +340,8 @@
 	ask_vehicle: function(vehicle_channel, funcName, cache, cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
+	    cache = cache || {};
+	    var rid = options.rid || "vehicle";
 	    if (typeof cache[vehicle_channel] === "undefined" 
 	      || cache[vehicle_channel] === "" 
 	      || cache[vehicle_channel] === null
@@ -345,7 +350,7 @@
 	       ) {
                 Fuse.log("Calling " + funcName);
 		if(vehicle_channel !== "none") {
-		    return CloudOS.skyCloud(Fuse.get_rid("fleet"), funcName, {}, cb, {"eci": vehicle_channel});
+		    return CloudOS.skyCloud(Fuse.get_rid(rid), funcName, {}, cb, {"eci": vehicle_channel});
 		} else {
 		    Fuse.log("vehicle_channel is undefined, you must get the vehicle channel first");
 		    return null;
@@ -362,6 +367,7 @@
 	lastFillup: function(vehicle_channel, cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
+	    options.rid = "fuel";
 	    return Fuse.ask_vehicle(vehicle_channel, "lastFillup", Fuse.last_fillup, function(json) {
 			Fuse.vehicles = json;
 			Fuse.log("Retrieve vehicle status", json);

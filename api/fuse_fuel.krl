@@ -24,8 +24,8 @@ Operations for fuel
   global {
 
     // external decls
-    lastFillup = function(){
-      pds:get_item(common:fuel_namespace(), ent:last_fuel_purchase);
+    lastFillup = function(key){
+      pds:get_item(common:fuel_namespace(), key || ent:last_fuel_purchase);
     };
 
   }
