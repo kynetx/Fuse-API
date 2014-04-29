@@ -122,7 +122,13 @@ Manage trips. PDS is not well-suited to these operations
        // 	"endTime": endTime(trip),
        // 	"startTime": trip{"startTime"}
        // };
-      summary = trip.delete(["data"]);
+      fillup = fuel:lastFillup() || {"mpg": 1, "unit_price": 0};
+      mileage = trip{"mileage"} || 1;
+      cost = (mileage / fillup{"mpg"}) * fillup{"unit_price"};
+      summary = trip
+                 .delete(["data"])
+ 		 .put(["cost"], cost)
+                ;
       summary
     };
 
