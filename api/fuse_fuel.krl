@@ -33,7 +33,7 @@ Operations for fuel
       last_key = not key.isnull()                    => key 
                | not ent:last_fuel_purchase.isnull() => ent:last_fuel_purchase
 		                                      | pds:get_keys(common:fuel_namespace(), sort_opt, 1).klog(">>>> pds key <<<<")
-      pds:get_item(common:fuel_namespace(), last_key);
+      pds:get_item(common:fuel_namespace(), last_key.klog(">>>>> using this key <<<<<<<<<"));
     };
 
   }
@@ -112,6 +112,13 @@ Operations for fuel
     select when fuse unneeded_fuel_purchase
     pre {
       key = event:attr("key");
+
+      sort_opt = {
+        "path" : ["timestamp"],
+	"reverse": true,
+	"compare" : "datetime"
+      };
+      last_key = pds:get_keys(common:fuel_namespace(), sort_opt, 1).klog(">>>> pds key <<<<")
     }
     if( not key.isnull() 
       ) then
@@ -127,6 +134,7 @@ Operations for fuel
             "_api": "sky"
  		   
 	  };
+      set ent:last_fuel_purchase last_key
     }
   }
 

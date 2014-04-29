@@ -375,7 +375,7 @@
 
 	    return Fuse.ask_vehicle(vehicle_channel, "lastFillup", args, Fuse.last_fillup, function(json) {
 			Fuse.last_fillup[vehicle_channel] = json;
-			Fuse.log("Retrieve vehicle status", json);
+			Fuse.log("Retrieve last fillup", json);
 			cb(json);
   		       }, options);
 	},
