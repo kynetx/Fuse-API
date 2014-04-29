@@ -59,18 +59,18 @@ Operations for fuel
   rule update_fuel_purchase {
     select when fuse updated_fuel_purchase
     pre {
-      volume = event:attr("volume");
+      volume = event:attr("volume") || 1;
       unit_price = event:attr("unit_price");
       odometer = event:attr("odometer");
       location = event:attr("location");
       key = event:attr("key");
       current_time = time:now({"tz": "UTC"});
 
-      fillup = lastFillup() || {};
-      distance = odometer - (fillup{"odometer"} || 0);
+      fillup = lastFillup() || {"odometer": 0, "timestamp": current_time};
+      distance = odometer - fillup{"odometer"};
       mpg = distance/volume;
 
-      days = (time:strftime("%s", current_time) - time:strftime("%s", fillup{"timestamp"}))/84600;
+      days = (time:strftime(current_time, "%s") - time:strftime(fillup{"timestamp"}, "%s"))/84600;
 
 
       rec = {
@@ -118,7 +118,7 @@ Operations for fuel
 	"reverse": true,
 	"compare" : "datetime"
       };
-      last_key = pds:get_keys(common:fuel_namespace(), sort_opt, 1).klog(">>>> pds key <<<<")
+      last_key = pds:get_keys(common:fuel_namespace(), sort_opt, 1).klog(">>>> retrieved pds key <<<<");
     }
     if( not key.isnull() 
       ) then
@@ -134,7 +134,7 @@ Operations for fuel
             "_api": "sky"
  		   
 	  };
-      set ent:last_fuel_purchase last_key
+      set ent:last_fuel_purchase last_key;
     }
   }
 
