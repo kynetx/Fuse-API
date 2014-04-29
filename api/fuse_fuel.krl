@@ -112,13 +112,6 @@ Operations for fuel
     select when fuse unneeded_fuel_purchase
     pre {
       key = event:attr("key");
-
-      sort_opt = {
-        "path" : ["timestamp"],
-	"reverse": true,
-	"compare" : "datetime"
-      };
-      last_key = pds:get_keys(common:fuel_namespace(), sort_opt, 1).head().klog(">>>> retrieved pds key <<<<");
     }
     if( not key.isnull() 
       ) then
@@ -134,6 +127,21 @@ Operations for fuel
             "_api": "sky"
  		   
 	  };
+      raise explicit event last_entry_key_wrong // in case we removed the most recent item
+    }
+  }
+
+  rule reset_last_fuel_entry {
+    select when explicit last_entry_key_wrong
+    pre {
+      sort_opt = {
+        "path" : ["timestamp"],
+	"reverse": true,
+	"compare" : "datetime"
+      };
+      last_key = pds:get_keys(common:fuel_namespace(), sort_opt, 1).head().klog(">>>> retrieved pds key <<<<");
+    }
+    always {
       set ent:last_fuel_purchase last_key;
     }
   }
