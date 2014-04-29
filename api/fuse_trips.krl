@@ -124,7 +124,7 @@ Manage trips. PDS is not well-suited to these operations
        // };
       fillup = fuel:lastFillup() || {"mpg": 1, "unit_price": 0};
       mileage = trip{"mileage"} || 1;
-      cost = (mileage / fillup{"mpg"}) * fillup{"unit_price"};
+      cost = math:round((mileage / fillup{"mpg"}) * fillup{"unit_price"} * 10000) / 10000;
       summary = trip
                  .delete(["data"])
  		 .put(["cost"], cost)
