@@ -42,28 +42,30 @@ Operations for fuel
   rule record_fuel_purchase {
     select when fuse new_fuel_purchase
     pre {
-      key = time:now({"tz" : "UTC"});  // UTC; using time as key
       rec = event:attrs()
-	      .put(["key"], key)  
+              .delete(["key"]) // new records can't have key
 	      .klog(">>>>>> new record <<<<<<<<"); 
-    }
+    }      
     {
       send_directive("Recording fill up") with rec = rec
     }
     fired {
       raise fuse event updated_fuel_purchase attributes rec; // Keeping it DRY
-      set ent:last_fuel_purchase key
     }
   }
 
   rule update_fuel_purchase {
     select when fuse updated_fuel_purchase
     pre {
+
+      // if no key, assume new record and create one
+      new_record = event:attr("key").isnull();
+      key = event:attr("key") || time:now({"tz" : "UTC"});  // UTC; using time as key
+
       volume = event:attr("volume") || 1;
       unit_price = event:attr("unit_price");
       odometer = event:attr("odometer");
       location = event:attr("location");
-      key = event:attr("key");
       current_time = time:now({"tz": "UTC"});
 
       fillup = lastFillup().klog(">>>> last fill up <<<<<<<") || {"odometer": 0, "timestamp": current_time};
@@ -74,13 +76,13 @@ Operations for fuel
 
 
       rec = {
-        "key": key,	    // don't assume key is timestamp here...
+        "key": key,	    
         "volume": volume,
 	"unit_price": unit_price,
 	"location": location,
 	"odometer": odometer.sprintf("%.1f"),
-	"distance": distance.sprintf("%.2f"),
-	"mpg": mpg,
+	"distance": distance.sprintf("%.1f"),
+	"mpg": mpg.sprintf("%.2f"),
 	"interval": days,
 	"timestamp": current_time
       }.klog(">>>>>>> fuel record <<<<<<<<");
@@ -103,6 +105,7 @@ Operations for fuel
             "_api": "sky"
  		   
 	  };
+      set ent:last_fuel_purchase key if new_record
     } else {
       log(">>>>>> Could not store fuel record " + rec.encode());
     }
