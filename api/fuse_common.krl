@@ -18,7 +18,7 @@ Common definitions
 
       S3Bucket = function(){"k-fuse-01"};
 
-      namespace = function(type) {
+      namespace = function() {
         meta_id = "fuse-meta";
 	meta_id    
       };
@@ -29,19 +29,19 @@ Common definitions
 	picos_by_id{id};
       };
 
-      fuel_namespace = function(type) {
+      fuel_namespace = function() {
         namespace_id = "fuse-fuel";
 	namespace_id    
       };
 
 
-      trips_namespace = function(type) {
+      trips_namespace = function() {
         namespace_id = "fuse-trips";
 	namespace_id    
       };
 
 
-     maint_namespace = function(type) {
+     maint_namespace = function() {
         namespace_id = "fuse-maint";
 	namespace_id    
       };
