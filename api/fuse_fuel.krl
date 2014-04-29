@@ -34,7 +34,7 @@ Operations for fuel
   rule record_fuel_purchase {
     select when fuse new_fuel_purchase
     pre {
-      key = time:now({"tz" : "Europe/London"});  // UTC; using time as key
+      key = time:now({"tz" : "UTC"});  // UTC; using time as key
       rec = event:attrs()
 	      .put(["key"], key)  
 	      .klog(">>>>>> new record <<<<<<<<"); 
@@ -62,7 +62,7 @@ Operations for fuel
 	"unit_price": unit_price,
 	"location": location,
 	"odometer": odometer,
-	"timestamp": time:now({"tz": "Europe/London"})
+	"timestamp": time:now({"tz": "UTC"})
       }.klog(">>>>>>> fuel record <<<<<<<<");
     }
     if( not volume.isnull() 
