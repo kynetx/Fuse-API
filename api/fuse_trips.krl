@@ -64,7 +64,7 @@ Manage trips. PDS is not well-suited to these operations
 		 "dtend" : e{"endTime"},
 		 "summary" : "Trip of #{miles} miles",
 		 "url": url,
-		 "description": "Trip ID: " + e{"id"},
+		 "description": "Trip ID: " + e{"id"} + "; Cost: $" + e{"cost"},
 		 "uid": "http://fuse.to/ical/v1/trip/" + $e{"id"}  // should be the same each time generated
 		}
 	      });
