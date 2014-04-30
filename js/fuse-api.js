@@ -432,6 +432,22 @@
             );
         },
 
+	// ---------- trips ----------
+	lastTrip: function(vehicle_channel, cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    options.rid = "trips";
+	    
+	    Fuse.last_trip = Fuse.last_trip || {};
+
+	    var args = {};
+
+	    return Fuse.ask_vehicle(vehicle_channel, "lastTrip", args, Fuse.last_trip, function(json) {
+			Fuse.last_trip[vehicle_channel] = json;
+			Fuse.log("Retrieve last trip", json);
+			cb(json);
+  		       }, options);
+	},
 
     };
 

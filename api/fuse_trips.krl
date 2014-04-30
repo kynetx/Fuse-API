@@ -29,8 +29,7 @@ Manage trips. PDS is not well-suited to these operations
       ent:trip_summaries
     };
 
-    lastTrip = function(options){
-      with_data = options{"with_data"};
+    lastTrip = function(with_data){
       with_data => ent:trips(ent:last_trip)
                  | ent:trip_summaries(ent:last_trip)
     };
