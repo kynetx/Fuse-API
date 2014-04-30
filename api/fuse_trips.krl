@@ -31,7 +31,7 @@ Manage trips. PDS is not well-suited to these operations
 
     lastTrip = function(with_data){
       with_data => ent:trips{ent:last_trip}
-                 | ent:trip_summaries{ent:last_trip}
+                 | ent:trip_summaries{ent:last_trip}.klog(">>> working with summary <<<")
     };
 
     tripName = function(start, end) {
