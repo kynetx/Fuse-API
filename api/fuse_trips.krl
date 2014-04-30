@@ -164,7 +164,7 @@ Manage trips. PDS is not well-suited to these operations
       week_number = time:strftime(end_time, "%U_")
     }
     if( end_time neq "ERROR_NO_TIMESTAMP_AVAILABLE" 
-     && trip_info{"mileage"} > 0.01
+//     && trip_info{"mileage"} > 0.01
       ) then
     {send_directive("Adding trip #{tid}") with 
       end_time = end_time and
