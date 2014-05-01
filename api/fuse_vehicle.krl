@@ -372,7 +372,7 @@ Fuse ruleset for a vehicle pico
 	                 .put(["profileName"], profile{"myProfileName"})
 			 .put(["DTC"], dtc)
 			 .put(["fuellevel"], status{["GEN_FUELLEVEL","value"]})
-			 .put(["address"], status{["GEN_ADDRESS","value"]})
+			 .put(["address"], status{["GEN_NEAREST_ADDRESS","value"]})
 			 .put(["speed"], speed)
 			 .put(["heading"], status{["GEN_HEADING","value"]})
 
