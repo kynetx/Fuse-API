@@ -354,7 +354,7 @@ Fuse ruleset for a vehicle pico
         raw_vehicle_info = incoming{"vin"}.isnull() => carvoyant:get_vehicle_data(carvoyant:carvoyant_vehicle_data(vid))
                                                      | incoming;
 
-	profile = pds:get_me();
+	profile = pds:get_all_me();
 
 	status = vehicleStatus();
 
@@ -368,7 +368,6 @@ Fuse ruleset for a vehicle pico
 	                 .put(["profileName"], profile{"myProfileName"})
 			 .put(["DTC"], dtc)
 			 .put(["fuellevel"], status{["GEN_FUELLEVEL","value"]})
-			 .put(["odometer"], status{["GEN_ODOMETER","value"]})
 			 .put(["address"], status{["GEN_ADDRESS","value"]})
 			 .put(["speed"], status{["GEN_SPEED","value"]})
 			 .put(["heading"], status{["GEN_HEADING","value"]})
