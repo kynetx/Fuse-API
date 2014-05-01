@@ -351,8 +351,27 @@ Fuse ruleset for a vehicle pico
 
         vid = carvoyant:vehicle_id();
 	incoming = event:attrs() || {};
-        vehicle_info = incoming{"vin"}.isnull() => carvoyant:get_vehicle_data(carvoyant:carvoyant_vehicle_data(vid))
-                                                 | incoming;
+        raw_vehicle_info = incoming{"vin"}.isnull() => carvoyant:get_vehicle_data(carvoyant:carvoyant_vehicle_data(vid))
+                                                     | incoming;
+
+	profile = pds:get_me();
+
+	status = vehicleStatus();
+
+	dtc = {"code": status{["GEN_DTC","value"]},
+	       "id":  status{["GEN_DTC","id"]},
+	       "timestamp":  status{["GEN_DTC","timestamp"]}
+	      };
+
+	vehicle_info = raw_vehicle_info
+	                 .put(["profilePhoto"], profile{"myProfilePhoto"})
+	                 .put(["profileName"], profile{"myProfileName"})
+			 .put(["DTC"], dtc)
+			 .put(["fuellevel"], status{["GEN_FUELLEVEL","value"]})
+			 .put(["odometer"], status{["GEN_ODOMETER","value"]})
+			 .put(["address"], status{["GEN_ADDRESS","value"]})
+			 .put(["speed"], status{["GEN_SPEED","value"]})
+			 .put(["heading"], status{["GEN_HEADING","value"]})
 
       }
       {send_directive("Updated vehicle data for #{vid}") with

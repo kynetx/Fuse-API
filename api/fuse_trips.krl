@@ -26,10 +26,10 @@ Manage trips. PDS is not well-suited to these operations
 
     // external decls
     trips = function(search){
-      ent:trip_summaries.klog(">>>>> all trip summaries");
+      ent:trip_summaries;
     };
 
-    // external decls
+    // temp for mark
     mileage = function(tid){
       ent:trip_summaries{[tid, "mileage"]}.klog(">>>>> trip mileage from summary");
     };
