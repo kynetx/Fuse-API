@@ -363,13 +363,17 @@ Fuse ruleset for a vehicle pico
 	       "timestamp":  status{["GEN_DTC","timestamp"]}
 	      };
 
+	speed = raw_vehicle_info{"running"} => status{["GEN_SPEED","value"]}
+	                                     | "0";
+
+
 	vehicle_info = raw_vehicle_info
 	                 .put(["profilePhoto"], profile{"myProfilePhoto"})
 	                 .put(["profileName"], profile{"myProfileName"})
 			 .put(["DTC"], dtc)
 			 .put(["fuellevel"], status{["GEN_FUELLEVEL","value"]})
 			 .put(["address"], status{["GEN_ADDRESS","value"]})
-			 .put(["speed"], status{["GEN_SPEED","value"]})
+			 .put(["speed"], speed)
 			 .put(["heading"], status{["GEN_HEADING","value"]})
 
       }
