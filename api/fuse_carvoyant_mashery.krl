@@ -100,7 +100,7 @@ b16x17: fuse_fleet.krl
 	       "netloc": hostname + ":443"
                },
              "params" : {"grant_type": "client_credentials"}
-            }; // .klog(">>>>>> client header <<<<<<<<");
+            }.klog(">>>>>> client header <<<<<<<<");
       raw_result = http:post(url, header);
       (raw_result{"status_code"} eq "200") => raw_result{"content"}.decode()
                                             | raw_result.decode()
