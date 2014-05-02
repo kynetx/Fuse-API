@@ -91,7 +91,7 @@ b16x17: fuse_fleet.krl
             {"credentials": {
                "username": keys:carvoyant_client("client_id"),
                "password": keys:carvoyant_client("client_secret"),
-	       "realm": "Carvoyant API",
+	       "realm": hostname,
 	       "netloc": hostname + ":443"
                },
              "params" : {"grant_type": "client_credential"}
