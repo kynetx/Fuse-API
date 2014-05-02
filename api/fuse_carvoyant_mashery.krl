@@ -91,7 +91,7 @@ b16x17: fuse_fleet.krl
     };
 
     clientAccessToken = function() {
-      url = apiUrl("/oauth/token");
+      url = apiUrl("/oauth/token").klog(">>> url >>>> ");
       header = 
             {"credentials": {
                "username": keys:carvoyant_client("client_id"),
