@@ -17,7 +17,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     errors to b16x13
 
-    provides client_access_token,
+    provides clientAccessToken, // don't provide after debug
              namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
              vehicleStatus, keyToLabel, tripInfo,
              get_subscription,no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
@@ -84,9 +84,14 @@ b16x17: fuse_fleet.krl
     };
 
 
-    client_access_token = function() {
+    apiUrl = function(path) {
       hostname = "api.carvoyant.com";
-      url = "https://"+hostname+"/oauth/token";
+      url = "https://"+hostname+ (path.isnull() => "/v1/api/" | path);
+      url
+    };
+
+    clientAccessToken = function() {
+      url = apiUrl("/oauth/token");
       header = 
             {"credentials": {
                "username": keys:carvoyant_client("client_id"),
@@ -95,9 +100,10 @@ b16x17: fuse_fleet.krl
 	       "netloc": hostname + ":443"
                },
              "params" : {"grant_type": "client_credentials"}
-            }.klog(">>>>>> client header <<<<<<<<");
+            }; // .klog(">>>>>> client header <<<<<<<<");
       raw_result = http:post(url, header);
-      raw_result
+      (raw_result{"status_code"} eq "200") => raw_result{"content"}.decode()
+                                            | raw_result.decode()
     }
 
 
@@ -292,6 +298,92 @@ b16x17: fuse_fleet.krl
       carvoyant_channel.length() > 0 => carvoyant_channel.head().pick("$.cid")
                                       | CloudOS:channelCreate(carvoyant_channel_name).pick("$.token")
     }
+
+
+  }
+
+  // ---------- create account ----------
+
+  /*
+    I'm going to just get new credentials each time. If we get to where we're adding 100's of account per week 
+    we may want to rethink this, store them, use the refresh, etc. 
+  */
+  rule init_account {
+    select when carvoyant init_account
+    pre {
+      client_access_token = clientAccessToken();
+    }
+    if(client_access_token{"access_token"})  then 
+    {
+      send_directive("Retrieved access token for client_credentials")
+    }
+    fired {
+      raise explicit event create_account 
+        attributes event:attrs().put(["access_token"], client_access_token{"access_token"})
+    } else {
+      error warn "Carvoyant Error: " + client_access_token.encode()
+    }
+  }
+
+  rule init_account_follow_on {
+    select when explicit create_account
+    pre {
+
+      profile = pds:get_all_me();
+      first_name = event:attr("first_name") || profile{"myProfileName"}.extract(re/^(\w+)\s*/).head() || "";
+      last_name = event:attr("last_name") || profile{"myProfileName"}.extract(re/\s*(\w+)$/).head() || "";
+      email = event:attr("email") || profile{"myProfileEmail"} || "";
+      phone = event:attr("phone") || profile{"myProfilePhone"} || "";
+      zip = event:attr("zip") || profile{"myProfileZip"} || "";
+      username = event:attr("username") || pci:get_username() || "";
+      password = event:attr("password") || "";
+
+      payload = { "firstName": first_name,  
+                  "lastName": last_name,  
+		  "email": email,  
+		  "zipcode": zip,  
+		  "phone": phone,  
+		  "timeZone": null,  
+		  "preferredContact": "EMAIL",  
+		  "username" : username,  
+		  "password": password
+		};
+
+      bearer = event:attr("access_token");
+    }
+
+    if( username neq "" 
+     && password neq ""
+      ) then 
+    {
+      //post to carvoyant
+      http:post(url) 
+        with body = payload
+	 and headers = {"content-type": "application/json",
+	                "Authorization": "Bearer " + bearer
+	               }
+         and autoraise = "account_init";
+
+      send_directive("Posting to Carvoyant to make account") with 
+        username = payload 
+      
+    }
+    fired {
+      log ">>>>> creating carvoyant account <<<<<"
+    } else {
+      error warn "Must supply username and password" ;
+    }
+
+  } 
+
+  rule process_carvoyant_acct_creation {
+    select when http post status_code  re#2\d\d#  label "account_init"
+
+
+  }
+
+  rule error_carvoyant_acct_creation {
+    select when http post status_code  re#[45]\d\d#  label "account_init"
 
 
   }
