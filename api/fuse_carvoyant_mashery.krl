@@ -94,7 +94,7 @@ b16x17: fuse_fleet.krl
 	       "realm": hostname,
 	       "netloc": hostname + ":443"
                },
-             "params" : {"grant_type": "client_credential"}
+             "params" : {"grant_type": "client_credentials"}
             }.klog(">>>>>> client header <<<<<<<<");
       raw_result = http:post(url, header);
       raw_result
