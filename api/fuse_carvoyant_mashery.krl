@@ -83,9 +83,9 @@ b16x17: fuse_fleet.krl
       pds:get_item(namespace(), "vehicle_info").pick("$.vehicleId")
     };
 
-
+    apiHostname = function() {"api.carvoyant.com"};
     apiUrl = function(path) {
-      hostname = "api.carvoyant.com";
+      hostname = apiHostname();
       url = "https://"+hostname+ (path.isnull() => "/v1/api/" | path);
       url
     };
@@ -96,8 +96,8 @@ b16x17: fuse_fleet.krl
             {"credentials": {
                "username": keys:carvoyant_client("client_id"),
                "password": keys:carvoyant_client("client_secret"),
-	       "realm": hostname,
-	       "netloc": hostname + ":443"
+	       "realm": apiHostname(),
+	       "netloc": apiHostname() + ":443"
                },
              "params" : {"grant_type": "client_credentials"}
             }.klog(">>>>>> client header <<<<<<<<");
