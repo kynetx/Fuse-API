@@ -116,8 +116,7 @@ b16x17: fuse_fleet.krl
 	       "netloc": apiHostname() + ":443"
                },
              "params" : {"grant_type": "authorization_code",
-	                 "code": code,
-			 "redirect_uri": redirect_url
+	                 "code": code
 	                }
             }.klog(">>>>>> client header <<<<<<<<");
       raw_result = http:post(url, header);
