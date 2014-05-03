@@ -107,7 +107,7 @@ b16x17: fuse_fleet.krl
     };
 
     codeForAccessToken = function(code, redirect_url) {
-      url = apiUrl("/oauth/token?redirect_uri=" + redirect_url);
+      url = apiUrl("/oauth/token"); //"?redirect_uri=" + redirect_url);
       header = 
             {"credentials": {
                "username": keys:carvoyant_client("client_id"),
@@ -116,7 +116,8 @@ b16x17: fuse_fleet.krl
 	       "netloc": apiHostname() + ":443"
                },
              "params" : {"grant_type": "authorization_code",
-	                 "code": code
+	                 "code": code,
+			 "redirect_uri": redirect_url
 	                }
             }.klog(">>>>>> client header <<<<<<<<");
       raw_result = http:post(url, header);
