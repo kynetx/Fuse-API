@@ -17,7 +17,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     errors to b16x13
 
-    provides clientAccessToken, // don't provide after debug
+    provides clientAccessToken, codeForAccessToken,  // don't provide after debug
              namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
              vehicleStatus, keyToLabel, tripInfo,
              get_subscription,no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
@@ -91,7 +91,7 @@ b16x17: fuse_fleet.krl
     };
 
     clientAccessToken = function() {
-      url = apiUrl("/oauth/token").klog(">>> url >>>> ");
+      url = apiUrl("/oauth/token");
       header = 
             {"credentials": {
                "username": keys:carvoyant_client("client_id"),
@@ -100,11 +100,29 @@ b16x17: fuse_fleet.krl
 	       "netloc": apiHostname() + ":443"
                },
              "params" : {"grant_type": "client_credentials"}
+            }; //.klog(">>>>>> client header <<<<<<<<");
+      raw_result = http:post(url, header);
+      (raw_result{"status_code"} eq "200") => raw_result{"content"}.decode()
+                                            | raw_result.decode()
+    };
+
+    codeForAccessToken = function(code) {
+      url = apiUrl("/oauth/token");
+      header = 
+            {"credentials": {
+               "username": keys:carvoyant_client("client_id"),
+               "password": keys:carvoyant_client("client_secret"),
+	       "realm": apiHostname(),
+	       "netloc": apiHostname() + ":443"
+               },
+             "params" : {"grant_type": "authorization_code",
+	                 "code": code
+	                }
             }.klog(">>>>>> client header <<<<<<<<");
       raw_result = http:post(url, header);
       (raw_result{"status_code"} eq "200") => raw_result{"content"}.decode()
                                             | raw_result.decode()
-    }
+    };
 
 
     // vehicle_id is optional if creating a new vehicle profile
@@ -378,7 +396,12 @@ b16x17: fuse_fleet.krl
 
   rule process_carvoyant_acct_creation {
     select when http post status_code  re#2\d\d#  label "account_init"
-
+    pre {
+      account = event:attr('content').decode().pick("$.account");
+      account_id = account{"id"};
+      code = account{["accessToken", "code"]};
+      
+    }
 
   }
 
