@@ -400,15 +400,31 @@ b16x17: fuse_fleet.krl
     pre {
       account = event:attr('content').decode().pick("$.account");
       account_id = account{"id"};
-      code = account{["accessToken", "code"]};
-      
+      code = account{["accessToken", "code"]}.klog(">>>> code >>>> ");
+      tokens = codeForAccessToken(code, "https://kibdev.kobj.net/sky/event/somethingelsegoeshere");
+      ai = {
+        "account_id": account_id,
+	"refresh_token": tokens{"refresh_token"}
+      }
     }
+
+    {
+      send_directive("Exchanged account code for account tokens") with tokens = tokens
+    }
+    fired {
+      set ent:account_info ai;
+      set ent:access_token tokens{"access_token"};
+    }
+
 
   }
 
   rule error_carvoyant_acct_creation {
     select when http post status_code  re#[45]\d\d#  label "account_init"
 
+    always {
+      log ">>>>> carvoyant account creation failed " + event:attrs().encode();
+    }
 
   }
 
