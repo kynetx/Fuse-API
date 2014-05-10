@@ -18,7 +18,7 @@ Fuse ruleset for a vehicle pico
       use module b16x19 alias common
       // don't load trips
 	
-      provides vin, fleetChannel, vehicleSummary, lastTrip
+      provides vin, fleetChannel, vehicleSummary, lastTrip, vehicleSubscription
 
     }
 
@@ -56,6 +56,13 @@ Fuse ruleset for a vehicle pico
         status = pds:get_item(carvoyant_namespace, "vehicle_status");
 	key => status{key} 
              | status
+      }
+
+      // subscription_type is optional, if left off, retrieves all subscriptions for vehicle
+      // subscription_id is optional, if left off, retrieves all subscriptions of given type
+      vehicleSubscription = function(subscription_type, subscription_id) {
+        vid = carvoyant:vehicle_id();
+        carvoyant:get_subscription(vid, subscription_type, subscription_id)
       }
 
  // not using
