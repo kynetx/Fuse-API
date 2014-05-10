@@ -19,7 +19,7 @@ Manage trips. PDS is not well-suited to these operations
     use module b16x20 alias fuel
 
 	
-    provides trips, lastTrip, tripName, ical_for_vehicle, mileage
+    provides trips, lastTrip, tripName, icalForVehicle, mileage
   }
 
   global {
@@ -48,7 +48,7 @@ Manage trips. PDS is not well-suited to these operations
                              | wp.split(re/,/)
     };
 
-    ical_for_vehicle = function(search){
+    icalForVehicle = function(search){
       num_trips = 25; // return last 50 trips
       sort_opt = {
         "path" : ["endTime"],
