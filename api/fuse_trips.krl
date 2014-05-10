@@ -75,7 +75,9 @@ Manage trips. PDS is not well-suited to these operations
 		}
 	      });
       vdata = vehicle:vehicleSummary();
-      ical:from_array(t, {"name": vdata{"label"}, "desc": "Calendar of trips for " + vdata{"label"}});
+      ical:from_array(t, {"name": vdata{"label"}, 
+                          "desc": "Calendar of trips for " + vdata{"label"}}
+	             ).replace(re#\\;#g, ";");
     };
 
     // find latlong within 365 feet
