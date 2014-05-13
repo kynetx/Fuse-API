@@ -25,8 +25,21 @@ Manage trips. PDS is not well-suited to these operations
   global {
 
     // external decls
-    trips = function(search){
-      ent:trip_summaries;
+    trips = function(start, end){
+      ent:trip_summaries.query([], { 
+       'requires' : '$and',
+       'conditions' : [
+          { 
+     	   'search_key' : [ 'startWaypoint', 'timestamp'],
+       	   'operator' : '$gte',
+       	   'value' : start 
+	  },
+     	  {
+       	   'search_key' : [ 'endWaypoint', 'timestamp' ],
+       	   'operator' : '$lte',
+       	   'value' : end 
+	  }
+	]})
     };
 
     // temp for mark
