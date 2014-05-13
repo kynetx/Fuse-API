@@ -30,7 +30,7 @@ Manage trips. PDS is not well-suited to these operations
        'requires' : '$and',
        'conditions' : [
           { 
-     	   'search_key' : [ 'startWaypoint', 'timestamp'],
+     	   'search_key' : [ 'endWaypoint', 'timestamp'],
        	   'operator' : '$gte',
        	   'value' : start 
 	  },
