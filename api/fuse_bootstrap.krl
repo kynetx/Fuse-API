@@ -46,7 +46,7 @@ ruleset fuse_bootstrap {
 	  remove_rulesets = CloudOS:rulesetRemoveChild(apps{"unwanted"}, pico_auth_channel);
           installed = CloudOS:rulesetAddChild(apps{"core"}, meta:eci());
           profile = {
-            "username": CloudOS:username(),
+            "username": event:attr("username") || CloudOS:username(),
             "email": event:attr("email") || ""
           };
         }
