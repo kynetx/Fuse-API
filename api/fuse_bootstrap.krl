@@ -18,6 +18,7 @@ ruleset fuse_bootstrap {
                    "a169x676.prod",  // PDS
                    "a16x161.prod",   // Notification service
                    "a169x672.prod",  // MyProfile
+                   "a169x695.prod",  // Settings
                    "a41x174.prod",   // Amazon S3 module
                    "a16x129.dev",    // SendGrid module
 		   "b16x16.prod",    // Fuse Init (owner)
@@ -25,16 +26,11 @@ ruleset fuse_bootstrap {
 		   "b16x19.prod"     // Fuse common
             ],
 	    "unwanted": [ 
-                   "a169x625.prod",
-                   "a169x664.prod",
-                   "a169x676.prod",
-                   "a169x667.prod",
-                   "a16x161.prod",
-                   "a41x178.prod",
-                   "a169x672.prod",
-                   "a169x669.prod",
-                   "a169x727.prod",
-                   "a169x695.prod",
+                   "a169x664.prod",	// CloudUIService 
+                   "a169x667.prod",	// myThings
+                   "a41x178.prod",	// SquareTag
+                   "a169x669.prod",	// appStore
+                   "a169x727.prod",	// CloudAPI
                    "b177052x7.prod"
             ]
         };
@@ -43,7 +39,7 @@ ruleset fuse_bootstrap {
     rule strap_some_boots {
         select when fuse bootstrap
         pre {
-	  remove_rulesets = CloudOS:rulesetRemoveChild(apps{"unwanted"}, pico_auth_channel);
+	  remove_rulesets = CloudOS:rulesetRemoveChild(apps{"unwanted"}, meta:eci());
           installed = CloudOS:rulesetAddChild(apps{"core"}, meta:eci());
           profile = {
             "username": event:attr("username") || CloudOS:username(),
