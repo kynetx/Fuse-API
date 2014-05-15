@@ -42,18 +42,21 @@ ruleset fuse_bootstrap {
 	  remove_rulesets = CloudOS:rulesetRemoveChild(apps{"unwanted"}, meta:eci());
           installed = CloudOS:rulesetAddChild(apps{"core"}, meta:eci());
           profile = {
-            "username": event:attr("username") || CloudOS:username(),
-            "email": event:attr("email") || ""
+            "myProfileName": event:attr("name") || CloudOS:username(),
+            "myProfileEmail": event:attr("email") || "",
+	    "myProfilePhoto" : event:attr("photo"),
+	    "myProfilePhone" : event:attr("phone"),
           };
         }
 
         if (installed) then {
-            send_directive("New Fuse user bootstrapped");
+            send_directive("New Fuse user bootstrapped") with
+	      profile = profile;
         }
 
         fired {
             raise pds event "new_profile_item_available"
-                attributes ({"_api": "sky"}).put(profile);
+                attributes profile.put(["_api"], "sky"})
             log "Fuse user bootstrap succeeded";
         } else {
             log "Fuse user bootstrap failed";
