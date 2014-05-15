@@ -50,6 +50,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 		   "b16x13.prod"     // Fuse errors
                ],
                "fleet": [
+                   "b16x11.prod",   // fuse_carvoyant.krl
                    "b16x17.prod"   // fuse_fleet.krl
                ],
                "vehicle": [

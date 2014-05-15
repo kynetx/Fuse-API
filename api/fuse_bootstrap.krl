@@ -45,7 +45,7 @@ ruleset fuse_bootstrap {
             "myProfileName": event:attr("name") || CloudOS:username(),
             "myProfileEmail": event:attr("email") || "",
 	    "myProfilePhoto" : event:attr("photo"),
-	    "myProfilePhone" : event:attr("phone"),
+	    "myProfilePhone" : event:attr("phone")
           };
         }
 
@@ -56,7 +56,7 @@ ruleset fuse_bootstrap {
 
         fired {
             raise pds event "new_profile_item_available"
-                attributes profile.put(["_api"], "sky"})
+                attributes profile.put(["_api"], "sky");
             log "Fuse user bootstrap succeeded";
         } else {
             log "Fuse user bootstrap failed";
