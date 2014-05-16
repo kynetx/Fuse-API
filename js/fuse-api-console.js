@@ -2,6 +2,6 @@
 Fuse.defaults.logging = true;
 
 // login and initialize
-CloudOS.login(username, password, function(){
-    Fuse.init(show_res);
-}, show_res);
+// CloudOS.login(username, password, function(){
+//     Fuse.init(show_res);
+// }, show_res);

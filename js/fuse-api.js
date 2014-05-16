@@ -103,6 +103,84 @@
             return CloudOS.updateMyProfile(json, cb);
         },
 
+	// ---------- account ----------
+        // createAccount: function(attrs, cb, options)
+        // {
+	//     cb = cb || function(){};
+	//     options = options || {};
+	//     attrs = attrs || {};
+        //     Fuse.log("Creating account for user with attributes ", attrs);
+
+	//     if(typeof attrs.username === "undefined") {
+	// 	throw "username required to create account";
+	//     }
+	//     if(typeof attrs.password === "undefined") {
+	// 	throw "password required to create account";
+	//     }
+
+        //     return CloudOS.raiseEvent("fuse", "init_account", {}, attrs, function(response)
+        //     {
+	// 	// note that because the channel is create asynchronously, processing callback does
+	// 	// NOT mean the channel exists. 
+        //         Fuse.log("Account created");
+	// 	if(response.length < 1) {
+	// 	    throw "Account creation failed";
+	// 	}
+	// 	cb(response);
+        //     });
+        // },
+
+	initAccount: function(attrs, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    attrs = attrs || {};
+            Fuse.log("Initializing account for user with attributes ", attrs);
+
+            return CloudOS.raiseEvent("fuse", "bootstrap", {}, attrs, function(response)
+            {
+		// note that because the channel is create asynchronously, processing callback does
+		// NOT mean the channel exists. 
+                Fuse.log("account initialized");
+		if(response.length < 1) {
+		    throw "Account initialization failed";
+		}
+		cb(response);
+            });
+        },
+
+	createCarvoyantAccount: function(attrs, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    attrs = attrs || {};
+            var fleet_channel = options.fleet_channel || Fuse.fleetChannel();
+	    Fuse.log("Creating Carvoyant account for user with attributes ", attrs);
+
+            return CloudOS.raiseEvent("carvoyant", "init_account", {}, attrs, function(response)
+            {
+                Fuse.log("Carvoyant account created");
+		if(response.length < 1) {
+		    throw "Carvoyant account creation failed";
+		}
+		cb(response);
+            },
+	    {"eci": fleet_channel
+	    });
+        },
+
+	codeForToken: function(code, cb, options) 
+	{
+	    cb = cb || function(){};
+	    options = options || {};
+            Fuse.log("Retrieving access token");
+		return CloudOS.skyCloud(Fuse.get_rid("owner"), "fleetChannel", {}, function(json) {
+		    Fuse.fleet_eci = json.cid;
+		    Fuse.log("Retrieved fleet channel", json);
+		    cb(json);
+		});
+	},
+
 	// ---------- manage and use fleet pico ----------
         createFleet: function(attrs, cb, options)
         {
@@ -448,6 +526,86 @@
 			cb(json);
   		       }, options);
 	},
+
+	// ---------- subscriptions to device events ----------
+	vehicleSubscriptions: function(vehicle_channel, cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    options.rid = "vehicle";
+	    
+	    Fuse.last_trip = Fuse.last_trip || {};
+
+	    var args = {};
+	    if(typeof options.subscription_type !== "undefined") {
+		args.subscription_type = options.subscription_type;
+	    }
+	    if(typeof options.subscription_id !== "undefined") {
+		args.subscription_id = options.subscription_id;
+	    }
+
+	    return Fuse.ask_vehicle(vehicle_channel, "vehicleSubscription", args, {}, function(json) {
+			Fuse.log("Retrieve vehicle subscriptions", json);
+			cb(json);
+  		       }, options);
+	},
+
+	addSubscription: function(vehicle_channel, subscription_type, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record fuel fillup for vehicle";
+	    };
+	    if( typeof subscription_type === "undefined" 
+	      ){
+		throw "Bad data; invalid subscription type: ", subscription_typej;
+	    }
+
+	    var attrs  = {"subscription_type": subscription_type,
+			  "idempotent" : options.idempotent
+			 };
+            return CloudOS.raiseEvent("carvoyant", "new_subscription_needed", {}, attrs, function(response)
+            {
+                Fuse.log("Added new subscription ("+ subscription_type + ") for vehicle: " + vehicle_channel);
+		if(response.length < 1) {
+		    throw "Adding subscription (" + subscription_type + ") failed for vehicle: "  + vehicle_channel;
+		}
+                cb(response);
+            },
+	    {"eci": vehicle_channel
+	    } 
+            );
+        },
+
+	deleteSubscription: function(vehicle_channel, subscription_type, subscription_id, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record fuel fillup for vehicle";
+	    };
+	    if( typeof subscription_type === "undefined" 
+             || typeof subscription_id === "undefined" 
+	      ){
+		throw "Bad params; subscription_type: " + subscription_type + ", subscription_id: " + subscription_id;
+	    }
+	    var attrs = {"subscription_type": subscription_type,
+			 "subscription_id": subscription_id
+			};
+            return CloudOS.raiseEvent("fuse", "subscription_not_needed", {}, attrs, function(response)
+            {
+                Fuse.log("Deleted subscription (" + subscription_type +  ", " + subscription_id + ") for vehicle: " + vehicle_channel);
+		if(response.length < 1) {
+		    throw "Subscription delete failed (" + subscription_type +  ", " + subscription_id + ") for vehicle: " + vehicle_channel;
+		}
+                cb(response);
+            },
+	    {"eci": vehicle_channel
+	    } 
+            );
+        },
+
+
 
     };
 

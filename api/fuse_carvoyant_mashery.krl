@@ -86,7 +86,7 @@ b16x17: fuse_fleet.krl
 
     api_hostname = "api.carvoyant.com";
     apiHostname = function() {api_hostname};
-    api_url = "https://"+api_hostname+"/v1/api/";
+    api_url = "https://"+api_hostname+"/v1/api";
     oauth_url = "https://"+api_hostname+"/oauth/token";
     apiUrl = function() { api_url };
 

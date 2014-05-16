@@ -5,6 +5,7 @@
     // ------------------------------------------------------------------------
 
     CloudOS.defaultECI = "none";
+    CloudOS.access_token = "none";
 
     var mkEci = function(cid) {
 	var res = cid || CloudOS.defaultECI;
@@ -270,7 +271,12 @@
 	return CloudOS.skyCloud("cloudos",
 				"cloudAuth", 
 				parameters, 
-				function(res){CloudOS.saveSession(res.token); success(res);}, 
+				function(res){
+				    // patch this up since it's not OAUTH
+				    var tokens = {"access_token": "none",
+						  "OAUTH_ECI": res.token
+						 };
+				    CloudOS.saveSession(tokens); success(tokens);}, 
 				{eci: CloudOS.anonECI,
 				 errorFunc: failure
 				}
@@ -340,7 +346,7 @@
                     callback(json);
                     return;
                 };
-                CloudOS.saveSession(json.OAUTH_ECI);
+                CloudOS.saveSession(json);
                 window.localStorage.removeItem("CloudOS_CLIENT_STATE");
                 callback(json);
             },
@@ -369,10 +375,13 @@
     };
 
     // ------------------------------------------------------------------------
-    CloudOS.saveSession = function(Session_ECI)
+    CloudOS.saveSession = function(token_json)
     {
+	var Session_ECI = token_json.OAUTH_ECI;
+	var access_token = token_json.access_token;
         console.log("Saving session for ", Session_ECI);
         CloudOS.defaultECI = Session_ECI;
+	CloudOS.access_token = access_token;
         kookie_create(Session_ECI);
     };
     // ------------------------------------------------------------------------
