@@ -530,6 +530,7 @@ b16x17: fuse_fleet.krl
     }
   }
 
+  // this needs to be in fleet carvoyant ruleset, not vehicle
   rule send_vehicle_new_config {
     select when fuse config_outdated
     foreach fleet:vehicleChannels().pick("$..channel") setting (vehicle_channel)
@@ -537,7 +538,7 @@ b16x17: fuse_fleet.krl
       send_directive("Sending Carvoyant config to " + vehicle_channel) with 
 	tokens = ent:account_info; 
       event:send({"cid": vehicle_channel}, "carvoyant", "new_tokens_available") with
-        tokens = ent:account_info;
+        attrs = {"tokens": ent:account_info};
     }
   }
 
