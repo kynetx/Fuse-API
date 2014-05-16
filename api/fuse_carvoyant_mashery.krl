@@ -413,8 +413,7 @@ b16x17: fuse_fleet.krl
 
       bearer = event:attr("access_token");
 
-      foo = apiUrl().klog(">>>>>>> from function >>>>>>>>>");
-      url = api_url+"/account/".klog(">>>>>> url <<<<<<<<<<");
+      url = (api_url+"/account/").klog(">>>>>> url <<<<<<<<<<");
 
     }
 
