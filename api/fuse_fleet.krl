@@ -305,11 +305,9 @@ Application that manages the fleet
     rule send_vehicle_new_config {
       select when fuse config_outdated
       foreach vehicleChannels().pick("$..channel") setting (vehicle_channel)
-        pre {
-	  tokens = ent:account_info.klog(">>>>>> sending tokens to vehicle #{vehicle_channel} >>>>>> "); 
-	}
 	{
-	  send_directive("Sending Carvoyant config to " + vehicle_channel) with tokens = tokens;
+	  send_directive("Sending Carvoyant config to " + vehicle_channel) with 
+	    tokens = ent:account_info; 
  	  event:send({"cid": vehicle_channel}, "carvoyant", "new_tokens_available");
 	}
     }
