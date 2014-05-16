@@ -536,7 +536,8 @@ b16x17: fuse_fleet.krl
     {
       send_directive("Sending Carvoyant config to " + vehicle_channel) with 
 	tokens = ent:account_info; 
-      event:send({"cid": vehicle_channel}, "carvoyant", "new_tokens_available");
+      event:send({"cid": vehicle_channel}, "carvoyant", "new_tokens_available") with
+        tokens = ent:account_info;
     }
   }
 
