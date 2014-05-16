@@ -412,6 +412,10 @@ b16x17: fuse_fleet.krl
 		};
 
       bearer = event:attr("access_token");
+
+      foo = apiUrl().klog(">>>>>>> from function >>>>>>>>>");
+      url = api_url+"/account/".klog(">>>>>> url <<<<<<<<<<");
+
     }
 
     if( username neq "" 
@@ -419,7 +423,7 @@ b16x17: fuse_fleet.krl
       ) then 
     {
       //post to carvoyant
-      http:post(api_url+"/account/") 
+      http:post(url) 
         with body = payload
 	 and headers = {"content-type": "application/json",
 	                "Authorization": "Bearer " + bearer
