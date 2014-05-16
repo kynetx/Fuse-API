@@ -515,7 +515,7 @@ b16x17: fuse_fleet.krl
   rule store_tokens {
     select when carvoyant new_tokens_available
     pre {
-      tokens = event:attr("tokens");
+      tokens = event:attr("tokens").decode();
     }
     if( not tokens.isnull() ) then 
     {
