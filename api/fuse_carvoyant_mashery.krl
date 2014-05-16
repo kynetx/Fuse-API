@@ -17,10 +17,11 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     errors to b16x13
 
-    provides clientAccessToken, codeForAccessToken,  // don't provide after debug
+    provides clientAccessToken, codeForAccessToken, refreshTokenForAccessToken,  // don't provide after debug
+             is_authorized,
              namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
              vehicleStatus, keyToLabel, tripInfo,
-             get_subscription,no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
+             get_subscription, no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
 
 /* 
 
@@ -83,15 +84,16 @@ b16x17: fuse_fleet.krl
       pds:get_item(namespace(), "vehicle_info").pick("$.vehicleId")
     };
 
-    apiHostname = function() {"api.carvoyant.com"};
-    apiUrl = function(path) {
-      hostname = apiHostname();
-      url = "https://"+hostname+ (path.isnull() => "/v1/api/" | path);
-      url
-    };
+    api_hostname = "api.carvoyant.com";
+    apiHostname = function() {api_hostname};
+    api_url = "https://"+api_hostname+"/v1/api/";
+    oauth_url = "https://"+api_hostname+"/oauth/token";
+    apiUrl = function() { api_url };
 
+    // ---------- authorization ----------
+
+    // used for getting token to create an account; not for general use
     clientAccessToken = function() {
-      url = apiUrl("/oauth/token");
       header = 
             {"credentials": {
                "username": keys:carvoyant_client("client_id"),
@@ -101,13 +103,26 @@ b16x17: fuse_fleet.krl
                },
              "params" : {"grant_type": "client_credentials"}
             }; //.klog(">>>>>> client header <<<<<<<<");
-      raw_result = http:post(url, header);
+      raw_result = http:post(oauth_url, header);
       (raw_result{"status_code"} eq "200") => raw_result{"content"}.decode()
                                             | raw_result.decode()
     };
 
+    is_authorized = function() {
+
+      created = ent:account_info{"timeStamp"};
+      time_expires = time:add(created, {"seconds": ent:account_info{"expires_in"}});
+      expired = time:compare(time_expires,
+                             time:now()) // less than 1 if expired
+                < 1;      
+
+//      access_token = expired => refreshTokenForAccessToken() | ent:access_token;
+
+      vehicle_info = expired => {} | carvoyant_get(api_url+"/vehicle/");
+      vehicle_info{"status_code"} eq "200"
+    };
+
     codeForAccessToken = function(code, redirect_url) {
-      url = apiUrl("/oauth/token"); //"?redirect_uri=" + redirect_url);
       header = 
             {"credentials": {
                "username": keys:carvoyant_client("client_id"),
@@ -120,11 +135,31 @@ b16x17: fuse_fleet.krl
 			 "redirect_uri": redirect_url
 	                }
             }.klog(">>>>>> client header <<<<<<<<");
-      raw_result = http:post(url, header);
+      raw_result = http:post(oauth_url, header);
       (raw_result{"status_code"} eq "200") => raw_result{"content"}.decode()
                                             | raw_result.decode()
     };
 
+
+    refreshTokenForAccessToken = function() {
+      header = 
+            {"credentials": {
+               "username": keys:carvoyant_client("client_id"),
+               "password": keys:carvoyant_client("client_secret"),
+	       "realm": apiHostname(),
+	       "netloc": apiHostname() + ":443"
+               },
+             "params" : {"grant_type": "refresh_token",
+	                 "refresh_token": ent:account_info{"refresh_token"}
+	                }
+            }.klog(">>>>>> client header <<<<<<<<");
+      raw_result = http:post(oauth_url, header);
+      (raw_result{"status_code"} eq "200") => raw_result{"content"}.decode()
+                                            | raw_result.decode()
+    };
+
+
+    // ---------- config ----------
 
     // vehicle_id is optional if creating a new vehicle profile
     // key is optional, if missing, use default
@@ -171,12 +206,17 @@ b16x17: fuse_fleet.krl
     };
 
     // actions
-    carvoyant_post = defaction(url, params, config_data) {
+    carvoyant_post = defaction(url, payload, config_data) { // updated for Mashery
       configure using ar_label = false;
-      auth_data =  carvoyant_headers(config_data);
-      http:post(url)
-        with credentials = auth_data{"credentials"} 
-         and params = params
+
+      // check and update access token???? How? 
+
+      //post to carvoyant
+      http:post(url) 
+        with body = payload
+	 and headers = {"content-type": "application/json",
+	                "Authorization": "Bearer " + ent:access_token
+	               }
          and autoraise = ar_label;
     };
 
@@ -324,7 +364,7 @@ b16x17: fuse_fleet.krl
   // ---------- create account ----------
 
   /*
-    I'm going to just get new credentials each time. If we get to where we're adding 100's of account per week 
+    I'm going to just get new client credentials each time. If we get to where we're adding 100's of account per week 
     we may want to rethink this, store them, use the refresh, etc. 
   */
   rule init_account {
@@ -337,24 +377,27 @@ b16x17: fuse_fleet.krl
       send_directive("Retrieved access token for client_credentials")
     }
     fired {
-      raise explicit event create_account 
+      raise explicit event "need_carvoyant_account"
         attributes event:attrs().put(["access_token"], client_access_token{"access_token"})
     } else {
       error warn "Carvoyant Error: " + client_access_token.encode()
     }
   }
 
+  // running this in fleet...
   rule init_account_follow_on {
-    select when explicit create_account
+    select when explicit need_cavoyant_account
     pre {
 
-      profile = pds:get_all_me();
+      owner = CloudOS:subscriptionList(common:namespace(),"FleetOwner").head().pick("$.eventChannel");
+      profile = common:skycloud(owner,"pds","get_all_me");
+//      profile = pds:get_all_me();
       first_name = event:attr("first_name") || profile{"myProfileName"}.extract(re/^(\w+)\s*/).head() || "";
       last_name = event:attr("last_name") || profile{"myProfileName"}.extract(re/\s*(\w+)$/).head() || "";
       email = event:attr("email") || profile{"myProfileEmail"} || "";
       phone = event:attr("phone") || profile{"myProfilePhone"} || "";
       zip = event:attr("zip") || profile{"myProfileZip"} || "";
-      username = event:attr("username") || pci:get_username() || "";
+      username = event:attr("username") || "";
       password = event:attr("password") || "";
 
       payload = { "firstName": first_name,  
@@ -402,21 +445,15 @@ b16x17: fuse_fleet.krl
       account_id = account{"id"};
       code = account{["accessToken", "code"]}.klog(">>>> code >>>> ");
       tokens = codeForAccessToken(code, "https://kibdev.kobj.net/sky/event/somethingelsegoeshere");
-      ai = {
-        "account_id": account_id,
-	"refresh_token": tokens{"refresh_token"}
-      }
     }
 
     {
       send_directive("Exchanged account code for account tokens") with tokens = tokens
     }
     fired {
-      set ent:account_info ai;
+      set ent:account_info tokens.put(["timeStamp"], time:now()); // includes refresh token
       set ent:access_token tokens{"access_token"};
     }
-
-
   }
 
   rule error_carvoyant_acct_creation {
@@ -426,6 +463,44 @@ b16x17: fuse_fleet.krl
       log ">>>>> carvoyant account creation failed " + event:attrs().encode();
     }
 
+  }
+
+  rule retry_refresh_token {
+    select when http post status_code re#401# label "???" // check error number and header...
+    pre {
+      tokens = refreshTokenForAccessToken();
+    }
+    if( tokens{"error"}.isnull() ) then 
+    {
+      send_directive("Used refresh token to get new account token");
+    }
+    fired {
+      set ent:account_info tokens.put(["timeStamp"], time:now()); // includes refresh token
+      set ent:access_token tokens{"access_token"};
+    } else {
+      log(">>>>>>> couldn't use refresh token to get new access token <<<<<<<<");
+      log(">>>>>>> we're screwed <<<<<<<<");
+    }
+  }
+
+  rule update_token {
+    select when carvoyant access_token_expired
+
+    pre {
+      tokens = refreshTokenForAccessToken();
+    }
+    if( tokens{"error"}.isnull() ) then 
+    {
+      send_directive("Used refresh token to get new account token");
+    }
+    fired {
+      set ent:account_info tokens.put(["timeStamp"], time:now()); // includes refresh token
+      set ent:access_token tokens{"access_token"};
+
+    } else {
+      log(">>>>>>> couldn't use refresh token to get new access token <<<<<<<<");
+    }
+    
   }
 
   // ---------- rules for initializing and updating vehicle cloud ----------
@@ -484,7 +559,7 @@ b16x17: fuse_fleet.krl
     noop();
     always {
       set ent:vehicle_data storable_vehicle_data;
-      raise fuse event new_vehicle_added with 
+      raise fuse event "new_vehicle_added" with 
         vehicle_data = vehicle_data
     }
   }
@@ -594,9 +669,9 @@ b16x17: fuse_fleet.krl
     }
     noop();
     always {
-      raise fuse event need_vehicle_data;
-      raise fuse event need_vehicle_status;
-      raise fuse event new_trip with tripId = tid if status eq "OFF";
+      raise fuse event "need_vehicle_data";
+      raise fuse event "need_vehicle_status";
+      raise fuse event "new_trip" with tripId = tid if status eq "OFF";
     }
   }
 
@@ -609,7 +684,7 @@ b16x17: fuse_fleet.krl
     noop();
     always {
       log "Recorded battery level: " + recorded;
-      raise pds event new_data_available
+      raise pds event "new_data_available"
 	  attributes {
 	    "namespace": namespace(),
 	    "keyvalue": "lowBattery_fired",
@@ -618,7 +693,7 @@ b16x17: fuse_fleet.krl
             "_api": "sky"
  		   
 	  };
-      raise fuse event updated_battery
+      raise fuse event "updated_battery"
 	  with threshold = threshold
 	   and recorded = recorded
 	   and timestamp = event:attr("_timestamp");
@@ -634,7 +709,7 @@ b16x17: fuse_fleet.krl
     noop();
     always {
       log "Recorded trouble codes: " + codes.encode();
-      raise pds event new_data_available
+      raise pds event "new_data_available"
 	  attributes {
 	    "namespace": namespace(),
 	    "keyvalue": "troubleCode_fired",
@@ -643,7 +718,7 @@ b16x17: fuse_fleet.krl
             "_api": "sky"
  		   
 	  };
-     raise fuse event updated_dtc
+     raise fuse event "updated_dtc"
 	  with dtc = codes
 	   and timestamp = event:attr("_timestamp");
     }
@@ -659,7 +734,7 @@ b16x17: fuse_fleet.krl
     noop();
     always {
       log "Fuel level of #{recorded}% is #{relationship.lc()} threshold value of #{threshold}%";
-      raise pds event new_data_available
+      raise pds event "new_data_available"
 	  attributes {
 	    "namespace": namespace(),
 	    "keyvalue": "fuelLevel_fired",
@@ -668,7 +743,7 @@ b16x17: fuse_fleet.krl
             "_api": "sky"
  		   
      };
-     raise fuse event updated_fuel_level
+     raise fuse event "updated_fuel_level"
        with threshold = threshold
 	and recorded = recorded
 	and timestamp = event:attr("_timestamp");
