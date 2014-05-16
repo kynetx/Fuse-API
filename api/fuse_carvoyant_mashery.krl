@@ -395,8 +395,8 @@ b16x17: fuse_fleet.krl
       first_name = event:attr("first_name") || profile{"myProfileName"}.extract(re/^(\w+)\s*/).head() || "";
       last_name = event:attr("last_name") || profile{"myProfileName"}.extract(re/\s*(\w+)$/).head() || "";
       email = event:attr("email") || profile{"myProfileEmail"} || "";
-      phone = event:attr("phone") || profile{"myProfilePhone"} || "";
-      zip = event:attr("zip") || profile{"myProfileZip"} || "";
+      phone = event:attr("phone") || profile{"myProfilePhone"} || "8015551212";
+      zip = event:attr("zip") || profile{"myProfileZip"} || "84042";
       username = event:attr("username") || "";
       password = event:attr("password") || "";
 
