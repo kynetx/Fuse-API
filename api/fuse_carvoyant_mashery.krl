@@ -525,7 +525,7 @@ b16x17: fuse_fleet.krl
     fired {
       set ent:account_info tokens; // includes refresh token
       set ent:access_token tokens{"access_token"};
-    } else {
+    } else {  
       log(">>>>>>> tokens empty <<<<<<<<");
     }
   }
