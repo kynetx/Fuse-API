@@ -370,7 +370,7 @@ b16x17: fuse_fleet.krl
   rule init_account {
     select when carvoyant init_account
     pre {
-      client_access_token = clientAccessToken().klog(">>>>>>>> client access token <<<<<<<<<<<");
+      client_access_token = clientAccessToken();
     }
     if(client_access_token{"access_token"})  then 
     {
@@ -419,7 +419,7 @@ b16x17: fuse_fleet.krl
       ) then 
     {
       //post to carvoyant
-      http:post(oauth_url) 
+      http:post(oauth_url+"/account/") 
         with body = payload
 	 and headers = {"content-type": "application/json",
 	                "Authorization": "Bearer " + bearer
