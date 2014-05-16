@@ -456,7 +456,7 @@ b16x17: fuse_fleet.krl
       send_directive("Exchanged account code for account tokens") with tokens = tokens
     }
     fired {
-      raise carvoyant event new_tokens_available with tokens = tokens
+      raise carvoyant event new_tokens_available with tokens = tokens.put(["timeStamp"], time:now())
       // set ent:account_info tokens.put(["timeStamp"], time:now()); // includes refresh token
       // set ent:access_token tokens{"access_token"};
     }
@@ -481,7 +481,7 @@ b16x17: fuse_fleet.krl
       send_directive("Used refresh token to get new account token");
     }
     fired {
-      raise carvoyant event new_tokens_available with tokens = tokens
+      raise carvoyant event new_tokens_available with tokens = tokens.put(["timeStamp"], time:now())
        // set ent:account_info tokens.put(["timeStamp"], time:now()); // includes refresh token
        // set ent:access_token tokens{"access_token"};
     } else {
@@ -502,7 +502,7 @@ b16x17: fuse_fleet.krl
       // send to each vehicle...
     }
     fired {
-      raise carvoyant event new_tokens_available with tokens = tokens
+      raise carvoyant event new_tokens_available with tokens = tokens.put(["timeStamp"], time:now())
        // set ent:account_info tokens.put(["timeStamp"], time:now()); // includes refresh token
        // set ent:access_token tokens{"access_token"};
     } else {
@@ -523,7 +523,7 @@ b16x17: fuse_fleet.krl
       // send to each vehicle...
     }
     fired {
-      set ent:account_info tokens.put(["timeStamp"], time:now()); // includes refresh token
+      set ent:account_info tokens; // includes refresh token
       set ent:access_token tokens{"access_token"};
     } else {
       log(">>>>>>> tokens empty <<<<<<<<");
@@ -538,7 +538,8 @@ b16x17: fuse_fleet.krl
       send_directive("Sending Carvoyant config to " + vehicle_channel) with 
 	tokens = ent:account_info; 
       event:send({"cid": vehicle_channel}, "carvoyant", "new_tokens_available") with
-        attrs = {"tokens": ent:account_info};
+        attrs = {"tokens": ent:account_info.encode()
+	        };
     }
   }
 
