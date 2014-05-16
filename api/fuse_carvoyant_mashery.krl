@@ -386,7 +386,7 @@ b16x17: fuse_fleet.krl
 
   // running this in fleet...
   rule init_account_follow_on {
-    select when explicit need_cavoyant_account
+    select when explicit need_carvoyant_account
     pre {
 
       owner = CloudOS:subscriptionList(common:namespace(),"FleetOwner").head().pick("$.eventChannel");
