@@ -34,7 +34,7 @@ RID Key:
 
 b16x9: fuse_vehicle.krl
 b16x10: fuse_keys.krl — (in the CloudOS Keys Repo)
-b16x11: fuse_carvoyant.krl
+b16x11: fuse_carvoyant.krl  
 b16x12: carvoyant_module_test.krl
 b16x13: fuse_error.krl
 b16x16: fuse_init.krl
