@@ -1,50 +1,125 @@
 
 These are instructions for alpha stage users of the Fuse API.
 
-_These instructions are pre-release. The final released version of the API will likely be drastically different.  In addition, you're being required to complete a number of steps below (like installing certain rulesets, configuring Carvoyant, etc..) that will be automated for users._
+Notes:
+
+- For purposes of this document, a "Fuse app" is an app that a developer creates that uses OAuth to access the Fuse API.
+- This document presumes a familiarity with OAuth.
+- URLs and RIDs will change in these instructions as the API moves toward production
+- Some of the operations in the following may be combined as I get more comfortable with what building blocks are really necessary in the API. 
 
 
-# Set up the Owner Pico
+# Create an OAuth App in KDK
 
-_If you're unfamiliar with SquareTag and some of the activities you'll undertake as a developer, the [Quickstart](http://developer.kynetx.com/display/docs/Quickstart) has instructions about how to install rulesets, etc._
+Notes:
 
-1. Create a Carvoyant account, if necessary and configure it:
-	- create a vehicle
-	- put the Carvoyant device ID in the vehicle profile
-	-use the developer API to create a developer key and secret. Record these for later use. If you don't have access to the developer API, ask Caroyant for access.
+- _If you're unfamiliar with SquareTag and some of the activities you'll undertake as a developer, the [Quickstart](http://developer.kynetx.com/display/docs/Quickstart) has instructions about how to install rulesets, etc._
+- You only have to do this once for each Fuse app you create. 
 
-1. Create a new account at SquareTag.com.
-	- don't use an existing SquareTag account
-	- use the new account to log into SquareTag (using an incognito window will allow you to continue to use SquareTag to support your development activities from your existing account.)
-	- add a name and picture to the profile if you like.
-	    - Settings -> Profile
-	- use the settings menu under your profile to set your Cloud Type to ```cloudTypeDeveloper```
-		- Settings -> myCloud -> cloudTypeDeveloper
+Complete the following steps:
 
-1. Install the following rulesets with type Application:
-	- Fuse: b16x16
-	- Fuse Errors: b16x13
-	- myApps -> Add devApp
+1.  Create an account at SquareTag.com if you don't have one. 
+	 - An existing SquareTag account should be fine
 
-1. You may want to install the PicoInspector for debugging
+1. Use the settings menu under your profile to set your Cloud Type to ```cloudTypeDeveloper```
+    - Settings -> myCloud -> cloudTypeDeveloper
+
+2. Install the Kynetx Developer Kit app
+	- AppStore -> KDK
+	- The SquareTag app store is a messy place when you're a developer. Sorry. 
+
+3. Launch KDK and Create and App
+    - Goto myApps
+    - KDK -> Create an app
+    - The fields are largely self-explanatory. The callback URL *must* be ```https```. Your users will be redirected here as part of the OAuth flow.
+    - Save the app
+
+1. Click on the app you just created in the KDK menu. There is an additional field (```bootstrap RID```)
+    - Put ```b16x22.prod``` in this field and save
+    - You will see a token called the App ECI listed at the bottom. You will need this as it is the identifier for your app.
 
 # Install and Configure the JS API
 
 1. Clone the Fuse-API Github repo to your development machine
 
-2. Install and configure ```CloudOS-config.js``` from the template.  You can ignore the appKey for now. 
+2. Install and configure ```CloudOS-config.js``` from the template.
+    - The App ECI from KDK is the ```appKey```.
+	- The callbackURL is the same one you put in KDK.
+	- For development, use ```kibdev.kobj.net``` as the host. 
 
-3. Install and configure ```fuse-console-config.js``` from the template. You'll need to set the ```username``` and ```password``` fields to the values you used when you created the SquareTag account above.  You might also want to put test device configurations in this file to save having to type them over and over. 
+3. Install and configure ```fuse-console-config.js``` from the template. 
 
-When you load ```Fuse-console.html``` in a browser and open the console for the window. You should now type
+When you load ```Fuse-console.html``` in a browser and open the console for the window.
 
-    Fuse.user
+# Provisioning Users
 
-at the console prompt and see the profile information for the owner profile you set up in SquareTag. 
+The following steps can be repeated for any new Fuse users. While you will be using the JavaScript console in your browser to complete these steps, they model the process your application will have to complete to provision a user.
 
-# Set up the Fleet Pico
+- Create account
+- Initialize account
+- Authorize the Fuse account at Carvoyant
 
-1. From the console prompt type
+## Create a Fuse account for the user
+
+Notes:
+
+- Creating an account is, for now a separate step. It will be incorporated in the overall flow soon. 
+- As a developer, you'll likely need a SquareTag account for managing your OAuth app registration. The Fuse account should be separate from the SquareTag account (i.e. different user name).
+- Ensure you're logged out of SquareTag before creating a new user. Doing this in an incognito window in Chrome, or in a browser that is not logged into SquareTag will allow you to create multiple users and experiment with them and keep SquareTag open for debugging. 
+
+Complete the following steps:
+
+1. Go to the following URL and create an account. 
+
+		https://cs.kobj.net/login/newaccount
+
+2. At the console prompt, enter the following command:
+
+		CloudOS.getOAuthURL();
+
+If you've correctly configure the console, clicking the URL that is returned should take you to an "Authorization" screen from the OAuth flow. The styling on this page is going to change.
+
+Clicking on "Allow" will redirect you to the page you configure as the callback URL. You'll note that there is a parameter ```code``` in the redirect URL.  Copy the value of that parameter.
+
+You can retrieve and access token and ECI by entering the following at the console (substituting the code you copied above for ```<code>```)
+
+	CloudOS.getOAuthAccessToken("<code>", show_res)
+
+You now type
+
+    CloudOS.defaultECI
+
+to see the ECI that was retrieved.  You can save the access_token/ECI object returned from ```getOAuthAccessToken()```  and restore it another session by doing the following
+
+	CloudOS.saveSession(<eci>)
+
+## Initialize the New Account
+
+The new account has a few bootstrap rulesets installed, but nothing else. We have to initialize it before it can be used.
+
+*This step is likely to be automated in the final version of the API/SDK.*
+
+You can type the following at the console to boostrap the account:
+
+	Fuse.initAccount({"name": "Joe Driver", "email": "joe@driver.com", "phone": "8015551212", "photo": "<url>"}, show_res);
+
+Note that all of the attributes are optional. ```show_res``` is the callback function. You can replace it with any callback function you like.
+
+Note that this command is idempotent, so you can run it multiple times without ill effect. 
+
+
+## Set up the Fleet Pico
+
+Every Fuse users needs a fleet to manage their vehicles. A key part of initialization is setting up the fleet pico for the user.
+
+Notes:
+
+- The fleet is a singleton. You cannot have more than one fleet per Fuse user at present. That may change in the future. 
+
+
+### Create a Fleet
+
+ From the console prompt type
 
 		Fuse.createFleet({}, show_res)
 
@@ -76,7 +151,13 @@ Setting up the fleet is idempotent. That is, the code is written such that there
 
 Creating a fleet creates a subscription to the fleet pico asynchronously. This means that the fleet channel isn't immidiately available for use. You should check ```Fuse.fleetChannel()``` to ensure it's not null before using it and wait if it's null. 
 
-2. You can delete the fleet. 
+### Deleting a Fleet
+
+You probably won't be deleting the fleet object very often, but it is available.
+
+__Warning:__ Deleting the fleet also deletes all the vehicles. Don't delete the fleet unless you want to start completely over for a user.
+
+The following command deletes the fleet pico:
 
 		Fuse.deleteFleet(show_res)
 
@@ -94,7 +175,21 @@ While the number of directives might change over time, getting back an empty dir
 
 Now, ```Fuse.fleetChannel()``` will return ```null```.
 
-# Install One or More Vehicles
+
+## Authorize the Fuse account with Carvoyant
+
+Fuse uses [Carvoyant](http://carvoyant.com) to provision devices, run the virtual mobile network that connects them, and run the backend servers for talking to the devices.  After much debate, we've determined that at this point Carvoyant needs to be known to users because they may have to authorize Fuse to work with Carvoyant from time to time (when tokens break). Consequently, users will have to take the extra step of creating a Carvoyant account. 
+
+1. Create an account at Carvoyant with the following command:
+
+
+
+
+
+The user is now provisioned and their Fuse Fleet is linked to Carvoyant.
+
+
+# Adding a vehicle
 
 Now we can add some vehicles.
 
@@ -202,4 +297,28 @@ Also, if you do it for multiple vehicle picos, Carvoyant will be raising events 
 
 2.  ```fuse:clean_up_subscriptions``` cleans up Carvoyant subscriptions, deleting any that don't point at the current vehicle pico.
 
+
+# Debugging
+
+_If you're unfamiliar with SquareTag and some of the activities you'll undertake as a developer, the [Quickstart](http://developer.kynetx.com/display/docs/Quickstart) has instructions about how to install rulesets, etc._
+
+1. Create a Carvoyant account, if necessary and configure it:
+	- create a vehicle
+	- put the Carvoyant device ID in the vehicle profile
+	-use the developer API to create a developer key and secret. Record these for later use. If you don't have access to the developer API, ask Caroyant for access.
+
+1. Create a new account at SquareTag.com.
+	- don't use an existing SquareTag account
+	- use the new account to log into SquareTag (using an incognito window will allow you to continue to use SquareTag to support your development activities from your existing account.)
+	- add a name and picture to the profile if you like.
+	    - Settings -> Profile
+	- use the settings menu under your profile to set your Cloud Type to ```cloudTypeDeveloper```
+		- Settings -> myCloud -> cloudTypeDeveloper
+
+1. Install the following rulesets with type Application:
+	- Fuse: b16x16
+	- Fuse Errors: b16x13
+	- myApps -> Add devApp
+
+1. You may want to install the PicoInspector for debugging
 

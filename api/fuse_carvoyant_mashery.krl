@@ -419,7 +419,7 @@ b16x17: fuse_fleet.krl
       ) then 
     {
       //post to carvoyant
-      http:post(oauth_url+"/account/") 
+      http:post(apiUrl()+"/account/") 
         with body = payload
 	 and headers = {"content-type": "application/json",
 	                "Authorization": "Bearer " + bearer
