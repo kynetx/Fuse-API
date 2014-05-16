@@ -403,7 +403,7 @@ b16x17: fuse_fleet.krl
       payload = { "firstName": first_name,  
                   "lastName": last_name,  
 		  "email": email,  
-		  "zipcode": zip,  
+		  "zipcode": zip || "84042",  
 		  "phone": phone,  
 		  "timeZone": null,  
 		  "preferredContact": "EMAIL",  
