@@ -298,11 +298,21 @@ Application that manages the fleet
         raise cloudos event picoAttrsClear 
           with picoChannel = eci  // created with _LOGIN, not subscriber ECI, so look it up
            and _api = "sky";
-     }
+      }
 
     }
 
-
+    rule send_vehicle_new_config {
+      select when fuse config_outdated
+      foreach vehicleChannels().pick("$..channel") setting (vehicle_channel)
+        pre {
+	  tokens = ent:account_info;
+	}
+	{
+	  send_directive("Sending Carvoyant config to " + vehicle_channel) with tokens = tokens;
+ 	  send:event({"cid": vehicle_channel}, "carvoyant", "new_tokens_available");
+	}
+    }
 
 
     // ---------- cache vehicle data ----------

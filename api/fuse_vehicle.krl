@@ -65,50 +65,6 @@ Fuse ruleset for a vehicle pico
         carvoyant:get_subscription(vid, subscription_type, subscription_id)
       }
 
- // not using
-      initVehicle = defaction(vehicle_channel, vehicle_details) {
-            vehicle = {
-                "cid": vehicle_channel
-            };
-            
-            {
-                event:send(vehicle, "pds", "new_data_available")
-                    with attrs = {
-                        "namespace": "data",
-                        "keyvalue": "detail",
-                        "value": vehicle_details.delete(["eci"]).encode()
-                    };
-
-                event:send(fleetChannel(), "fuse", "new_pico") // should this be the same as the event that initializes the pico? 
-                    with attrs = {
-                        "details": vehicle_details.encode()
-                    };
-            }
-        };
-
- // not using
-        updateVehicle = defaction(vehicle_channel, vehicle_details) {
-            vehicle = {
-                "cid": vehicle_channel
-            };
-            stale_details = sky:cloud(vehicle{"cid"}, "b501810x6", "detail");
-            fresh_details = (not stale_details{"error"}) => stale_details.put(vehicle_details) | vehicle_details;
-            
-            {
-                event:send(vehicle, "pds", "new_data_available")
-                    with attrs = {
-                        "namespace": "data",
-                        "keyvalue": "detail",
-                        "value": fresh_details.encode()
-                    };
-
-
-                event:send(fleetChannel(), "gtour", "did_amend_pico")
-                    with attrs = {
-                        "details": fresh_details.encode()
-                    };
-            }
-        };
     }
 
     // ---------- initialization ----------
@@ -173,13 +129,13 @@ Fuse ruleset for a vehicle pico
 	      };
 
 	  // temporarily store the keys here...these will eventually have to come from Carovyant OAuth
-	  raise fuse event updated_vehicle_configuration
-            attributes
-              {"apiKey": keys:carvoyant_test("apiKey") || "no API key available",
-               "secToken": keys:carvoyant_test("secToken") || "no security token available",
-	       "deviceId" : device_id,
-	       "_api": "sky"
-              } if false; // disabled
+	   // raise fuse event updated_vehicle_configuration
+           //   attributes
+           //     {"apiKey": keys:carvoyant_test("apiKey") || "no API key available",
+           //      "secToken": keys:carvoyant_test("secToken") || "no security token available",
+	   //      "deviceId" : device_id,
+	   //      "_api": "sky"
+           //     } if false; // disabled
 
 	  raise fuse event new_vehicle_added 
             attributes
@@ -259,21 +215,19 @@ Fuse ruleset for a vehicle pico
       }
     }
 
-    rule update_config_for_vehicle {
-      select when fuse updated_vehicle_configuration
-      send_directive("Updating config for vehicle")
-         with new_config = event:attrs();
+    rule request_config_for_vehicle {
+      select when fuse new_vehicle_configuration
+      pre {
+        // figure out who my fleet is
+	fleet_chan = fleetChannel();
+      }
+      {
+        send_directive("Advertising an outdated config for vehicle")
+          with new_config = event:attrs();
+	send:event({"cid": fleet_chan}, "fuse", "config_outdated");
+      }	  
       always {
-        raise pds event new_data_available
-	  attributes {
-	    "namespace": carvoyant_namespace,
-	    "keyvalue": "config",
-	    "value": event:attrs()
-	              .delete(["_api"])
-		      .delete(["_generatedby"]),
-            "_api": "sky"
- 		   
-	  };
+        log ">>> looking for new configuration >>>>";
       }
     }
 

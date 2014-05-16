@@ -367,6 +367,7 @@ b16x17: fuse_fleet.krl
     I'm going to just get new client credentials each time. If we get to where we're adding 100's of account per week 
     we may want to rethink this, store them, use the refresh, etc. 
   */
+  // running this in fleet...
   rule init_account {
     select when carvoyant init_account
     pre {
@@ -384,7 +385,7 @@ b16x17: fuse_fleet.krl
     }
   }
 
-  // running this in fleet...
+
   rule init_account_follow_on {
     select when explicit need_carvoyant_account
     pre {
@@ -454,8 +455,9 @@ b16x17: fuse_fleet.krl
       send_directive("Exchanged account code for account tokens") with tokens = tokens
     }
     fired {
-      set ent:account_info tokens.put(["timeStamp"], time:now()); // includes refresh token
-      set ent:access_token tokens{"access_token"};
+      raise carvoyant event new_tokens_available with tokens = tokens
+      // set ent:account_info tokens.put(["timeStamp"], time:now()); // includes refresh token
+      // set ent:access_token tokens{"access_token"};
     }
   }
 
@@ -478,8 +480,9 @@ b16x17: fuse_fleet.krl
       send_directive("Used refresh token to get new account token");
     }
     fired {
-      set ent:account_info tokens.put(["timeStamp"], time:now()); // includes refresh token
-      set ent:access_token tokens{"access_token"};
+      raise carvoyant event new_tokens_available with tokens = tokens
+       // set ent:account_info tokens.put(["timeStamp"], time:now()); // includes refresh token
+       // set ent:access_token tokens{"access_token"};
     } else {
       log(">>>>>>> couldn't use refresh token to get new access token <<<<<<<<");
       log(">>>>>>> we're screwed <<<<<<<<");
@@ -495,15 +498,35 @@ b16x17: fuse_fleet.krl
     if( tokens{"error"}.isnull() ) then 
     {
       send_directive("Used refresh token to get new account token");
+      // send to each vehicle...
     }
     fired {
-      set ent:account_info tokens.put(["timeStamp"], time:now()); // includes refresh token
-      set ent:access_token tokens{"access_token"};
-
+      raise carvoyant event new_tokens_available with tokens = tokens
+       // set ent:account_info tokens.put(["timeStamp"], time:now()); // includes refresh token
+       // set ent:access_token tokens{"access_token"};
     } else {
       log(">>>>>>> couldn't use refresh token to get new access token <<<<<<<<");
     }
     
+  }
+  
+  // used by both fleet and vehicle to store tokens
+  rule store_tokens {
+    select when carvoyant new_tokens_available
+    pre {
+      tokens = event:attr("tokens");
+    }
+    if( not tokens.isnull() ) then 
+    {
+      send_directive("Storing new tokens");
+      // send to each vehicle...
+    }
+    fired {
+      set ent:account_info tokens.put(["timeStamp"], time:now()); // includes refresh token
+      set ent:access_token tokens{"access_token"};
+    } else {
+      log(">>>>>>> tokens empty <<<<<<<<");
+    }
   }
 
   // ---------- rules for initializing and updating vehicle cloud ----------

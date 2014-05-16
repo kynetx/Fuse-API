@@ -7,7 +7,7 @@ Notes:
 - This document presumes a familiarity with OAuth.
 - URLs and RIDs will change in these instructions as the API moves toward production
 - Some of the operations in the following may be combined as I get more comfortable with what building blocks are really necessary in the API. 
-
+- The API is under active development. Names, parameters, etc. are subject to change. What's more the API is running right now in a development environment and might be unavailable or broken at times. When this moves to beta, there will be a proper release to a production system and regular release procedures.
 
 # Create an OAuth App in KDK
 
@@ -178,18 +178,22 @@ Now, ```Fuse.fleetChannel()``` will return ```null```.
 
 ## Authorize the Fuse account with Carvoyant
 
-Fuse uses [Carvoyant](http://carvoyant.com) to provision devices, run the virtual mobile network that connects them, and run the backend servers for talking to the devices.  After much debate, we've determined that at this point Carvoyant needs to be known to users because they may have to authorize Fuse to work with Carvoyant from time to time (when tokens break). Consequently, users will have to take the extra step of creating a Carvoyant account. 
+Fuse uses [Carvoyant](http://carvoyant.com) to provision devices, run the virtual mobile network that connects them, and run the backend servers for talking to the devices.  After much debate, we've determined that at this point Carvoyant needs to be known to users because they may have to authorize Fuse to work with Carvoyant from time to time (when tokens break). Consequently, users will have to take the extra step of creating a Carvoyant account.
+
+*This step is subject to change. Specifically, it may be incorporated into other steps or go away altogether.*
 
 1. Create an account at Carvoyant with the following command:
 
+	Fuse.createCarvoyantAccount({"username": "<username>", "password":"<password>"}, show_res)
 
+This will create an account at Carvoyant with the username and password you provide using the profile elements from the fleet owner.
 
-
+Creating an account also creates initial Carvoyant credentials. These are stored in the fleet pico for later use in communicating with Carvoyant.
 
 The user is now provisioned and their Fuse Fleet is linked to Carvoyant.
 
 
-# Adding a vehicle
+# Adding a Vehicle
 
 Now we can add some vehicles.
 
@@ -201,7 +205,7 @@ Now we can add some vehicles.
 
 Here's an example:
 
-		Fuse.addVehicle("Ford F-150", "https://s3.amazonaws.com/k-mycloud/a169x672/7BD0B300-7DDF-11E2-AB3A-B9D7E71C24E1.img?q=97013", show_res);
+		Fuse.createVehicle("Ford F-150", "https://s3.amazonaws.com/k-mycloud/a169x672/7BD0B300-7DDF-11E2-AB3A-B9D7E71C24E1.img?q=97013", show_res);
 
 You should see a non-empty array of directives returned.
 
