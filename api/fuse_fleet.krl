@@ -310,7 +310,7 @@ Application that manages the fleet
 	}
 	{
 	  send_directive("Sending Carvoyant config to " + vehicle_channel) with tokens = tokens;
- 	  send:event({"cid": vehicle_channel}, "carvoyant", "new_tokens_available");
+ 	  event:send({"cid": vehicle_channel}, "carvoyant", "new_tokens_available");
 	}
     }
 
