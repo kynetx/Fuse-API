@@ -14,6 +14,7 @@ Application that manages the fleet
         use module a169x676  alias pds
 	use module b16x19 alias common
         use module b16x16 alias FuseInit
+	// don't load carvoyant
 
         sharing on
         provides vehicleChannels, seeFleetData, vehicleSummary, vehicleStatus
@@ -300,16 +301,6 @@ Application that manages the fleet
            and _api = "sky";
       }
 
-    }
-
-    rule send_vehicle_new_config {
-      select when fuse config_outdated
-      foreach vehicleChannels().pick("$..channel") setting (vehicle_channel)
-	{
-	  send_directive("Sending Carvoyant config to " + vehicle_channel) with 
-	    tokens = ent:account_info; 
- 	  event:send({"cid": vehicle_channel}, "carvoyant", "new_tokens_available");
-	}
     }
 
 

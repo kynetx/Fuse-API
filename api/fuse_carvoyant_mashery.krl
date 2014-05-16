@@ -14,6 +14,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     use module a169x625 alias CloudOS
     use module a169x676 alias pds
     use module b16x19 alias common
+    use module b16x17 alias fleet
 
     errors to b16x13
 
@@ -528,6 +529,18 @@ b16x17: fuse_fleet.krl
       log(">>>>>>> tokens empty <<<<<<<<");
     }
   }
+
+  rule send_vehicle_new_config {
+    select when fuse config_outdated
+    foreach fleet:vehicleChannels().pick("$..channel") setting (vehicle_channel)
+    {
+      send_directive("Sending Carvoyant config to " + vehicle_channel) with 
+	tokens = ent:account_info; 
+      event:send({"cid": vehicle_channel}, "carvoyant", "new_tokens_available");
+    }
+  }
+
+
 
   // ---------- rules for initializing and updating vehicle cloud ----------
   rule carvoyant_init_vehicle {
