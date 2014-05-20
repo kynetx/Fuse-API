@@ -198,16 +198,20 @@ The user is now provisioned and their Fuse Fleet is linked to Carvoyant.
 Now we can add some vehicles.
 
 1. Add a vehicle with a name and photo
-```createVehicle(<name>, <photo_url>,<callback>)``` takes the following paramters:
+```createVehicle(<name>, <photo_url>, <vin>,  <deviceId>, <callback>)``` takes the following paramters:
       - name of vehicle
 	  - URL of a profile photo for the vehicle
+	  - Vehicle Identification Number
+	  - Carvoyant device ID
 	  - optional callback
 
-Here's an example:
+Here's an example:     ________UPATE________
 
 		Fuse.createVehicle("Ford F-150", "https://s3.amazonaws.com/k-mycloud/a169x672/7BD0B300-7DDF-11E2-AB3A-B9D7E71C24E1.img?q=97013", show_res);
 
 You should see a non-empty array of directives returned.
+
+The VIN is required. The device ID is required if you want to initialize the vehicle in the Carvoyant account. The device ID can be supplied later. 
 
 You should be able to ask the fleet for the vehicle channels:
 
@@ -228,7 +232,10 @@ This tells the fleet pico to update all the vehicles with the latest Carvoyant t
 
 			Fuse.configureVehicles({}, show_res)
 	
-2. Install the Carvoyant device ID. 
+2. Install the Carvoyant device ID and initialize the Carvoyant Account
+
+updateCarvoyantDeviceID
+
 
 2. Test the configuration
 If your configuration is connected to a real device in the Carvoyant system, you can tell Fuse to update the vehicle data from Carvoyant:

@@ -76,7 +76,8 @@ Fuse ruleset for a vehicle pico
 	   photo = event:attr("photo");
            my_fleet = event:attr("fleet_channel");
            my_schema = event:attr("schema");
-//	   device_id = event:attr("device_id");
+	   device_id = event:attr("device_id");
+	   vin = event:attr("vin");
 
 	   // need to take stuff from event attrs and fill our schema
 
@@ -125,17 +126,26 @@ Fuse ruleset for a vehicle pico
             attributes
 	      {"myProfileName"  : name,
 	       "myProfilePhoto" : photo,
+	       "myVin": vin,
 	       "_api": "sky"
 	      };
 
-	  // temporarily store the keys here...these will eventually have to come from Carovyant OAuth
-	   // raise fuse event updated_vehicle_configuration
-           //   attributes
-           //     {"apiKey": keys:carvoyant_test("apiKey") || "no API key available",
-           //      "secToken": keys:carvoyant_test("secToken") || "no security token available",
-	   //      "deviceId" : device_id,
-	   //      "_api": "sky"
-           //     } if false; // disabled
+	   // // create the carvoyant vehicle
+	   // raise carvoyant event update_account
+           //    attributes
+           //      {"deviceId" : device_id,
+	   //       "label" : name,
+	   // 	"vin" : vin,
+	   // 	"mileage": mileage,
+	   //       "_api": "sky"
+           //      } if vin && device_id  // need to ensure carvoyant has been set up? 
+
+          // send the device ID 
+	  raise carvoyant event new_device_id
+            attributes
+              {"deviceId" : device_id,
+	       "_api": "sky"
+              } if device_id;
 
 	  raise fuse event new_vehicle_added 
             attributes

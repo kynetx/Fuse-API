@@ -317,12 +317,14 @@
 	},
 
 	// ---------- manage and use vehicle picos ----------
-        createVehicle: function(name, photo_url, cb, options)
+        createVehicle: function(name, photo_url, vin, deviceId, cb, options)
         {
 	    cb = cb || function(){}; // prophilaxis
 	    options = options || {};
 	    var json = {"name": name,
-			"photo": photo_url
+			"photo": photo_url,
+			"vin": bin,
+			"deviceId": deviceId
 		       };
 	    var fleet_channel = options.fleet_channel || Fuse.fleetChannel();
 	    if(fleet_channel === null ) {
@@ -388,20 +390,18 @@
             );
         },
 
-	updateCarvoyantAccount: function(vehicle_channel, vid, vin, cb, options)
+	initCarvoyantAccount: function(vehicle_channel, cb, options)
         {
 	    cb = cb || function(){};
 	    options = options || {};
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
 		throw "Vehicle channel is null; can't update Carvoyant account for vehicle";
 	    };
-	    var attrs = {"deviceID": vid,
-			 "vin": vin,
-			 "label": options.label,
+	    var attrs = {"label": options.label,
 			 "mileage": options.mileage
 			};
 
-            return CloudOS.raiseEvent("carvoyant", "update_account", attrs, {}, function(response)
+            return CloudOS.raiseEvent("carvoyant", "init_account", attrs, {}, function(response)
             {
                 Fuse.log("Updated carvoyant account for  vehicle: " + vehicle_channel);
 		if(response.length < 1) {
@@ -413,6 +413,31 @@
 	    } 
             );
         },
+
+	updateCarvoyantDeviceID: function(vehicle_channel, deviceId, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't update Carvoyant account for vehicle";
+	    };
+	    var attrs = {"deviceID": deviceId
+			};
+
+            return CloudOS.raiseEvent("carvoyant", "new_device_id", attrs, {}, function(response)
+            {
+                Fuse.log("Updated device ID for  vehicle: " + vehicle_channel);
+		if(response.length < 1) {
+		    throw "Vehicle initialization failed";
+		}
+                cb(response);
+            },
+	    {"eci": vehicle_channel
+	    } 
+            );
+        },
+
+
 
 	updateVehicleDataCarvoyant: function(vehicle_channel, data_type, cb, options)
         {

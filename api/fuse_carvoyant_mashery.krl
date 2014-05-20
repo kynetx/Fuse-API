@@ -563,32 +563,45 @@ b16x17: fuse_fleet.krl
   // ---------- rules for initializing and updating vehicle cloud ----------
 
 
-   // rule carvoyant_init_vehicle {
-   //   select when carvoyant init_vehicle
-   //   pre {
-   //     config_data = get_config();
-   //     params = {
-   //       "name": event:attr("name") || "Unknown Vehicle",
-   //       "deviceId": event:attr("deviceId") || "unknown",
-   //       "label": event:attr("label") || "My Vehicle",
-   //       "mileage": event:attr("mileage")
-   //     }
-   //   }
-   //   {
-   //     carvoyant_post(config_data{"base_url"},
-   //     		     params,
-   //                    config_data
-   // 		    )
-   //       with autoraise = "vehicle_init";
-   //   }
-   // }
+  rule carvoyant_init_vehicle {
+    select when carvoyant init_account
+    pre {
+      config_data = get_config();
+      profile = pds:get_all_me();
+      params = {
+        "name": event:attr("name") || profile{"myProfileName"} || "Unknown Vehicle",
+        "deviceId": event:attr("deviceId") || "unknown",
+        "label": event:attr("label") || profile{"myProfileName"} || "My Vehicle",
+	"vin": event:attr("vin") || profile{"myVin"},
+        "mileage": event:attr("mileage") || "10"
+      }
+    }
+    if( deviceId neq "unknown"
+     && not vin.isnull()
+      ) then
+    {
+      send_directive("Initializing Carvoyant account for vehicle ");
+      carvoyant_post(config_data{"base_url"},
+      		     params,
+                     config_data
+   	    )
+        with ar_label = "vehicle_init";
+    }
+    fired {
+      log(">>>>>>>>>> initializing Carvoyant account with device ID = " + deviceId);
+      raise carvoyant event new_device_id 
+        with deviceId = deviceId
+    } else {
+      log(">>>>>>>>>> Carvoyant account initializaiton failed; missing device ID");
+    }
+  }
 
   rule carvoyant_update_vehicle_account {
     select when carvoyant update_account
     pre {
       // if this vehicleId attr is unset, this creates a new vehicle...
       config_data = get_config(event:attr("vehicleId")); 
-      profile = pds:get_all_me();
+      deviceId = event:attr("deviceId");
       // will update any of the updatable data that appears in attrs() and leave the rest alone
       params = event:attrs().delete(["vehicleId"]);
     }
@@ -599,6 +612,33 @@ b16x17: fuse_fleet.krl
                      config_data
 		    )
         with ar_label = "vehicle_account_update";
+    }
+    fired {
+      raise carvoyant event new_device_id 
+        with deviceId = deviceId if not deviceId.isnull()
+    }
+  }
+
+
+  rule store_device_id {
+    select when carvoyant new_device_id
+    pre {
+      deviceId = event:attr("deviceId") ;
+
+    }
+    if (not deviceId.isnull() ) then {
+      noop();
+    }
+    fired {
+      raise pds event "new_data_available"
+	  attributes {
+	    "namespace": namespace(),
+	    "keyvalue": "config",
+	    "value": {"deviceId": deviceId
+	             },
+            "_api": "sky"
+ 		   
+	  };
     }
   }
 
@@ -648,7 +688,7 @@ b16x17: fuse_fleet.krl
      && subscribe
       ) then {
         add_subscription(vid, sub_type, params) with
-    	  autoraise = "add_subscription";
+    	  ar_label = "add_subscription";
         send_directive("Adding subscription") with
 	  attributes = event:attrs();
     }
