@@ -588,7 +588,7 @@ b16x17: fuse_fleet.krl
       config_data = get_config(event:attr("vehicleId")); 
       profile = pds:get_all_me();
       // will update any of the updatable data that appears in attrs() and leave the rest alone
-      params = event:attrs().delete("vehicleId");
+      params = event:attrs().delete(["vehicleId"]);
     }
     {
       carvoyant_post(config_data{"base_url"},
