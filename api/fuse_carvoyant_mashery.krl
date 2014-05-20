@@ -561,6 +561,8 @@ b16x17: fuse_fleet.krl
 
 
   // ---------- rules for initializing and updating vehicle cloud ----------
+
+
    // rule carvoyant_init_vehicle {
    //   select when carvoyant init_vehicle
    //   pre {
@@ -596,7 +598,7 @@ b16x17: fuse_fleet.krl
       		     params,
                      config_data
 		    )
-        with autoraise = "vehicle_account_update";
+        with ar_label = "vehicle_account_update";
     }
   }
 
