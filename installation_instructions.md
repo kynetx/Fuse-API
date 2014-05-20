@@ -220,19 +220,18 @@ You should be able to ask the fleet for the vehicle channels:
 
 # Configure the Vehicle
 
-1. Install the Carvoyant keys and device ID
-```Fuse.configureVehicle(<vehicle_channel>,<test_device_config>,<callback>)``` takes the following parameters
-	 - vehicle channel to configure
-	 - configuration values for device
-	 - optional callback
+1. Updates the carvoyant config for the vehicle
+```Fuse.configureVehicle({}, <callback>)``` takes the following parameters
+	- empty attribute object
+	- optional callback
 
-For now, the configuration object looks like this:
+This tells the fleet pico to update all the vehicles with the latest Carvoyant tokens. This will usually happen automatically, but when you're initializing, you have to do it manually to ensure it's done before you start making calls.
 
-	{"apiKey": "<carvoyant api key>",
-	 "secToken": "<carvoyan security token>",
-	 "deviceId": "<device id>"}
+	Fuse.configureVehicles({}, show_res)
 
-Now, let's see if the configuration is working. 
+Now, let's see if the configuration is working.
+
+2. Install the Carvoyant device ID. 
 
 2. Test the configuration
 If your configuration is connected to a real device in the Carvoyant system, you can tell Fuse to update the vehicle data from Carvoyant:

@@ -171,18 +171,15 @@ b16x17: fuse_fleet.krl
     get_config = function(vid, key) {
        carvoyant_config_key = key || namespace();
        config_data = pds:get_item(carvoyant_config_key, "config") || {};
-
        vid = vid
           || config_data{"deviceID"} // old name remove once we are creating vehicles with new name
           || config_data{"deviceId"};
-       hostname = "dash.carvoyant.com";
-       url = "https://#{hostname}/api/vehicle/#{vid}";
+       url = api_url+ "/vehicle/" + vid;
        config_data
-         .put({"hostname": hostname,
+         .put({"hostname": api_hostname,
 	       "base_url": url,
 	       "vehicle_id": vid,
-	       "apiKey" : config_data{"apiKey"} || keys:carvoyant_test("apiKey"),
-	       "secToken" : config_data{"secToken"} || keys:carvoyant_test("secToken")
+	       "access_token" : ent:access_token
 	      })
     }
 
@@ -190,24 +187,35 @@ b16x17: fuse_fleet.krl
     // See http://confluence.carvoyant.com/display/PUBDEV/Authentication+Mechanism for details
 
     // params is optional
-    carvoyant_headers = function(config_data, params) {
-      {"credentials": {
-          "username": config_data{"apiKey"},
-          "password": config_data{"secToken"},
-          "realm": "Carvoyant API",
-          "netloc": config_data{"hostname"} + ":443"
-          },
-       "params" : params || {}
+     // carvoyant_headers = function(config_data, params) {
+     //   {"credentials": {
+     //       "username": config_data{"apiKey"},
+     //       "password": config_data{"secToken"},
+     //       "realm": "Carvoyant API",
+     //       "netloc": config_data{"hostname"} + ":443"
+     //       },
+     //    "params" : params || {}
+     //   }
+     // };
+    
+    oauthHeader = function(access_token) {
+      {"Authorization": "Bearer " + access_token,
+       "content-type": "application/json"
       }
-    };
+    }
 
     // functions
-    carvoyant_get = function(url, config_data) {
-      raw_result = http:get(url, carvoyant_headers(config_data));
+    // params if optional
+    carvoyant_get = function(url, config_data, params) {
+      raw_result = http:get(url, 
+                            params, 
+			    oauthHeader(config_data{"access_token"}),
+			    ["WWW-Authenticate"]
+			   );
       (raw_result{"status_code"} eq "200") => {"content" : raw_result{"content"}.decode(),
                                                "status_code": raw_result{"status_code"}
                                               }
-                                            | raw_result
+                                            | raw_result.klog(">>>>>>> carvoyant_get() error >>>>>>")
     };
 
     // actions
@@ -219,9 +227,7 @@ b16x17: fuse_fleet.krl
       //post to carvoyant
       http:post(url) 
         with body = payload
-	 and headers = {"content-type": "application/json",
-	                "Authorization": "Bearer " + ent:access_token
-	               }
+	 and headers = oauthHeader(ent:access_token)
          and autoraise = ar_label;
     };
 
@@ -229,17 +235,22 @@ b16x17: fuse_fleet.krl
       configure using ar_label = false;
       auth_data =  carvoyant_headers(config_data);
       http:put(url)
-        with credentials = auth_data{"credentials"} 
-         and params = params
+        with body = payload
+	 and headers = oauthHeader(ent:access_token)
          and autoraise = ar_label;
+         // with credentials = auth_data{"credentials"} 
+         //  and params = params
+         //  and autoraise = ar_label;
     };
 
     carvoyant_delete = defaction(url, config_data) {
       configure using ar_label = false;
-      auth_data =  carvoyant_headers(config_data);
       http:delete(url) 
-        with credentials = auth_data{"credentials"} 
-         and autoraise = ar_label;
+        with headers = oauthHeader(ent:access_token)
+         and autoraise = ar_label; 
+       // auth_data =  carvoyant_headers(config_data);
+       //   with credentials = auth_data{"credentials"} 
+       //    and autoraise = ar_label;
     };
 
 
