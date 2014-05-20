@@ -228,7 +228,7 @@ b16x17: fuse_fleet.krl
       http:post(url) 
         with body = payload
 	 and headers = oauthHeader(ent:access_token)
-         and autoraise = ar_label;
+         and autoraise = ar_label.klog(">>>>> autoraise label >>>>> ");
     };
 
     carvoyant_put = defaction(url, params, config_data) {

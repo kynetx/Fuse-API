@@ -401,7 +401,7 @@
 			 "mileage": options.mileage
 			};
 
-            return CloudOS.raiseEvent("carvoyant", "update_account", {}, attrs, function(response)
+            return CloudOS.raiseEvent("carvoyant", "update_account", attrs, {}, function(response)
             {
                 Fuse.log("Updated carvoyant account for  vehicle: " + vehicle_channel);
 		if(response.length < 1) {
