@@ -199,7 +199,7 @@ b16x17: fuse_fleet.krl
      // };
     
     oauthHeader = function(access_token) {
-      {"Authorization": "Bearer " + access_token,
+      {"Authorization": "Bearer " + access_token.klog(">>>>>> using access token >>>>>>>"),
        "content-type": "application/json"
       }
     }
@@ -591,6 +591,7 @@ b16x17: fuse_fleet.krl
       params = event:attrs().delete(["vehicleId"]);
     }
     {
+      send_directive("Updating Carvoyant account for vehicle ");
       carvoyant_post(config_data{"base_url"},
       		     params,
                      config_data
