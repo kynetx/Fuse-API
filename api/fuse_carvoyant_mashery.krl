@@ -561,30 +561,32 @@ b16x17: fuse_fleet.krl
 
 
   // ---------- rules for initializing and updating vehicle cloud ----------
-  rule carvoyant_init_vehicle {
-    select when carvoyant init_vehicle
-    pre {
-      config_data = get_config();
-      params = {
-        "name": event:attr("name") || "Unknown Vehicle",
-        "deviceId": event:attr("deviceId") || "unknown",
-        "label": event:attr("label") || "My Vehicle",
-        "mileage": event:attr("mileage")
-      }
-    }
-    {
-      carvoyant_post(config_data{"base_url"},
-      		     params,
-                     config_data
-		    )
-        with autoraise = "vehicle_init";
-    }
-  }
+   // rule carvoyant_init_vehicle {
+   //   select when carvoyant init_vehicle
+   //   pre {
+   //     config_data = get_config();
+   //     params = {
+   //       "name": event:attr("name") || "Unknown Vehicle",
+   //       "deviceId": event:attr("deviceId") || "unknown",
+   //       "label": event:attr("label") || "My Vehicle",
+   //       "mileage": event:attr("mileage")
+   //     }
+   //   }
+   //   {
+   //     carvoyant_post(config_data{"base_url"},
+   //     		     params,
+   //                    config_data
+   // 		    )
+   //       with autoraise = "vehicle_init";
+   //   }
+   // }
 
-  rule carvoyant_update_vehicle {
-    select when carvoyant update_vehicle
+  rule carvoyant_update_vehicle_account {
+    select when carvoyant update_account
     pre {
-      config_data = get_config(event:attr("vehicleId"));
+      // if this vehicleId attr is unset, this creates a new vehicle...
+      config_data = get_config(event:attr("vehicleId")); 
+      profile = pds:get_all_me();
       // will update any of the updatable data that appears in attrs() and leave the rest alone
       params = event:attrs().delete("vehicleId");
     }
@@ -593,13 +595,13 @@ b16x17: fuse_fleet.krl
       		     params,
                      config_data
 		    )
-        with autoraise = "vehicle_update";
+        with autoraise = "vehicle_account_update";
     }
   }
 
   rule initialization_ok {
     select when http post status_code  re#2\d\d#  label "vehicle_init" 
-             or http post status_code  re#2\d\d#  label "vehicle_update"
+             or http post status_code  re#2\d\d#  label "vehicle_account_update"
     pre {
 
       // not sure this is actually set with the new data. If not, make a call to get()
@@ -616,7 +618,7 @@ b16x17: fuse_fleet.krl
     noop();
     always {
       set ent:vehicle_data storable_vehicle_data;
-      raise fuse event "new_vehicle_added" with 
+      raise fuse event "vehicle_account_updated" with 
         vehicle_data = vehicle_data
     }
   }

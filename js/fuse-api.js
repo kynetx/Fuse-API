@@ -259,6 +259,8 @@
 	    }
 	},
 
+	// tells the fleet to bradcast access tokens to the vehicles. 
+	// should be done any time the access token is refreshed or a new vehicle is added
 	configureVehicles: function(config, cb, options)
         {
 	    cb = cb || function(){};
@@ -376,6 +378,32 @@
             return CloudOS.raiseEvent("fuse", "vehicle_uninitialized", {}, attrs, function(response)
             {
                 Fuse.log("Initialized vehicle for: " + vehicle_channel);
+		if(response.length < 1) {
+		    throw "Vehicle initialization failed";
+		}
+                cb(response);
+            },
+	    {"eci": vehicle_channel
+	    } 
+            );
+        },
+
+	updateCarvoyantAccount: function(vehicle_channel, vid, vin, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't update Carvoyant account for vehicle";
+	    };
+	    var attrs = {"deviceID": vid,
+			 "vin": vin,
+			 "label": options.label,
+			 "mileage": options.mileage
+			};
+
+            return CloudOS.raiseEvent("carvoyant", "update_account", {}, attrs, function(response)
+            {
+                Fuse.log("Updated carvoyant account for  vehicle: " + vehicle_channel);
 		if(response.length < 1) {
 		    throw "Vehicle initialization failed";
 		}
