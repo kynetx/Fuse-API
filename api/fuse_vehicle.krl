@@ -140,12 +140,16 @@ Fuse ruleset for a vehicle pico
 	   //       "_api": "sky"
            //      } if vin && device_id  // need to ensure carvoyant has been set up? 
 
+	  log(">>>>>>>> device_id >>>>>>> " + device_id);
+
           // send the device ID 
 	  raise carvoyant event new_device_id
             attributes
               {"deviceId" : device_id,
 	       "_api": "sky"
               } if device_id;
+
+	  log(">>>>>>>> device_id >>>>>>> " + device_id);
 
 	  raise fuse event new_vehicle_added 
             attributes

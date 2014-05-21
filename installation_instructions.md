@@ -205,9 +205,13 @@ Now we can add some vehicles.
 	  - Carvoyant device ID
 	  - optional callback
 
-Here's an example:     ________UPATE________
+Here's an example:   
 
-		Fuse.createVehicle("Ford F-150", "https://s3.amazonaws.com/k-mycloud/a169x672/7BD0B300-7DDF-11E2-AB3A-B9D7E71C24E1.img?q=97013", show_res);
+		Fuse.createVehicle("Lynne's Burb",
+	                               "https://s3.amazonaws.com/k-mycloud/a169x672/7BD0B300-7DDF-11E2-AB3A-B9D7E71C24E1.img?q=97013",
+								   "3GNFK16Z34G244122",
+								   "C201300242",
+								   show_res);
 
 You should see a non-empty array of directives returned.
 

@@ -323,7 +323,7 @@
 	    options = options || {};
 	    var json = {"name": name,
 			"photo": photo_url,
-			"vin": bin,
+			"vin": vin,
 			"deviceId": deviceId
 		       };
 	    var fleet_channel = options.fleet_channel || Fuse.fleetChannel();
@@ -403,7 +403,7 @@
 
             return CloudOS.raiseEvent("carvoyant", "init_account", attrs, {}, function(response)
             {
-                Fuse.log("Updated carvoyant account for  vehicle: " + vehicle_channel);
+                Fuse.log("Initialized carvoyant account for vehicle: " + vehicle_channel);
 		if(response.length < 1) {
 		    throw "Vehicle initialization failed";
 		}
@@ -414,19 +414,22 @@
             );
         },
 
-	updateCarvoyantDeviceID: function(vehicle_channel, deviceId, cb, options)
+
+	updateCarvoyantAccount: function(vehicle_channel, cb, options)
         {
 	    cb = cb || function(){};
 	    options = options || {};
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
 		throw "Vehicle channel is null; can't update Carvoyant account for vehicle";
 	    };
-	    var attrs = {"deviceID": deviceId
+	    var attrs = {"label": options.label,
+			 "mileage": options.mileage,
+			 "deviceId": options.deviceId
 			};
 
-            return CloudOS.raiseEvent("carvoyant", "new_device_id", attrs, {}, function(response)
+            return CloudOS.raiseEvent("carvoyant", "init_account", attrs, {}, function(response)
             {
-                Fuse.log("Updated device ID for  vehicle: " + vehicle_channel);
+                Fuse.log("Updated carvoyant account for  vehicle: " + vehicle_channel);
 		if(response.length < 1) {
 		    throw "Vehicle initialization failed";
 		}
