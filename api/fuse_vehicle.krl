@@ -76,7 +76,7 @@ Fuse ruleset for a vehicle pico
 	   photo = event:attr("photo");
            my_fleet = event:attr("fleet_channel");
            my_schema = event:attr("schema");
-	   device_id = event:attr("device_id");
+	   device_id = event:attr("deviceId");
 	   vin = event:attr("vin");
 
 	   // need to take stuff from event attrs and fill our schema
