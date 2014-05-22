@@ -401,7 +401,7 @@
 			 "mileage": options.mileage
 			};
 
-            return CloudOS.raiseEvent("carvoyant", "init_account", attrs, {}, function(response)
+            return CloudOS.raiseEvent("carvoyant", "init_vehicle", attrs, {}, function(response)
             {
                 Fuse.log("Initialized carvoyant account for vehicle: " + vehicle_channel);
 		if(response.length < 1) {
@@ -427,7 +427,7 @@
 			 "deviceId": options.deviceId
 			};
 
-            return CloudOS.raiseEvent("carvoyant", "init_account", attrs, {}, function(response)
+            return CloudOS.raiseEvent("carvoyant", "init_vehicle", attrs, {}, function(response)
             {
                 Fuse.log("Updated carvoyant account for  vehicle: " + vehicle_channel);
 		if(response.length < 1) {

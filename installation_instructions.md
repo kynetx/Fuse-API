@@ -236,9 +236,9 @@ This tells the fleet pico to update all the vehicles with the latest Carvoyant t
 
 			Fuse.configureVehicles({}, show_res)
 	
-2. Install the Carvoyant device ID and initialize the Carvoyant Account
+2. Initialize the Carvoyant Account
 
-updateCarvoyantDeviceID
+
 
 
 2. Test the configuration
@@ -272,7 +272,7 @@ You can use the following commands to see this data.
 
 	Fuse.vehicleStatus()
 
-	Fuse vehicleSummary()
+	Fuse.vehicleSummary()
 
 *Trips are still incomplete waiting for searching*
 

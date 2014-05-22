@@ -564,13 +564,12 @@ b16x17: fuse_fleet.krl
 
 
   rule carvoyant_init_vehicle {
-    select when carvoyant init_account
+    select when carvoyant init_vehicle
     pre {
       config_data = get_config();
-      profile = pds:get_all_me();
       params = {
         "name": event:attr("name") || profile{"myProfileName"} || "Unknown Vehicle",
-        "deviceId": event:attr("deviceId") || "unknown",
+        "deviceId": vehicle_id() || event:attr("deviceId") || "unknown",
         "label": event:attr("label") || profile{"myProfileName"} || "My Vehicle",
 	"vin": event:attr("vin") || profile{"myVin"},
         "mileage": event:attr("mileage") || "10"
@@ -580,7 +579,7 @@ b16x17: fuse_fleet.krl
      && not vin.isnull()
       ) then
     {
-      send_directive("Initializing Carvoyant account for vehicle ");
+      send_directive("Initializing Carvoyant account for vehicle ") with params = params;
       carvoyant_post(config_data{"base_url"},
       		     params,
                      config_data
