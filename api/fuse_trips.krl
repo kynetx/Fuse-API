@@ -19,14 +19,23 @@ Manage trips. PDS is not well-suited to these operations
     use module b16x20 alias fuel
 
 	
-    provides trips, lastTrip, tripName, icalForVehicle, mileage,
-             all_trips
+    provides trips, lastTrip, tripName, mileage,
+//             all_trips,   // for debugging
+	       icalForVehicle
   }
 
   global {
 
+    convertToUTC = function(dt) {
+      time:strformat(dt, "%Y%m%dT%H%M%S%z", {"tz":"UTC"}).klog(">>>>> Returning for #{dt} >>>>> ")
+    };
+
     // external decls
     trips = function(start, end){
+
+      utc_start = convertToUTC(start);
+      urc_end = convertToUTC(end);
+      
       ent:trip_summaries.query([], { 
        'requires' : '$and',
        'conditions' : [
