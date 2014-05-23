@@ -27,14 +27,14 @@ Manage trips. PDS is not well-suited to these operations
   global {
 
     convertToUTC = function(dt) {
-      time:strftime(dt, "%Y%m%dT%H%M%S%z", {"tz":"UTC"}).klog(">>>>> Returning for #{dt} >>>>> ")
+      time:strftime(dt, "%Y%m%dT%H%M%S%z", {"tz":"UTC"}).klog(">>>>> convertToUTC() returning for #{dt} >>>>> ")
     };
 
     // external decls
     trips = function(start, end){
 
-      utc_start = convertToUTC(start).klog(">>>>>> utc_start >>>>>>>");
-      utc_end = convertToUTC(end).klog(">>>>>> utc_end >>>>>>>");
+      utc_start = convertToUTC(start);
+      utc_end = convertToUTC(end);
       
       ent:trip_summaries.query([], { 
        'requires' : '$and',
@@ -42,12 +42,12 @@ Manage trips. PDS is not well-suited to these operations
           { 
      	   'search_key' : [ 'endWaypoint', 'timestamp'],
        	   'operator' : '$gte',
-       	   'value' : start 
+       	   'value' : utc_start 
 	  },
      	  {
        	   'search_key' : [ 'endWaypoint', 'timestamp' ],
        	   'operator' : '$lte',
-       	   'value' : end 
+       	   'value' : utc_end 
 	  }
 	]},
 	"return_values"
