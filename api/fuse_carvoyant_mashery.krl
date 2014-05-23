@@ -572,12 +572,12 @@ b16x17: fuse_fleet.krl
         "name": event:attr("name") || profile{"myProfileName"} || "Unknown Vehicle",
         "deviceId": vehicle_id() || event:attr("deviceId") || "unknown",
         "label": event:attr("label") || profile{"myProfileName"} || "My Vehicle",
-	"vin": event:attr("vin") || profile{"myVin"},
+	"vin": event:attr("vin") || profile{"myVin"} || "unknown",
         "mileage": event:attr("mileage") || "10"
       }
     }
-    if( deviceId neq "unknown"
-     && not vin.isnull()
+    if( params{"deviceId"} neq "unknown"
+     && params{"vin"} neq "unknown"
       ) then
     {
       send_directive("Initializing Carvoyant account for vehicle ") with params = params;
