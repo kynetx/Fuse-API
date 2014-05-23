@@ -175,7 +175,7 @@ b16x17: fuse_fleet.krl
           || config_data{"deviceID"} // old name remove once we are creating vehicles with new name
           || config_data{"deviceId"};
        base_url = api_url+ "/vehicle/";
-       url = vid eq "none" => base_url 
+       url = vid.klog(">>>>>> VID: >>>>>>> ") eq "none" => base_url 
                             | base_url + vid;
        config_data
          .put({"hostname": api_hostname,
