@@ -77,12 +77,12 @@ Manage trips. PDS is not well-suited to these operations
                              | wp.split(re/,/)
     };
 
-    maximum = function(x,y) {
-      (x < y) => y | x
+    minimum = function(x,y) {
+      (x < y) => x | y
     };
 
     icalForVehicle = function(search){
-      num_trips = maximum(25, ent:trip_summaries.length()); // return last 50 trips
+      num_trips = minimum(25, ent:trip_summaries.length()); // return last 50 trips
       sort_opt = {
         "path" : ["endTime"],
 	"reverse": true,
