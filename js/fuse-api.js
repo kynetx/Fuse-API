@@ -302,7 +302,7 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    return Fuse.ask_fleet("vehicleStatus", Fuse.vehicle_status, function(json) {
-			Fuse.vehicles = json;
+			Fuse.vehicle_status = json;
 			Fuse.log("Retrieve vehicle status", json);
 			cb(json);
   		       }, options);
@@ -312,7 +312,7 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    return Fuse.ask_fleet("vehicleSummary", Fuse.vehicle_summary, function(json) {
-			Fuse.vehicles = json;
+			Fuse.vehicle_summary = json;
 			Fuse.log("Retrieve vehicle summary", json);
 			cb(json);
   		       }, options);
