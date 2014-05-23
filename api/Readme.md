@@ -48,8 +48,6 @@ In general, use Carvoyant CamelCase identifiers in vehicle PDS for sanity
 
 - ```config```
     - ```deviceId``` &mdash; Carvoyant device ID
-    - ```apiKey``` &mdash; Carvoyant API Key
-	- ```secToken``` &mdash; Carvoyant Secret Token
 
 - ```vehicle_info```
     - ```vehicleId``` &mdash; carvoyant vehicle identifier
