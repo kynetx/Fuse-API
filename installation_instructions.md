@@ -297,7 +297,10 @@ We have taken care to ensure that these are idempotent so that the vehicle pico 
 The ```ignitionStatus``` (when if goes to ```OFF```) causes the trip that just ended to be downloaded and made available in the vehicle and fleet picos. 
 
 Initialize the vehicle:
-```Fuse.initializeVehicle(<vehicle_channel>, <callback>, <options>);``` takes the following parameters
+
+	Fuse.initializeVehicle(<vehicle_channel>, <callback>, <options>);
+
+takes the following parameters
 	  - vehicle channel
 	  - an optional callback function
 

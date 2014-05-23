@@ -246,9 +246,8 @@
 	      || options.force
 	       ) {
                    Fuse.log("Calling " + funcName);
-		   Fuse.fleetChannel(function(fc_object) {
-		       var fc = fc_object.cid;
-		       Fuse.log("Using fleet channel ", fc_object);
+		   Fuse.fleetChannel(function(fc) {
+		       Fuse.log("Using fleet channel ", fc);
    		       if(fc !== "none") {
 			   return CloudOS.skyCloud(Fuse.get_rid("fleet"), funcName, {}, cb, {"eci": fc});
 		       } else {

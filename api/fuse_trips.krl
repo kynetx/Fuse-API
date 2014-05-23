@@ -39,7 +39,9 @@ Manage trips. PDS is not well-suited to these operations
        	   'operator' : '$lte',
        	   'value' : end 
 	  }
-	]})
+	]},
+	"return_values"
+	)
     };
 
     // temp for mark

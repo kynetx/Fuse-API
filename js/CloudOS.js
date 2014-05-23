@@ -76,7 +76,11 @@
 
 	    var retries = 2;
 	    
+	     console.log("Options ", options);
+
 	    options = options || {};
+
+	    console.log("Options ", options);
 
             if (typeof options.repeats !== "undefined") {
 		console.warn("This is a repeated request: ", options.repeats);
