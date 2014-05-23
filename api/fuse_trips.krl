@@ -82,7 +82,7 @@ Manage trips. PDS is not well-suited to these operations
     };
 
     icalForVehicle = function(search){
-      num_trips = minimum(25, ent:trip_summaries.length()).klog(">>>>>> num of trips returned >>>>>>>"); // return last 50 trips
+      num_trips = 25; // return last 50 trips
       sort_opt = {
         "path" : ["endTime"],
 	"reverse": true,
