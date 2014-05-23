@@ -261,7 +261,7 @@
 	       }
 	},
 
-	// tells the fleet to bradcast access tokens to the vehicles. 
+	// tells the fleet to broadcast access tokens to the vehicles. 
 	// should be done any time the access token is refreshed or a new vehicle is added
 	configureVehicles: function(config, cb, options)
         {

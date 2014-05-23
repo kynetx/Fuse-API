@@ -227,7 +227,7 @@ b16x17: fuse_fleet.krl
       //post to carvoyant
       http:post(url) 
         with body = payload
-	 and headers = oauthHeader(ent:access_token)
+	 and headers = oauthHeader(config_data{"access_token"})
          and autoraise = ar_label.klog(">>>>> autoraise label >>>>> ");
     };
 
@@ -236,7 +236,7 @@ b16x17: fuse_fleet.krl
       auth_data =  carvoyant_headers(config_data);
       http:put(url)
         with body = payload
-	 and headers = oauthHeader(ent:access_token)
+	 and headers = oauthHeader(config_data{"access_token"})
          and autoraise = ar_label;
          // with credentials = auth_data{"credentials"} 
          //  and params = params
@@ -246,7 +246,7 @@ b16x17: fuse_fleet.krl
     carvoyant_delete = defaction(url, config_data) {
       configure using ar_label = false;
       http:delete(url) 
-        with headers = oauthHeader(ent:access_token)
+        with headers = oauthHeader(config_data{"access_token"})
          and autoraise = ar_label; 
        // auth_data =  carvoyant_headers(config_data);
        //   with credentials = auth_data{"credentials"} 
@@ -566,7 +566,7 @@ b16x17: fuse_fleet.krl
   rule carvoyant_init_vehicle {
     select when carvoyant init_vehicle
     pre {
-      config_data = get_config();
+      config_data = get_config(""); // pass in empty vid to ensure we create one
       profile = pds:get_all_me();
       params = {
         "name": event:attr("name") || profile{"myProfileName"} || "Unknown Vehicle",
@@ -588,7 +588,7 @@ b16x17: fuse_fleet.krl
         with ar_label = "vehicle_init";
     }
     fired {
-      log(">>>>>>>>>> initializing Carvoyant account with device ID = " + deviceId);
+      log(">>>>>>>>>> initializing Carvoyant account with device ID = " + params{"deviceId"});
       raise carvoyant event new_device_id 
         with deviceId = deviceId
     } else {
@@ -596,6 +596,7 @@ b16x17: fuse_fleet.krl
     }
   }
 
+  // this neds work
   rule carvoyant_update_vehicle_account {
     select when carvoyant update_account
     pre {
