@@ -245,18 +245,20 @@
 	      || (typeof cache === "object" && typeof cache.length === "number" && cache.length < 1)
 	      || options.force
 	       ) {
-                Fuse.log("Calling " + funcName);
-		var fc = Fuse.fleetChannel();
-		if(fc !== "none") {
-		    return CloudOS.skyCloud(Fuse.get_rid("fleet"), funcName, {}, cb, {"eci": fc});
-		} else {
-		    Fuse.log("fleet_eci is undefined, you must get the fleet channel first");
-		    return null;
-		}
-	    } else {
-		cb(cache);
-		return cache
-	    }
+                   Fuse.log("Calling " + funcName);
+		   Fuse.fleetChannel(function(fc_object) {
+		       var fc = fc_object.cid;
+   		       if(fc !== "none") {
+			   return CloudOS.skyCloud(Fuse.get_rid("fleet"), funcName, {}, cb, {"eci": fc});
+		       } else {
+			   Fuse.log("fleet_eci is undefined, you must get the fleet channel first");
+			   return null;
+		       }
+		   });
+	       } else {
+		   cb(cache);
+		   return cache;
+	       }
 	},
 
 	// tells the fleet to bradcast access tokens to the vehicles. 
@@ -390,7 +392,7 @@
             );
         },
 
-	initCarvoyantAccount: function(vehicle_channel, cb, options)
+	initCarvoyantVehicle: function(vehicle_channel, cb, options)
         {
 	    cb = cb || function(){};
 	    options = options || {};
@@ -415,7 +417,7 @@
         },
 
 
-	updateCarvoyantAccount: function(vehicle_channel, cb, options)
+	updateCarvoyantVehicle: function(vehicle_channel, cb, options)
         {
 	    cb = cb || function(){};
 	    options = options || {};

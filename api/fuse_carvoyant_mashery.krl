@@ -567,6 +567,7 @@ b16x17: fuse_fleet.krl
     select when carvoyant init_vehicle
     pre {
       config_data = get_config();
+      profile = pds:get_all_me();
       params = {
         "name": event:attr("name") || profile{"myProfileName"} || "Unknown Vehicle",
         "deviceId": vehicle_id() || event:attr("deviceId") || "unknown",
