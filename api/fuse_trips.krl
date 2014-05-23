@@ -88,10 +88,8 @@ Manage trips. PDS is not well-suited to these operations
 	"reverse": true,
 	"compare" : "datetime"
       };
-      sorted_keys = this2that:transform(ent:trip_summaries, sort_opt)
-                      .slice(0,num_trips-1)
-		      ;
-      t = sorted_keys
+      sorted_keys = this2that:transform(ent:trip_summaries, sort_opt);
+      t = sorted_keys.slice(0, minimum(num_trips, sorted_keys.length())-1)
               .map(function(k) {
 	        e = ent:trip_summaries{k}.klog(">>> working with summary <<<");
 	        start = waypointToArray(e{"startWaypoint"}).join(",");
