@@ -138,7 +138,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             cid =  ent:fleet_channel
                 || CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel");
 
-            {"cid": cid}
+            {"eci": cid}
         };
 
 	// not updated for Fuse

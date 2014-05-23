@@ -863,7 +863,7 @@ b16x17: fuse_fleet.krl
     send_directive("Carvoyant subscription failed") with
        sub_status = event:attrs();
     fired {
-      error warn "Carvoyant HTTP Error (#{status}): ${event:attr('status_line')}. Autoraise label: #{event:attr('label')}."
+      error warn "Carvoyant HTTP Error (#{status}): #{event:attr('status_line')}. Autoraise label: #{event:attr('label')}."
     }
   }
 

@@ -236,14 +236,15 @@ This tells the fleet pico to update all the vehicles with the latest Carvoyant t
 
 			Fuse.configureVehicles({}, show_res)
 	
-2. Initialize the Carvoyant Account
+2. Initialize the Carvoyant Account for the vehicle
+The following command creates the vehicle in the Carvoyant system with the device ID 
 
-
+		Fuse.initCarvoyantVehicle(<vehicle_channel>, show_res);
 
 
 2. Test the configuration
 If your configuration is connected to a real device in the Carvoyant system, you can tell Fuse to update the vehicle data from Carvoyant:
-```Fuse.updateVehicleDataCarvoyant(<vehicle_id>, <update_type>, <callback>, <options>);``` takes the following parameters
+```Fuse.updateVehicleDataCarvoyant(<vehicle_channel>, <update_type>, <callback>, <options>);``` takes the following parameters
 	  - vehicle channel
 	  - the type of update (one of "summary", "status", or "trip")
 	  - an optional callback function
@@ -276,6 +277,8 @@ You can use the following commands to see this data.
 
 *Trips are still incomplete waiting for searching*
 
+__Note:__ you won't see any data until the vehicle with the new device has been driven. 
+
 # Initializing a Vehicle
 
 You may have noticed that the update commands in the last section don't return data. If the API design succeeds, you will rarely need to call them and when you do, you will update the vehicle data pre-emptively, before it's needed.
@@ -294,7 +297,7 @@ We have taken care to ensure that these are idempotent so that the vehicle pico 
 The ```ignitionStatus``` (when if goes to ```OFF```) causes the trip that just ended to be downloaded and made available in the vehicle and fleet picos. 
 
 Initialize the vehicle:
-```Fuse.updateVehicleDataCarvoyant(<vehicle_id>, <callback>, <options>);``` takes the following parameters
+```Fuse.initializeVehicle(<vehicle_channel>, <callback>, <options>);``` takes the following parameters
 	  - vehicle channel
 	  - an optional callback function
 

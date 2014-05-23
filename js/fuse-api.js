@@ -226,7 +226,7 @@
 	    if (typeof Fuse.fleet_eci === "undefined" || Fuse.fleet_eci === "" || Fuse.fleet_eci === null || options.force) {
                 Fuse.log("Retrieving fleet channel");
 		return CloudOS.skyCloud(Fuse.get_rid("owner"), "fleetChannel", {}, function(json) {
-		    Fuse.fleet_eci = json.cid;
+		    Fuse.fleet_eci = json.eci;
 		    Fuse.log("Retrieved fleet channel", json);
 		    cb(json);
 		});
@@ -248,6 +248,7 @@
                    Fuse.log("Calling " + funcName);
 		   Fuse.fleetChannel(function(fc_object) {
 		       var fc = fc_object.cid;
+		       Fuse.log("Using fleet channel ", fc_object);
    		       if(fc !== "none") {
 			   return CloudOS.skyCloud(Fuse.get_rid("fleet"), funcName, {}, cb, {"eci": fc});
 		       } else {

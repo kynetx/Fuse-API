@@ -331,7 +331,7 @@ Fuse ruleset for a vehicle pico
 
 	profile = pds:get_all_me();
 
-	status = vehicleStatus();
+	status = vehicleStatus() || {};
 
 	dtc = {"code": status{["GEN_DTC","value"]},
 	       "id":  status{["GEN_DTC","id"]},
