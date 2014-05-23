@@ -171,12 +171,11 @@ b16x17: fuse_fleet.krl
     get_config = function(vid, key) {
        carvoyant_config_key = key || namespace();
        config_data = pds:get_item(carvoyant_config_key, "config") || {};
-       vid = vid
-          || config_data{"deviceID"} // old name remove once we are creating vehicles with new name
-          || config_data{"deviceId"};
+        // vid = vid
+        //    || config_data{"deviceID"} // old name remove once we are creating vehicles with new name
+        //    || config_data{"deviceId"};
        base_url = api_url+ "/vehicle/";
-       url = vid.klog(">>>>>> VID: >>>>>>> ") eq "none" => base_url 
-                            | base_url + vid;
+       url = base_url + vid;
        config_data
          .put({"hostname": api_hostname,
 	       "base_url": url,
@@ -568,7 +567,7 @@ b16x17: fuse_fleet.krl
   rule carvoyant_init_vehicle {
     select when carvoyant init_vehicle
     pre {
-      config_data = get_config("none"); // pass in empty vid to ensure we create one
+      config_data = get_config(""); // pass in empty vid to ensure we create one
       profile = pds:get_all_me();
       params = {
         "name": event:attr("name") || profile{"myProfileName"} || "Unknown Vehicle",
