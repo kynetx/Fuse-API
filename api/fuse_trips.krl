@@ -21,7 +21,7 @@ Manage trips. PDS is not well-suited to these operations
 	
     provides trips, lastTrip, tripName, mileage,
 //             all_trips,   // for debugging
-	       icalForVehicle
+	       icalForVehicle, icalSubscriptionUrl
   }
 
   global {
@@ -80,6 +80,15 @@ Manage trips. PDS is not well-suited to these operations
     minimum = function(x,y) {
       (x < y) => x | y
     };
+
+    icalSubscriptionUrl = function() {
+      ical_channel_name = "iCal_for_vehicle";
+      channels = CloudOS:channelList().filter(function(x){x{"name"} eq ical_channel_name});
+      channel = channels.length() > 0 => channels.head()
+                		       | CloudOS:channelCreate(ical_channel_name);
+      "http://" + meta:hostname() + "/sky/cloud/" + meta:rid() + "/icalForVehicle?_eci=" + channel
+      
+    }
 
     icalForVehicle = function(search){
       num_trips = 25; // return last 50 trips
