@@ -286,7 +286,7 @@ b16x17: fuse_fleet.krl
     // ---------- trips ----------
     // vid is optional
     tripInfo = function(tid, vid) {
-      config_data = get_config(vid);
+      config_data = get_config(vid).klog(">>> Config data in tripInfo >>>>>");
       trip_url = config_data{"base_url"} + "/trip/#{tid}";
       result = carvoyant_get(trip_url, config_data);
       result{"status_code"} eq "200" => result{["content","trip"]}
