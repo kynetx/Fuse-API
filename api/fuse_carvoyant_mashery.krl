@@ -264,7 +264,7 @@ b16x17: fuse_fleet.krl
     };
 
     get_vehicle_data = function (vehicle_data, vehicle_number, dkey) {
-      vda = vehicle_data{["content","vehicle"]};
+      vda = vehicle_data{["content","vehicle"]} || {};
       vd = vehicle_number.isnull() => vda | vda[vehicle_number];
       dkey.isnull() => vd | vd{dkey}
     };

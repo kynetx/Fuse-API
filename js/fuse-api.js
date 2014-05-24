@@ -588,6 +588,21 @@
   		       }, options);
 	},
 
+	trips: function(vehicle_channel, start, end, cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    options.rid = "trips";
+	    
+	    var args = {"start": start,
+			"end": end
+		       };
+
+	    return Fuse.ask_vehicle(vehicle_channel, "trips", args, null, function(json) {
+			Fuse.log("Retrieve trips", json);
+			cb(json);
+  		       }, options);
+	},
+
 	// ---------- subscriptions to device events ----------
 	vehicleSubscriptions: function(vehicle_channel, cb, options) {
 	    cb = cb || function(){};
