@@ -320,13 +320,21 @@ The parameters are
 	- vehicle channel
 	- start time, an ISO8601 formatted datetime string such as "20140523T080000-0600"
 	- end time, an ISO8601 formatted datetime string such as "20140523T150000-0600"
+	- callback
 
 Note that the trips are reported to Fuse and stored in Fuse with UTC datetime strings, but you can submit datetime strings with the local timezone. They will be normalized to UTC datetime strings before the query is processed.
 
 ## iCalendar Subscription
 
+You can subscribe to trips using iCaledar. The API can generate the subscription URL for you with this call:
 
+	Fuse.icalSubscriptionUrl(<vehicle_channel>,,<callback>)
 
+The parameters are
+	- vehicle channel
+	- callback
+
+The iCalendar function only returns the last 25 trips. 
 
 # Notes
 
