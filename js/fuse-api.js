@@ -603,6 +603,19 @@
   		       }, options);
 	},
 
+	icalSubscriptionUrl: function(vehicle_channel, cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    options.rid = "trips";
+	    
+	    var args = {};
+
+	    return Fuse.ask_vehicle(vehicle_channel, "icalSubscriptionUrl", args, null, function(json) {
+			Fuse.log("iCal subscription URL: ", json);
+			cb(json);
+  		       }, options);
+	},
+
 	// ---------- subscriptions to device events ----------
 	vehicleSubscriptions: function(vehicle_channel, cb, options) {
 	    cb = cb || function(){};

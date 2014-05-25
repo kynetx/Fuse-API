@@ -241,8 +241,40 @@ The following command creates the vehicle in the Carvoyant system with the devic
 
 		Fuse.initCarvoyantVehicle(<vehicle_channel>, show_res);
 
+You can provision as many vehicles in the account as you like.
 
-2. Test the configuration
+# Initializing a Vehicle
+
+You may have noticed that the update commands in the last section don't return data. If the API design succeeds, you will rarely need to call them and when you do, you will update the vehicle data pre-emptively, before it's needed.
+
+For the most part, we rely on subscriptions to the vehicle itself to raise events into the Fuse system and thus automatically update critical vehicle information as events in the vehicle dictate.
+
+When we initialize a vehicle, we set up four initial subscriptions:
+
+- ```ignitionStatus``` &mdash; on or off
+- ```lowBattery``` &mdash; below 12v
+- ```troubleCode``` &mdash; any diagnostic trouble code
+- ```fuelLevel```  &mdash; below 20%
+
+We have taken care to ensure that these are idempotent so that the vehicle pico never sees multiple events for the same state change.
+
+The ```ignitionStatus``` (when if goes to ```OFF```) causes the trip that just ended to be downloaded and made available in the vehicle and fleet picos. 
+
+Initialize the vehicle:
+
+	Fuse.initializeVehicle(<vehicle_channel>, <callback>, <options>);
+
+takes the following parameters
+	  - vehicle channel
+	  - an optional callback function
+
+It doesn't hurt to do this more than once, but you should avoid it if possible since it's an involved process with many API calls to Carvoyant.
+
+Also, if you do it for multiple vehicle picos, Carvoyant will be raising events into each of those picos for the same car which puts a load on their system. There is a way, not exposed in the JavaScript yet, to clean up subscriptions and tell Carvoyant to delete all of them except for those pointing at the current pico (i.e. the pico talking to Carvoyant at the time). Automating this could lead to a dueling picos situation where multiple picos think they each represent the same car and steal subscriptions from Carvoyant from the others. Avoid this. 
+
+
+# Use the SDK. 
+
 If your configuration is connected to a real device in the Carvoyant system, you can tell Fuse to update the vehicle data from Carvoyant:
 ```Fuse.updateVehicleDataCarvoyant(<vehicle_channel>, <update_type>, <callback>, <options>);``` takes the following parameters
 	  - vehicle channel
@@ -275,38 +307,26 @@ You can use the following commands to see this data.
 
 	Fuse.vehicleSummary()
 
-*Trips are still incomplete waiting for searching*
+__Note:__ you won't see any data until the vehicle with the new device has been driven.
 
-__Note:__ you won't see any data until the vehicle with the new device has been driven. 
 
-# Initializing a Vehicle
+## Trips
 
-You may have noticed that the update commands in the last section don't return data. If the API design succeeds, you will rarely need to call them and when you do, you will update the vehicle data pre-emptively, before it's needed.
+The call to query trips is
 
-For the most part, we rely on subscriptions to the vehicle itself to raise events into the Fuse system and thus automatically update critical vehicle information as events in the vehicle dictate.
+	Fuse.trips(<vehicle_channel>,<start-time>,<end-time>, <callback>)
 
-When we initialize a vehicle, we set up four initial subscriptions:
+The parameters are
+	- vehicle channel
+	- start time, an ISO8601 formatted datetime string such as "20140523T080000-0600"
+	- end time, an ISO8601 formatted datetime string such as "20140523T150000-0600"
 
-- ```ignitionStatus``` &mdash; on or off
-- ```lowBattery``` &mdash; below 12v
-- ```troubleCode``` &mdash; any diagnostic trouble code
-- ```fuelLevel```  &mdash; below 20%
+Note that the trips are reported to Fuse and stored in Fuse with UTC datetime strings, but you can submit datetime strings with the local timezone. They will be normalized to UTC datetime strings before the query is processed.
 
-We have taken care to ensure that these are idempotent so that the vehicle pico never sees multiple events for the same state change.
+## iCalendar Subscription
 
-The ```ignitionStatus``` (when if goes to ```OFF```) causes the trip that just ended to be downloaded and made available in the vehicle and fleet picos. 
 
-Initialize the vehicle:
 
-	Fuse.initializeVehicle(<vehicle_channel>, <callback>, <options>);
-
-takes the following parameters
-	  - vehicle channel
-	  - an optional callback function
-
-It doesn't hurt to do this more than once, but you should avoid it if possible since it's an involved process with many API calls to Carvoyant.
-
-Also, if you do it for multiple vehicle picos, Carvoyant will be raising events into each of those picos for the same car which puts a load on their system. There is a way, not exposed in the JavaScript yet, to clean up subscriptions and tell Carvoyant to delete all of them except for those pointing at the current pico (i.e. the pico talking to Carvoyant at the time). Automating this could lead to a dueling picos situation where multiple picos think they each represent the same car and steal subscriptions from Carvoyant from the others. Avoid this. 
 
 # Notes
 

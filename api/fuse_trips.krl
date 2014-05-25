@@ -87,7 +87,7 @@ Manage trips. PDS is not well-suited to these operations
       channels = channel_list{"channels"}.filter(function(x){x{"name"} eq ical_channel_name});
       channel = channels.length() > 0 => channels.head()
                 		       | CloudOS:channelCreate(ical_channel_name);
-      "http://" + meta:hostname() + "/sky/cloud/" + meta:rid() + "/icalForVehicle?_eci=" + channel{"cid"}
+      {"url": "http://" + meta:hostname() + "/sky/cloud/" + meta:rid() + "/icalForVehicle?_eci=" + channel{"cid"} }
     }
 
     icalForVehicle = function(search){
