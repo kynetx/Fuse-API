@@ -20,7 +20,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     provides clientAccessToken, codeForAccessToken, refreshTokenForAccessToken, showTokens, // don't provide after debug
              is_authorized,
-             namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, getVehicleData,
+             namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, carvoyantVehicleData,
              vehicleStatus, keyToLabel, tripInfo,
              get_subscription, no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
 
