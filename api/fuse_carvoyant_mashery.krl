@@ -20,7 +20,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     provides clientAccessToken, codeForAccessToken, refreshTokenForAccessToken, showTokens, // don't provide after debug
              is_authorized,
-             namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
+             namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, getVehicleData,
              vehicleStatus, keyToLabel, tripInfo,
              get_subscription, no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
 
@@ -256,7 +256,7 @@ b16x17: fuse_fleet.krl
 
 
     // ---------- vehicle data ----------
-    // vehicle ID is optional if already in pico
+    // without vid, returns data on all vehicles in account
     carvoyant_vehicle_data = function(vid) {
       vid = vid || vehicle_id();
       config_data = get_config(vid);
@@ -268,6 +268,15 @@ b16x17: fuse_fleet.krl
       vd = vehicle_number.isnull() => vda | vda[vehicle_number];
       dkey.isnull() => vd | vd{dkey}
     };
+
+    carvoyantVehicleData = function(vid) {
+      vid = vid || vehicle_id();
+      config_data = get_config(vid);
+      data = carvoyant_get(config_data{"base_url"}, config_data);
+      status = data{"status_code"} eq "200" => data{["content","vehicle"]}
+                                             | mk_error(data);
+      status
+    }
 
     vehicleStatus = function(vid) {
       vid = vid || vehicle_id();

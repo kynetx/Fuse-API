@@ -292,41 +292,16 @@ Fuse ruleset for a vehicle pico
     }
 
     // ---------- vehicle data rules ----------
-
-    rule show_vehicle_data  is inactive {
-      select when fuse need_vehicle_data
-      pre {
-
-
-        cached_info = pds:get_item(carvoyant_namespace, "vehicle_info");
-
-        vid = carvoyant:vehicle_id();
-	vehicle_info = cached_info.isnull() => carvoyant:get_vehicle_data(carvoyant:carvoyant_vehicle_data(vid))
-                                             | cached_info;
-
-      }
-      {send_directive("Vehicle Data for #{vid}") with
-         id = vid and
-	 cached = not cached_info.isnull() and
-         values = vehicle_info and
-	 namespace = carvoyant_namespace;
-      }
-
-      always {
-        raise fuse event updated_vehicle_data attributes vehicle_info
-	 if cached_info.isnull(); // only update if we didn't cache
-      }
-
-    }
-
-  
     rule update_vehicle_data {
       select when fuse need_vehicle_data
       pre {
 
         vid = carvoyant:vehicle_id();
 	incoming = event:attrs() || {};
-        raw_vehicle_info = incoming{"vin"}.isnull() => carvoyant:get_vehicle_data(carvoyant:carvoyant_vehicle_data(vid))
+         // raw_vehicle_info = incoming{"vin"}.isnull() => carvoyant:get_vehicle_data(carvoyant:carvoyant_vehicle_data(vid))
+         //                                              | incoming;
+
+        raw_vehicle_info = incoming{"vin"}.isnull() => carvoyant:carvoyantVehicleData(vid)
                                                      | incoming;
 
 	profile = pds:get_all_me();
