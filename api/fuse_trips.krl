@@ -203,27 +203,36 @@ Manage trips. PDS is not well-suited to these operations
 
       // accept either the trip as a set of attributes or just an ID that requires us to ping Carvoyant API
       incoming = event:attrs() || {};
-      trip_info = incoming{"mileage"}.isnull() => carvoyant:tripInfo(incoming{"tripId"}, vid)
+      raw_trip_info = incoming{"mileage"}.isnull() => carvoyant:tripInfo(incoming{"tripId"}, vid)
                                                 | incoming;
-      tid = mkTid(trip_info{"id"});
-      end_time = endTime(trip_info);
-      trip_info = trip_info.put(["endTime"], end_time).klog(">>>> storing trip <<<<< ");
-      trip_summary = tripSummary(trip_info);
-      time_split = time:strftime(end_time, "%Y_:%m_:%d_:%H_:%M%S_").split(re/:/);
-      week_number = time:strftime(end_time, "%U_")
+      tid = mkTid(raw_trip_info{"id"});
+      end_time = endTime(raw_trip_info);
+
+       // time_split = time:strftime(end_time, "%Y_:%m_:%d_:%H_:%M%S_").split(re/:/);
+       // week_number = time:strftime(end_time, "%U_")
+
+      trip_info = raw_trip_info.put(["endTime"], end_time).klog(">>>> storing trip <<<<< ");
+
+      raw_trip_summary = tripSummary(trip_info);
+      start =reducePrecision(raw_trip_summary{"startWaypoint"});
+      end = reducePrecision(raw_trip_summary{"endWaypoint"});
+      trip_name = tripName(start, end) || "";
+
+      trip_summary = raw_trip_summary.put(["name"], trip_name);
+      
+
     }
     if( end_time neq "ERROR_NO_TIMESTAMP_AVAILABLE" 
      && trip_info{"mileage"} > 0.01
       ) then
     {send_directive("Adding trip #{tid}") with 
       end_time = end_time and
-      time_split = time_split and
       trip_summary = trip_summary
       ;
      event:send({"cid": vehicle:fleetChannel()}, "fuse", "updated_vehicle") with
          attrs = {"keyvalue": "last_trip_info",
 	          "vehicleId": vid,
-	          "value": trip_info.encode()
+	          "value": trip_summary.encode()
 		 }
     }
     fired {
@@ -239,8 +248,37 @@ Manage trips. PDS is not well-suited to these operations
   // daily summaries (TZs, ugh)
   // trip summaries (easier)
 
+  rule update_trip {
+    select when fuse trip_meta_data
+    pre {
+      carvoyant_tid = event:attr("tripId");
+      tid = mkTid(carvoyant_tid);
+      tname = event:attr("tripName");
+      tcategory = event:attr("tripCategory");
+      trip_summary = ent:trip_summaries{tid} || {};
+      start =reducePrecision(trip_summary{"startWaypoint"});
+      end = reducePrecision(trip_summary{"endWaypoint"});
+
+    }
+    {
+      send_directive("Updating trip meta data") with
+        tid = tid and
+	trip_name = tname and
+	trip_category = tcategory and
+	start = start and
+	end = end
+    }
+    fired {
+      set ent:trip_summaries{tid} trip_summary
+             .put(["category"], tcategory)
+	     .put(["name"], tname);
+      set ent:trip_names{[end, start]} {"tripName": tname}
+    }
+
+  }
+
   rule name_trip {
-    select when fuse name_trip
+    select when fuse trip_name
     pre {
       carvoyant_tid = event:attr("tripId");
       tid = mkTid(carvoyant_tid);
