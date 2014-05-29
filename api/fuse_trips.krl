@@ -102,10 +102,10 @@ Manage trips. PDS is not well-suited to these operations
       t = sorted_keys.slice(0, minimum(num_trips, sorted_keys.length())-1)
               .map(function(k) {
 	        e = ent:trip_summaries{k}.klog(">>> working with summary <<<");
-	        start = waypointToArray(e{"startWaypoint"}).join(",");
-	        dest = waypointToArray(e{"endWaypoint"}).join(",");
+	        start = e{["startWaypoint", "latitude"]} + "," + e{["startWaypoint", "longitude"]};
+	        dest = e{["endWaypoint", "latitude"]} + "," + e{["endWaypoint", "longitude"]};
 		miles = e{"mileage"} || "unknown";
-	        url = "http://maps.google.com/maps?saddr=#{start}&daddr=#{dest}";
+	        url = "http://maps.google.com/maps?saddr="+ start + "&daddr=" + dest;
                 cost_str = e{"cost"} => "Cost: $" + e{"cost"} | "";
 		summary = e{"name"} neq "" => e{"name"} + "(" + miles + ")"
                                             | "Trip of " + miles + "miles"
