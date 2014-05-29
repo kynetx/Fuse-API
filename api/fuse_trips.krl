@@ -107,9 +107,11 @@ Manage trips. PDS is not well-suited to these operations
 		miles = e{"mileage"} || "unknown";
 	        url = "http://maps.google.com/maps?saddr=#{start}&daddr=#{dest}";
                 cost_str = e{"cost"} => "Cost: $" + e{"cost"} | "";
+		summary = e{"name"} neq "" => name + "(" + miles + ")"
+                                            | "Trip of " + miles + "miles"
 	        {"dtstart" : e{"startTime"},
 		 "dtend" : e{"endTime"},
-		 "summary" : "Trip of #{miles} miles",
+		 "summary" : summary,
 		 "url": url,
 		 "description": "Trip ID: " + e{"id"} + "; " + cost_str,
 		 "uid": "http://fuse.to/ical/v1/trip/" + $e{"id"}  // should be the same each time generated
@@ -245,8 +247,7 @@ Manage trips. PDS is not well-suited to these operations
       log "End time: #{end_time}; mileage: " + trip_info{"mileage"};
     }
   }
-  // daily summaries (TZs, ugh)
-  // trip summaries (easier)
+
 
   rule update_trip {
     select when fuse trip_meta_data
