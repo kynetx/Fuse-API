@@ -107,7 +107,7 @@ Manage trips. PDS is not well-suited to these operations
 		miles = e{"mileage"} || "unknown";
 	        url = "http://maps.google.com/maps?saddr="+ start + "&daddr=" + dest;
                 cost_str = e{"cost"} => "Cost: $" + e{"cost"} | "";
-		summary = e{"name"} neq "" => e{"name"} + "(" + miles + ")"
+		summary = e{"name"} neq "" => e{"name"} + "(" + miles + " miles)"
                                             | "Trip of " + miles + "miles"
 	        {"dtstart" : e{"startTime"},
 		 "dtend" : e{"endTime"},
