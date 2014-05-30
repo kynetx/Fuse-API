@@ -103,8 +103,8 @@ b16x17: fuse_fleet.krl
       params = {"client_id" : keys:carvoyant_client("client_id"),	
                 "redirect_url" : redirect_url,
 		"response_type" : "code"
-		}.klog(">>>>>> params >>>>>>>");
-      query_string = params.map(function(k,v){k+"="+v}).join("&").klog(">>>>> query string >>>>>");
+		};
+      query_string = params.map(function(k,v){k+"="+v}).klog(">>>>> query string >>>>>");
       "https://auth.carvoyant.com/OAuth/authorize?" + query_string
     
     }
