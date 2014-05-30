@@ -168,7 +168,7 @@ Manage trips. PDS is not well-suited to these operations
        // 	"endTime": endTime(trip),
        // 	"startTime": trip{"startTime"}
        // };
-      fillup = fuel:lastFillup() || {"mpg": 1, "unit_price": 0};
+      fillup = fuel:fillup() || {"mpg": 1, "unit_price": 0};
       mileage = trip{"mileage"} < 0.1 =>  0.01
                                        |  trip{"mileage"};
       cost = math:round((mileage.klog(">>>> mileage <<<<<") / fillup{"mpg"}) * fillup{"unit_price"} * 1000) / 1000;
