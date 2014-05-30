@@ -161,7 +161,7 @@ Operations for fuel
        //       "_api": "sky"
  		   
        // 	  };
-      set ent:fuel_purchases{key} null
+      clear ent:fuel_purchases{key} 
     }
   }
 
