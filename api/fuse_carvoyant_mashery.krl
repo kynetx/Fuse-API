@@ -19,7 +19,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     errors to b16x13
 
     provides clientAccessToken, codeForAccessToken, refreshTokenForAccessToken, showTokens, // don't provide after debug
-             is_authorized,
+             is_authorized, carvoyantOauthUrl,
              namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
 	     carvoyantVehicleData,
              vehicleStatus, keyToLabel, tripInfo,
@@ -96,6 +96,17 @@ b16x17: fuse_fleet.krl
 
     showTokens = function() {
       ent:account_info
+    }
+
+    carvoyantOauthUrl = function(redirect_url) {
+    
+      params = {"client_id" : keys:carvoyant_client("client_id"),	
+                "redirect_url" : redirect_url,
+		"response_type" : "code"
+		};
+      query_string = params.map(function(k,v){k+"="+v}).join("&").klog(">>>>> query string >>>>>");
+      "https://auth.carvoyant.com/OAuth/authorize?" + query_string
+    
     }
 
     // used for getting token to create an account; not for general use

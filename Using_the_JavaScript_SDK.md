@@ -184,13 +184,15 @@ Fuse uses [Carvoyant](http://carvoyant.com) to provision devices, run the virtua
 
 1. Create an account at Carvoyant with the following command:
 
-	Fuse.createCarvoyantAccount({"username": "<username>", "password":"<password>"}, show_res)
+		Fuse.createCarvoyantAccount({"username": "<username>", "password":"<password>"}, show_res)
 
 This will create an account at Carvoyant with the username and password you provide using the profile elements from the fleet owner.
 
 Creating an account also creates initial Carvoyant credentials. These are stored in the fleet pico for later use in communicating with Carvoyant.
 
 The user is now provisioned and their Fuse Fleet is linked to Carvoyant.
+
+If the Carvoyant account was created correctly, you should be able to login to the [Carvoyant dashboard](https://dash.carvoyant.com) with the credentials you used to create the Carvoyant account. 
 
 
 # Adding a Vehicle
@@ -271,8 +273,29 @@ takes the following parameters
 
 It doesn't hurt to do this more than once, but you should avoid it if possible since it's an involved process with many API calls to Carvoyant.
 
-Also, if you do it for multiple vehicle picos, Carvoyant will be raising events into each of those picos for the same car which puts a load on their system. There is a way, not exposed in the JavaScript yet, to clean up subscriptions and tell Carvoyant to delete all of them except for those pointing at the current pico (i.e. the pico talking to Carvoyant at the time). Automating this could lead to a dueling picos situation where multiple picos think they each represent the same car and steal subscriptions from Carvoyant from the others. Avoid this. 
+Also, if you do it for multiple vehicle picos, Carvoyant will be raising events into each of those picos for the same car which puts a load on their system. There is a way, not exposed in the JavaScript yet, to clean up subscriptions and tell Carvoyant to delete all of them except for those pointing at the current pico (i.e. the pico talking to Carvoyant at the time). Automating this could lead to a dueling picos situation where multiple picos think they each represent the same car and steal subscriptions from Carvoyant from the others. Avoid this.
 
+# Is It Right?
+
+At this point, if you do the following:
+
+	Fuse.vehicleSummary()
+
+the return value should be an object with a property that is the device ID you used above that contains null values for it's sub properties:
+
+	Object {C201200037: Object}
+		C201200037: Object
+			DTC: Object
+			address: null
+			fuellevel: null
+			heading: null
+			profileName: "Tacoma"
+			profilePhoto: "https://s3.amazonaws.com/k-mycloud/a169x672/B87948E0-2306-11E3-953D-B39BDC00B96D.img?q=49420"
+			speed: "0"
+
+This is normal until you drive the vehicle.
+
+You can also login to the [Carvoyant dashboard](https://dash.carvoyant.com) with the credentials you used to create the Carvoyant account. You should see any vehicles you've added there. 
 
 # Use the SDK. 
 
@@ -406,27 +429,4 @@ where ```key``` that is the key of the fillup record you wish to delete.
 2.  ```fuse:clean_up_subscriptions``` cleans up Carvoyant subscriptions, deleting any that don't point at the current vehicle pico.
 
 
-# Debugging
-
-_If you're unfamiliar with SquareTag and some of the activities you'll undertake as a developer, the [Quickstart](http://developer.kynetx.com/display/docs/Quickstart) has instructions about how to install rulesets, etc._
-
-1. Create a Carvoyant account, if necessary and configure it:
-	- create a vehicle
-	- put the Carvoyant device ID in the vehicle profile
-	-use the developer API to create a developer key and secret. Record these for later use. If you don't have access to the developer API, ask Caroyant for access.
-
-1. Create a new account at SquareTag.com.
-	- don't use an existing SquareTag account
-	- use the new account to log into SquareTag (using an incognito window will allow you to continue to use SquareTag to support your development activities from your existing account.)
-	- add a name and picture to the profile if you like.
-	    - Settings -> Profile
-	- use the settings menu under your profile to set your Cloud Type to ```cloudTypeDeveloper```
-		- Settings -> myCloud -> cloudTypeDeveloper
-
-1. Install the following rulesets with type Application:
-	- Fuse: b16x16
-	- Fuse Errors: b16x13
-	- myApps -> Add devApp
-
-1. You may want to install the PicoInspector for debugging
 
