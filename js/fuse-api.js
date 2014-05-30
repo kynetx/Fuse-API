@@ -521,6 +521,7 @@
   		       }, options);
 	},
 
+
 	recordFillUp: function(vehicle_channel, fillup_obj, cb, options)
         {
 	    cb = cb || function(){};
@@ -528,23 +529,47 @@
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
 		throw "Vehicle channel is null; can't record fuel fillup for vehicle";
 	    };
-	    if( typeof fillup_obj === "undefined" 
-             || typeof fillup_obj.volume === "undefined"
-             || typeof fillup_obj.unit_price === "undefined"
-	      ){
-		throw "Bad data; can't record fuel fillup for vehicle", fillup_obj;
-	    }
+	    Fuse.requireParams({volume: fillup_obj.volume,
+				unitPrice: fillup_obj.unitPrice,
+				odometer: fillup_obj.odometer
+			       });
 
             return CloudOS.raiseEvent("fuse", "new_fuel_purchase", {}, fillup_obj, function(response)
-            {
-                Fuse.log("Recorded fillup for vehicle: " + vehicle_channel);
-		if(response.length < 1) {
-		    throw "Fuel fillup record failed for vehicle: "  + vehicle_channel;
-		}
-                cb(response);
-            },
-	    {"eci": vehicle_channel
-	    } 
+				      {
+					  Fuse.log("Recorded fillup for vehicle: " + vehicle_channel);
+					  if(response.length < 2) {
+					      throw "Fuel fillup record failed for vehicle: "  + vehicle_channel;
+					  }
+					  cb(response);
+				      },
+				      {"eci": vehicle_channel
+				      } 
+            );
+        },
+
+	updateFillUp: function(vehicle_channel, fillup_obj, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record fuel fillup for vehicle";
+	    };
+	    Fuse.requireParams({volume: fillup_obj.volume,
+				unitPrice: fillup_obj.unitPrice,
+				odometer: fillup_obj.odometer,
+				key: fillup_obj.key
+			       });
+
+            return CloudOS.raiseEvent("fuse", "updated_fuel_purchase", {}, fillup_obj, function(response)
+				      {
+					  Fuse.log("Updateded fillup for vehicle: " + vehicle_channel);
+					  if(response.length < 1) {
+					      throw "Fuel fillup update failed for vehicle: "  + vehicle_channel;
+					  }
+					  cb(response);
+				      },
+				      {"eci": vehicle_channel
+				      } 
             );
         },
 
@@ -555,10 +580,8 @@
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
 		throw "Vehicle channel is null; can't record fuel fillup for vehicle";
 	    };
-	    if( typeof key === "undefined" 
-	      ){
-		throw "Bad key; can't delete fuel fillup record for vehicle";
-	    }
+	    Fuse.requireParams({key: key});
+
 	    var attrs = {"key": key};
             return CloudOS.raiseEvent("fuse", "unneeded_fuel_purchase", {}, attrs, function(response)
             {
@@ -617,6 +640,35 @@
 			cb(json);
   		       }, options);
 	},
+	
+	updateTrip: function(vehicle_channel, trip_id, trip_name, trip_category, cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record fuel fillup for vehicle";
+	    };
+	    if( typeof trip_id === "undefined" 
+	      ){
+		throw "Bad data; Trip ID is required: ";
+	    }
+
+	    var attrs  = {"tripId": trip_id,
+		          "tripName": trip_name,
+			  "tripCategory" : trip_category
+			 };
+            return CloudOS.raiseEvent("fuse", "trip_meta_data", {}, attrs, function(response)
+            {
+                Fuse.log("Updated trip for vehicle: " + vehicle_channel + " with " + attrs);
+		if(response.length < 1) {
+		    throw "Updating trip (" + trip_id + ") failed for vehicle: "  + vehicle_channel;
+		}
+                cb(response);
+            },
+	    {"eci": vehicle_channel
+	    } 
+            );
+	},
+
 
 	// ---------- subscriptions to device events ----------
 	vehicleSubscriptions: function(vehicle_channel, cb, options) {
@@ -645,7 +697,7 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
-		throw "Vehicle channel is null; can't record fuel fillup for vehicle";
+		throw "Vehicle channel is null; can't add subscription for vehicle";
 	    };
 	    if( typeof subscription_type === "undefined" 
 	      ){
@@ -673,7 +725,7 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
-		throw "Vehicle channel is null; can't record fuel fillup for vehicle";
+		throw "Vehicle channel is null; can't delete subscription for vehicle";
 	    };
 	    if( typeof subscription_type === "undefined" 
              || typeof subscription_id === "undefined" 
@@ -696,7 +748,18 @@
             );
         },
 
+	requireParams: function(params) {
 
+	    if( typeof params === "undefined") {
+		throw "Data data; undefined params";
+	    }
+
+	    $.each(params, function(k, v){
+		if(typeof v === "undefined" || v === null ) {
+		    throw "Data data; parameter undefined: " + k;
+		};
+	    });
+	},
 
     };
 

@@ -66,7 +66,7 @@ Operations for fuel
       key = event:attr("key") || time:now({"tz" : "UTC"});  // UTC; using time as key
 
       volume = event:attr("volume") || 1;
-      unit_price = event:attr("unit_price");
+      unit_price = event:attr("unitPrice");
       odometer = event:attr("odometer");
       location = event:attr("location");
       current_time = time:now({"tz": "UTC"});
@@ -85,7 +85,8 @@ Operations for fuel
 	"location": location,
 	"odometer": odometer.sprintf("%.1f"),
 	"distance": distance.sprintf("%.1f"),
-	"mpg": mpg.sprintf("%.2f"),
+	"mpg": (mpg < 100) => mpg.sprintf("%.2f") // throw out bad data
+	                    | 0,
 	"interval": seconds,
 	"timestamp": current_time
       }.klog(">>>>>>> fuel record <<<<<<<<");

@@ -232,7 +232,8 @@ You should be able to ask the fleet for the vehicle channels:
 ```Fuse.configureVehicle({}, <callback>)``` takes the following parameters
 	- empty attribute object
 	- optional callback
-This tells the fleet pico to update all the vehicles with the latest Carvoyant tokens. This will usually happen automatically, but when you're initializing, you have to do it manually to ensure it's done before you start making calls.
+
+	This tells the fleet pico to update all the vehicles with the latest Carvoyant tokens. This will usually happen automatically, but when you're creating a new vehicle, you have to do it manually to ensure it's done before you start making calls.
 
 			Fuse.configureVehicles({}, show_res)
 	
@@ -312,6 +313,8 @@ __Note:__ you won't see any data until the vehicle with the new device has been 
 
 ## Trips
 
+### Query Trips
+
 The call to query trips is
 
 	Fuse.trips(<vehicle_channel>,<start-time>,<end-time>, <callback>)
@@ -324,17 +327,38 @@ The parameters are
 
 Note that the trips are reported to Fuse and stored in Fuse with UTC datetime strings, but you can submit datetime strings with the local timezone. They will be normalized to UTC datetime strings before the query is processed.
 
-## iCalendar Subscription
+### iCalendar Subscription
 
 You can subscribe to trips using iCaledar. The API can generate the subscription URL for you with this call:
 
-	Fuse.icalSubscriptionUrl(<vehicle_channel>,,<callback>)
+	Fuse.icalSubscriptionUrl(<vehicle_channel>,<callback>)
 
 The parameters are
 	- vehicle channel
 	- callback
 
-The iCalendar function only returns the last 25 trips. 
+The iCalendar function only returns the last 25 trips.
+
+
+### Updating a Trip
+
+You can update a trip to change the meta data (trip name and category) with the following command:
+
+		Fuse.updateTrip: function(<vehicle_channel>, <trip_id>, <trip_name>, <trip_category>, <callback>)
+
+The parameters are
+	- vehicle channel
+	- trip ID &mdash; 6-7 digit string
+	- trip name &mdash; free form string naming the trip
+	- trip category &mdash; free form string giving the trip category
+	- callback
+
+Note that the accepted categories for IRS purposes are "business," "medical," "moving," "charitable," and "other."
+
+## Fuel
+
+Fuel stored with the fill up time in UTC as the key
+
 
 # Notes
 
