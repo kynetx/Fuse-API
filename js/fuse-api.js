@@ -563,6 +563,7 @@
             return CloudOS.raiseEvent("fuse", "updated_fuel_purchase", {}, fillup_obj, function(response)
 				      {
 					  Fuse.log("Updateded fillup for vehicle: " + vehicle_channel);
+					  Fuse.last_fillup[vehicle_channel] = null;
 					  if(response.length < 1) {
 					      throw "Fuel fillup update failed for vehicle: "  + vehicle_channel;
 					  }

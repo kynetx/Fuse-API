@@ -357,6 +357,8 @@ Note that the accepted categories for IRS purposes are "business," "medical," "m
 
 ## Fuel
 
+### Retrieving a Fillup
+
 Fuel stored with the fill up time in UTC as the key
 
 

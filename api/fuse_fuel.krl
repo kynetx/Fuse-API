@@ -18,13 +18,13 @@ Operations for fuel
     use module b16x9 alias vehicle
 
 	
-    provides lastFillup
+    provides fillup
   }
 
   global {
 
     // external decls
-    lastFillup = function(key){
+    fillup = function(key){
       sort_opt = {
         "path" : ["timestamp"],
 	"reverse": true,
@@ -71,7 +71,7 @@ Operations for fuel
       location = event:attr("location");
       current_time = time:now({"tz": "UTC"});
 
-      fillup = lastFillup() || {"odometer": 0, "timestamp": current_time};
+      fillup = fillup() || {"odometer": 0, "timestamp": current_time};
       distance = odometer - fillup{"odometer"};
       mpg = distance/volume;
 
