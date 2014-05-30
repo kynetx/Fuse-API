@@ -505,17 +505,14 @@
 
 
 	// ---------- Fuel ----------
-	lastFillup: function(vehicle_channel, cb, options) {
+	getFillup: function(vehicle_channel, cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
 	    options.rid = "fuel";
 	    
-	    Fuse.last_fillup = Fuse.last_fillup || {};
-
 	    var args = options.key ? {"key": options.key} : {};
 
-	    return Fuse.ask_vehicle(vehicle_channel, "lastFillup", args, Fuse.last_fillup, function(json) {
-			Fuse.last_fillup[vehicle_channel] = json;
+	    return Fuse.ask_vehicle(vehicle_channel, "fillup", args, null, function(json) {
 			Fuse.log("Retrieve last fillup", json);
 			cb(json);
   		       }, options);
@@ -563,7 +560,6 @@
             return CloudOS.raiseEvent("fuse", "updated_fuel_purchase", {}, fillup_obj, function(response)
 				      {
 					  Fuse.log("Updateded fillup for vehicle: " + vehicle_channel);
-					  Fuse.last_fillup[vehicle_channel] = null;
 					  if(response.length < 1) {
 					      throw "Fuel fillup update failed for vehicle: "  + vehicle_channel;
 					  }
