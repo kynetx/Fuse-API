@@ -18,7 +18,7 @@ Operations for fuel
     use module b16x9 alias vehicle
 
 	
-    provides fillup
+    provides fillup, fillups
   }
 
   global {
@@ -36,8 +36,33 @@ Operations for fuel
 		                                       | pds:get_keys(common:fuel_namespace(), sort_opt, 1)
                                                            .head()
  						 	   .klog(">>>>> had to punt on key for last fuel entry <<<<<<");
-      pds:get_item(common:fuel_namespace(), last_key.klog(">>>>> using this key <<<<<<<<<"));
+      ent:fuel_purchases{last_key.klog(">>>>> retrieving fuel purchase record using this key <<<<<<<<<")}
+      //pds:get_item(common:fuel_namespace(), last_key.klog(">>>>> using this key <<<<<<<<<"));
     };
+
+    fillups = function(start, end){
+
+      utc_start = convertToUTC(start);
+      utc_end = convertToUTC(end);
+      
+      ent:fuel_purchases.query([], { 
+       'requires' : '$and',
+       'conditions' : [
+          { 
+     	   'search_key' : [ 'timestamp'],
+       	   'operator' : '$gte',
+       	   'value' : utc_start 
+	  },
+     	  {
+       	   'search_key' : [ 'timestamp' ],
+       	   'operator' : '$lte',
+       	   'value' : utc_end 
+	  }
+	]},
+	"return_values"
+	)
+    };
+
 
   }
 
@@ -89,7 +114,7 @@ Operations for fuel
 	                    | 0,
 	"interval": seconds,
 	"timestamp": current_time
-      }.klog(">>>>>>> fuel record <<<<<<<<");
+      };
     }
     if( not volume.isnull() 
      && not unit_price.isnull()
@@ -101,14 +126,16 @@ Operations for fuel
         rec = rec
     }
     fired {
-      raise pds event new_data_available
-        attributes {
-	    "namespace": common:fuel_namespace(),
-	    "keyvalue": key,
-	    "value": rec,
-            "_api": "sky"
+       // raise pds event new_data_available
+       //   attributes {
+       // 	    "namespace": common:fuel_namespace(),
+       // 	    "keyvalue": key,
+       // 	    "value": rec,
+       //       "_api": "sky"
  		   
-	  };
+       // 	  };
+      log(">>>>>> Storing fuel purchase >>>>>> " + rec.encode());
+      set ent:fuel_purchases{key} rec;
       set ent:last_fuel_purchase key if new_record
     } else {
       log(">>>>>> Could not store fuel record " + rec.encode());
@@ -127,13 +154,14 @@ Operations for fuel
         rec = rec
     }
     fired {
-      raise pds event remove_old_data
-        attributes {
-	    "namespace": common:fuel_namespace(),
-	    "keyvalue": key,
-            "_api": "sky"
+       // raise pds event remove_old_data
+       //   attributes {
+       // 	    "namespace": common:fuel_namespace(),
+       // 	    "keyvalue": key,
+       //       "_api": "sky"
  		   
-	  };
+       // 	  };
+      set ent:fuel_purchases{key} null
     }
   }
 

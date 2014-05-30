@@ -11,6 +11,7 @@ Common definitions
 
 
 	provides S3Bucket, namespace, find_pico_by_id, fuel_namespace, trips_namespace, maint_namespace,
+	         convertToUTC,
 	         skycloud
     }
 
@@ -46,6 +47,10 @@ Common definitions
      maint_namespace = function() {
         namespace_id = "fuse-maint";
 	namespace_id    
+     };
+
+     convertToUTC = function(dt) {
+       time:strftime(dt, "%Y%m%dT%H%M%S%z", {"tz":"UTC"}).klog(">>>>> convertToUTC() returning for #{dt} >>>>> ")
      };
 
  

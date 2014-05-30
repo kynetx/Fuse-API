@@ -26,15 +26,11 @@ Manage trips. PDS is not well-suited to these operations
 
   global {
 
-    convertToUTC = function(dt) {
-      time:strftime(dt, "%Y%m%dT%H%M%S%z", {"tz":"UTC"}).klog(">>>>> convertToUTC() returning for #{dt} >>>>> ")
-    };
-
     // external decls
     trips = function(start, end){
 
-      utc_start = convertToUTC(start);
-      utc_end = convertToUTC(end);
+      utc_start = common:convertToUTC(start);
+      utc_end = common:convertToUTC(end);
       
       ent:trip_summaries.query([], { 
        'requires' : '$and',
