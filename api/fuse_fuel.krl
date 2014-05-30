@@ -71,11 +71,11 @@ Operations for fuel
       location = event:attr("location");
       current_time = time:now({"tz": "UTC"});
 
-      lastfillup = fillup() || {"odometer": 0, "timestamp": current_time};
+      lastfillup = fillup().klog(">>>> returned from fillup >>>> ") || {"odometer": 0, "timestamp": current_time};
       distance = odometer - lastfillup{"odometer"};
       mpg = distance/volume;
 
-      seconds = (time:strftime(current_time, "%s") - time:strftime(fillup{"timestamp"}, "%s"));
+      seconds = (time:strftime(current_time, "%s") - time:strftime(lastfillup{"timestamp"}, "%s"));
 
 
       rec = {
