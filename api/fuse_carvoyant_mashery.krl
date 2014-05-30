@@ -98,10 +98,10 @@ b16x17: fuse_fleet.krl
       ent:account_info
     }
 
-    carvoyantOauthUrl = function(redirect_url) {
+    carvoyantOauthUrl = function(redirect_uri) {
     
       params = {"client_id" : keys:carvoyant_client("client_id"),	
-                "redirect_url" : redirect_url,
+                "redirect_uri" : redirect_uri,
 		"response_type" : "code"
 		};
       query_string = params.map(function(k,v){k+"="+v}).values().join("&").klog(">>>>> query string >>>>>>");
@@ -139,7 +139,7 @@ b16x17: fuse_fleet.krl
       vehicle_info{"status_code"} eq "200"
     };
 
-    codeForAccessToken = function(code, redirect_url) {
+    codeForAccessToken = function(code, redirect_uri) {
       header = 
             {"credentials": {
                "username": keys:carvoyant_client("client_id"),
@@ -149,7 +149,7 @@ b16x17: fuse_fleet.krl
                },
              "params" : {"grant_type": "authorization_code",
 	                 "code": code,
-			 "redirect_uri": redirect_url
+			 "redirect_uri": redirect_uri
 	                }
             }.klog(">>>>>> client header <<<<<<<<");
       raw_result = http:post(oauth_url, header);
