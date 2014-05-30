@@ -344,7 +344,7 @@ The iCalendar function only returns the last 25 trips.
 
 You can update a trip to change the meta data (trip name and category) with the following command:
 
-		Fuse.updateTrip: function(<vehicle_channel>, <trip_id>, <trip_name>, <trip_category>, <callback>)
+		Fuse.updateTrip(<vehicle_channel>, <trip_id>, <trip_name>, <trip_category>, <callback>)
 
 The parameters are
 	- vehicle channel
@@ -357,9 +357,46 @@ Note that the accepted categories for IRS purposes are "business," "medical," "m
 
 ## Fuel
 
-### Retrieving a Fillup
+### Retrieving a Fillup Record
 
-Fuel stored with the fill up time in UTC as the key
+You can retrieve the last fillup or a specific fillup using the following function:
+
+	Fuse.getFillup(<vehicle_channel>, <callback>, <options>)
+
+To retreive a specific fillup, you pass the key for the fillup as an option named ```key```.  Fillups are stored with the fill up time in UTC as the key.
+
+If no key is provided, the function returns the most recent fillup.
+
+### Recording a Fillup
+
+You record a fillup using the following function:
+
+	Fuse.recordFillUp(<vehicle_channel>, <fillup_obj>, <callback>, <options>)
+
+The fillup object has the following properties:
+- ```volume``` &mdash; the volume of the fuel purchase.
+- ```unitPrice``` &mdash; the price of a unit of fuel
+- ```odometer``` &mdash; the odometer reading of the fuel purchase
+- ```location``` &mdash; a string giving the location of the purchase
+
+Note:  The system is unitless, it's up to you to use consistent units.
+
+### Updating a Fillup Record
+
+You update a fillup using the following function:
+
+	Fuse.updateFillUp(<vehicle_channel>, <fillup_obj>, <callback>, <options>)
+
+In addition to the properties listed in the ```recordFillup()``` function above, you *must* supply a property called ```key``` that is the key of the fillup record you wish to update. 
+
+
+### Deleting a Fillup Record
+
+You delete a fillup using the following function:
+
+	Fuse.deleteFillUp(<vehicle_channel>, <key>, <callback>, <options>)
+
+where ```key``` that is the key of the fillup record you wish to delete. 
 
 
 # Notes
