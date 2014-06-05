@@ -141,6 +141,7 @@ Application that manages the fleet
     // meant to generally route events to owner. Extend eventex to choose what gets routed
     rule route_to_owner {
       select when fuse new_fleet
+               or fuse reminders_ready
       pre {
         owner = CloudOS:subscriptionList(common:namespace(),"FleetOwner").head().pick("$.eventChannel");
       }
@@ -148,7 +149,7 @@ Application that manages the fleet
         send_directive("Routing to owner")
           with channel = owner 
            and attrs = event:attrs();
-        event:send({"cid": owner}, "fuse", "new_fleet")
+        event:send({"cid": owner}, "fuse", event:type())
           with attrs = event:attrs();
       }
     }
@@ -313,7 +314,7 @@ Application that manages the fleet
 	keyvalue = event:attr("keyvalue");
         vehicle_info = event:attr("value").decode();
 
-	// why am I gettting this?  Oh, yeah, we need to made vehicle_id and vehicle channel so we'll do that here...
+	// why am I gettting this?  Oh, yeah, we need to match vehicle_id and vehicle channel so we'll do that here...
 	vehicle_channel = findVehicleByBackchannel(meta:eci()).klog(">>>>>>>>>>>> vehicle channel <<<<<<<<<<<<<");
 
 
@@ -328,7 +329,7 @@ Application that manages the fleet
       }
 
       always {
-        set ent:fleet{[keyvalue, vid]} vehicle_info
+        set ent:fleet{[keyvalue, vehicle_channel]} vehicle_info.put(["deviceId"], vid)
       }
 
     }
@@ -341,7 +342,69 @@ Application that manages the fleet
     }
 
 
-    // ---------- maintainance rules ----------
+    // ---------- maintenance ----------
+  rule find_due_reminders {
+    // fire whenever we get new mileage
+    select when fuse updated_vehicle_info
+
+    pre {
+      current_time = time:now();
+      current_mileage = event:attr("mileage").klog(">>>> seeing this mileage >>>>> ");
+
+      today = time:strftime(time:now(), "%Y%m%dT000000%z");
+
+      days_since = daysBetween(time:now(), ent:last_reminder);
+      
+
+    }
+    // once per day at most
+    if( days_since > 1
+      ) then {
+      send_directive("Retrieving new reminders for today") with
+	today = today and
+	previous_day = ent:last_reminder;
+
+      }
+
+    fired {
+      set ent:last_reminder today;
+      raise fuse event reminders_finish;
+    } else {
+      log "Not enough days since last reminder: " + days_since;
+    }
+
+  }
+
+  rule find_due_reminders_complete {
+    select when fuse reminders_finish
+
+    pre {
+      all_subs = CloudOS:subscriptionList(common:namespace(),"Vehicle").pick("$.eventChannel").klog(">>> all_subs >>>>");
+      createReminder = function(eci) {
+        vinfo = ent:fleet{["vehicle_info", eci]};
+        reminders = common:skyCloud(eci, "b16x21", "activeReminders", {"mileage": vinfo{"mileage"}, "current_time": time:now() });
+	{"label": vinfo{"label"},
+	 "photo": vinfo{"photo"},
+	 "reminders": reminders
+	}	
+      };
+      // flatten array of array
+      reminders = all_subs.map(createReminder(eci)).klog(">>>>> all reminders >>>>>>>> ");
+    }
+    
+    {
+      send_directive("Seeing reminders") with
+        reminders = reminders;
+    }
+    fired {
+      raise fuse event reminders_ready with reminders = reminders;
+    }
+
+  }
+  
+
+    
+    // ---------- housekeeping rules ----------
     rule catch_complete {
       select when system send_complete
         foreach event:attr('send_results').pick("$.result") setting (result)

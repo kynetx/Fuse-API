@@ -141,39 +141,6 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             {"eci": cid}
         };
 
-	// not updated for Fuse
-        coupleTagWithVehicle = defaction(tid, lid) {
-            vehicle = sky:cloud(fleetChannel().pick("$.cid"), "b501810x4", "translate", {
-                "id": lid
-            });
-            vehicle_details = sky:cloud(vehicle{"cid"}, "b501810x6", "detail");
-            fresh_tags = (vehicle_details{"tags"} || []).append(tid);
-            vehicle_with_tags = vehicle_details.put(["tags"], fresh_tags);
-
-            {
-                event:send(vehicle, "pds", "new_data_available")
-                    with attrs = {
-                        "namespace": "data",
-                        "keyvalue": "detail",
-                        "value": vehicle_with_tags.encode()
-                    };
-            }
-        };
-
-	// not updated for Fuse
-        dereference = function(tag, identity) {
-            couplings = ent:tagCouplings;
-            lid = couplings{tag};
-            scanner = sky:cloud(identity, "a169x676", "get_all_me");
-            scanner_role = (scanner{"role"}.match(re/manager/i)) => "manager" | (scanner{"role"}.match(re/guard/i)) => "guard" | 0;
-            // if they have a role and there is a vehicle id associated with the tag, if they don't have a role, they aren't authorized
-            // to see anything for the tag anyway, and if we make it to the fallback, it means they have a role but there is no vehicle id
-            // associated with the tag.
-            page = (scanner_role && lid) => tagPages{scanner_role} + "?id=#{lid}" | (not scanner_role) => tagPages{"notAuthorized"} | tagPages{"notCoupled"};
-            uri = "#{GTOUR_URI}#{page}";
-            {"uri": uri, "couplings": couplings, "tag": tag, "lid": lid, "identity": identity}
-        };
-
 	// only ruleset installs are specific to fuse. Generalize? 
         factory = function(pico_meta, parent_eci) {
 	  pico_schema = pico_meta{"schema"};
@@ -423,7 +390,45 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         }
     }
 
-    // ---------- maintenance ----------
+    // ---------- reminders ----------
+    rule process_reminders {
+      select when fuse reminders_ready
+      pre {
+        reminderItemTemplate = function(reminder) {
+	  what = reminder{"what"};
+      	  due_string = (reminder{"type"} eq "mileage") => reminder{"mileage"} + " miles"
+                                                        | time:strftime(reminder{"due_date"}, "%A %d %b %Y");
+          msg  = <<
+    #{what}
+    Due: #{due_string}
+
+>>;
+          msg
+        };
+        remindersForVehicle = function(vreminder) {
+	  label = vreminder{"label"};
+	  reminders = vreminder{"reminders"};
+	  msg = <<
+#{label}
+#{reminders.map(reminderItemTemplate)}
+>>;
+	  msg
+	};
+        reminders = event:attr("reminders"); // array of hashes
+      }
+      {
+        send_directive("processing reminders for owner") with reminders = reminders
+      }
+      fired {
+        raise notification event status 
+	  with application = "Fuse" 
+	   and subject = "Maintenance Reminders"
+	   and priority = 1
+	   and description = reminders.map(reminderItemTemplate).join("\n");
+      }
+    }
+
+    // ---------- housekeeping ----------
     rule log_all_the_things {
         select when fuse var_dump
         pre {
