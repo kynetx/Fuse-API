@@ -315,7 +315,8 @@ Application that manages the fleet
         vehicle_info = event:attr("value").decode();
 
 	// why am I gettting this?  Oh, yeah, we need to match vehicle_id and vehicle channel so we'll do that here...
-	vehicle_channel = findVehicleByBackchannel(meta:eci()).klog(">>>>>>>>>>>> vehicle channel <<<<<<<<<<<<<");
+	vehicle_channel_data = findVehicleByBackchannel(meta:eci()).klog(">>>>>>>>>>>> vehicle channel <<<<<<<<<<<<<");
+	vehicle_channel = vehicle_channel_data{"eventChannel"};
 
 
       }
