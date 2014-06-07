@@ -104,32 +104,6 @@
         },
 
 	// ---------- account ----------
-        // createAccount: function(attrs, cb, options)
-        // {
-	//     cb = cb || function(){};
-	//     options = options || {};
-	//     attrs = attrs || {};
-        //     Fuse.log("Creating account for user with attributes ", attrs);
-
-	//     if(typeof attrs.username === "undefined") {
-	// 	throw "username required to create account";
-	//     }
-	//     if(typeof attrs.password === "undefined") {
-	// 	throw "password required to create account";
-	//     }
-
-        //     return CloudOS.raiseEvent("fuse", "init_account", {}, attrs, function(response)
-        //     {
-	// 	// note that because the channel is create asynchronously, processing callback does
-	// 	// NOT mean the channel exists. 
-        //         Fuse.log("Account created");
-	// 	if(response.length < 1) {
-	// 	    throw "Account creation failed";
-	// 	}
-	// 	cb(response);
-        //     });
-        // },
-
 	initAccount: function(attrs, cb, options)
         {
 	    cb = cb || function(){};

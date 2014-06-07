@@ -316,7 +316,7 @@ Application that manages the fleet
 
 	// why am I gettting this?  Oh, yeah, we need to match vehicle_id and vehicle channel so we'll do that here...
 	vehicle_channel_data = findVehicleByBackchannel(meta:eci()).klog(">>>>>>>>>>>> vehicle channel <<<<<<<<<<<<<");
-	vehicle_channel = vehicle_channel_data{"eventChannel"};
+	vehicle_name = vehicle_channel_data{"channelName"};
 
 
       }
@@ -325,12 +325,12 @@ Application that manages the fleet
          values = vehicle_info and
 	 keyvalue = keyvalue and
 	 namespace = carvoyant_namespace and 
-	 vehicle_channel = vehicle_channel
+	 vehicle_name = vehicle_name
 	 ;
       }
 
       always {
-        set ent:fleet{[keyvalue, vehicle_channel]} vehicle_info.put(["deviceId"], vid)
+        set ent:fleet{[keyvalue, vehicle_name]} vehicle_info.put(["deviceId"], vid)
       }
 
     }
@@ -385,7 +385,7 @@ Application that manages the fleet
         vinfo = ent:fleet{["vehicle_info", eci]};
         reminders = common:skyCloud(eci, "b16x21", "activeReminders", {"mileage": vinfo{"mileage"}, "current_time": time:now() });
 	{"label": vinfo{"label"},
-	 "photo": vinfo{"photo"},
+	 "photo": vinfo{"profilePhoto"},
 	 "reminders": reminders
 	}	
       };
