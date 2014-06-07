@@ -248,11 +248,11 @@ Application that manages the fleet
     rule delete_vehicle {
       select when fuse delete_vehicle
       pre {
-        eci = event:attr("vehicle_eci");
+        name = event:attr("vehicle_name");
 
 	// use the eci to look up the subscription to delete
         this_sub = CloudOS:subscriptionList(common:namespace(),"Vehicle")
-	           .filter(function(sub){sub{"eventChannel"} eq eci})
+	           .filter(function(sub){sub{"channelName"} eq name})
 		   .head() 
                 || {};   // tolerate lookup failures
 
@@ -262,6 +262,7 @@ Application that manages the fleet
 	this_pico_id = this_sub{"channelName"};
 
         this_sub_channel = this_sub{"backChannel"};
+	eci = this_sub{"eventChannel"}.klog(">>>>>> eci to destroy >>>>>");
 	huh = CloudOS:cloudDestroy(eci); 
       }
       {

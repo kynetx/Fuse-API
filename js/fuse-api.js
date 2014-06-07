@@ -320,7 +320,7 @@
 		});
         },
 
-        deleteVehicle: function(vehicle_channel, cb, options)
+        deleteVehicle: function(vehicle_name, cb, options)
         {
 	    cb = cb || function(){};
 	    options = options || {};
@@ -328,10 +328,10 @@
 		if(fleet_channel === null ) {
 		    throw "Fleet channel is null; can't delete vehicle";
 		};
-		if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		if(typeof vehicle_name === "undefined" || vehicle_name === null ) {
 		    throw "Vehicle channel is null; can't delete vehicle";
 		};
-		var attrs = { "vehicle_eci": vehicle_channel };
+		var attrs = { "vehicle_name": vehicle_name };
 		return CloudOS.raiseEvent("fuse", "delete_vehicle", {}, attrs, function(response)
 					  {
 					      Fuse.log("Fleet deleted with ECI: " + fleet_channel);
