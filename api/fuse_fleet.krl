@@ -59,7 +59,7 @@ Application that manages the fleet
         garbage = bc.klog(">>>> back channel <<<<<");
         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle");
 	vehicle_ecis_by_backchannel = vehicle_ecis.collect(function(x){x{"backChannel"}}).map(function(k,v){v.head()}).klog(">>> vehicle_ecis_by_backchannel <<<<<");
-	vehicle_ecis_by_backchannel{bc}
+	vehicle_ecis_by_backchannel{bc} || {}
       };
 
     }
