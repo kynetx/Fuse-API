@@ -103,7 +103,7 @@ b16x17: fuse_fleet.krl
       params = {"client_id" : keys:carvoyant_client("client_id"),	
                 "redirect_uri" : redirect_uri,
 		"response_type" : "code",
-		"state": [meta:rid(), accessing_eci].join(",")
+		"state": [meta:rid(), accessing_eci ].join(",")
 		};
 
 // &state=b16x11,02F3F3EA-DC82-11E3-9FD7-CEEAE71C24E1
