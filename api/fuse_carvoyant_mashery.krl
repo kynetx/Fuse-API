@@ -98,7 +98,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     is_authorized = function() {
 
-      created = ent:account_info{"timeStamp"};
+      created = ent:account_info{"timestamp"};
       time_expires = time:add(created, {"seconds": ent:account_info{"expires_in"}});
       expired = time:compare(time_expires,
                              time:now()) // less than 1 if expired
