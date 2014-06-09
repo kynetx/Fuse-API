@@ -98,12 +98,16 @@ b16x17: fuse_fleet.krl
       ent:account_info
     }
 
-    carvoyantOauthUrl = function(redirect_uri) {
+    carvoyantOauthUrl = function(redirect_uri, accessing_eci) {
     
       params = {"client_id" : keys:carvoyant_client("client_id"),	
                 "redirect_uri" : redirect_uri,
-		"response_type" : "code"
+		"response_type" : "code",
+		"state": [meta:eci(), accessing_eci].join(",")
 		};
+
+// &state=b16x11,02F3F3EA-DC82-11E3-9FD7-CEEAE71C24E1
+
       query_string = params.map(function(k,v){k+"="+v}).values().join("&").klog(">>>>> query string >>>>>>");
       "https://auth.carvoyant.com/OAuth/authorize?" + query_string
     
