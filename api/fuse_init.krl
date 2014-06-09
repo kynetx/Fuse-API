@@ -75,9 +75,6 @@ Ruleset for initializing a Fuse account and managing vehicle picos
                ]
            };
 
-
-        S3Bucket = common:S3Bucket();
-  
         initPicoProfile = defaction(pico_channel, profile) {
             pico = {
                 "cid": pico_channel
@@ -92,7 +89,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         makeImageURLForPico = function(pico_channel) {
             image_seed = math:random(100000);
 
-            "https://s3.amazonaws.com/#{S3Bucket}/#{meta:rid()}/#{pico_channel}.img?q=#{image_seed}"
+            "https://s3.amazonaws.com/#{common:S3Bucket()}/#{meta:rid()}/#{pico_channel}.img?q=#{image_seed}"
         };
 
         uploadPicoImage = defaction(pico_channel, image_url, image) {
@@ -118,7 +115,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
                         "value": details.encode()
                     };
 
-                AWSS3:upload(S3Bucket, image_id, image_value)
+                AWSS3:upload(common:S3Bucket(), image_id, image_value)
                     with object_type = image_type;
             }
         };

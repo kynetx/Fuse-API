@@ -22,8 +22,6 @@ Application that manages the fleet
 
     global {
 
-      S3Bucket = common:S3Bucket();
-
       // this is complicated cause we want to return the subscription channel for the vehicle, not the _LOGIN channel
       vehicleChannels = function() {
 
