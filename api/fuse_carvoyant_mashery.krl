@@ -19,7 +19,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     errors to b16x13
 
     provides clientAccessToken,  refreshTokenForAccessToken, showTokens, // don't provide after debug
-             is_authorized, redirectUri, carvoyantOauthUrl, codeForAccessToken,
+             isAuthorized, redirectUri, carvoyantOauthUrl, codeForAccessToken,
              namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
 	     carvoyantVehicleData,
              vehicleStatus, keyToLabel, tripInfo,
@@ -96,7 +96,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                                             | raw_result.decode()
     };
 
-    is_authorized = function() {
+    isAuthorized = function() {
 
       huh = ent:account_info.klog(">>>> using this token data >>>>>");
       created = ent:account_info{"timestamp"};
@@ -107,7 +107,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
 //      access_token = expired => refreshTokenForAccessToken() | ent:account_info{"access_token"};
 
-      vehicle_info = expired => {} | carvoyant_get(api_url+"/vehicle/") || {};
+      config_data = get_config();
+      vehicle_info = expired => {} | carvoyant_get(api_url+"/vehicle/", config_data) || {};
       vehicle_info{"status_code"} eq "200"
     };
 
