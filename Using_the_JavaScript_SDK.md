@@ -73,7 +73,7 @@ Complete the following steps:
 
 		https://cs.kobj.net/login/newaccount
 
-2. At the console prompt, enter the following command:
+2. At the JavaScript console prompt, enter the following command:
 
 		CloudOS.getOAuthURL();
 
@@ -89,9 +89,11 @@ You now type
 
     CloudOS.defaultECI
 
-to see the ECI that was retrieved.  You can save the access_token/ECI object returned from ```getOAuthAccessToken()```  and restore it another session by doing the following
+to see the ECI that was retrieved.  You can save the access_token/ECI object returned from ```getOAuthAccessToken()```. At the start of another session, you can restore it by doing the following
 
-	CloudOS.saveSession(<eci>)
+	CloudOS.saveSession({access_token: <access_token>, OAUTH_ECI: <oauth_eci>})
+
+Note that CloudOS OAuth supports only the implicit flow. You will only get an access token, not a refresh token. 
 
 ## Initialize the New Account
 

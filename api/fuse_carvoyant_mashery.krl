@@ -97,8 +97,6 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     };
 
     isAuthorized = function() {
-
-      huh = ent:account_info.klog(">>>> using this token data >>>>>");
       created = ent:account_info{"timestamp"};
       time_expires = time:add(created, {"seconds": ent:account_info{"expires_in"}});
       expired = time:compare(time_expires,
@@ -247,14 +245,10 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     carvoyant_put = defaction(url, params, config_data) {
       configure using ar_label = false;
-      auth_data =  carvoyant_headers(config_data);
       http:put(url)
         with body = payload
 	 and headers = oauthHeader(config_data{"access_token"})
          and autoraise = ar_label;
-         // with credentials = auth_data{"credentials"} 
-         //  and params = params
-         //  and autoraise = ar_label;
     };
 
     carvoyant_delete = defaction(url, config_data) {
@@ -262,9 +256,6 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       http:delete(url) 
         with headers = oauthHeader(config_data{"access_token"})
          and autoraise = ar_label; 
-       // auth_data =  carvoyant_headers(config_data);
-       //   with credentials = auth_data{"credentials"} 
-       //    and autoraise = ar_label;
     };
 
 

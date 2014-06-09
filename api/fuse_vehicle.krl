@@ -24,10 +24,6 @@ Fuse ruleset for a vehicle pico
 
     global {
 
-      S3Bucket = common:S3Bucket();
-
-      carvoyant_namespace = carvoyant:namespace();
-
       fleetChannel = function () {
           CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel");
       };
@@ -43,17 +39,17 @@ Fuse ruleset for a vehicle pico
       };
 
       vehicleSummary = function(){
-        pds:get_item(carvoyant_namespace, "vehicle_info");
+        pds:get_item(carvoyant:namespace(), "vehicle_info");
       }
 
       lastTrip = function(key) {
-        trip = pds:get_item(carvoyant_namespace, "last_trip_info");
+        trip = pds:get_item(carvoyant:namespace(), "last_trip_info");
 	key => trip{key}
              | trip
       }
 
       vehicleStatus = function(key) {
-        status = pds:get_item(carvoyant_namespace, "vehicle_status");
+        status = pds:get_item(carvoyant:namespace(), "vehicle_status");
 	key => status{key} 
              | status
       }
@@ -222,7 +218,7 @@ Fuse ruleset for a vehicle pico
       always {
         raise pds event new_settings_schema
           with setName   = "Carvoyant"
-          and  setRID    = carvoyant_namespace
+          and  setRID    = carvoyant:namespace()
           and  setSchema = schema
           and  setData   = data
           and  _api = "sky";
@@ -248,7 +244,7 @@ Fuse ruleset for a vehicle pico
     rule initialize_vehicle {
       select when fuse vehicle_uninitialized
       pre {
-        config = pds:get_item(carvoyant_namespace, "config");
+        config = pds:get_item(carvoyant:namespace(), "config");
       }
       if (not config{"deviceId"}.isnull() ) then {
         send_directive("initializing vehicle " + config{"deviceId"});
@@ -330,7 +326,7 @@ Fuse ruleset for a vehicle pico
       {send_directive("Updated vehicle data for #{vid}") with
          id = vid and
          values = vehicle_info and
-	 namespace = carvoyant_namespace;
+	 namespace = carvoyant:namespace();
        event:send({"cid": fleetChannel()}, "fuse", "updated_vehicle") with
          attrs = {"keyvalue": "vehicle_info",
 	          "vehicleId": vid,
@@ -343,7 +339,7 @@ Fuse ruleset for a vehicle pico
 
         raise pds event new_data_available
 	  attributes {
-	    "namespace": carvoyant_namespace,
+	    "namespace": carvoyant:namespace(),
 	    "keyvalue": "vehicle_info",
 	    "value": vehicle_info
 	              .delete(["_generatedby"])
@@ -368,7 +364,7 @@ Fuse ruleset for a vehicle pico
       {send_directive("Updated vehicle status") with
          id = vid and
          values = vehicle_status and
-	 namespace = carvoyant_namespace;
+	 namespace = carvoyant:namespace();
        event:send({"cid": fleetChannel()}, "fuse", "updated_vehicle") with
          attrs = {"keyvalue": "vehicle_status",
 	          "vehicleId": vid,
@@ -380,7 +376,7 @@ Fuse ruleset for a vehicle pico
         raise fuse event updated_vehicle_status attributes vehicle_status;
         raise pds event new_data_available 
             attributes
-              {"namespace": carvoyant_namespace,
+              {"namespace": carvoyant:namespace(),
                "keyvalue": "vehicle_status",
 	       "value": vehicle_status
 	              	 .delete(["_generatedby"])
