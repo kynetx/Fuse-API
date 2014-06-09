@@ -98,7 +98,10 @@ b16x17: fuse_fleet.krl
       ent:account_info
     }
 
-    carvoyantOauthUrl = function(redirect_uri, accessing_eci) {
+    carvoyantOauthUrl = function() {
+    
+      redirect_uri = "https://" + meta:host() + "/sky/event/" + keys:anonymous_eci + "/" + math:random(9) +  "/oauth/new_oauth_code";
+      accessing_eci = meta:eci();
     
       params = {"client_id" : keys:carvoyant_client("client_id"),	
                 "redirect_uri" : redirect_uri,
