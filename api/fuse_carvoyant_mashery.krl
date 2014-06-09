@@ -18,31 +18,13 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     errors to b16x13
 
-    provides clientAccessToken, codeForAccessToken, refreshTokenForAccessToken, showTokens, // don't provide after debug
-             is_authorized, carvoyantOauthUrl,
+    provides clientAccessToken,  refreshTokenForAccessToken, showTokens, // don't provide after debug
+             is_authorized, redirectUri, carvoyantOauthUrl, codeForAccessToken,
              namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
 	     carvoyantVehicleData,
              vehicleStatus, keyToLabel, tripInfo,
              get_subscription, no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
 
-/* 
-
-Design decisions:
-
-1.) Use Carvoyant names, including camel case to avoid complex mapping calculations on keys. 
-
-RID Key:
-
-b16x9: fuse_vehicle.krl
-b16x10: fuse_keys.krl — (in the CloudOS Keys Repo)
-b16x11: fuse_carvoyant.krl  
-b16x12: carvoyant_module_test.krl
-b16x13: fuse_error.krl
-b16x16: fuse_init.krl
-b16x17: fuse_fleet.krl
-
-*/
-  
   }
 
   global {
@@ -98,24 +80,6 @@ b16x17: fuse_fleet.krl
       ent:account_info
     }
 
-    carvoyantOauthUrl = function() {
-    
-      redirect_uri = "https://" + meta:host() + "/sky/event/" + keys:anonymous_pico("eci")  + "/" + math:random(9) +  "/oauth/new_oauth_code";
-      accessing_eci = meta:eci();
-    
-      params = {"client_id" : keys:carvoyant_client("client_id"),	
-                "redirect_uri" : redirect_uri,
-		"response_type" : "code",
-		"state": [meta:rid(), accessing_eci ].join(",")
-		};
-
-// &state=b16x11,02F3F3EA-DC82-11E3-9FD7-CEEAE71C24E1
-
-      query_string = params.map(function(k,v){k+"="+v}).values().join("&").klog(">>>>> query string >>>>>>");
-      "https://auth.carvoyant.com/OAuth/authorize?" + query_string
-    
-    }
-
     // used for getting token to create an account; not for general use
     clientAccessToken = function() {
       header = 
@@ -140,12 +104,35 @@ b16x17: fuse_fleet.krl
                              time:now()) // less than 1 if expired
                 < 1;      
 
-//      access_token = expired => refreshTokenForAccessToken() | ent:access_token;
+//      access_token = expired => refreshTokenForAccessToken() | ent:account_info{"access_token"};
 
       vehicle_info = expired => {} | carvoyant_get(api_url+"/vehicle/");
       vehicle_info{"status_code"} eq "200"
     };
 
+    redirectUri = function() {
+      "https://" + meta:host() + "/sky/event/" + keys:anonymous_pico("eci")  + "/" + math:random(9999) +  "/oauth/new_oauth_code";
+    }
+
+    // this function creates a carvoyant OAuth URL that leads the user to a login screen. 
+    // the redirect URL gets picked up by the anonymous pico's CloudOS handleOauthCode rule 
+    carvoyantOauthUrl = function() {
+    
+      redirect_uri = redirectUri();
+      accessing_eci = meta:eci();
+    
+      params = {"client_id" : keys:carvoyant_client("client_id"),	
+                "redirect_uri" : redirect_uri,
+		"response_type" : "code",
+		"state": [meta:rid(), accessing_eci ].join(",")
+		};
+
+      query_string = params.map(function(k,v){k+"="+v}).values().join("&").klog(">>>>> query string >>>>>>");
+      "https://auth.carvoyant.com/OAuth/authorize?" + query_string
+    
+    }
+
+    // handleOauthCode rule redirects to this function based on state param created in carvoyantOathUrl()
     codeForAccessToken = function(code, redirect_uri) {
       header = 
             {"credentials": {
@@ -160,7 +147,7 @@ b16x17: fuse_fleet.krl
 	                }
             }.klog(">>>>>> client header <<<<<<<<");
       raw_result = http:post(oauth_url, header);
-      (raw_result{"status_code"} eq "200") => raw_result{"content"}.decode()
+      (raw_result{"status_code"} eq "200") => normalizeAccountInfo(raw_result{"content"}.decode())
                                             | raw_result.decode()
     };
 
@@ -178,9 +165,14 @@ b16x17: fuse_fleet.krl
 	                }
             }.klog(">>>>>> client header <<<<<<<<");
       raw_result = http:post(oauth_url, header);
-      (raw_result{"status_code"} eq "200") => raw_result{"content"}.decode()
+      (raw_result{"status_code"} eq "200") => normalizeAccountInfo(raw_result{"content"}.decode())
                                             | raw_result.decode()
     };
+
+    normalizeAccountInfo = function(account_info) {
+      // add the timestamp and then store the info in an entity var (ugh; evil)
+      account_info.put(["timestamp"], time:now()).pset(ent:account_info);
+    }
 
 
     // ---------- config ----------
@@ -199,7 +191,7 @@ b16x17: fuse_fleet.krl
          .put({"hostname": api_hostname,
 	       "base_url": url,
 	       "vehicle_id": vid,
-	       "access_token" : ent:access_token
+	       "access_token" : ent:account_info{"access_token"}
 	      })
     }
 
@@ -459,7 +451,7 @@ b16x17: fuse_fleet.krl
 
       bearer = event:attr("access_token");
 
-      url = (api_url+"/account/").klog(">>>>>> url <<<<<<<<<<");
+      url = (api_url+"/account/").klog(">>>>>> account creation url <<<<<<<<<<");
 
     }
 
@@ -493,16 +485,14 @@ b16x17: fuse_fleet.krl
       account = event:attr('content').decode().pick("$.account");
       account_id = account{"id"};
       code = account{["accessToken", "code"]}.klog(">>>> code >>>> ");
-      tokens = codeForAccessToken(code, "https://kibdev.kobj.net/sky/event/somethingelsegoeshere");
+      tokens = codeForAccessToken(code, redirectUri());
     }
 
     {
       send_directive("Exchanged account code for account tokens") with tokens = tokens
     }
     fired {
-      raise carvoyant event new_tokens_available with tokens = tokens.put(["timeStamp"], time:now())
-      // set ent:account_info tokens.put(["timeStamp"], time:now()); // includes refresh token
-      // set ent:access_token tokens{"access_token"};
+      raise carvoyant event new_tokens_available with tokens = tokens.put(["timestamp"], time:now())
     }
   }
 
@@ -525,9 +515,7 @@ b16x17: fuse_fleet.krl
       send_directive("Used refresh token to get new account token");
     }
     fired {
-      raise carvoyant event new_tokens_available with tokens = tokens.put(["timeStamp"], time:now())
-       // set ent:account_info tokens.put(["timeStamp"], time:now()); // includes refresh token
-       // set ent:access_token tokens{"access_token"};
+      raise carvoyant event new_tokens_available with tokens = tokens.put(["timestamp"], time:now())
     } else {
       log(">>>>>>> couldn't use refresh token to get new access token <<<<<<<<");
       log(">>>>>>> we're screwed <<<<<<<<");
@@ -546,9 +534,7 @@ b16x17: fuse_fleet.krl
       // send to each vehicle...
     }
     fired {
-      raise carvoyant event new_tokens_available with tokens = tokens.put(["timeStamp"], time:now())
-       // set ent:account_info tokens.put(["timeStamp"], time:now()); // includes refresh token
-       // set ent:access_token tokens{"access_token"};
+      raise carvoyant event new_tokens_available with tokens = tokens.put(["timestamp"], time:now())
     } else {
       log(">>>>>>> couldn't use refresh token to get new access token <<<<<<<<");
     }
@@ -568,7 +554,7 @@ b16x17: fuse_fleet.krl
     }
     fired {
       set ent:account_info tokens; // includes refresh token
-      set ent:access_token tokens{"access_token"};
+//      set ent:access_token tokens{"access_token"};
     } else {  
       log(">>>>>>> tokens empty <<<<<<<<");
     }
