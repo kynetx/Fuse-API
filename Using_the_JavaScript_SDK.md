@@ -186,13 +186,13 @@ Fuse uses [Carvoyant](http://carvoyant.com) to provision devices, run the virtua
 
 		Fuse.createCarvoyantAccount({"username": "<username>", "password":"<password>"}, show_res)
 
-This will create an account at Carvoyant with the username and password you provide using the profile elements from the fleet owner.
+	This will create an account at Carvoyant with the username and password you provide using the profile elements from the fleet owner.
 
-Creating an account also creates initial Carvoyant credentials. These are stored in the fleet pico for later use in communicating with Carvoyant.
+	Creating an account also creates initial Carvoyant credentials. These are stored in the fleet pico for later use in communicating with Carvoyant.
 
-The user is now provisioned and their Fuse Fleet is linked to Carvoyant.
+	The user is now provisioned and their Fuse Fleet is linked to Carvoyant.
 
-If the Carvoyant account was created correctly, you should be able to login to the [Carvoyant dashboard](https://dash.carvoyant.com) with the credentials you used to create the Carvoyant account. 
+	If the Carvoyant account was created correctly, you should be able to login to the [Carvoyant dashboard](https://dash.carvoyant.com) with the credentials you used to create the Carvoyant account. 
 
 
 # Adding a Vehicle
@@ -207,25 +207,25 @@ Now we can add some vehicles.
 	  - Carvoyant device ID
 	  - optional callback
 
-Here's an example:   
+	Here's an example:   
 
-		Fuse.createVehicle("Lynne's Burb",
-	                               "https://s3.amazonaws.com/k-mycloud/a169x672/7BD0B300-7DDF-11E2-AB3A-B9D7E71C24E1.img?q=97013",
+			Fuse.createVehicle("Lynne's Burb",
+	                               "https://s3.amazonaws.com/k-mycloud...",
 								   "3GNFK16Z34G244122",
 								   "C201300242",
 								   show_res);
 
-You should see a non-empty array of directives returned.
+	You should see a non-empty array of directives returned.
 
-The VIN is required. The device ID is required if you want to initialize the vehicle in the Carvoyant account. The device ID can be supplied later. 
+	The VIN is required. The device ID is required if you want to initialize the vehicle in the Carvoyant account. The device ID can be supplied later. 
 
-You should be able to ask the fleet for the vehicle channels:
+	You should be able to ask the fleet for the vehicle channels:
 
-	   Fuse.vehicleChannels(show_res)
+			Fuse.vehicleChannels(show_res)
 
 2. You can delete a vehicle:
-```Fuse.deleteVehicle(<vehicle_channel>, <callback>)``` takes the following parameters
-	 - channel of vehicle to delete
+```Fuse.deleteVehicle(<vehicle_id>, <callback>)``` takes the following parameters
+	 - id of vehicle to delete (see ```Fuse.vehicleChannels``` to get an ID for existing vehicles)
 	 - optional callback
 
 # Configure the Vehicle
