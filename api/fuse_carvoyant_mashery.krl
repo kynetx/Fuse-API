@@ -98,6 +98,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     is_authorized = function() {
 
+      huh = ent:account_info.klog(">>>> using this token data >>>>>");
       created = ent:account_info{"timestamp"};
       time_expires = time:add(created, {"seconds": ent:account_info{"expires_in"}});
       expired = time:compare(time_expires,
@@ -106,7 +107,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
 //      access_token = expired => refreshTokenForAccessToken() | ent:account_info{"access_token"};
 
-      vehicle_info = expired => {} | carvoyant_get(api_url+"/vehicle/");
+      vehicle_info = expired => {} | carvoyant_get(api_url+"/vehicle/") || {};
       vehicle_info{"status_code"} eq "200"
     };
 
@@ -485,14 +486,14 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       account = event:attr('content').decode().pick("$.account");
       account_id = account{"id"};
       code = account{["accessToken", "code"]}.klog(">>>> code >>>> ");
-      tokens = codeForAccessToken(code, redirectUri());
+      tokens = codeForAccessToken(code, redirectUri()); // mutates ent:account_info
     }
 
     {
       send_directive("Exchanged account code for account tokens") with tokens = tokens
     }
     fired {
-      raise carvoyant event new_tokens_available with tokens = tokens.put(["timestamp"], time:now())
+      raise carvoyant event new_tokens_available with tokens = ent:account_info
     }
   }
 
@@ -508,14 +509,14 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
   rule retry_refresh_token {
     select when http post status_code re#401# label "???" // check error number and header...
     pre {
-      tokens = refreshTokenForAccessToken();
+      tokens = refreshTokenForAccessToken(); // mutates ent:account_info
     }
     if( tokens{"error"}.isnull() ) then 
     {
       send_directive("Used refresh token to get new account token");
     }
     fired {
-      raise carvoyant event new_tokens_available with tokens = tokens.put(["timestamp"], time:now())
+      raise carvoyant event new_tokens_available with tokens = ent:account_info
     } else {
       log(">>>>>>> couldn't use refresh token to get new access token <<<<<<<<");
       log(">>>>>>> we're screwed <<<<<<<<");
@@ -526,7 +527,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     select when carvoyant access_token_expired
 
     pre {
-      tokens = refreshTokenForAccessToken();
+      tokens = refreshTokenForAccessToken(); // mutates
     }
     if( tokens{"error"}.isnull() ) then 
     {
@@ -534,7 +535,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       // send to each vehicle...
     }
     fired {
-      raise carvoyant event new_tokens_available with tokens = tokens.put(["timestamp"], time:now())
+      raise carvoyant event new_tokens_available with tokens = ent:account_info
     } else {
       log(">>>>>>> couldn't use refresh token to get new access token <<<<<<<<");
     }
@@ -553,7 +554,9 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       // send to each vehicle...
     }
     fired {
-      set ent:account_info tokens; // includes refresh token
+      log(">>>>>>> new tokens! w00t! >>>>>>>>");
+// these are done in the functions that get access tokens
+//      set ent:account_info tokens; // includes refresh token
 //      set ent:access_token tokens{"access_token"};
     } else {  
       log(">>>>>>> tokens empty <<<<<<<<");
