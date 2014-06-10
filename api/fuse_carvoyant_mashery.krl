@@ -547,9 +547,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
     fired {
       log(">>>>>>> new tokens! w00t! >>>>>>>>");
-// these are done in the functions that get access tokens
-//      set ent:account_info tokens; // includes refresh token
-//      set ent:access_token tokens{"access_token"};
+      set ent:account_info tokens; // includes refresh token
     } else {  
       log(">>>>>>> tokens empty <<<<<<<<");
     }
