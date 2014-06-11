@@ -160,7 +160,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
              "params" : {"grant_type": "refresh_token",
 	                 "refresh_token": ent:account_info{"refresh_token"}
 	                }
-            }.klog(">>>>>> client header <<<<<<<<");
+            };
       raw_result = http:post(oauth_url, header);
       (raw_result{"status_code"} eq "200") => normalizeAccountInfo(raw_result{"content"}.decode())
                                             | raw_result.decode()
@@ -240,7 +240,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     fix_token = function(result, url, config_data, param) {
       try_refresh = not ent:account_info{"refresh_token"}.isnull();
-      new_tokens = try_refresh => refreshTokenForAccessToken() 
+      new_tokens = try_refresh => refreshTokenForAccessToken().klog(">>>>> refreshing for carvoyant_get() >>> ")
                                 | {};
       new_tokens{"access_token"} => carvoyant_get(url, 
                                                   config_data.put(["access_token"], new_tokens{"access_token"}),
