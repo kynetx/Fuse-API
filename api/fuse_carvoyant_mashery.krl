@@ -223,7 +223,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     // functions
     // params if optional
-    carvoyant_get = function(url, config_data, params) {
+    carvoyant_get = function(url, config_data, params, redo) {
       raw_result = http:get(url, 
                             params, 
 			    oauthHeader(config_data{"access_token"}),
@@ -231,12 +231,23 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 			   );
       (raw_result{"status_code"} eq "200") => {"content" : raw_result{"content"}.decode(),
                                                "status_code": raw_result{"status_code"}
-                                              }
+                                              } |
+      (raw_result{"status_code"} eq "401") &&
+      redo.isnull()                        => fix_token(raw_result, url, config_data, params) 
                                             | raw_result.klog(">>>>>>> carvoyant_get() error >>>>>>")
+                  
     };
 
-    fix_token = function(redo, counter) {
-      1
+    fix_token = function(result, url, config_data, param) {
+      try_refresh = not ent:account_info{"refresh_token"}.isnull();
+      new_tokens = try_refresh => refreshTokenForAccessToken() 
+                                | {};
+      new_tokens{"access_token"} => carvoyant_get(url, 
+                                                  config_data.put(["access_token"], new_tokens{"access_token"}),
+						  params,
+						  true
+                                                 )
+                                  | result.put(["refresh_token_tried"], try_refresh).klog(">>>> giving up on fix token ")
     };
 
     // actions
