@@ -18,7 +18,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     errors to b16x13
 
-    provides clientAccessToken,  refreshTokenForAccessToken, showTokens, // don't provide after debug
+    provides clientAccessToken,  refreshTokenForAccessToken, showTokens, forgetTokens, // don't provide after debug
              isAuthorized, redirectUri, carvoyantOauthUrl, codeForAccessToken,
              namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
 	     carvoyantVehicleData,
@@ -76,10 +76,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     // ---------- authorization ----------
 
-    showTokens = function() {
-      ent:account_info
-    }
-
+   
     // used for getting token to create an account; not for general use
     clientAccessToken = function() {
       header = 
@@ -174,6 +171,14 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       account_info.put(["timestamp"], time:now()).pset(ent:account_info);
     }
 
+    forgetTokens = function(){
+      "".pset(ent:account_info{["access_token"]})
+    };
+
+    showTokens = function() {
+      ent:account_info
+    }
+
 
     // ---------- config ----------
 
@@ -228,6 +233,10 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                                                "status_code": raw_result{"status_code"}
                                               }
                                             | raw_result.klog(">>>>>>> carvoyant_get() error >>>>>>")
+    };
+
+    fix_token = function(redo, counter) {
+      1
     };
 
     // actions
