@@ -297,7 +297,13 @@ the return value should be an object with a property that is the device ID you u
 
 This is normal until you drive the vehicle.
 
-You can also login to the [Carvoyant dashboard](https://dash.carvoyant.com) with the credentials you used to create the Carvoyant account. You should see any vehicles you've added there. 
+You can also login to the [Carvoyant dashboard](https://dash.carvoyant.com) with the credentials you used to create the Carvoyant account. You should see any vehicles you've added there.
+
+The following command should show you the subscriptions that Carvoyant has recorded for a vehicle:
+
+	Fuse.vehicleSubscriptions(<vehicle_channel>, <callback>)
+
+Normally, there should be four after the initialization above. 
 
 # Use the SDK. 
 
