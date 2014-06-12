@@ -143,18 +143,18 @@ Check that get_vehicle() works
   }
 
   // ---------- test subscriptions ----------
-  rule get_subscription_test { 
-    select when test get_subscription
+  rule getSubscription_test { 
+    select when test getSubscription
 
     pre {
       test_desc = <<
-Checks to make sure get_subscription() works
+Checks to make sure getSubscription() works
 >>;
 
       vehicle_data = carvoyant:carvoyant_vehicle_data();
       vehicleId = carvoyant:get_vehicle_data(vehicle_data, 0, "vehicleId");
 
-      subscriptions = carvoyant:get_subscription(vehicleId);
+      subscriptions = carvoyant:getSubscription(vehicleId);
 
       values = {'subscription_data' : subscriptions,
                 'vehicleId': vehicleId
@@ -166,7 +166,7 @@ Checks to make sure get_subscription() works
 
     // expect an empty subscription back
     if( carvoyant:no_subscription(subscriptions) ) then {
-      show_test:diag("test get_subscription empty", values);
+      show_test:diag("test getSubscription empty", values);
     }
 
     fired {
@@ -223,7 +223,7 @@ Checks to make sure subscription was added by add_subscription()
       vehicle_data = carvoyant:carvoyant_vehicle_data();
       vehicleId = carvoyant:get_vehicle_data(vehicle_data, 0, "vehicleId");
 
-      subscriptions = carvoyant:get_subscription(vehicleId);
+      subscriptions = carvoyant:getSubscription(vehicleId);
 
       
 
@@ -241,7 +241,7 @@ Checks to make sure subscription was added by add_subscription()
 	   .head()
 	   .pick("$.._type") eq "LOWBATTERY"
       ) then {
-      show_test:diag("get_subscription not empty", values);
+      show_test:diag("getSubscription not empty", values);
     }
 
     fired {
@@ -299,7 +299,7 @@ Checks to make sure subscription was deleted by del_subscription()
       vehicle_data = carvoyant:carvoyant_vehicle_data();
       vehicleId = carvoyant:get_vehicle_data(vehicle_data, 0, "vehicleId");
 
-      subscriptions = carvoyant:get_subscription(vehicleId);
+      subscriptions = carvoyant:getSubscription(vehicleId);
 
       values = {'subscription_data' : subscriptions,
                 'vehicleId': vehicleId
@@ -309,7 +309,7 @@ Checks to make sure subscription was deleted by del_subscription()
 
     // expect an empty subscription back
     if( carvoyant:no_subscription(subscriptions) ) then {
-      show_test:diag("get_subscription is empty", values);
+      show_test:diag("getSubscription is empty", values);
     }
     fired {
       raise test event succeeds for b503129x0 with

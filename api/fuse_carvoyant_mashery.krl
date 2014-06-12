@@ -23,7 +23,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
              namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
 	     carvoyantVehicleData,
              vehicleStatus, keyToLabel, tripInfo,
-             get_subscription, no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
+             getSubscription, no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
 
   }
 
@@ -361,7 +361,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     // subscription functions
     // subscription_type is optional, if left off, retrieves all subscriptions for vehicle
     // subscription_id is optional, if left off, retrieves all subscriptions of given type
-    get_subscription = function(vehicle_id, subscription_type, subscription_id) {
+    getSubscription = function(vehicle_id, subscription_type, subscription_id) {
       config_data = get_config(vehicle_id);
       carvoyant_get(carvoyant_subscription_url(subscription_type, config_data, subscription_id),
    	            config_data)
@@ -709,7 +709,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                   .delete(["vehicle_id"])
                   .delete(["idempotent"]);
       // if idempotent attribute is set, then check to make sure no subscription of this type exist
-      subs = get_subscription(vid, sub_type);
+      subs = getSubscription(vid, sub_type);
       subscribe = not event:attr("idempotent") ||
                   no_subscription(subs)
     }
@@ -762,7 +762,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     select when carvoyant need_vehicle_subscriptions
     pre {
       vid = event:attr("vehicle_id") || vehicle_id();
-      subscriptions = get_subscription(vid, event:attr("subscription_type"));
+      subscriptions = getSubscription(vid, event:attr("subscription_type"));
       subs = event:attr("filter") => subscriptions{["content","subscriptions"]}
                                        .filter(function(s){ s{"deletionTimestamp"}.isnull() })
                                    | subscriptions;
@@ -772,7 +772,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
   rule clean_up_subscriptions {
     select when carvoyant dirty_subscriptions
-    foreach get_subscription().pick("$..subscriptions").filter(function(s){ s{"deletionTimestamp"}.isnull() }) setting(sub)
+    foreach getSubscription().pick("$..subscriptions").filter(function(s){ s{"deletionTimestamp"}.isnull() }) setting(sub)
     pre {
       id = sub{"id"};	
       sub_type = sub{"_type"};

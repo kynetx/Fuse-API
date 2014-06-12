@@ -58,7 +58,9 @@ Fuse ruleset for a vehicle pico
       // subscription_id is optional, if left off, retrieves all subscriptions of given type
       vehicleSubscription = function(subscription_type, subscription_id) {
         vid = carvoyant:vehicle_id();
-        carvoyant:get_subscription(vid, subscription_type, subscription_id)
+        raw_result = carvoyant:getSubscription(vid, subscription_type, subscription_id);
+	raw_result{"status_code"} eq "200" => raw_result{"content"}.decode()
+                                            | raw_result
       }
 
     }
