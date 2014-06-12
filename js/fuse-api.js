@@ -155,6 +155,18 @@
 		});
 	},
 
+	carvoyantOauthUrl: function(cb, options) 
+	{
+	    cb = cb || function(){};
+	    options = options || {};
+            Fuse.log("Retrieving Carvoyant OAuth URL");
+	    return Fuse.ask_fleet("carvoyantOauthUrl", Fuse.carvoyantOauthUrl, function(json) {
+		          Fuse.carvoyantOauthUrl = json;
+		          Fuse.log("URL: ", json);
+			  cb(json);
+  		       }, options);
+	},
+
 	// ---------- manage and use fleet pico ----------
         createFleet: function(attrs, cb, options)
         {
