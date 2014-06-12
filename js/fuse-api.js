@@ -32,6 +32,9 @@
 			 },
 		"fuel":  {"prod": "b16x20",
 			  "dev":  "b16x20"
+			 },
+		"carvoyant":  {"prod": "b16x11",
+			       "dev":  "b16x11"
 			 }
 	    };
 
@@ -159,9 +162,10 @@
 	{
 	    cb = cb || function(){};
 	    options = options || {};
+	    options.rid = "carvoyant";
             Fuse.log("Retrieving Carvoyant OAuth URL");
-	    return Fuse.ask_fleet("carvoyantOauthUrl", Fuse.carvoyantOauthUrl, function(json) {
-		          Fuse.carvoyantOauthUrl = json;
+	    return Fuse.ask_fleet("carvoyantOauthUrl", Fuse.carvoyant_oauth_url, function(json) {
+		          Fuse.carvoyant_oauth_url = json.url;
 		          Fuse.log("URL: ", json);
 			  cb(json);
   		       }, options);
@@ -225,6 +229,7 @@
 	ask_fleet: function(funcName, cache, cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
+	    var rid = options.rid || "fleet";
 	    if (typeof cache === "undefined" 
 	      || cache === "" 
 	      || cache === null
@@ -235,7 +240,7 @@
 		   Fuse.fleetChannel(function(fc) {
 		       Fuse.log("Using fleet channel ", fc);
    		       if(fc !== "none") {
-			   return CloudOS.skyCloud(Fuse.get_rid("fleet"), funcName, {}, cb, {"eci": fc});
+			   return CloudOS.skyCloud(Fuse.get_rid(rid), funcName, {}, cb, {"eci": fc});
 		       } else {
 			   Fuse.log("fleet_eci is undefined, you must get the fleet channel first");
 			   return null;

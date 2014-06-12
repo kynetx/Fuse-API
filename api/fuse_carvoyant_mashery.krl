@@ -125,7 +125,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 		};
 
       query_string = params.map(function(k,v){k+"="+v}).values().join("&").klog(">>>>> query string >>>>>>");
-      {url: "https://auth.carvoyant.com/OAuth/authorize?" + query_string}
+      {"url": "https://auth.carvoyant.com/OAuth/authorize?" + query_string}
     
     }
 
