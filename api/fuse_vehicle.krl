@@ -59,7 +59,7 @@ Fuse ruleset for a vehicle pico
       vehicleSubscription = function(subscription_type, subscription_id) {
         vid = carvoyant:vehicle_id();
         raw_result = carvoyant:getSubscription(vid, subscription_type, subscription_id);
-	raw_result{"status_code"} eq "200" => raw_result{"content"}.decode()
+	raw_result{"status_code"} eq "200" => raw_result{"content"}.decode().pick("$.subscriptions")
                                             | raw_result
       }
 
