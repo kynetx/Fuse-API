@@ -646,7 +646,7 @@
 			 };
             return CloudOS.raiseEvent("fuse", "trip_meta_data", {}, attrs, function(response)
             {
-                Fuse.log("Updated trip for vehicle: " + vehicle_channel + " with " + attrs);
+                Fuse.log("Updated trip for vehicle: " + vehicle_channel + " with ", attrs);
 		if(response.length < 1) {
 		    throw "Updating trip (" + trip_id + ") failed for vehicle: "  + vehicle_channel;
 		}

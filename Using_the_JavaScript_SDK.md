@@ -194,7 +194,19 @@ Fuse uses [Carvoyant](http://carvoyant.com) to provision devices, run the virtua
 
 	The user is now provisioned and their Fuse Fleet is linked to Carvoyant.
 
-	If the Carvoyant account was created correctly, you should be able to login to the [Carvoyant dashboard](https://dash.carvoyant.com) with the credentials you used to create the Carvoyant account. 
+	If the Carvoyant account was created correctly, you should be able to login to the [Carvoyant dashboard](https://dash.carvoyant.com) with the credentials you used to create the Carvoyant account.
+
+Once the initial account creation is done, you can renew the tokens if necessary, but going through the Carvoyant OAuth flow. To assist in getting that right, there is a helper function that returns the Carvoyant OAuth URL:
+
+	Fuse.carvoyantOauthUrl(<callback>)
+
+This function will return a JSON object with the Carvoyant URL. Going to that URL in a browser will take the user to Carvoyant where they can log in with their Carvoyant credentials. Once they do that they will be redirected back to Fuse and the tokens will be returned and saved in the Fleet. You can distribute them to the vehicles with the following command:
+
+	Fuse.configureVehicles({}, show_res)
+
+(See configuring vehicles below.)
+
+This command should be run whenever a new vehicle is added or the tokens have changed. 
 
 
 # Adding a Vehicle
