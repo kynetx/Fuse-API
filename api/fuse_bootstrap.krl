@@ -41,11 +41,10 @@ ruleset fuse_bootstrap {
         pre {
 	  remove_rulesets = CloudOS:rulesetRemoveChild(apps{"unwanted"}, meta:eci());
           installed = CloudOS:rulesetAddChild(apps{"core"}, meta:eci());
+	  account_profile = CloudOS:accountProfile();
           profile = {
-            "myProfileName": event:attr("name") || CloudOS:username(),
-            "myProfileEmail": event:attr("email") || "",
-	    "myProfilePhoto" : event:attr("photo"),
-	    "myProfilePhone" : event:attr("phone")
+            "myProfileName": account_profile{"firstname"} + " " + account_profile{"lastname"},
+            "myProfileEmail": account_profile{"email"}
           };
         }
 
@@ -57,6 +56,7 @@ ruleset fuse_bootstrap {
         fired {
             raise pds event "new_profile_item_available"
                 attributes profile.put(["_api"], "sky");
+            raise fuse event "need_fleet";
             log "Fuse user bootstrap succeeded";
         } else {
             log "Fuse user bootstrap failed";

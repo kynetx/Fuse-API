@@ -252,11 +252,12 @@ Manage trips. PDS is not well-suited to these operations
       tid = mkTid(carvoyant_tid);
       tname = event:attr("tripName");
       tcategory = event:attr("tripCategory");
-      trip_summary = ent:trip_summaries{tid}.klog(">>>> trip summary for #{tid} >>>> ") || {};
+      trip_summary = trip_summaries{tid}.klog(">>>> trip summary for #{tid} >>>> ") || {};
       start =reducePrecision(trip_summary{"startWaypoint"});
       end = reducePrecision(trip_summary{"endWaypoint"});
 
     }
+    if(not trip_summary{"startWaypoint"}.isnull()) then // if this isn't a real trip, don't pollute trip_summaries...
     {
       send_directive("Updating trip meta data") with
         tid = tid and
@@ -270,6 +271,8 @@ Manage trips. PDS is not well-suited to these operations
              .put(["category"], tcategory)
 	     .put(["name"], tname);
       set ent:trip_names{[end, start]} {"tripName": tname}
+    } else {
+      log ">>> can't find #{tid} in trips for this vehicle >>>>> "
     }
 
   }

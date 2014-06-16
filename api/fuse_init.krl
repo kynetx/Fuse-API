@@ -168,7 +168,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	// protect against creating more than one fleet pico (singleton)
 	if(fleet_channel.isnull()) then
         {
-            send_directive("requsting new Fuse setup");
+            send_directive("requesting new Fuse setup");
         }
         
         fired {
