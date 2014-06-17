@@ -105,7 +105,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
       config_data = get_config();
       vehicle_info = expired => {} | carvoyant_get(api_url+"/vehicle/", config_data) || {};
-      vehicle_info{"status_code"} eq "200"
+      {"authorized" : vehicle_info{"status_code"} eq "200"}
     };
 
     redirectUri = function() {
