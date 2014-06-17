@@ -146,7 +146,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       raw_result = http:post(oauth_url, header);
       results = (raw_result{"status_code"} eq "200") => normalizeAccountInfo(raw_result{"content"}.decode())
                                                       | raw_result.decode();
-      url = "http://windley.github.io/Joinfuse/carvoyant.html" + 
+      url = "http://windley.github.io/Joinfuse/carvoyant.html" + "?" +
               results.map(function(k,v){k + "=" + v}).values().join("&").klog(">>>>> url >>>>>");
         
       page = <<
@@ -166,7 +166,8 @@ You are being redirected to <a href="#{url}">#{url}</a>
 </body>
 </html>
       >>;
-     page
+
+      page
     };
 
 
@@ -538,6 +539,7 @@ You are being redirected to <a href="#{url}">#{url}</a>
     }
 
   }
+
 
   rule retry_refresh_token {
     select when http post status_code re#401# label "???" // check error number and header...
