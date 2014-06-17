@@ -18,7 +18,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     errors to b16x13
 
-    provides clientAccessToken,  refreshTokenForAccessToken, showTokens, forgetTokens, // don't provide after debug
+    provides clientAccessToken,  refreshTokenForAccessToken, showTokens, forgetTokens, forgetAllTokens, // don't provide after debug
              isAuthorized, redirectUri, carvoyantOauthUrl, codeForAccessToken,
              namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
 	     carvoyantVehicleData,
@@ -195,6 +195,10 @@ You are being redirected to <a href="#{url}">#{url}</a>
 
     forgetTokens = function(){
       "".pset(ent:account_info{["access_token"]})
+    };
+
+    forgetAllTokens = function(){
+      {}.pset(ent:account_info)
     };
 
     showTokens = function() {
