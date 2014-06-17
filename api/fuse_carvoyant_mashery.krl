@@ -144,8 +144,29 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	                }
             }.klog(">>>>>> client header <<<<<<<<");
       raw_result = http:post(oauth_url, header);
-      (raw_result{"status_code"} eq "200") => normalizeAccountInfo(raw_result{"content"}.decode())
-                                            | raw_result.decode()
+      results = (raw_result{"status_code"} eq "200") => normalizeAccountInfo(raw_result{"content"}.decode())
+                                                      | raw_result.decode();
+      url = "http://windley.github.io/Joinfuse/carvoyant.html" + 
+              results.map(function(k,v){k + "=" + v}).values().join("&").klog(">>>>> url >>>>>");
+        
+      page = <<
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title></title>
+  <META HTTP-EQUIV="Refresh" CONTENT="0;url=#{url}">
+  <meta name="robots" content="noindex"/>
+  <link rel="canonical" href="#{url}"/>
+</head>
+<body>
+<p>
+You are being redirected to <a href="#{url}">#{url}</a>
+</p>
+
+</body>
+</html>
+      >>;
+     page
     };
 
 
