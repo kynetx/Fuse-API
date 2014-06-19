@@ -129,11 +129,12 @@ Fuse ruleset for a vehicle pico
 	       "_api": "sky"
 	      };
 
+	   // just use pds:profile_updated instead
 	   // send this all to the fleet	      
-	   raise fuse event "need_vehicle_data"
-            attributes
-	      {"vin": vin // this keeps it from asking Carvoyant before it's ready
-	      };
+	    // raise fuse event "need_vehicle_data"
+            //  attributes
+	    //    {"vin": vin // this keeps it from asking Carvoyant before it's ready
+	    //    };
 
 
 	   // // create the carvoyant vehicle
@@ -257,12 +258,11 @@ Fuse ruleset for a vehicle pico
     // ---------- vehicle data rules ----------
     rule update_vehicle_data {
       select when fuse need_vehicle_data
+               or pds profile_updated // since we store pictures, etc. in profile
       pre {
 
         vid = carvoyant:vehicle_id();
 	incoming = event:attrs() || {};
-         // raw_vehicle_info = incoming{"vin"}.isnull() => carvoyant:get_vehicle_data(carvoyant:carvoyant_vehicle_data(vid))
-         //                                              | incoming;
 
         raw_vehicle_info = incoming{"vin"}.isnull() => carvoyant:carvoyantVehicleData(vid)
                                                      | incoming;
