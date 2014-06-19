@@ -128,7 +128,8 @@ Fuse ruleset for a vehicle pico
 	       "deviceId": device_id,
 	       "_api": "sky"
 	      };
-	      
+
+	   // send this all to the fleet	      
 	   raise fuse event "need_vehicle_data"
             attributes
 	      {"vin": vin // this keeps it from asking Carvoyant before it's ready
@@ -191,43 +192,6 @@ Fuse ruleset for a vehicle pico
 
 
     // ---------- set up and configure me ----------
-
-    // not sure we need the full "settings framework"
-    rule load_app_config_settings is inactive {
-      select when web sessionLoaded 
-               or fuse initialize_config
-      pre {
-        schema = [
-          {"name"     : "deviceId",
-           "label"    : "Device ID",
-           "dtype"    : "text"
-          },
-          {"name"     : "apiKey",
-           "label"    : "Carvoyant API Key",
-           "dtype"    : "text"
-          },
-          {"name"     : "secToken",
-           "label"    : "Carvoyant security token (keep private)",
-           "dtype"    : "text"
-          }
-	  
-        ];
-        data = {
-	  "deviceId" : "C201300398",
-	  "apiKey": keys:carvoyant_test("apiKey"),
-	  "secToken": keys:carvoyant_test("secToken")
-        };
-      }
-      always {
-        raise pds event new_settings_schema
-          with setName   = "Carvoyant"
-          and  setRID    = carvoyant:namespace()
-          and  setSchema = schema
-          and  setData   = data
-          and  _api = "sky";
-      }
-    }
-
     rule request_config_for_vehicle {
       select when fuse new_vehicle_configuration
       pre {
@@ -247,10 +211,10 @@ Fuse ruleset for a vehicle pico
     rule initialize_vehicle {
       select when fuse vehicle_uninitialized
       pre {
-        config = pds:get_item(carvoyant:namespace(), "config");
+        profile = pds:get_me();
       }
-      if (not config{"deviceId"}.isnull() ) then {
-        send_directive("initializing vehicle " + config{"deviceId"});
+      if (not profile{"deviceId"}.isnull() ) then {
+        send_directive("initializing vehicle " + profile{"deviceId"});
       }
       fired {
         raise fuse event need_initial_carvoyant_subscriptions;
@@ -303,7 +267,7 @@ Fuse ruleset for a vehicle pico
         raw_vehicle_info = incoming{"vin"}.isnull() => carvoyant:carvoyantVehicleData(vid)
                                                      | incoming;
 
-	profile = pds:get_all_me();
+	profile = pds:get_all_me().klog(">>>>>> seeing profile >>>>> ");
 
 	status = vehicleStatus() || {};
 

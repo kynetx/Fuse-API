@@ -143,6 +143,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       raw_result = http:post(oauth_url, header);
       results = (raw_result{"status_code"} eq "200") => normalizeAccountInfo(raw_result{"content"}.decode())
                                                       | raw_result.decode();
+
+      // hardcoded URL!!
       url = "http://windley.github.io/Joinfuse/carvoyant.html" + "?" +
               results.map(function(k,v){k + "=" + v}).values().join("&").klog(">>>>> url >>>>>");
         
@@ -186,6 +188,10 @@ You are being redirected to <a href="#{url}">#{url}</a>
     };
 
     normalizeAccountInfo = function(account_info) {
+
+      // raise an event to broadcast new config
+      response = cloudos:sendEvent(meta:eci(), "fuse", "config_outdated", account_info);
+
       // add the timestamp and then store the info in an entity var (ugh; evil)
       account_info.put(["timestamp"], time:now()).pset(ent:account_info);
     }
