@@ -289,15 +289,15 @@ Fuse ruleset for a vehicle pico
       select when fuse need_vehicle_data
       pre {
 
-        vid = carvoyant:vehicle_id();
+        vid = carvoyant:vehicle_id().klog(">>>>> vehicle ID >>>>> ");
 	incoming = event:attrs() || {};
          // raw_vehicle_info = incoming{"vin"}.isnull() => carvoyant:get_vehicle_data(carvoyant:carvoyant_vehicle_data(vid))
          //                                              | incoming;
 
-        raw_vehicle_info = incoming{"vin"}.isnull() => carvoyant:carvoyantVehicleData(vid)
+        raw_vehicle_info = incoming{"vin"}.isnull() => carvoyant:carvoyantVehicleData(vid).klog(">>>>>> Carvoyant stuff >>> ")
                                                      | incoming;
 
-	profile = pds:get_all_me().klog(">>>>> vehicle profile >>>>>>>");
+	profile = pds:get_all_me();
 
 	status = vehicleStatus() || {};
 
@@ -310,7 +310,7 @@ Fuse ruleset for a vehicle pico
 	                                     | "0";
 
 
-	vehicle_info = raw_vehicle_info.klog(">>>>>> raw vehicle data >>>>> ")
+	vehicle_info = raw_vehicle_info
 	                 .put(["profilePhoto"], profile{"myProfilePhoto"})
 	                 .put(["profileName"], profile{"myProfileName"})
 	                 .put(["vin"], profile{"vin"})
