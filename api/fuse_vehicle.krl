@@ -25,7 +25,9 @@ Fuse ruleset for a vehicle pico
     global {
 
       fleetChannel = function () {
-          CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel");
+          CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel")
+         ||
+          pds:get_item(common:namespace(),"fleet_channel") // if we can't find subscription use the one passed
       };
 
       myIncomingChannel = function () {
@@ -296,7 +298,7 @@ Fuse ruleset for a vehicle pico
          id = vid and
          values = vehicle_info and
 	 namespace = carvoyant:namespace();
-       event:send({"cid": fleetChannel()}, "fuse", "updated_vehicle") with
+       event:send({"cid": fleetChannel().klog(">>>> fleet channel >>>>> ")}, "fuse", "updated_vehicle") with
          attrs = {"keyvalue": "vehicle_info",
 	          "vehicleId": vid,
 	          "value": vehicle_info.encode()
