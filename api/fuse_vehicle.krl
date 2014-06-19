@@ -128,6 +128,12 @@ Fuse ruleset for a vehicle pico
 	       "deviceId": device_id,
 	       "_api": "sky"
 	      };
+	      
+	   raise fuse event "need_vehicle_data"
+            attributes
+	      {"vin": vin // this keeps it from asking Carvoyant before it's ready
+	      };
+
 
 	   // // create the carvoyant vehicle
 	   // raise carvoyant event update_account

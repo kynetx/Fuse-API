@@ -301,7 +301,7 @@ You are being redirected to <a href="#{url}">#{url}</a>
 
     carvoyantVehicleData = function(vid) {
       vid = vid || vehicle_id();
-      config_data = get_config(vid).klog(">>>>>> config data >>>>> ");
+      config_data = get_config(vid);
       data = carvoyant_get(config_data{"base_url"}, config_data);
       status = data{"status_code"} eq "200" => data{["content","vehicle"]}
                                              | mk_error(data);
