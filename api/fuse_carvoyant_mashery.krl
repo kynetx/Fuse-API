@@ -677,7 +677,7 @@ You are being redirected to <a href="#{url}">#{url}</a>
     }
   }
 
-  rule initialization_ok {
+  rule initialization_ok { 
     select when http post status_code  re#2\d\d#  label "vehicle_init" 
              or http post status_code  re#2\d\d#  label "vehicle_account_update"
     pre {
