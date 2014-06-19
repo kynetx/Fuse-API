@@ -56,7 +56,7 @@ Application that manages the fleet
       findVehicleByBackchannel = function (bc) {
         garbage = bc.klog(">>>> back channel <<<<<");
         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle");
-	vehicle_ecis_by_backchannel = vehicle_ecis.collect(function(x){x{"backChannel"}}).map(function(k,v){v.head()}).klog(">>> vehicle_ecis_by_backchannel <<<<<");
+	vehicle_ecis_by_backchannel = vehicle_ecis.collect(function(x){x{"backChannel"}}).map(function(k,v){v.head()});
 	vehicle_ecis_by_backchannel{bc} || {}
       };
 
@@ -306,15 +306,15 @@ Application that manages the fleet
 
     // ---------- cache vehicle data ----------
 
-    rule update_vehicle_data {
+    rule update_vehicle_data_in_fleet {
       select when fuse updated_vehicle
       pre {
         vid = event:attr("vehicleId");
 	keyvalue = event:attr("keyvalue");
-        vehicle_info = event:attr("value").decode();
+        vehicle_info = event:attr("value").decode().klog(">>>> vehicle info >>>>>");
 
 	// why am I gettting this?  Oh, yeah, we need to match vehicle_id and vehicle channel so we'll do that here...
-	vehicle_channel_data = findVehicleByBackchannel(meta:eci()).klog(">>>>>>>>>>>> vehicle channel <<<<<<<<<<<<<");
+	vehicle_channel_data = findVehicleByBackchannel(meta:eci());
 	vehicle_name = vehicle_channel_data{"channelName"};
 
 
