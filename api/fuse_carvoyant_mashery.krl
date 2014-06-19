@@ -29,11 +29,6 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
   global {
 
-    // config data contains
-    //   deviceId - Carvoyant device ID
-    //   apiKey - API Key in http://confluence.carvoyant.com/display/PUBDEV/Authentication+Mechanism
-    //   secToken - Access Token in http://confluence.carvoyant.com/display/PUBDEV/Authentication+Mechanism 
-
     // [TODO] 
     //  vehicle ID can't be in config data. Has to match one of them, but is supplied
 
@@ -60,10 +55,11 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     };
 
     vehicle_id = function() {
-      config = pds:get_item(namespace(), "config"); 
-      config{"deviceID"} // old name remove once we are creating vehicles with new name
-     ||
+      config = pds:get_item(namespace(), "config"); // can delete after vehicles are updated
+      me = pds:get_me("deviceId"); 
       config{"deviceId"}
+     ||
+      me
      ||
       pds:get_item(namespace(), "vehicle_info").pick("$.vehicleId")
     };
@@ -213,35 +209,18 @@ You are being redirected to <a href="#{url}">#{url}</a>
     // key is optional, if missing, use default
     get_config = function(vid, key) {
        carvoyant_config_key = key || namespace();
-       config_data = pds:get_item(carvoyant_config_key, "config") || {};
-        // vid = vid
-        //    || config_data{"deviceID"} // old name remove once we are creating vehicles with new name
-        //    || config_data{"deviceId"};
+       config_data = vehicleId();
        base_url = api_url+ "/vehicle/";
        url = base_url + vid;
        config_data
          .put({"hostname": api_hostname,
 	       "base_url": url,
-	       "vehicle_id": vid,
 	       "access_token" : ent:account_info{"access_token"}
 	      })
     }
 
     // ---------- general carvoyant API access functions ----------
     // See http://confluence.carvoyant.com/display/PUBDEV/Authentication+Mechanism for details
-
-    // params is optional
-     // carvoyant_headers = function(config_data, params) {
-     //   {"credentials": {
-     //       "username": config_data{"apiKey"},
-     //       "password": config_data{"secToken"},
-     //       "realm": "Carvoyant API",
-     //       "netloc": config_data{"hostname"} + ":443"
-     //       },
-     //    "params" : params || {}
-     //   }
-     // };
-    
     oauthHeader = function(access_token) {
       {"Authorization": "Bearer " + access_token.klog(">>>>>> using access token >>>>>>>"),
        "content-type": "application/json"
@@ -628,7 +607,7 @@ You are being redirected to <a href="#{url}">#{url}</a>
         "name": event:attr("name") || profile{"myProfileName"} || "Unknown Vehicle",
         "deviceId": vehicle_id() || event:attr("deviceId") || "unknown",
         "label": event:attr("label") || profile{"myProfileName"} || "My Vehicle",
-	"vin": event:attr("vin") || profile{"myVin"} || "unknown",
+	"vin": event:attr("vin") || profile{"vin"} || "unknown",
         "mileage": event:attr("mileage") || "10"
       }
     }
@@ -680,21 +659,20 @@ You are being redirected to <a href="#{url}">#{url}</a>
   rule store_device_id {
     select when carvoyant new_device_id
     pre {
-      deviceId = event:attr("deviceId") ;
+      new_deviceId = event:attr("deviceId");
+      old_deviceId = pds:get_me("deviceId");
 
     }
-    if (not deviceId.isnull() ) then {
+    if ( not new_deviceId.isnull()
+      && new_deviceId neq old_deviceId
+       ) then {
       noop();
     }
     fired {
-      raise pds event "new_data_available"
+      raise pds event "updated_profile_item_available"
 	  attributes {
-	    "namespace": namespace(),
-	    "keyvalue": "config",
-	    "value": {"deviceId": deviceId
-	             },
-            "_api": "sky"
- 		   
+	    "deviceId": deviceId,
+	    "_api": "sky"	
 	  };
     }
   }

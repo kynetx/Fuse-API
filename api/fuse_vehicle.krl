@@ -124,7 +124,8 @@ Fuse ruleset for a vehicle pico
             attributes
 	      {"myProfileName"  : name,
 	       "myProfilePhoto" : photo,
-	       "myVin": vin,
+	       "vin": vin,
+	       "deviceId": device_id,
 	       "_api": "sky"
 	      };
 
@@ -318,6 +319,8 @@ Fuse ruleset for a vehicle pico
 	vehicle_info = raw_vehicle_info
 	                 .put(["profilePhoto"], profile{"myProfilePhoto"})
 	                 .put(["profileName"], profile{"myProfileName"})
+	                 .put(["vin"], profile{"vin"})
+	                 .put(["deviceId"], profile{"deviceId"})
 			 .put(["DTC"], dtc)
 			 .put(["fuellevel"], status{["GEN_FUELLEVEL","value"]})
 			 .put(["address"], status{["GEN_NEAREST_ADDRESS","value"]})
