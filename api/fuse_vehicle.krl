@@ -141,27 +141,21 @@ Fuse ruleset for a vehicle pico
 
 	  log(">>>>>>>> device_id >>>>>>> " + device_id);
 
-          // send the device ID 
-	  raise carvoyant event new_device_id
-            attributes
-              {"deviceId" : device_id,
-	       "_api": "sky"
-              } if device_id;
+           // // send the device ID 
+	   // raise carvoyant event new_device_id
+           //   attributes
+           //     {"deviceId" : device_id,
+	   //      "_api": "sky"
+           //     } if device_id;
 
-	  log(">>>>>>>> device_id >>>>>>> " + device_id);
+	   // log(">>>>>>>> device_id >>>>>>> " + device_id);
 
-	  raise fuse event new_vehicle_added 
-            attributes
-	      {"vehicle_name": name,
-	       "_api": "sky"
-	      };
         }
     }
 
     // meant to generally route events to owner. Extend eventex to choose what gets routed
     rule route_to_owner {
-      select when fuse new_vehicle_added
-               or fuse vehicle_initialzed
+      select when fuse vehicle_initialzed
       pre {
         owner = fleetChannel();
       }

@@ -55,7 +55,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     };
 
     vehicle_id = function() {
-      config = pds:get_item(namespace(), "config"); // can delete after vehicles are updated
+      config = pds:get_item(namespace(), "config") || {}; // can delete after vehicles are updated
       me = pds:get_me("deviceId"); 
       config{"deviceId"}
      ||
@@ -209,7 +209,7 @@ You are being redirected to <a href="#{url}">#{url}</a>
     // key is optional, if missing, use default
     get_config = function(vid, key) {
        carvoyant_config_key = key || namespace();
-       config_data = vehicleId();
+       config_data = vehicleId() || {};
        base_url = api_url+ "/vehicle/";
        url = base_url + vid;
        config_data
