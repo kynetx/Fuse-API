@@ -209,7 +209,7 @@ You are being redirected to <a href="#{url}">#{url}</a>
     // key is optional, if missing, use default
     get_config = function(vid, key) {
        carvoyant_config_key = key || namespace();
-       config_data = {"deviceId": vehicleId() || {}};
+       config_data = {"deviceId": vehicle_id() || "no device found"};
        base_url = api_url+ "/vehicle/";
        url = base_url + vid;
        config_data
