@@ -47,9 +47,9 @@ Application that manages the fleet
 
       vehicleSummary = function() {
 
-        picos = CloudOS:picoList() || {}; // tolerate lookup failures
+        picos = CloudOS:picoList().klog(">>>> we have these picos >>>>") || {}; // tolerate lookup failures
 	summaries = ent:fleet{["vehicle_info"]};
-	summary_keys = summaries.keys();
+	summary_keys = summaries.keys().klog(">>>> we have these key >>>>");
 
 	// which picos exist that have no summary yet? 
 	missing = picos.difference(summary_keys).klog(">>>> missing vehicle data here >>>>");
