@@ -261,7 +261,7 @@ Application that manages the fleet
     rule delete_vehicle {
       select when fuse delete_vehicle
       pre {
-        name = event:attr("vehicle_name");
+        name = event:attr("vehicle_name").klog(">>>>> deleting vehicle >>>> ");
 
 	// use the eci to look up the subscription to delete
         this_sub = CloudOS:subscriptionList(common:namespace(),"Vehicle")
@@ -303,11 +303,12 @@ Application that manages the fleet
           with backChannel = this_sub_channel
            and _api = "sky" if not this_sub_channel.isnull();
 
-	clear ent:vehicle_info{name};
+	clear ent:fleet{["vehicle_info", name]};
 
       } else {
         log ">>>>>> no vehicle to delete with name " + name;
-	clear ent:vehicle_info{name}; // just in case it's hanging around
+	log ent:fleet{["vehicle_info"]}.encode();
+	clear ent:fleet{["vehicle_info", name]};
       }
       
     }
