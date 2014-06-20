@@ -11,7 +11,7 @@ Common definitions
 
 
 	provides S3Bucket, namespace, find_pico_by_id, fuel_namespace, trips_namespace, maint_namespace,
-	         convertToUTC,
+	         convertToUTC, vehicleChannels,
 	         skycloud
     }
 
@@ -81,6 +81,27 @@ Common definitions
         // if HTTP status was OK & the response was not null and there were no errors...
         (status eq "200" && not is_bad_response) => response_content | error
      };
+
+
+     //  Only works when executed in a fleet pico
+     vehicleChannels = function() {
+
+        picos = CloudOS:picoList() || {}; // tolerate lookup failures
+
+	// the rest of this is to return subscription ECIs rather than _LOGIN ECIs. Ought to be easier. 
+        vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle")
+                    || [];   
+
+        // collect returns arrays as values, and we only have one, so map head()
+        vehicle_ecis_by_name = vehicle_ecis.collect(function(x){x{"channelName"}}).map(function(k,v){v.head()});
+
+	res = picos.map(function(k,p){
+	   id = p{"id"};
+	   p.put(["channel"],vehicle_ecis_by_name{[id,"eventChannel"]});
+	}).values();
+	res
+      };
+
 
 
   }

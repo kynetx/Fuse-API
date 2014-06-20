@@ -25,20 +25,7 @@ Application that manages the fleet
       // this is complicated cause we want to return the subscription channel for the vehicle, not the _LOGIN channel
       vehicleChannels = function() {
 
-         picos = CloudOS:picoList() || {}; // tolerate lookup failures
-
-	 // the rest of this is to return subscription ECIs rather than _LOGIN ECIs. Ought to be easier. 
-         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle")
-                     || [];   
-
-         // collect returns arrays as values, and we only have one, so map head()
-         vehicle_ecis_by_name = vehicle_ecis.collect(function(x){x{"channelName"}}).map(function(k,v){v.head()});
-
-	 res = picos.map(function(k,p){
-	   id = p{"id"};
-	   p.put(["channel"],vehicle_ecis_by_name{[id,"eventChannel"]});
-	 }).values();
-	 res
+         common:vehicleChannels();
       };
 
       seeFleetData = function(){
@@ -328,6 +315,17 @@ Application that manages the fleet
         raise cloudos event picoAttrsClear 
           with picoChannel = eci  // created with _LOGIN, not subscriber ECI, so look it up
            and _api = "sky";
+      }
+
+    }
+
+    rule sync_fleet_with_carvoyant {
+      select when fuse fleet_updated
+      pre {
+        cv_vehicles = 0;
+      }
+      {
+        send_directive("sync_fleet") 
       }
 
     }
