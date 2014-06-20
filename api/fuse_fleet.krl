@@ -48,7 +48,7 @@ Application that manages the fleet
       vehicleSummary = function() {
 
         picos = CloudOS:picoList()|| {}; // tolerate lookup failures
-        picos_by_id = picos.collect(function(x){x{"id"}}).map(function(k,v){v.head()}).klog(">>> picos by id>>>>");
+        picos_by_id = picos.values().collect(function(x){x{"id"}}).map(function(k,v){v.head()}).klog(">>> picos by id>>>>");
 	pico_ids = picos_by_id.keys().klog(">>>> we have these picos >>>>") ;
 //	pico_ids = picos.values().map(function(h){h{"id"}}).klog(">>>> we have these picos >>>>") ;
 	summaries = ent:fleet{["vehicle_info"]};
