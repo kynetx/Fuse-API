@@ -303,7 +303,7 @@ Application that manages the fleet
           with backChannel = this_sub_channel
            and _api = "sky" if not this_sub_channel.isnull();
 
-	set ent:vehicle_info ent:vehicle_info.delete([name]);
+	clear ent:vehicle_info{name};
 
       } else {
         log ">>>>>> no vehicle to delete with name " + name
