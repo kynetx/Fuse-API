@@ -89,7 +89,7 @@ Common definitions
         picos = CloudOS:picoList() || {}; // tolerate lookup failures
 
 	// the rest of this is to return subscription ECIs rather than _LOGIN ECIs. Ought to be easier. 
-        vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle")
+        vehicle_ecis = CloudOS:subscriptionList(namespace(),"Vehicle")
                     || [];   
 
         // collect returns arrays as values, and we only have one, so map head()
