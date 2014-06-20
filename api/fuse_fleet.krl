@@ -277,11 +277,13 @@ Application that manages the fleet
 	this_pico_id = this_sub{"channelName"};
 
         this_sub_channel = this_sub{"backChannel"};
-//	eci = this_sub{"eventChannel"}.klog(">>>>>> eci to destroy >>>>>");
-	eci = this_pico{"channel"}.klog(">>>>>> eci to destroy >>>>>");
-	huh = (something_to_do) => CloudOS:cloudDestroy(eci).klog(">>>> report from cloudDestroy >>> ") | 0;
+	sub_eci = this_sub{"eventChannel"}.klog(">>>>>> eci to destroy >>>>>");
+	pico_eci = this_pico{"channel"}.klog(">>>>>> eci to destroy >>>>>");
+	huh = (something_to_do) => CloudOS:cloudDestroy(sub_eci).klog(">>>> report from cloudDestroy >>> ") ||
+	                               CloudOS:cloudDestroy(pico_eci).klog(">>>> report from cloudDestroy >>> ") 
+                                 | 0;
       }
-      if (something_do_do) then
+      if (something_to_do) then
       {
         send_directive("Deleted vehicle" ) with
           child = eci and
