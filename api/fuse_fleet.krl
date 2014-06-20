@@ -188,7 +188,8 @@ Application that manages the fleet
         {
 
 	  send_directive("Vehicle created") with
-            cid = channel;
+            cid = channel and
+	    id = pico_id;
 
           // tell the vehicle pico to take care of the rest of the initialization.
           event:send(vehicle, "fuse", "new_vehicle") with 
