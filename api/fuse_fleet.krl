@@ -266,11 +266,14 @@ Application that manages the fleet
 	// use the eci to look up the subscription to delete
         this_sub = CloudOS:subscriptionList(common:namespace(),"Vehicle")
 	           .filter(function(sub){sub{"channelName"} eq name})
-		   .head() 
+		   .head()
+		   .klog(">>>>>>> this_sub >>>>>>")
                 || {};   // tolerate lookup failures
 
+	// not sure why we want the sub???
 
-	this_pico = common:find_pico_by_id(this_sub{"channelName"}).klog(">>>>>>>>>>> pico <<<<<<<<<<<<<<<") || {};
+
+	this_pico = common:find_pico_by_id(name).klog(">>>>>>>>>>> pico <<<<<<<<<<<<<<<") || {};
 
 	something_to_do = not this_pico{"channel"}.isnull();
 
@@ -307,7 +310,6 @@ Application that manages the fleet
 
       } else {
         log ">>>>>> no vehicle to delete with name " + name;
-	log ent:fleet{["vehicle_info"]}.encode();
 	clear ent:fleet{["vehicle_info", name]};
       }
       

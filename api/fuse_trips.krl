@@ -87,7 +87,7 @@ Manage trips. PDS is not well-suited to these operations
       {"url": "http://" + meta:hostname() + "/sky/cloud/" + meta:rid() + "/icalForVehicle?_eci=" + eci }
     };
 
-    icalForVehicle = function(search){1};
+    icalForVehicle = function(search){""};
 
     icalForVehicleDisabled = function(search){
       num_trips = 25; // return last 50 trips
