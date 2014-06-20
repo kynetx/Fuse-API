@@ -85,9 +85,11 @@ Manage trips. PDS is not well-suited to these operations
                 		       | CloudOS:channelCreate(ical_channel_name);
       eci = channel{"cid"} || channel{"token"}; // CloudOS uses cid in one place and token in another 
       {"url": "http://" + meta:hostname() + "/sky/cloud/" + meta:rid() + "/icalForVehicle?_eci=" + eci }
-    }
+    };
 
-    icalForVehicle = function(search){
+    icalForVehicle = function(search){1};
+
+    icalForVehicleDisabled = function(search){
       num_trips = 25; // return last 50 trips
       sort_opt = {
         "path" : ["endTime"],
