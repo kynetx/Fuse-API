@@ -306,7 +306,8 @@ Application that manages the fleet
 	clear ent:vehicle_info{name};
 
       } else {
-        log ">>>>>> no vehicle to delete with name " + name
+        log ">>>>>> no vehicle to delete with name " + name;
+	clear ent:vehicle_info{name}; // just in case it's hanging around
       }
       
     }
