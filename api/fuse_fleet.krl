@@ -46,7 +46,17 @@ Application that manages the fleet
       };
 
       vehicleSummary = function() {
-        ent:fleet{["vehicle_info"]}
+
+        picos = CloudOS:picoList() || {}; // tolerate lookup failures
+	summaries = ent:fleet{["vehicle_info"]};
+	summary_keys = summaries.keys();
+
+	// which picos exist that have no summary yet? 
+	missing = picos.difference(summary_keys).klog(">>>> missing vehicle data here >>>>");
+	responses = missing.map(function(k){cloudos:sendEvent(picos{[k,"channel"]}, "fuse", "need_vehicle_data", account_info)});
+	
+	summaries
+
       };
 
       vehicleStatus = function() {
