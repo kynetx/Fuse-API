@@ -54,7 +54,7 @@ Application that manages the fleet
 
 	// which picos exist that have no summary yet? 
 	missing = pico_ids.difference(summary_keys).klog(">>>> missing vehicle data here >>>>");
-	responses = missing.map(function(k){cloudos:sendEvent(picos{[k,"channel"]}, "fuse", "need_vehicle_data", account_info)});
+	responses = missing.map(function(k){CloudOS:sendEvent(picos{[k,"channel"]}, "fuse", "need_vehicle_data", account_info)});
 	
 	summaries
 
