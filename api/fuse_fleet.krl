@@ -270,16 +270,16 @@ Application that manages the fleet
                 || {};   // tolerate lookup failures
 
 
-	this_pico = common:find_pico_by_id(this_sub{"channelName"}).klog(">>>>>>>>>>> pico <<<<<<<<<<<<<<<") || 0;
+	this_pico = common:find_pico_by_id(this_sub{"channelName"}).klog(">>>>>>>>>>> pico <<<<<<<<<<<<<<<") || {};
 
-	something_to_do = this_pico != 0;
+	something_to_do = not this_pico{"channel"}.isnull();
 
 	this_pico_id = this_sub{"channelName"};
 
         this_sub_channel = this_sub{"backChannel"};
 //	eci = this_sub{"eventChannel"}.klog(">>>>>> eci to destroy >>>>>");
 	eci = this_pico{"channel"}.klog(">>>>>> eci to destroy >>>>>");
-	huh = (something_to_do) => CloudOS:cloudDestroy(eci) | 0;
+	huh = (something_to_do) => CloudOS:cloudDestroy(eci).klog(">>>> report from cloudDestroy >>> ") | 0;
       }
       if (something_do_do) then
       {
