@@ -187,7 +187,8 @@ Application that manages the fleet
 	if (pico{"authChannel"} neq "none") then
         {
 
-	  send_directive("Vehicle created") with
+	  // depend on this directive name and id
+	  send_directive("vehicle_created") with
             cid = channel and
 	    id = pico_id;
 
