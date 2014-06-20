@@ -48,13 +48,15 @@ Application that manages the fleet
       vehicleSummary = function() {
 
         picos = CloudOS:picoList()|| {}; // tolerate lookup failures
-	pico_ids = picos.values().map(function(h){h{"id"}}).klog(">>>> we have these picos >>>>") ;
+        picos_by_id = picos.collect(function(x){x{"id"}}).map(function(k,v){v.head()});
+	pico_ids = picos_by_id.keys().klog(">>>> we have these picos >>>>") ;
+//	pico_ids = picos.values().map(function(h){h{"id"}}).klog(">>>> we have these picos >>>>") ;
 	summaries = ent:fleet{["vehicle_info"]};
 	summary_keys = summaries.keys().klog(">>>> we have these key >>>>");
 
 	// which picos exist that have no summary yet? 
 	missing = pico_ids.difference(summary_keys).klog(">>>> missing vehicle data here >>>>");
-	responses = missing.map(function(k){CloudOS:sendEvent(picos{[k,"channel"]}, "fuse", "need_vehicle_data", account_info)}); 
+	responses = missing.map(function(k){CloudOS:sendEvent(picos_by_id{[k,"channel"]}, "fuse", "need_vehicle_data", account_info)}); 
 	
 	summaries
 
