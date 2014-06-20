@@ -22,10 +22,9 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         errors to b16x13
 
         sharing on
-        provides fleet_photo, apps, S3Bucket, 
+        provides apps, S3Bucket, 
                  makeImageURLForPico, uploadPicoImage, updatePicoProfile, 
-                 fleetChannel, 
-                 dereference, factory
+                 fleetChannel
     }
 
     global {
@@ -35,45 +34,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
            PUBLIC FUNCTIONS & INDENTIFIERS
            ========================================================= */
 
-       fleet_photo = "https://dl.dropboxusercontent.com/u/329530/fuse_fleet_pico_picture.png";
+       
 
-           // rulesets we need installed in every Guard Tour Pico
-           apps = {
-               "core": [
-                   "a169x625.prod",  // CloudOS Service
-                   "a169x676.prod",  // PDS
-                   "a16x161.prod",   // Notification service
-                   "a169x672.prod",  // MyProfile
-                   "a41x174.prod",   // Amazon S3 module
-                   "a16x129.dev",    // SendGrid module
-//  don't think we really want this everywhere...                 "b16x16.prod",    // Fuse Init (owner)
-		   "b16x13.prod"     // Fuse errors
-               ],
-               "fleet": [
-                   "b16x11.prod",   // fuse_carvoyant.krl
-                   "b16x17.prod"   // fuse_fleet.krl
-               ],
-               "vehicle": [
-                   "b16x9.prod",   // fuse_vehicle.krl
-		   "b16x11.prod",  // fuse_carvoyant.krl
-		   "b16x18.prod",  // fuse_trips.krl
-		   "b16x20.prod",  // fuse_fuel.krl
- 		   "b16x21.prod"   // fuse_maintenance.krl
-               ],
-               "unwanted": [ 
-                   "a169x625.prod",
-                   "a169x664.prod",
-                   "a169x676.prod",
-                   "a169x667.prod",
-                   "a16x161.prod",
-                   "a41x178.prod",
-                   "a169x672.prod",
-                   "a169x669.prod",
-                   "a169x727.prod",
-                   "a169x695.prod",
-                   "b177052x7.prod"
-               ]
-           };
 
         initPicoProfile = defaction(pico_channel, profile) {
             pico = {
@@ -138,24 +100,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             {"eci": cid}
         };
 
-	// only ruleset installs are specific to fuse. Generalize? 
-        factory = function(pico_meta, parent_eci) {
-	  pico_schema = pico_meta{"schema"};
-          pico_role = pico_meta{"role"};
-          pico = CloudOS:cloudCreateChild(parent_eci);
-          pico_auth_channel = pico{"token"};
-          remove_rulesets = CloudOS:rulesetRemoveChild(apps{"unwanted"}, pico_auth_channel);
-          install_rulesets = CloudOS:rulesetAddChild(apps{"core"}, pico_auth_channel);
-          installed_rulesets = 
-             (pico_role.match(re/fleet/gi)) => CloudOS:rulesetAddChild(apps{"fleet"}, pico_auth_channel)
-                                             | CloudOS:rulesetAddChild(apps{"vehicle"}, pico_auth_channel);
-          {
-             "schema": pico_schema,
-             "role": pico_role,
-             "authChannel": pico_auth_channel,
-	     "installed_rulesets": installed_rulesets
-          }
-        };
+	
     }
 
     // ---------- manage fleet singleton ----------
@@ -186,7 +131,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         select when explicit need_new_fleet
         pre {
             fleet_name = event:attr("fleet");
-            pico = factory({"schema": "Fleet", "role": "fleet"}, meta:eci());
+            pico = common:factory({"schema": "Fleet", "role": "fleet"}, meta:eci());
             fleet_channel = pico{"authChannel"};
             fleet = {
                 "cid": fleet_channel
@@ -224,7 +169,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	  raise cloudos event picoAttrsSet
             with picoChannel = fleet_channel // really ought to be using subscriber channel, but don't have it...
              and picoName = fleet_name
-             and picoPhoto = fleet_photo 
+             and picoPhoto = common:fleet_photo 
 	     and picoId = pico_id
              and _api = "sky";
 

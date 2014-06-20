@@ -13,8 +13,7 @@ Application that manages the fleet
         use module a169x625  alias CloudOS
         use module a169x676  alias pds
 	use module b16x19 alias common
-        use module b16x16 alias FuseInit
-	// don't load carvoyant
+	use module b16x11 alias carvoyant
 
         sharing on
         provides vehicleChannels, seeFleetData, vehicleSummary, vehicleStatus
@@ -124,7 +123,7 @@ Application that manages the fleet
 	  raise pds event new_profile_item_available 
             attributes
 	      {"myProfileName"  : fleet_name,
-	       "myProfilePhoto" : FuseInit:fleet_photo,
+	       "myProfilePhoto" : common:fleet_photo,
 	       "_api": "sky"
 	      };
 
@@ -177,7 +176,7 @@ Application that manages the fleet
         select when fuse need_new_vehicle
         pre {
 	  name = event:attr("name") || "Vehicle-"+math:random(99999);
-          pico = FuseInit:factory({"schema": "Vehicle", "role": "vehicle"}, meta:eci());
+          pico = common:factory({"schema": "Vehicle", "role": "vehicle"}, meta:eci());
           channel = pico{"authChannel"};
           vehicle = {
             "cid": channel

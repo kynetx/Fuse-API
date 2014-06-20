@@ -11,14 +11,74 @@ Common definitions
 
 
 	provides S3Bucket, namespace, find_pico_by_id, fuel_namespace, trips_namespace, maint_namespace,
-	         convertToUTC, vehicleChannels,
+	         convertToUTC, vehicleChannels, fleet_photo, factory,
 	         skycloud
     }
 
     global {
 
+       // rulesets we need installed by type
+       apps = {
+               "core": [
+                   "a169x625.prod",  // CloudOS Service
+                   "a169x676.prod",  // PDS
+                   "a16x161.prod",   // Notification service
+                   "a169x672.prod",  // MyProfile
+                   "a41x174.prod",   // Amazon S3 module
+                   "a16x129.dev",    // SendGrid module
+		   "b16x13.prod"     // Fuse errors
+               ],
+               "fleet": [
+                   "b16x11.prod",   // fuse_carvoyant.krl
+                   "b16x17.prod"   // fuse_fleet.krl
+               ],
+               "vehicle": [
+                   "b16x9.prod",   // fuse_vehicle.krl
+		   "b16x11.prod",  // fuse_carvoyant.krl
+		   "b16x18.prod",  // fuse_trips.krl
+		   "b16x20.prod",  // fuse_fuel.krl
+ 		   "b16x21.prod"   // fuse_maintenance.krl
+               ],
+               "unwanted": [ 
+                   "a169x625.prod",
+                   "a169x664.prod",
+                   "a169x676.prod",
+                   "a169x667.prod",
+                   "a16x161.prod",
+                   "a41x178.prod",
+                   "a169x672.prod",
+                   "a169x669.prod",
+                   "a169x727.prod",
+                   "a169x695.prod",
+                   "b177052x7.prod"
+               ]
+      };
+
+      // only ruleset installs are specific to fuse. Generalize? 
+      factory = function(pico_meta, parent_eci) {
+
+
+
+	  pico_schema = pico_meta{"schema"};
+          pico_role = pico_meta{"role"};
+          pico = CloudOS:cloudCreateChild(parent_eci);
+          pico_auth_channel = pico{"token"};
+          remove_rulesets = CloudOS:rulesetRemoveChild(apps{"unwanted"}, pico_auth_channel);
+          install_rulesets = CloudOS:rulesetAddChild(apps{"core"}, pico_auth_channel);
+          installed_rulesets = 
+             (pico_role.match(re/fleet/gi)) => CloudOS:rulesetAddChild(apps{"fleet"}, pico_auth_channel)
+                                             | CloudOS:rulesetAddChild(apps{"vehicle"}, pico_auth_channel);
+          {
+             "schema": pico_schema,
+             "role": pico_role,
+             "authChannel": pico_auth_channel,
+	     "installed_rulesets": installed_rulesets
+          }
+        };
 
       S3Bucket = function(){"k-fuse-01"};
+
+      fleet_photo = "https://dl.dropboxusercontent.com/u/329530/fuse_fleet_pico_picture.png";
 
       namespace = function() {
         meta_id = "fuse-meta";
