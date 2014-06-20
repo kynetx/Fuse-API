@@ -270,14 +270,17 @@ Application that manages the fleet
                 || {};   // tolerate lookup failures
 
 
-	this_pico = common:find_pico_by_id(this_sub{"channelName"}).klog(">>>>>>>>>>> pico <<<<<<<<<<<<<<<");
+	this_pico = common:find_pico_by_id(this_sub{"channelName"}).klog(">>>>>>>>>>> pico <<<<<<<<<<<<<<<") || 0;
+
+	something_to_do = this_pico != 0;
 
 	this_pico_id = this_sub{"channelName"};
 
         this_sub_channel = this_sub{"backChannel"};
 	eci = this_sub{"eventChannel"}.klog(">>>>>> eci to destroy >>>>>");
-	huh = CloudOS:cloudDestroy(eci); 
+	huh = (something_to_do) => CloudOS:cloudDestroy(eci) | 0;
       }
+      if (something_do_do) then
       {
         send_directive("Deleted vehicle" ) with
           child = eci and
@@ -286,7 +289,7 @@ Application that manages the fleet
           fuseSub = this_sub and
           channel = this_sub_channel;
       }
-      always {
+      fired {
 
         // not a pico I'm keeping track of anymore      
         raise cloudos event picoAttrsClear 
@@ -297,6 +300,10 @@ Application that manages the fleet
           with backChannel = this_sub_channel
            and _api = "sky" if not this_sub_channel.isnull();
 
+	set ent:vehicle_info ent:vehicle_info.delete([name]);
+
+      } else {
+        log ">>>>>> no vehicle to delete with name " + name
       }
       
     }
