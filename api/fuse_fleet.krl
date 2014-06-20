@@ -277,7 +277,8 @@ Application that manages the fleet
 	this_pico_id = this_sub{"channelName"};
 
         this_sub_channel = this_sub{"backChannel"};
-	eci = this_sub{"eventChannel"}.klog(">>>>>> eci to destroy >>>>>");
+//	eci = this_sub{"eventChannel"}.klog(">>>>>> eci to destroy >>>>>");
+	eci = this_pico{"channel"}.klog(">>>>>> eci to destroy >>>>>");
 	huh = (something_to_do) => CloudOS:cloudDestroy(eci) | 0;
       }
       if (something_do_do) then
