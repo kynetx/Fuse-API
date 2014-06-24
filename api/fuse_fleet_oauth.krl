@@ -165,14 +165,15 @@ You are being redirected to <a href="#{url}">#{url}</a>
 	vehicle_ecis_by_id = vehicle_ecis.collect(function(x){x{"channelName"}}).map(function(k,v){v.head()});
 	caller = vehicle_ecis_by_id{id}.klog(">>>> this caller >>>>>");
 	incoming_eci = meta:eci().klog(">>>> incoming ECI >>>>>");
-	caller{"eventChannel"} eq incoming_eci => ent:account_info
+	caller{"backChannel"} eq incoming_eci => ent:account_info
 	                                        | {}
       };
 
       getTokens = function(id) {
-        meta:inModule() => ent:account_info
-	                 | getTokensForVehicle(id)
-      };		
+        event:domain() eq "discovery" => getTokensForVehicle(id)
+	                               | ent:account_info
+      };	
+	
 
     }
 

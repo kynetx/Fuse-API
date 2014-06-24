@@ -341,8 +341,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
   rule carvoyant_init_vehicle {
     select when carvoyant init_vehicle
     pre {
-      config_data = get_config(""); // pass in empty vid to ensure we create one
-      profile = pds:get_all_me();
+      config_data = get_config("").klog(">>>>> config data >>>>>"); // pass in empty vid to ensure we create one
+      profile = pds:get_all_me().klog(">>>>> profile >>>>>");
       params = {
         "name": event:attr("name") || profile{"myProfileName"} || "Unknown Vehicle",
         "deviceId": vehicle_id() || event:attr("deviceId") || "unknown",
@@ -371,7 +371,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
   }
 
-  // this neds work
+  // this needs work
   rule carvoyant_update_vehicle_account {
     select when carvoyant update_account
     pre {
