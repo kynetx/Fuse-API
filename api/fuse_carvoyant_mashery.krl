@@ -340,6 +340,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
   rule carvoyant_init_vehicle {
     select when carvoyant init_vehicle
+             or pds profile_updated
     pre {
       config_data = get_config("").klog(">>>>> config data >>>>>"); // pass in empty vid to ensure we create one
       profile = pds:get_all_me().klog(">>>>> profile >>>>>");
@@ -394,32 +395,6 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
    // }
 
 
-  rule store_device_id {
-    select when carvoyant new_device_id
-             or pds profile_updated
-    pre {
-      new_deviceId = event:attr("deviceId");
-      old_deviceId = pds:get_me("deviceId");
-      config_data = get_config(event:attr(ent:vehicle_data{"vehicleId"})); // URL for this vehicle
-    }
-    if ( not new_deviceId.isnull()
-      && new_deviceId neq old_deviceId
-       ) then {
-      send_directive("Updating Carvoyant account for vehicle since deviceId changed ");
-      carvoyant_post(config_data{"base_url"},
-      		     params,
-                     config_data
-		    )
-        with ar_label = "vehicle_account_update";
-    }
-    fired {
-      raise pds event "updated_profile_item_available"
-	  attributes {
-	    "deviceId": deviceId,
-	    "_api": "sky"	
-	  };
-    }
-  }
 
   rule initialization_ok { 
     select when http post status_code  re#2\d\d#  label "vehicle_init" 

@@ -292,6 +292,8 @@ Fuse ruleset for a vehicle pico
 			 .put(["address"], status{["GEN_NEAREST_ADDRESS","value"]})
 			 .put(["speed"], speed)
 			 .put(["heading"], status{["GEN_HEADING","value"]})
+			 .put(["mileage"], raw_vehicle_info{"mileage"} || profile{"mileage"})
+			 ;
 
       }
       {send_directive("Updated vehicle data for #{vid}") with
