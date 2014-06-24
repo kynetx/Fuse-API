@@ -24,7 +24,9 @@ Ruleset for fleet OAuth stuff
 
     global {
     
+      // duplicated here and in fuse_carvoyant.krl
       api_hostname = "api.carvoyant.com";
+      apiHostname = function() {api_hostname};
       oauth_url = "https://"+api_hostname+"/oauth/token";
 
       // appears in both this ruleset and fuse_carvoyant
@@ -88,7 +90,7 @@ Ruleset for fleet OAuth stuff
         {"url": "https://auth.carvoyant.com/OAuth/authorize?" + query_string}
      }
 
-      // handleOauthCode rule redirects to this function based on state param created in carvoyantOathUrl()
+      // CloudOS:handleOauthCode rule redirects to this function based on state param created in carvoyantOathUrl()
       codeForAccessToken = function(code, redirect_uri) {
         header = 
             {"credentials": {
