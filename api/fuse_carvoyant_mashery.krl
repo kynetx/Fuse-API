@@ -98,6 +98,23 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	      })
     }
 
+    isAuthorized = function() {
+      account_info = getTokens();
+      created = account_info{"timestamp"} || time:now(); 
+      expires_in =  account_info{"expires_in"} || -1 ; // if we don't find it, it's expired
+      time_expires = time:add(created, {"seconds": expires_in});
+      expired = time:compare(time_expires,
+                             time:now()) // less than 1 if expired
+                < 1;      
+//      access_token = expired => refreshTokenForAccessToken() | account_info{"access_token"};
+
+      config_data = get_config();
+      vehicle_info = expired => {} | carvoyant_get(api_url+"/vehicle/", config_data) || {};
+      {"authorized" : vehicle_info{"status_code"} eq "200"}
+    };
+
+
+
     // ---------- general carvoyant API access functions ----------
     // See http://confluence.carvoyant.com/display/PUBDEV/Authentication+Mechanism for details
     oauthHeader = function(access_token) {

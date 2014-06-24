@@ -53,22 +53,6 @@ Ruleset for fleet OAuth stuff
                                               | raw_result.decode()
       };
 
-      isAuthorized = function() {
-        account_info = ent:account_info;
-        created = account_info{"timestamp"} || time:now(); 
-        expires_in =  account_info{"expires_in"} || -1 ; // if we don't find it, it's expired
-        time_expires = time:add(created, {"seconds": expires_in});
-        expired = time:compare(time_expires,
-                               time:now()) // less than 1 if expired
-                  < 1;      
-
-//      access_token = expired => refreshTokenForAccessToken() | account_info{"access_token"};
-
-        config_data = get_config();
-        vehicle_info = expired => {} | carvoyant_get(api_url+"/vehicle/", config_data) || {};
-        {"authorized" : vehicle_info{"status_code"} eq "200"}
-      };
-
       redirectUri = function() {
         "https://" + meta:host() + "/sky/event/" + keys:anonymous_pico("eci")  + "/" + math:random(9999) +  "/oauth/new_oauth_code";
       }
