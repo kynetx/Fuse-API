@@ -348,8 +348,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
         "deviceId": event:attr("deviceId") || profile{"deviceId"} || "unknown",
         "label": event:attr("label") || profile{"myProfileName"} || "My Vehicle",
 	"vin": event:attr("vin") || profile{"vin"} || "unknown",
-        "mileage": event:attr("mileage") || "10"
-      }
+        "mileage": event:attr("mileage") || profile{"mileage"} || "10"
+      }.klog(">>>> creating vehicle with these params >>>> ")
     }
     if( params{"deviceId"} neq "unknown"
      && params{"vin"} neq "unknown"
@@ -364,49 +364,53 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
     fired {
       log(">>>>>>>>>> initializing Carvoyant account with device ID = " + params{"deviceId"});
-      raise carvoyant event new_device_id 
-        with deviceId = deviceId
     } else {
       log(">>>>>>>>>> Carvoyant account initializaiton failed; missing device ID");
     }
   }
 
   // this needs work
-  rule carvoyant_update_vehicle_account {
-    select when carvoyant update_account
+   // rule carvoyant_update_vehicle_account {
+   //   select when carvoyant update_account
+   //   pre {
+   //     // if this vehicleId attr is unset, this creates a new vehicle...
+   //     config_data = get_config(event:attr("vehicleId")); 
+   //     deviceId = event:attr("deviceId");
+   //     // will update any of the updatable data that appears in attrs() and leave the rest alone
+   //     params = event:attrs().delete(["vehicleId"]);
+   //   }
+   //   {
+   //     send_directive("Updating Carvoyant account for vehicle ");
+   //     carvoyant_post(config_data{"base_url"},
+   //     		     params,
+   //                    config_data
+   // 		    )
+   //       with ar_label = "vehicle_account_update";
+   //   }
+   //   fired {
+   //     raise carvoyant event new_device_id 
+   //       with deviceId = deviceId if not deviceId.isnull()
+   //   }
+   // }
+
+
+  rule store_device_id {
+    select when carvoyant new_device_id
+             or pds profile_updated
     pre {
-      // if this vehicleId attr is unset, this creates a new vehicle...
-      config_data = get_config(event:attr("vehicleId")); 
-      deviceId = event:attr("deviceId");
-      // will update any of the updatable data that appears in attrs() and leave the rest alone
-      params = event:attrs().delete(["vehicleId"]);
+      new_deviceId = event:attr("deviceId");
+      old_deviceId = pds:get_me("deviceId");
+      config_data = get_config(event:attr(ent:vehicle_data{"vehicleId"})); // URL for this vehicle
     }
-    {
-      send_directive("Updating Carvoyant account for vehicle ");
+    if ( not new_deviceId.isnull()
+      && new_deviceId neq old_deviceId
+       ) then {
+      send_directive("Updating Carvoyant account for vehicle since deviceId changed ");
       carvoyant_post(config_data{"base_url"},
       		     params,
                      config_data
 		    )
         with ar_label = "vehicle_account_update";
-    }
-    fired {
-      raise carvoyant event new_device_id 
-        with deviceId = deviceId if not deviceId.isnull()
-    }
-  }
-
-
-  rule store_device_id {
-    select when carvoyant new_device_id
-    pre {
-      new_deviceId = event:attr("deviceId");
-      old_deviceId = pds:get_me("deviceId");
-
-    }
-    if ( not new_deviceId.isnull()
-      && new_deviceId neq old_deviceId
-       ) then {
-      noop();
     }
     fired {
       raise pds event "updated_profile_item_available"
@@ -437,7 +441,9 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     always {
       set ent:vehicle_data storable_vehicle_data;
       raise fuse event "vehicle_account_updated" with 
-        vehicle_data = vehicle_data
+        vehicle_data = vehicle_data;
+      raise carvoyant event new_device_id 
+        with deviceId = "BAD DEVICE ID" if deviceId.isnull()
     }
   }
 
