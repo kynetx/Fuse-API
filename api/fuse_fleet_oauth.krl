@@ -9,7 +9,13 @@ Ruleset for fleet OAuth stuff
         use module a169x676 alias pds
 	use module b16x19 alias common
 
+	use module b16x10 alias fuse_keys
+
 	errors to b16x13
+	
+	sharing on
+
+
 
 	provides clientAccessToken,  refreshTokenForAccessToken, showTokens, forgetTokens, forgetAllTokens, // don't provide after debug
              isAuthorized, redirectUri, carvoyantOauthUrl, codeForAccessToken, getTokens
