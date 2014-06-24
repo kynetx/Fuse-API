@@ -184,7 +184,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
           log ">>> FLEET CHANNEL <<<<";
           log "Pico created for fleet: " + pico.encode();
 
-	  raise fuse event new_fleet;
+	  raise fuse event new_fleet_initialized;
 
         } else {
           log "Pico NOT CREATED for fleet";
@@ -270,13 +270,13 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
 
     rule send_user_creation_email {
-        select when fuse new_fleet
+        select when fuse new_fleet_initialized
         pre {
 
 	  me = pds:get_all_me();
           msg = <<
-                A new fleet was created for me.encode();
-            >>;
+A new fleet was created for #{me.encode()};
+>>;
         }
 
         {

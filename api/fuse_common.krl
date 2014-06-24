@@ -42,9 +42,7 @@ Common definitions
                "unwanted": [ 
                    "a169x625.prod",
                    "a169x664.prod",
-                   "a169x676.prod",
                    "a169x667.prod",
-                   "a16x161.prod",
                    "a41x178.prod",
                    "a169x672.prod",
                    "a169x669.prod",
