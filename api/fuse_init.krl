@@ -94,8 +94,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         };
 
         fleetChannel = function() {
-            cid =  ent:fleet_channel
-                || CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel");
+            cid =  CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel") 
+	        || pds:get_item(common:namespace(),"fleet_channel");
 
             {"eci": cid}
         };
@@ -184,6 +184,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
           log ">>> FLEET CHANNEL <<<<";
           log "Pico created for fleet: " + pico.encode();
 
+	  raise fuse event new_fleet;
+
         } else {
           log "Pico NOT CREATED for fleet";
 	}
@@ -267,14 +269,6 @@ Ruleset for initializing a Fuse account and managing vehicle picos
     }
 
 
-    rule cache_index_channel is inactive {
-        select when fuse new_fleet
-        noop();
-        fired {
-            set ent:fleet_channel event:attr("fleet_channel");
-        }
-    }
-
     rule send_user_creation_email {
         select when fuse new_fleet
         pre {
@@ -282,7 +276,6 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	  me = pds:get_all_me();
           msg = <<
                 A new fleet was created for me.encode();
-
             >>;
         }
 
@@ -379,7 +372,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             gid = page:env("g_id");
             meta_eci = meta:eci();
             this_session = CloudOS:currentSession();
-            indici = ent:fleet_channel;
+            indici = pds:get_item(common:namespace(),"fleet_channel");
             fleet = subscriptionsByChannelName(common:namespace(), "Fleet");
             dump = {
                 "g_id": gid,
