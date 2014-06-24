@@ -342,7 +342,9 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     select when carvoyant init_vehicle
              or pds profile_updated
     pre {
-      config_data = get_config("").klog(">>>>> config data >>>>>"); // pass in empty vid to ensure we create one
+      vid = event:name() eq "init_vehicle" => "" // pass in empty vid to ensure we create one
+                                            | ent:vehicle_data{"vehicleId"};
+      config_data = get_config(vid).klog(">>>>> config data >>>>>"); 
       profile = pds:get_all_me().klog(">>>>> profile >>>>>");
       params = {
         "name": event:attr("name") || profile{"myProfileName"} || "Unknown Vehicle",
