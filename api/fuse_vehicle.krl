@@ -195,7 +195,7 @@ Fuse ruleset for a vehicle pico
 
 
     // ---------- set up and configure me ----------
-    rule request_config_for_vehicle {
+    rule request_config_for_vehicle is inactive {
       select when fuse new_vehicle_configuration
       pre {
         // figure out who my fleet is

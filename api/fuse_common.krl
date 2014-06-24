@@ -12,7 +12,7 @@ Common definitions
 
 	provides S3Bucket, namespace, find_pico_by_id, fuel_namespace, trips_namespace, maint_namespace,
 	         convertToUTC, vehicleChannels, fleet_photo, factory,
-	         skycloud
+	         skycloud, allowedRids
     }
 
     global {
@@ -158,7 +158,10 @@ Common definitions
 	res
       };
 
-
+      // rids allowed to ask for tokens from fleet
+      allowedRids = function() {
+        ["b16x11", "b16x23"];
+      }
 
   }
 

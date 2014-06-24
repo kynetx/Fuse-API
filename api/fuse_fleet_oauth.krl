@@ -170,8 +170,11 @@ You are being redirected to <a href="#{url}">#{url}</a>
       };
 
       getTokens = function(id) {
-        event:domain() eq "discovery" => getTokensForVehicle(id)
-	                               | ent:account_info
+        // this is ad hoc authentication
+        caller = meta:callingRID().klog(">>>> calling rid >>>>>");
+	allowed = common:allowedRids().klog(">>>> allowed rids >>>>");
+        allows.any(function(x){x eq caller}) => ent:account_info
+	                               	      | getTokensForVehicle(id)
       };	
 	
 

@@ -345,7 +345,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       profile = pds:get_all_me().klog(">>>>> profile >>>>>");
       params = {
         "name": event:attr("name") || profile{"myProfileName"} || "Unknown Vehicle",
-        "deviceId": vehicle_id() || event:attr("deviceId") || "unknown",
+        "deviceId": event:attr("deviceId") || profile{"deviceId"} || "unknown",
         "label": event:attr("label") || profile{"myProfileName"} || "My Vehicle",
 	"vin": event:attr("vin") || profile{"vin"} || "unknown",
         "mileage": event:attr("mileage") || "10"
