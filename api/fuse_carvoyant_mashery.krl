@@ -19,7 +19,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     errors to b16x13
 
     provides namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
-	     carvoyantVehicleData,
+	     carvoyantVehicleData, isAuthorized,
              vehicleStatus, keyToLabel, tripInfo,
              getSubscription, no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
 
