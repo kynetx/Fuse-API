@@ -30,7 +30,8 @@ Common definitions
                ],
                "fleet": [
                    "b16x11.prod",   // fuse_carvoyant.krl
-                   "b16x17.prod"   // fuse_fleet.krl
+                   "b16x17.prod",   // fuse_fleet.krl
+                   "b16x23.prod"    // fuse_fleet_oauth.krl
                ],
                "vehicle": [
                    "b16x9.prod",   // fuse_vehicle.krl
@@ -54,9 +55,6 @@ Common definitions
 
       // only ruleset installs are specific to fuse. Generalize? 
       factory = function(pico_meta, parent_eci) {
-
-
-
 	  pico_schema = pico_meta{"schema"};
           pico_role = pico_meta{"role"};
           pico = CloudOS:cloudCreateChild(parent_eci);

@@ -14,6 +14,7 @@ Application that manages the fleet
         use module a169x676  alias pds
 	use module b16x19 alias common
 	use module b16x11 alias carvoyant
+	use module b16x23 alias carvoyant_oauth
 
         sharing on
         provides vehicleChannels, seeFleetData, vehicleSummary, vehicleStatus
