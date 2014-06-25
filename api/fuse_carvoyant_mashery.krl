@@ -78,7 +78,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     // if we're the fleet, we ask the module installed here, if not, ask the fleet
     getTokens = function() {
-      my_type = pds:get_item("myCloud", "mySchemaName");
+      my_type = pds:get_item("myCloud", "mySchemaName").klog(">>> my type >>>>");
       (my_type eq "Fleet") => carvoyant_oauth:getTokens()
                             | getTokensFromFleet()
     }
@@ -342,7 +342,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     select when carvoyant init_vehicle
              or pds profile_updated
     pre {
-      cv_vehicles = carvoyantVehicleData(); //.klog(">>>>> carvoyant vehicle data >>>>");
+      cv_vehicles = carvoyantVehicleData().klog(">>>>> carvoyant vehicle data >>>>") || [];
       profile = pds:get_all_me().klog(">>>>> profile >>>>>");
       // true if vehicle exists in Carvoyant with same vin and deviceId and not yet linked
       vehicle_match = cv_vehicles
