@@ -160,7 +160,7 @@ Common definitions
 
       // rids allowed to ask for tokens from fleet
       allowedRids = function() {
-        ["b16x11", "b16x23"];
+        ["b16x11", "b16x23", "b16x17"];
       }
 
   }

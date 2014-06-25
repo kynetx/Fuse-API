@@ -163,7 +163,7 @@ You are being redirected to <a href="#{url}">#{url}</a>
       getTokensForVehicle = function(id) {
         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle").klog(">>>> some vehicle ECIs >>>>");
 	vehicle_ecis_by_id = vehicle_ecis.collect(function(x){x{"channelName"}}).map(function(k,v){v.head()});
-	caller = vehicle_ecis_by_id{id}.klog(">>>> this caller >>>>>");
+	caller = vehicle_ecis_by_id{id}.klog(">>>> this caller >>>>>") || {};
 	incoming_eci = meta:eci().klog(">>>> incoming ECI >>>>>");
 	caller{"backChannel"} eq incoming_eci => ent:account_info
 	                                        | {}
