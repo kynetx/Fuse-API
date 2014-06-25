@@ -374,7 +374,7 @@ Application that manages the fleet
       foreach event:attr("vehicle_data") setting(vehicle)
         pre {
 	  pid = vehicle{"picoId"}.klog(">>> Pico ID >>>>");
-	  vehicle_sub = findVehicleByName("pid");
+	  vehicle_sub = findVehicleByName("pid"); 
 	}
 	if(not vehicle_sub{"eventChannel"}.isnull()) then
 	{
