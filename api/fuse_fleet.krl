@@ -64,7 +64,7 @@ Application that manages the fleet
 	vehicle_ecis_by_name = vehicle_ecis
 	                         .collect(function(x){x{"channelName"}})
 				 .map(function(k,v){v.head()})
-				 .klog(">>>> vehicle ECIs by name")
+				 // .klog(">>>> vehicle ECIs by name")
 				 ;
 	vehicle_ecis_by_name{name} || {}
       };
@@ -374,7 +374,7 @@ Application that manages the fleet
       foreach event:attr("vehicle_data") setting(vehicle)
         pre {
 	  pid = vehicle{"picoId"}.klog(">>> Pico ID >>>>");
-	  vehicle_sub = findVehicleByName("pid").klog(">>>>>> Vehicle Sub >>>>>> "); 
+	  vehicle_sub = findVehicleByName(pid);
 	}
 	if(not vehicle_sub{"eventChannel"}.isnull()) then
 	{
