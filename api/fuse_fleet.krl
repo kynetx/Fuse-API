@@ -59,6 +59,12 @@ Application that manages the fleet
 	vehicle_ecis_by_backchannel{bc} || {}
       };
 
+      findVehicleByName = function (name) {
+        vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle");
+	vehicle_ecis_by_name = vehicle_ecis.collect(function(x){x{"channelName"}}).map(function(k,v){v.head()});
+	vehicle_ecis_by_name{name} || {}
+      };
+
     }
 
     // ---------- respond to owner ----------
@@ -318,24 +324,66 @@ Application that manages the fleet
 
     }
 
-    rule sync_fleet_with_carvoyant {
+    rule find_fuse_carvoyant_diffs {
       select when fuse fleet_updated
       pre {
-        cv_vehicles = carvoyant:carvoyantVehicleData().klog(">>>>> carvoyant vehicle data >>>>");
-	my_vehicles = vehicleSummary().map(function(k,v){v.put(["pico_id"], k)}).klog(">>>> Fuse vehicle data >>>>>");
-	no_vehicle_id = my_vehicles.values().filter(function(v){v{"vehicleId"}.isnull()}).klog(">>>> no vid >>>>");
+        cv_vehicles = carvoyant:carvoyantVehicleData(); //.klog(">>>>> carvoyant vehicle data >>>>");
+	my_vehicles = vehicleSummary().map(function(k,v){v.put(["picoId"], k)}); //.klog(">>>> Fuse vehicle data >>>>>");
+	no_vehicle_id = my_vehicles.values().filter(function(v){v{"vehicleId"}.isnull()}); //.klog(">>>> no vid >>>>");
 	by_vehicle_id = my_vehicles.values().filter(function(v){not v{"vehicleId"}.isnull()}).collect(function(v){v{"vehicleId"}}); //.klog(">>>> have vid >>>>"); 
 	in_cv_not_fuse = 
-	  cv_vehicles.filter(function(v){ by_vehicle_id{v{"vehicleId"}}.isnull() }).klog(">>> no matching fuse vehicle >>>> ");
+	  cv_vehicles.filter(function(v){ by_vehicle_id{v{"vehicleId"}}.isnull() }); // .klog(">>> no matching fuse vehicle >>>> ");
       }
       {
         send_directive("sync_fleet") with
 	  fuse_not_carvoyant = no_vehicle_id and
           carvoyant_not_fuse = in_cv_not_fuse
       }
+      fired {
+        log ">>>> syncing fleet and carvoyant>>> ";
+         // raise fuse event vehicles_not_in_carvoyant with
+         //   vehicle_data = fuse_not_carvoyant;
 
+	 // raise fuse event vehicles_not_in_fuse with 
+	 //   vehicle_data = carvoyant_not_fuse
+
+      }
     }
 
+    // what do we want to do with these????
+    rule sync_carvoyant_with_fuse {
+      select when fuse vehicles_not_in_fuse
+      foreach event:attr("vehicle_data") setting(vehicle)
+        pre {
+	  vid = vehicle{"vehicleId"}.klog(">>> Vehicle ID >>>>");
+	  config_data = carvoyant:get_config(vid).klog(">>>>> config data >>>>>"); 
+        }
+	if(not vid.isnull()) then
+	{
+	  send_directive("Deleting Carvoyant Vehicle") with
+	    vehicle_data = vehicle
+	}
+    }
+
+    rule sync_fuse_with_carvoyant {
+      select when fuse vehicles_not_in_carvoyant
+      foreach event:attr("vehicle_data") setting(vehicle)
+        pre {
+	  pid = vehicle{"picoId"}.klog(">>> Pico ID >>>>");
+	  vehicle_sub = findVehicleByName("pid");
+	}
+	if(not vehicle_sub{"eventChannel"}.isnull()) then
+	{
+	  send_directive("Initializing vehicle") with
+	    vehicle_sub_info = vehicle_sub;
+	  event:send({"cid": vehicle_sub{"eventChannel"}}, "carvoyant", "init_vehicle");
+	}
+	fired {
+	  log ">>>> telling #{pid} to initialize itself with Carvoyant >>>"
+	} else {
+	  log ">>>> No event channel found for #{pid}"
+	}
+    }
 
     // ---------- cache vehicle data ----------
 
