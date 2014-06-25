@@ -208,7 +208,7 @@ Application that manages the fleet
 	             			 "_async": 0    // we want this to be complete before we try to subscribe below
 		    			});
 
-        }
+        } 
 
         fired {
 
