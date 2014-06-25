@@ -266,7 +266,7 @@ Fuse ruleset for a vehicle pico
         vid = carvoyant:vehicle_id();
 	incoming = event:attrs() || {};
 
-        raw_vehicle_info = incoming{"vin"}.isnull() => carvoyant:carvoyantVehicleData(vid)
+        raw_vehicle_info = incoming{"vin"}.isnull() => carvoyant:carvoyantVehicleData(vid) || {}
                                                      | incoming;
 
 	profile = pds:get_all_me().klog(">>>>>> seeing profile >>>>> ");

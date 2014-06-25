@@ -348,11 +348,10 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       vehicle_match = cv_vehicles
                         .filter(function(v){
 			          v{"vin"} eq profile{"vin"}  
-                               && v{"deviceId"} eq profile{"deviceId"}
+                               // && v{"deviceId"} eq profile{"deviceId"}
 			       && ent:vehicle_data{"vehicleId"}.isnull()
-                               }).klog(">>>> matching vehicles >>>>").length() 
-                      > 0;
-      vid = vehicle_match                  => profile{"deviceId"} 
+                               }).head().klog(">>>> matching vehicle >>>>");
+      vid = not vehicle_match.isnull()     => vehicle_match{"vehicleId"} 
           | event:name() eq "init_vehicle" => "" // pass in empty vid to ensure we create one
           |                                   ent:vehicle_data{"vehicleId"} || profile{"deviceId"};
       config_data = get_config(vid).klog(">>>>> config data >>>>>"); 
