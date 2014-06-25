@@ -374,7 +374,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
    	    )
         with ar_label = "vehicle_init";
     }
-    fired {
+    fired { 
       log(">>>>>>>>>> initializing Carvoyant account with device ID = " + params{"deviceId"});
       raise fuse event vehicle_uninitialized if vehicle_match || event:name() eq "init_vehicle";
     } else {
