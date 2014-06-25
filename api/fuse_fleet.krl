@@ -342,10 +342,10 @@ Application that manages the fleet
       fired {
         log ">>>> syncing fleet and carvoyant>>> ";
         raise fuse event vehicles_not_in_carvoyant with
-          vehicle_data = fuse_not_carvoyant;
+          vehicle_data = no_vehicle_id;
 
 	 // raise fuse event vehicles_not_in_fuse with 
-	 //   vehicle_data = carvoyant_not_fuse
+	 //   vehicle_data = in_cv_not_fuse
 
       }
     }
