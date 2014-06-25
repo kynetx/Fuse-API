@@ -360,7 +360,7 @@ Application that manages the fleet
         }
 	if(not vid.isnull()) then
 	{
-	  send_directive("Deleting Carvoyant Vehicle") with
+	  send_directive("Reclaiming Carvoyant Vehicles") with
 	    vehicle_data = vehicle
 	}
     }

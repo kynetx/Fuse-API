@@ -214,7 +214,7 @@ Fuse ruleset for a vehicle pico
     rule initialize_vehicle {
       select when fuse vehicle_uninitialized
       pre {
-        profile = pds:get_me();
+        profile = pds:get_all_me();
       }
       if (not profile{"deviceId"}.isnull() ) then {
         send_directive("initializing vehicle " + profile{"deviceId"});
@@ -228,7 +228,7 @@ Fuse ruleset for a vehicle pico
 
 	raise fuse event vehicle_initialized;
       } else {
-        log ">>>>>>>>>>>>>>>>>>>>>>>>> vehicle not configure <<<<<<<<<<<<<<<<<<<<<<<<<";
+        log ">>>>>>>>>>>>>>>>>>>>>>>>> vehicle not configured <<<<<<<<<<<<<<<<<<<<<<<<<";
         raise fuse event vehicle_not_configured ;
       }
     }

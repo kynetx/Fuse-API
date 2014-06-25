@@ -337,15 +337,25 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
   // ---------- rules for initializing and updating vehicle cloud ----------
 
-
+  // creates and updates vehicles in the Carvoyant system
   rule carvoyant_init_vehicle {
     select when carvoyant init_vehicle
              or pds profile_updated
     pre {
-      vid = event:name() eq "init_vehicle" => "" // pass in empty vid to ensure we create one
-                                            | ent:vehicle_data{"vehicleId"};
-      config_data = get_config(vid).klog(">>>>> config data >>>>>"); 
+      cv_vehicles = carvoyantVehicleData(); //.klog(">>>>> carvoyant vehicle data >>>>");
       profile = pds:get_all_me().klog(">>>>> profile >>>>>");
+      // true if vehicle exists in Carvoyant with same vin and deviceId and not yet linked
+      vehicle_match = cv_vehicles
+                        .filter(function(v){
+			          v{"vin"} eq profile{"vin"}  
+                               && v{"deviceId"} eq profile{"deviceId"}
+			       && ent:vehicle_data{"vehicleId"}.isnull()
+                               }).klog(">>>> matching vehicles >>>>").length() 
+                      > 0;
+      vid = vehicle_match                  => profile{"deviceId"} 
+          | event:name() eq "init_vehicle" => "" // pass in empty vid to ensure we create one
+          |                                   ent:vehicle_data{"vehicleId"} || profile{"deviceId"};
+      config_data = get_config(vid).klog(">>>>> config data >>>>>"); 
       params = {
         "name": event:attr("name") || profile{"myProfileName"} || "Unknown Vehicle",
         "deviceId": event:attr("deviceId") || profile{"deviceId"} || "unknown",
@@ -358,7 +368,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
      && params{"vin"} neq "unknown"
       ) then
     {
-      send_directive("Initializing Carvoyant account for vehicle ") with params = params;
+      send_directive("Initializing or updating Carvoyant vehicle for Fuse vehicle ") with params = params;
       carvoyant_post(config_data{"base_url"},
       		     params,
                      config_data
@@ -367,6 +377,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
     fired {
       log(">>>>>>>>>> initializing Carvoyant account with device ID = " + params{"deviceId"});
+      raise fuse event vehicle_uninitialized if vehicle_match || event:name() eq "init_vehicle";
     } else {
       log(">>>>>>>>>> Carvoyant account initializaiton failed; missing device ID");
     }
