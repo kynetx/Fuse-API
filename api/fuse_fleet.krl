@@ -341,8 +341,8 @@ Application that manages the fleet
       }
       fired {
         log ">>>> syncing fleet and carvoyant>>> ";
-         // raise fuse event vehicles_not_in_carvoyant with
-         //   vehicle_data = fuse_not_carvoyant;
+        raise fuse event vehicles_not_in_carvoyant with
+          vehicle_data = fuse_not_carvoyant;
 
 	 // raise fuse event vehicles_not_in_fuse with 
 	 //   vehicle_data = carvoyant_not_fuse
@@ -360,7 +360,7 @@ Application that manages the fleet
         }
 	if(not vid.isnull()) then
 	{
-	  send_directive("Reclaiming Carvoyant Vehicles") with
+	  send_directive("Unclaimed Carvoyant Vehicles") with
 	    vehicle_data = vehicle
 	}
     }
