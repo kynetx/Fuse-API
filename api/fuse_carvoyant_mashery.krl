@@ -343,14 +343,14 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     pre {
       cv_vehicles = carvoyantVehicleData().klog(">>>>> carvoyant vehicle data >>>>") ;
       profile = pds:get_all_me().klog(">>>>> profile >>>>>");
-      // true if vehicle exists in Carvoyant with same vin and deviceId and not yet linked
       vehicle_match = cv_vehicles
                         .filter(function(v){
 			          v{"vin"} eq profile{"vin"}  
                                // && v{"deviceId"} eq profile{"deviceId"}
-			       && ent:vehicle_data{"vehicleId"}.isnull()
                                }).head().klog(">>>> matching vehicle >>>>");
-      vid = not vehicle_match.isnull()     => vehicle_match{"vehicleId"} 
+      // true if vehicle exists in Carvoyant with same vin and not yet linked
+      should_link = not vehicle_match.isnull() && ent:vehicle_data{"vehicleId"}.isnull();
+      vid = should_link                    => vehicle_match{"vehicleId"} 
           | event:name() eq "init_vehicle" => "" // pass in empty vid to ensure we create one
           |                                   ent:vehicle_data{"vehicleId"} || profile{"deviceId"};
       config_data = get_config(vid).klog(">>>>> config data >>>>>"); 
