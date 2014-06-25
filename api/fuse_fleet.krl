@@ -355,7 +355,8 @@ Application that manages the fleet
       select when fuse vehicles_not_in_fuse
       foreach event:attr("vehicle_data") setting(vehicle)
         pre {
-	  vid = vehicle{"vehicleId"}.klog(">>> Vehicle ID >>>>");
+	  v1 = vehicle.klog(">>> vehicle >>>>");
+	  vid = v1{"vehicleId"}.klog(">>> Vehicle ID >>>>");
 	  config_data = carvoyant:get_config(vid).klog(">>>>> config data >>>>>"); 
         }
 	if(not vid.isnull()) then
