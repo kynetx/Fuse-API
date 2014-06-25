@@ -197,7 +197,6 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     };
 
     carvoyantVehicleData = function(vid) {
-      vid = vid || vehicle_id();
       config_data = get_config(vid);
       data = carvoyant_get(config_data{"base_url"}, config_data);
       status = data{"status_code"} eq "200" => data{["content","vehicle"]}
@@ -342,7 +341,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     select when carvoyant init_vehicle
              or pds profile_updated
     pre {
-      cv_vehicles = carvoyantVehicleData(" ").klog(">>>>> carvoyant vehicle data >>>>") ;
+      cv_vehicles = carvoyantVehicleData().klog(">>>>> carvoyant vehicle data >>>>") ;
       profile = pds:get_all_me().klog(">>>>> profile >>>>>");
       // true if vehicle exists in Carvoyant with same vin and deviceId and not yet linked
       vehicle_match = cv_vehicles
