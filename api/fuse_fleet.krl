@@ -322,7 +322,7 @@ Application that manages the fleet
       select when fuse fleet_updated
       pre {
         cv_vehicles = carvoyant:carvoyantVehicleData().klog(">>>>> carvoyant vehicle data >>>>");
-	my_vehicles = vehicleSummary(); //.klog(">>>> Fuse vehicle data >>>>>");
+	my_vehicles = vehicleSummary().map(function(k,v){v.put(["pico_id"], k)}).klog(">>>> Fuse vehicle data >>>>>");
 	no_vehicle_id = my_vehicles.values().filter(function(v){v{"vehicleId"}.isnull()}).klog(">>>> no vid >>>>");
 	by_vehicle_id = my_vehicles.values().filter(function(v){not v{"vehicleId"}.isnull()}).collect(function(v){v{"vehicleId"}}); //.klog(">>>> have vid >>>>"); 
 	in_cv_not_fuse = 
