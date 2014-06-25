@@ -349,6 +349,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                                // && v{"deviceId"} eq profile{"deviceId"}
                                }).head().klog(">>>> matching vehicle >>>>");
       // true if vehicle exists in Carvoyant with same vin and not yet linked
+      ugh = ent:vehicle_data{"vehicleId"}.klog("stored vehicle ID");
       should_link = not vehicle_match.isnull() && ent:vehicle_data{"vehicleId"}.isnull();
       vid = should_link                    => vehicle_match{"vehicleId"} 
           | event:name() eq "init_vehicle" => "" // pass in empty vid to ensure we create one
@@ -360,7 +361,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
         "label": event:attr("label") || profile{"myProfileName"} || "My Vehicle",
 	"vin": event:attr("vin") || profile{"vin"} || "unknown",
         "mileage": event:attr("mileage") || profile{"mileage"} || "10"
-      }.klog(">>>> creating vehicle with these params >>>> ")
+      }.klog(">>>> vehicle with these params >>>> ")
     }
     if( params{"deviceId"} neq "unknown"
      && params{"vin"} neq "unknown"
