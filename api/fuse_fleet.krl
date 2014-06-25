@@ -61,7 +61,11 @@ Application that manages the fleet
 
       findVehicleByName = function (name) {
         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle");
-	vehicle_ecis_by_name = vehicle_ecis.collect(function(x){x{"channelName"}}).map(function(k,v){v.head()});
+	vehicle_ecis_by_name = vehicle_ecis
+	                         .collect(function(x){x{"channelName"}})
+				 .map(function(k,v){v.head()})
+				 .klog(">>>> vehicle ECIs by name")
+				 ;
 	vehicle_ecis_by_name{name} || {}
       };
 
