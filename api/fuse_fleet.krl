@@ -325,11 +325,13 @@ Application that manages the fleet
 	my_vehicles = vehicleSummary(); //.klog(">>>> Fuse vehicle data >>>>>");
 	no_vehicle_id = my_vehicles.values().filter(function(v){v{"vehicleId"}.isnull()}).klog(">>>> no vid >>>>");
 	by_vehicle_id = my_vehicles.values().filter(function(v){not v{"vehicleId"}.isnull()}).collect(function(v){v{"vehicleId"}}); //.klog(">>>> have vid >>>>"); 
-	cv_vehicles_with_no_matching_fuse_vehicle = 
+	in_cv_not_fuse = 
 	  cv_vehicles.filter(function(v){ by_vehicle_id{v{"vehicleId"}}.isnull() }).klog(">>> no matching fuse vehicle >>>> ");
       }
       {
-        send_directive("sync_fleet") 
+        send_directive("sync_fleet") with
+	  fuse_not_carvoyant = no_vehicle_id and
+          carvoyant_not_fuse = in_cv_not_fuse
       }
 
     }
