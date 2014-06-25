@@ -322,7 +322,8 @@ Application that manages the fleet
     rule sync_fleet_with_carvoyant {
       select when fuse fleet_updated
       pre {
-        cv_vehicles = 0;
+        cv_vehicles = carvoyant:carvoyantVehicleData().klog(">>>>> carvoyant vehicle data >>>>");
+	my_vehicles = vehicleSummary().klog(">>>> Fuse vehicle data >>>>>");
       }
       {
         send_directive("sync_fleet") 

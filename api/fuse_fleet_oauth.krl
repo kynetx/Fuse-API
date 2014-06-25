@@ -211,7 +211,6 @@ You are being redirected to <a href="#{url}">#{url}</a>
 
       owner = CloudOS:subscriptionList(common:namespace(),"FleetOwner").head().pick("$.eventChannel");
       profile = common:skycloud(owner,"pds","get_all_me");
-//      profile = pds:get_all_me();
       first_name = event:attr("first_name") || profile{"myProfileName"}.extract(re/^(\w+)\s*/).head() || "";
       last_name = event:attr("last_name") || profile{"myProfileName"}.extract(re/\s*(\w+)$/).head() || "";
       email = event:attr("email") || profile{"myProfileEmail"} || "";
