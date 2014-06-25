@@ -324,7 +324,7 @@ Application that manages the fleet
         cv_vehicles = carvoyant:carvoyantVehicleData().collect(function(v){v{"vehicleId"}}).klog(">>>>> carvoyant vehicle data >>>>");
 	my_vehicles = vehicleSummary(); //.klog(">>>> Fuse vehicle data >>>>>");
 	no_vehicle_id = my_vehicles.values().filter(function(v){v{"vehicleId"}.isnull()}).klog(">>>> no vid >>>>");
-	have_vehicle_id = my_vehicles.values().filter(function(v){not v{"vehicleId"}.isnull()}).klog(">>>> have vid >>>>");
+	have_vehicle_id = my_vehicles.values().filter(function(v){not v{"vehicleId"}.isnull()}).klog(">>>> have vid >>>>"); 
 
 
 
