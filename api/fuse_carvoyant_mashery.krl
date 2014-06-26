@@ -299,7 +299,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     del_subscription = defaction(subscription_type, subscription_id, vid) {
       configure using ar_label = false;
       config_data = get_config(vid);
-      carvoyant_delete(carvoyant_subscription_url(subscription_type, config_data, subscription_id),
+      carvoyant_delete(carvoyant_subscription_url(subscription_type, config_data, subscription_id).klog(">>>>>> deleting with this URL >>>>> "),
                        config_data)
         with ar_label = ar_label;
     }
@@ -500,7 +500,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
     if valid_subscription_type(sub_type) then
     {
-      del_subscription(sub_type, id, null)
+      del_subscription(sub_type, id, vehicle_id())
         with ar_label = "subscription_deleted";
       send_directive("Deleting subscription") with attributes = event:attrs();
     }
@@ -534,7 +534,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     {
       send_directive("Will delete subscription #{id} with type #{sub_type}") with
         sub_value = sub;
-      del_subscription(sub_type, id, null)
+      del_subscription(sub_type, id, vehicle_id())
         with ar_label = "subscription_deleted";
     }
   }
