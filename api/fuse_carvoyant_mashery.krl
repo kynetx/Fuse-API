@@ -206,7 +206,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     carvoyantVehicleData = function(vid) {
       config_data = get_config(vid);
-      data = carvoyant_get(config_data{"base_url"}, config_data);
+      data = carvoyant_get(config_data{"base_url"}, config_data) || {};
       status = data{"status_code"} eq "200" => data{["content","vehicle"]}
              | vid.isnull()                 => [] // no vid expect array
              |                                 {} // vid expect hash
@@ -274,8 +274,10 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     // subscription_id is optional, if left off, retrieves all subscriptions of given type
     getSubscription = function(vehicle_id, subscription_type, subscription_id) {
       config_data = get_config(vehicle_id);
-      carvoyant_get(carvoyant_subscription_url(subscription_type, config_data, subscription_id),
-   	            config_data)
+      raw_result = carvoyant_get(carvoyant_subscription_url(subscription_type, config_data, subscription_id),
+   	                         config_data);
+      raw_result{"status_code"} eq 200 => raw_result
+                                        | []
     };
 
 
