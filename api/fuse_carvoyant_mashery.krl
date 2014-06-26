@@ -82,7 +82,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       my_type = pds:get_item("myCloud", "mySchemaName").klog(">>> my type >>>>");
       tokens = (my_type eq "Fleet") => carvoyant_oauth:getTokens()
                                      | getTokensFromFleet();
-      tokens
+      tokens || {}
     };
     
     getTokens = function() {
