@@ -57,25 +57,29 @@ Ruleset for fleet OAuth stuff
         "https://" + meta:host() + "/sky/event/" + keys:anonymous_pico("eci")  + "/" + math:random(9999) +  "/oauth/new_oauth_code";
       }
 
+
+
       // this function creates a carvoyant OAuth URL that leads the user to a login screen. 
       // the redirect URL gets picked up by the anonymous pico's CloudOS handleOauthCode rule 
-      carvoyantOauthUrl = function() {
+      carvoyantOauthUrl = function(hostsite) {
     
         redirect_uri = redirectUri();
         accessing_eci = meta:eci();
-    
+
         params = {"client_id" : keys:carvoyant_client("client_id"),	
                   "redirect_uri" : redirect_uri,
   		  "response_type" : "code",
-  		  "state": [meta:rid(), accessing_eci ].join(",")
+  		  "state": [meta:rid(), accessing_eci, hostsite ].join(",")
 		 };
 
         query_string = params.map(function(k,v){k+"="+v}).values().join("&").klog(">>>>> query string >>>>>>");
         {"url": "https://auth.carvoyant.com/OAuth/authorize?" + query_string}
-     }
+      }
+
+
 
       // CloudOS:handleOauthCode rule redirects to this function based on state param created in carvoyantOathUrl()
-      codeForAccessToken = function(code, redirect_uri) {
+      codeForAccessToken = function(code, redirect_uri, hostsite) {
         header = 
             {"credentials": {
                "username": keys:carvoyant_client("client_id"),
@@ -93,7 +97,7 @@ Ruleset for fleet OAuth stuff
                                                         | raw_result.decode();
 
         // hardcoded URL!!
-        url = "http://windley.github.io/Joinfuse/carvoyant.html" + "?" +
+        url = hostsite + "?" +
                 results.map(function(k,v){k + "=" + v}).values().join("&").klog(">>>>> url >>>>>");
         
         page = <<
