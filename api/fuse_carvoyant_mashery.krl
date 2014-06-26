@@ -73,7 +73,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     getTokensFromFleet = function() {
        my_fleet = CloudOS:subscriptionList(common:namespace(),"Fleet").head();
-       common:skycloud(my_fleet{"eventChannel"},"b16x23","getTokens", {"id": my_fleet{"channelName"}});
+       (not my_fleet.isnull()) => common:skycloud(my_fleet{"eventChannel"},"b16x23","getTokens", {"id": my_fleet{"channelName"}})
+                                | null
     }
 
     // if we're the fleet, we ask the module installed here, if not, ask the fleet
@@ -91,10 +92,12 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
        base_url = api_url+ "/vehicle/";
        url = base_url + vid;
        account_info = getTokens();
+       access_token = (not account_info.isnull()) => account_info{"access_token"}
+                                                   | "NOTOKEN"
        config_data
          .put({"hostname": api_hostname,
 	       "base_url": url,
-	       "access_token" : account_info{"access_token"}			  
+	       "access_token" : access_token		  
 	      })
     }
 
@@ -126,6 +129,11 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     // functions
     // params if optional
     carvoyant_get = function(url, config_data, params, redo) {
+       params{"access_token"} neq "NOTOKEN" => carvoyant_get_aux(url, config_data, params, redo)
+                                             | null
+    }   
+
+    carvoyant_get_aux = function(url, config_data, params, redo) {
       raw_result = http:get(url, 
                             params, 
 			    oauthHeader(config_data{"access_token"}),
@@ -350,7 +358,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                                // && v{"deviceId"} eq profile{"deviceId"}
                                }).head().klog(">>>> matching vehicle >>>>");
       // true if vehicle exists in Carvoyant with same vin and not yet linked
-      ugh = ent:vehicle_data{"vehicleId"}.klog("stored vehicle ID");
+      ugh = ent:vehicle_data{"vehicleId"}.klog(">>> stored vehicle ID >>>");
       should_link = (not vehicle_match.isnull() && ent:vehicle_data{"vehicleId"}.isnull()).klog(">>> should we linl???? >>>>> ");
       vid = should_link                            => vehicle_match{"vehicleId"} 
           | ent:vehicle_data{"vehicleId"}.isnull() => "" // pass in empty vid to ensure we create one
