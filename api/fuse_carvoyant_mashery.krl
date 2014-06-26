@@ -78,12 +78,24 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
 
     // if we're the fleet, we ask the module installed here, if not, ask the fleet
-    getTokens = function() {
+    getTokensAux = function() {
       my_type = pds:get_item("myCloud", "mySchemaName").klog(">>> my type >>>>");
       tokens = (my_type eq "Fleet") => carvoyant_oauth:getTokens()
                                      | getTokensFromFleet();
       tokens
     };
+    
+    getTokens = function() {
+      saved_tokens = ent:saved_tokens;
+      tokens = (saved_tokens{"txn_id"} eq meta:txnId()) => saved_tokens{"tokens"}
+                                                         | getTokensAux();
+      // cache the tokens			
+      new_save = {"tokens": tokens,
+                  "txn_id" : meta:txnId()
+                 }.pset(ent:saved_tokens);
+      tokens
+
+    }
 
     // vehicle_id is optional if creating a new vehicle profile
     // key is optional, if missing, use default
