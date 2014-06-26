@@ -104,7 +104,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
        config_data = {"deviceId": vehicle_id() || "no device found"};
        base_url = api_url+ "/vehicle/";
        url = base_url + vid;
-       account_info = getTokens();
+       account_info = getTokens() || {};
        access_token = (not account_info.isnull()) => account_info{"access_token"}
                                                    | "NOTOKEN"
        config_data
