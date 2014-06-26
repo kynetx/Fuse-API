@@ -200,7 +200,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       config_data = get_config(vid);
       data = carvoyant_get(config_data{"base_url"}, config_data);
       status = data{"status_code"} eq "200" => data{["content","vehicle"]}
-                                             | []
+             | vid.isnull()                 => [] // no vid expect array
+             |                                 {} // vid expect hash
       status
     }
 
@@ -376,7 +377,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
     fired { 
       log(">>>>>>>>>> initializing Carvoyant account with device ID = " + params{"deviceId"});
-      raise fuse event vehicle_uninitialized if vehicle_match || event:name() eq "init_vehicle";
+      raise fuse event vehicle_uninitialized if should_link || event:name() eq "init_vehicle";
     } else {
       log(">>>>>>>>>> Carvoyant account initializaiton failed; missing device ID");
     }
