@@ -80,9 +80,10 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     // if we're the fleet, we ask the module installed here, if not, ask the fleet
     getTokens = function() {
       my_type = pds:get_item("myCloud", "mySchemaName").klog(">>> my type >>>>");
-      (my_type eq "Fleet") => carvoyant_oauth:getTokens()
-                            | getTokensFromFleet()
-    }
+      tokens = (my_type eq "Fleet") => carvoyant_oauth:getTokens()
+                                     | getTokensFromFleet();
+      tokens
+    };
 
     // vehicle_id is optional if creating a new vehicle profile
     // key is optional, if missing, use default
@@ -522,7 +523,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
   rule clean_up_subscriptions {
     select when carvoyant dirty_subscriptions
-    foreach getSubscription().pick("$..subscriptions").filter(function(s){ s{"deletionTimestamp"}.isnull() }) setting(sub)
+    foreach getSubscription(vehicle_id()).pick("$..subscriptions").filter(function(s){ s{"deletionTimestamp"}.isnull() }) setting(sub)
     pre {
       id = sub{"id"};	
       sub_type = sub{"_type"};
