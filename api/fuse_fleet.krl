@@ -400,7 +400,7 @@ Application that manages the fleet
 
 	// why am I gettting this?  Oh, yeah, we need to match vehicle_id and vehicle channel so we'll do that here...
 	vehicle_channel_data = findVehicleByBackchannel(meta:eci());
-	vehicle_name = vehicle_channel_data{"channelName"};
+	vehicle_name = vehicle_channel_data{"channelName"}.klog(">>>> vehicle name >>>> ");
 
 
       }

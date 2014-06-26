@@ -351,7 +351,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                                }).head().klog(">>>> matching vehicle >>>>");
       // true if vehicle exists in Carvoyant with same vin and not yet linked
       ugh = ent:vehicle_data{"vehicleId"}.klog("stored vehicle ID");
-      should_link = not vehicle_match.isnull() && ent:vehicle_data{"vehicleId"}.isnull();
+      should_link = (not vehicle_match.isnull() && ent:vehicle_data{"vehicleId"}.isnull()).klog(">>> should we linl???? >>>>> ");
       vid = should_link                            => vehicle_match{"vehicleId"} 
           | ent:vehicle_data{"vehicleId"}.isnull() => "" // pass in empty vid to ensure we create one
           |                                           ent:vehicle_data{"vehicleId"} || profile{"deviceId"};
