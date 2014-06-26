@@ -129,8 +129,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     // functions
     // params if optional
     carvoyant_get = function(url, config_data, params, redo) {
-       params{"access_token"} neq "NOTOKEN" => carvoyant_get_aux(url, config_data, params, redo)
-                                             | null
+       config_data{"access_token"} neq "NOTOKEN" => carvoyant_get_aux(url, config_data, params, redo)
+                                                  | null
     }   
 
     carvoyant_get_aux = function(url, config_data, params, redo) {
