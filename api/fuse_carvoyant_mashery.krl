@@ -87,7 +87,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     
     getTokens = function() {
       saved_tokens = ent:saved_tokens;
-      tokens = (saved_tokens{"txn_id"} eq meta:txnId()) => saved_tokens{"tokens"}
+      tokens = (saved_tokens{"txn_id"} eq meta:txnId()) => saved_tokens{"tokens"}.klog(">>>> using cached tokens >>>> ")
                                                          | getTokensAux();
       // cache the tokens			
       new_save = {"tokens": tokens,
@@ -289,7 +289,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       config_data = get_config(vehicle_id);
       raw_result = carvoyant_get(carvoyant_subscription_url(subscription_type, config_data, subscription_id),
    	                         config_data);
-      raw_result{"status_code"} eq 200 => raw_result |
+      raw_result{"status_code"} eq 200 => raw_result{["content", "subscriptions"]} |
       subscription_id.isnull()         => []
                                         | {}
     };
