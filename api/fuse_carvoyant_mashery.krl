@@ -291,7 +291,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                      config_data
 		    )
         with ar_label = ar_label;
-    };
+    }; 
 
     del_subscription = defaction(subscription_type, subscription_id, vid) {
       configure using ar_label = false;
