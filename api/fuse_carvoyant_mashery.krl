@@ -275,10 +275,9 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     // check that the subscription list is empty or all in it have been deleted
     no_subscription = function(subs) {
         // a subscription doesn't exist if...
-        subs{"status_code"} eq "404" ||
-        (subs{"status_code"} eq "200" &&
-	 subs{["content","subscriptions"]}.all(function(s){ not s{"deletionTimestamp"}.isnull() })
-	)
+	 subs.length() == 0 
+        ||
+	 subs.all(function(s){ not s{"deletionTimestamp"}.isnull() })
     }
 
 
@@ -289,7 +288,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       config_data = get_config(vehicle_id);
       raw_result = carvoyant_get(carvoyant_subscription_url(subscription_type, config_data, subscription_id),
    	                         config_data);
-      raw_result{"status_code"} eq 200 => raw_result{["content", "subscriptions"]} |
+      raw_result{"status_code"} eq 200 => raw_result{["content","subscriptions"]} |
       subscription_id.isnull()         => []
                                         | {}
     };
@@ -527,8 +526,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     pre {
       vid = event:attr("vehicle_id") || vehicle_id();
       subscriptions = getSubscription(vid, event:attr("subscription_type"));
-      subs = event:attr("filter") => subscriptions{["content","subscriptions"]}
-                                       .filter(function(s){ s{"deletionTimestamp"}.isnull() })
+      subs = event:attr("filter") => subscriptions.filter(function(s){ s{"deletionTimestamp"}.isnull() })
                                    | subscriptions;
     }
     send_directive("Subscriptions for #{vid} (404 means no subscriptions)") with subscriptions = subs;
@@ -536,7 +534,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
   rule clean_up_subscriptions {
     select when carvoyant dirty_subscriptions
-    foreach getSubscription(vehicle_id()).pick("$..subscriptions").filter(function(s){ s{"deletionTimestamp"}.isnull() }) setting(sub)
+    foreach getSubscription(vehicle_id()).filter(function(s){ s{"deletionTimestamp"}.isnull() }) setting(sub)
     pre {
       id = sub{"id"};	
       sub_type = sub{"_type"};
