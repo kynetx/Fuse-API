@@ -87,9 +87,10 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     
     getTokens = function() {
       saved_tokens = ent:saved_tokens;
-      tokens = (saved_tokens{"txn_id"} eq meta:txnId())   &&
-               (saved_tokens{["tokens", "access_token"]}) => saved_tokens{"tokens"}.klog(">>>> using cached tokens >>>> ")
-                                                           | getTokensAux();
+      tokens = (saved_tokens{"txn_id"} eq meta:txnId())               &&
+                not saved_tokens{"tokens"}.isnull()                   && 
+		not saved_tokens{["tokens", "access_token"]}.isnull() => saved_tokens{"tokens"}.klog(">>>> using cached tokens >>>> ")
+                                                                       | getTokensAux();
       // cache the tokens			
       new_save = {"tokens": tokens,
                   "txn_id" : meta:txnId()
