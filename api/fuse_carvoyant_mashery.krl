@@ -367,6 +367,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     select when carvoyant init_vehicle
              or pds profile_updated where myProfileName neq "My Fleet"
     pre {
+      foo = event:attrs().klog(">>>> did we see attributes? >>>>> ");
       cv_vehicles = carvoyantVehicleData().klog(">>>>> carvoyant vehicle data >>>>") ;
       profile = pds:get_all_me().klog(">>>>> profile >>>>>");
       vehicle_match = cv_vehicles
