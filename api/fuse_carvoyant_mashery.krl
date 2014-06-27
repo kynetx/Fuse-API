@@ -365,7 +365,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
   // creates and updates vehicles in the Carvoyant system
   rule carvoyant_init_vehicle {
     select when carvoyant init_vehicle
-             or pds profile_updated myProfileName re#(?!My Fleet)#
+             or pds profile_updated myProfileName re#^(?!My Fleet)#
     pre {
       foo = event:attrs().klog(">>>> did we see attributes? >>>>> ");
       cv_vehicles = carvoyantVehicleData().klog(">>>>> carvoyant vehicle data >>>>") ;
