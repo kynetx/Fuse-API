@@ -87,8 +87,9 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     
     getTokens = function() {
       saved_tokens = ent:saved_tokens;
-      tokens = (saved_tokens{"txn_id"} eq meta:txnId()) => saved_tokens{"tokens"}.klog(">>>> using cached tokens >>>> ")
-                                                         | getTokensAux();
+      tokens = (saved_tokens{"txn_id"} eq meta:txnId())   &&
+               (saved_tokens{["tokens", "access_token"]}) => saved_tokens{"tokens"}.klog(">>>> using cached tokens >>>> ")
+                                                           | getTokensAux();
       // cache the tokens			
       new_save = {"tokens": tokens,
                   "txn_id" : meta:txnId()
@@ -115,7 +116,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
 
     isAuthorized = function() {
-      account_info = getTokens();
+      account_info = getTokens() || {};
       created = account_info{"timestamp"} || time:now(); 
       expires_in =  account_info{"expires_in"} || -1 ; // if we don't find it, it's expired
       time_expires = time:add(created, {"seconds": expires_in});
