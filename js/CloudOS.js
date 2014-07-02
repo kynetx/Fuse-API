@@ -277,10 +277,21 @@
 				parameters, 
 				function(res){
 				    // patch this up since it's not OAUTH
-				    var tokens = {"access_token": "none",
-						  "OAUTH_ECI": res.token
-						 };
-				    CloudOS.saveSession(tokens); success(tokens);}, 
+				    if(res.status) {
+					var tokens = {"access_token": "none",
+						      "OAUTH_ECI": res.token
+						     };
+					CloudOS.saveSession(tokens); 
+					if(typeof success == "function") {
+					    success(tokens);
+					}
+				    } else {
+					console.log("Bad login ", res);
+					if(typeof failure == "function") {
+					    failure(res);
+					}
+				    }
+				},
 				{eci: CloudOS.anonECI,
 				 errorFunc: failure
 				}
