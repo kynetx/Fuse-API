@@ -1,8 +1,10 @@
 js/CloudOS-config.js
 js/fuse-console-config.js
+js/fuse-api-20140702.js
 
 api/test_config.yml
 api/carvoyant-keys
+api/v*
 
 *.orig
 
