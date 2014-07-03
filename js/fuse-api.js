@@ -581,14 +581,14 @@
 	fillupsByDate: function(vehicle_channel, start, end, cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
-	    options.rid = "trips";
+	    options.rid = "fuel";
 	    
 	    var args = {"start": start,
 			"end": end
 		       };
 
 	    return Fuse.ask_vehicle(vehicle_channel, "fillupsByDate", args, null, function(json) {
-			Fuse.log("Retrieve trips", json);
+			Fuse.log("Retrieve fillups", json);
 			cb(json);
   		       }, options);
 	},
