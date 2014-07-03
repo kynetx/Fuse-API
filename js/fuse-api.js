@@ -19,25 +19,28 @@
 	get_rid : function(name) {
 
 	    var rids = {
-		"owner": {"prod": "b16x16",
+		"owner": {"prod": "v1.fuse.owner",
 			  "dev":  "b16x16"
 			 },
-		"fleet": {"prod": "b16x17",
+		"fleet": {"prod": "v1.fuse.fleet",
 			  "dev":  "b16x17"
 			 },
-		"vehicle": {"prod": "b16x9",
+		"vehicle": {"prod": "v1.fuse.vehicle",
 			    "dev":  "b16x9"
 			   },
-		"trips": {"prod": "b16x18",
+		"trips": {"prod": "v1.fuse.trips",
 			  "dev":  "b16x18"
 			 },
-		"fuel":  {"prod": "b16x20",
+		"fuel":  {"prod": "v1.fuse.fuel",
 			  "dev":  "b16x20"
 			 },
-		"carvoyant":  {"prod": "b16x11",
+		"maintenance":  {"prod": "v1.maintenance.fuel",
+				 "dev":  "b16x21"
+				},
+		"carvoyant":  {"prod": "v1.fuse.carvoyant",
 			       "dev":  "b16x11"
 			 },
-		"carvoyant_oauth":  {"prod": "b16x23",
+		"carvoyant_oauth":  {"prod": "v1.fuse.fleet_oauth",
 				     "dev":  "b16x23"
 				    }
 	    };
@@ -562,7 +565,7 @@
 
 
 	// ---------- Fuel ----------
-	getFillup: function(vehicle_channel, cb, options) {
+	fillup: function(vehicle_channel, cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
 	    options.rid = "fuel";
@@ -571,6 +574,21 @@
 
 	    return Fuse.ask_vehicle(vehicle_channel, "fillup", args, null, function(json) {
 			Fuse.log("Retrieve last fillup", json);
+			cb(json);
+  		       }, options);
+	},
+
+	fillupsByDate: function(vehicle_channel, start, end, cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    options.rid = "trips";
+	    
+	    var args = {"start": start,
+			"end": end
+		       };
+
+	    return Fuse.ask_vehicle(vehicle_channel, "fillupsByDate", args, null, function(json) {
+			Fuse.log("Retrieve trips", json);
 			cb(json);
   		       }, options);
 	},

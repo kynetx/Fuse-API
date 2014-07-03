@@ -22,6 +22,7 @@ The Fuse API will follow the [event-query model](http://www.windley.com/archives
 - ```b16x20```: ```fuse_fuel.krl```
 - ```b16x21```: ```fuse_maintenance.krl```
 - ```b16x22```: ```fuse_bootstrap..krl```
+- ```b16x23```: ```fuse_fleet_oauth..krl```
 - ```b16x```: ```.krl```
 
 ## Install in Owner account

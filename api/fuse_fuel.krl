@@ -39,7 +39,7 @@ Operations for fuel
       //pds:get_item(common:fuel_namespace(), last_key.klog(">>>>> using this key <<<<<<<<<"));
     };
 
-    fillups = function(start, end){
+    fillupsByDate = function(start, end){
 
       utc_start = convertToUTC(start);
       utc_end = convertToUTC(end);
