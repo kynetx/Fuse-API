@@ -324,7 +324,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     mk_subscription_esl = function(event_name, eci) {
       use_eci = eci || get_eci_for_carvoyant() || "NO_ECI_AVAILABLE"; 
       eid = math:random(99999);
-      "https://#{meta:host()}/sky/event/#{use_eci}/#{eid}/carvoyant/#{event_name}";
+      host = "cs.kobj.net"; // meta:host()
+      "https://#{host}/sky/event/#{use_eci}/#{eid}/carvoyant/#{event_name}";
     };
 
     // creates a new ECI (once) for carvoyant
