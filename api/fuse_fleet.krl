@@ -37,14 +37,14 @@ Application that manages the fleet
         picos = CloudOS:picoList()|| {}; // tolerate lookup failures
         picos_by_id = picos.values().collect(function(x){x{"id"}}).map(function(k,v){v.head()});
 	pico_ids = picos_by_id.keys();
-	summaries = ent:fleet{["vehicle_info"]}.map(function(k,v){v.put(["id"], k)});
+	summaries = ent:fleet{["vehicle_info"]}.map(function(k,v){v.put(["picoId"], k)});
 	summary_keys = summaries.keys();
 
 	// which picos exist that have no summary yet? 
 	missing = pico_ids.difference(summary_keys).klog(">>>> missing vehicle data here >>>>");
 	responses = missing.map(function(k){CloudOS:sendEvent(picos_by_id{[k,"channel"]}, "fuse", "need_vehicle_data", account_info)}); 
 	
-	summaries
+	summaries.values();
 
       };
 
@@ -332,9 +332,9 @@ Application that manages the fleet
       select when fuse fleet_updated
       pre {
         cv_vehicles = carvoyant:carvoyantVehicleData(); //.klog(">>>>> carvoyant vehicle data >>>>");
-	my_vehicles = vehicleSummary().map(function(k,v){v.put(["picoId"], k)}).klog(">>>> Fuse vehicle data >>>>>");
-	no_vehicle_id = my_vehicles.values().filter(function(v){v{"vehicleId"}.isnull()}).klog(">>>> no vid >>>>");
-	by_vehicle_id = my_vehicles.values().filter(function(v){not v{"vehicleId"}.isnull()}).collect(function(v){v{"vehicleId"}}); //.klog(">>>> have vid >>>>"); 
+	my_vehicles = vehicleSummary().klog(">>>> Fuse vehicle data >>>>>");
+	no_vehicle_id = my_vehicles.filter(function(v){v{"vehicleId"}.isnull()}).klog(">>>> no vid >>>>");
+	by_vehicle_id = my_vehicles.filter(function(v){not v{"vehicleId"}.isnull()}).collect(function(v){v{"vehicleId"}}); //.klog(">>>> have vid >>>>"); 
 	in_cv_not_fuse = 
 	  cv_vehicles.filter(function(v){ by_vehicle_id{v{"vehicleId"}}.isnull() }); // .klog(">>> no matching fuse vehicle >>>> ");
       }
