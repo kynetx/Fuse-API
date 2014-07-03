@@ -221,7 +221,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     carvoyantVehicleData = function(vid) {
       config_data = get_config(vid);
-      data = carvoyant_get(config_data{"base_url"}, config_data) || {};
+      data = carvoyant_get(config_data{"base_url"}, config_data).klog(">>> retrieved vehicle data >>>") || {};
       status = data{"status_code"} eq "200" => data{["content","vehicle"]}
              | vid.isnull()                 => [] // no vid expect array
              |                                 {} // vid expect hash
