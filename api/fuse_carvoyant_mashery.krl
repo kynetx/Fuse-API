@@ -652,10 +652,13 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     select when http post status_code re#([45]\d\d)# setting (status)
              or http put status_code re#([45]\d\d)# setting (status)
              or http delete status_code re#([45]\d\d)# setting (status)
+    pre {
+      returned = event:attrs();
+    }
     send_directive("Carvoyant subscription failed") with
-       sub_status = event:attrs();
+       sub_status = returned
     fired {
-      error warn "Carvoyant HTTP Error (#{status}): #{event:attr('status_line')}. Autoraise label: #{event:attr('label')}."
+      error warn "Carvoyant HTTP Error (#{status}): #{event:attr('status_line')}. Autoraise label: #{event:attr('label')}. All #{event:attrs().encode()} "
     }
   }
 
