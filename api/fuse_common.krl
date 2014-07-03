@@ -153,7 +153,9 @@ Common definitions
 
 	res = picos.map(function(k,p){
 	   id = p{"id"};
-	   p.put(["channel"],vehicle_ecis_by_name{[id,"eventChannel"]});
+	   p.put(["channel"],vehicle_ecis_by_name{[id,"eventChannel"]})
+            .delete(["name"])
+            .delete(["photo"])
 	}).values();
 	res
       };
