@@ -19,28 +19,28 @@
 	get_rid : function(name) {
 
 	    var rids = {
-		"owner": {"prod": "v1.fuse.owner",
+		"owner": {"prod": "v1_fuse_owner",
 			  "dev":  "b16x16"
 			 },
-		"fleet": {"prod": "v1.fuse.fleet",
+		"fleet": {"prod": "v1_fuse_fleet",
 			  "dev":  "b16x17"
 			 },
-		"vehicle": {"prod": "v1.fuse.vehicle",
+		"vehicle": {"prod": "v1_fuse_vehicle",
 			    "dev":  "b16x9"
 			   },
-		"trips": {"prod": "v1.fuse.trips",
+		"trips": {"prod": "v1_fuse_trips",
 			  "dev":  "b16x18"
 			 },
-		"fuel":  {"prod": "v1.fuse.fuel",
+		"fuel":  {"prod": "v1_fuse_fuel",
 			  "dev":  "b16x20"
 			 },
-		"maintenance":  {"prod": "v1.maintenance.fuel",
+		"maintenance":  {"prod": "v1_maintenance_fuel",
 				 "dev":  "b16x21"
 				},
-		"carvoyant":  {"prod": "v1.fuse.carvoyant",
+		"carvoyant":  {"prod": "v1_fuse_carvoyant",
 			       "dev":  "b16x11"
 			 },
-		"carvoyant_oauth":  {"prod": "v1.fuse.fleet_oauth",
+		"carvoyant_oauth":  {"prod": "v1_fuse_fleet_oauth",
 				     "dev":  "b16x23"
 				    }
 	    };
