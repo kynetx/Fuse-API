@@ -21,8 +21,8 @@ ruleset fuse_bootstrap {
                    "a169x695.prod",  // Settings
                    "a41x174.prod",   // Amazon S3 module
                    "a16x129.dev",    // SendGrid module
-		   "b16x16.prod",    // Fuse Init (owner)
-		   "b16x13.prod"    // Fuse errors
+		   "v1_fuse_owner.prod",    // Fuse Init (owner)
+		   "v1_fuse_error.prod"     // Fuse errors
             ],
 	    "unwanted": [ 
                    "a169x664.prod",	// CloudUIService 
