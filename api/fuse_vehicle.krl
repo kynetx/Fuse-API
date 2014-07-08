@@ -264,10 +264,10 @@ Fuse ruleset for a vehicle pico
                or pds profile_updated // since we store pictures, etc. in profile
       pre {
 
-        vid = carvoyant:vehicle_id();
+        vid = carvoyant:vehicle_id() || "none";
 	incoming = event:attrs() || {};
 
-        raw_vehicle_info = incoming{"vin"}.isnull() => carvoyant:carvoyantVehicleData(vid) || {}
+        raw_vehicle_info = incoming{"vin"}.isnull() => carvoyant:carvoyantVehicleData(vid) 
                                                      | incoming;
 
 	profile = pds:get_all_me().klog(">>>>>> seeing profile >>>>> ");
