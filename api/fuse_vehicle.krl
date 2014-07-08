@@ -74,6 +74,7 @@ Fuse ruleset for a vehicle pico
 	   name = event:attr("name");
 	   photo = event:attr("photo");
            my_fleet = event:attr("fleet_channel");
+           mileage = event:attr("mileage");
            my_schema = event:attr("schema");
 	   device_id = event:attr("deviceId");
 	   vin = event:attr("vin");
@@ -127,6 +128,7 @@ Fuse ruleset for a vehicle pico
 	       "myProfilePhoto" : photo,
 	       "vin": vin,
 	       "deviceId": device_id,
+	       "mileage" : mileage,
 	       "_api": "sky"
 	      };
 
