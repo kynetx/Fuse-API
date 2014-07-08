@@ -21,8 +21,8 @@ ruleset fuse_bootstrap {
                    "a169x695.prod",  // Settings
                    "a41x174.prod",   // Amazon S3 module
                    "a16x129.dev",    // SendGrid module
-		   "v1_fuse_owner.prod",    // Fuse Init (owner)
-		   "v1_fuse_error.prod"     // Fuse errors
+		   "b16x16.prod",    // Fuse Init (owner)
+		   "b16x13.prod"    // Fuse errors
             ],
 	    "unwanted": [ 
                    "a169x664.prod",	// CloudUIService 
@@ -35,8 +35,29 @@ ruleset fuse_bootstrap {
         };
     }
 
+    rule bootstrap_guard {
+      select when fuse bootstrap
+      pre {
+        namespace = "fuse-meta"; // this is defined in fuse_common.krl, but we haven't got it yet.
+        eci = CloudOS:subscriptionList(namespace,"Fleet").head().pick("$.eventChannel") 
+	   || pds:get_item(namespace,"fleet_channel");
+
+      }
+      if (! eci.isnull()) then
+      {
+        send_directive("found_eci_for_fleet") 
+	  with eci = eci
+      }
+      fired {
+        log ">>>> pico needs a bootstrap >>>> ";
+	raise explicit event bootstrap_needed;
+      } else {
+        log ">>>> pico already bootstraped, saw fleet channel: " + eci;
+      }
+    }
+
     rule strap_some_boots {
-        select when fuse bootstrap
+        select when explicit bootstrap_needed
         pre {
 	  remove_rulesets = CloudOS:rulesetRemoveChild(apps{"unwanted"}, meta:eci());
           installed = CloudOS:rulesetAddChild(apps{"core"}, meta:eci());
