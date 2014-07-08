@@ -37,7 +37,7 @@ Application that manages the fleet
         picos = CloudOS:picoList()|| {}; // tolerate lookup failures
         picos_by_id = picos.values().collect(function(x){x{"id"}}).map(function(k,v){v.head()});
 	pico_ids = picos_by_id.keys();
-	summaries = ent:fleet{["vehicle_info"]}.map(function(k,v){v.put(["picoId"], k)});
+	summaries = ent:fleet{["vehicle_info"]}.klog(">>>> vehicle_info >>>>").map(function(k,v){v.put(["picoId"], k)});
 	summary_keys = summaries.keys();
 
 	// which picos exist that have no summary yet? 
