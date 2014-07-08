@@ -364,15 +364,12 @@
 	},
 
 	updateVehicleSummary: function(id, profile) {
-	    Fuse.vehicle_summary = Fuse.vehicle_summary || {};
-	    Fuse.vehicle_summary[id] = Fuse.vehicle_summary[id] || {};
-	    $.each(profile, function(k,v){
-		k = (k === "myProfileName") ? "profileName"
-                  : (k === "myProfilePhoto") ? "profilePhoto"
-                  : k;	
-		console.log("Storing in vehicle summary ", k, v);
-		Fuse.vehicle_summary[id][k] = v;
-	    });
+	    Fuse.vehicle_summary = Fuse.vehicle_summary || [];
+	    profile.profileName = profile.myProfileName;
+	    delete profile.myProfileName;
+	    profile.profilePhoto = profile.myProfilePhoto;
+	    delete profile.myProfilePhoto;
+	    Fuse.vehicle_summary.push(profile);
 	},
 
 	// ---------- manage and use vehicle picos ----------
