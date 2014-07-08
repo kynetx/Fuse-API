@@ -365,16 +365,21 @@
 
 	updateVehicleSummary: function(id, profile) {
 	    Fuse.vehicle_summary = Fuse.vehicle_summary || [];
-	    profile.profileName = profile.myProfileName;
-	    delete profile.myProfileName;
-	    profile.profilePhoto = profile.myProfilePhoto;
-	    delete profile.myProfilePhoto;
-	    profile.picoId = id;
+
+	    // prepare new object for saving
+	    var p = jQuery.extend({}, profile);
+	    delete p.myProfileName;
+	    delete p.myProfilePhoto;
+	    p.profileName = profile.myProfileName;
+	    p.profilePhoto = profile.myProfilePhoto;
+	    p.picoId = id;
+
+	    // save it or push it, if not foundf
 	    var elementPos = Fuse.vehicle_summary.map(function(x) {return x.picoId; }).indexOf(id);
 	    if (elementPos < 0) {
-		Fuse.vehicle_summary.push(profile);
+		Fuse.vehicle_summary.push(p);
 	    } else {
-		Fuse.vehicle_summary[elementPos] = profile;
+		Fuse.vehicle_summary[elementPos] = p;
 	    }
 	},
 
