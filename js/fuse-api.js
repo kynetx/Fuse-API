@@ -369,7 +369,13 @@
 	    delete profile.myProfileName;
 	    profile.profilePhoto = profile.myProfilePhoto;
 	    delete profile.myProfilePhoto;
-	    Fuse.vehicle_summary.push(profile);
+	    profile.picoId = id;
+	    var elementPos = Fuse.vehicle_summary.map(function(x) {return x.picoId; }).indexOf(id);
+	    if (elementPos < 0) {
+		Fuse.vehicle_summary.push(profile);
+	    } else {
+		Fuse.vehicle_summary[elementPos] = profile;
+	    }
 	},
 
 	// ---------- manage and use vehicle picos ----------
