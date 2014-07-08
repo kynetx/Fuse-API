@@ -60,7 +60,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
      ||
       me
      ||
-      pds:get_item(namespace(), "vehicle_info").pick("$.vehicleId")
+      pds:get_item(namespace(), "vehicle_info").pick("$.vehicleId", true).head();
     };
 
     api_hostname = "api.carvoyant.com";

@@ -177,7 +177,7 @@ You are being redirected to <a href="#{url}">#{url}</a>
         // this is ad hoc authentication
         caller = meta:callingRID().klog(">>>> calling rid >>>>>");
 	allowed = common:allowedRids().klog(">>>> allowed rids >>>>");
-	account_info = ent:account_info.klog(">>>> seeing account_info >>>>");
+	account_info = ent:account_info.klog(">>>> seeing account_info >>>>") || {};
         allowed.any(function(x){x eq caller}) => account_info
 	                               	      | getTokensForVehicle(id)
       };	
