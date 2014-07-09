@@ -39,7 +39,7 @@ Application that manages the fleet
 	pico_ids = picos_by_id.keys();
 
 	// get the subscription IDs (we don't want to use the Pico channels here...)
-        vehicle_ecis = CloudOS:subscriptionList(namespace(),"Vehicle")
+        vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle")
                     || [];   
 
         // collect returns arrays as values, and we only have one, so map head()
