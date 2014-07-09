@@ -266,7 +266,7 @@ Fuse ruleset for a vehicle pico
     rule check_subscriptions {
       select when fuse subscription_check
       pre {
-        vid = vehicle_id();
+        vid = carvoyant:vehicle_id();
         my_subs = carvoyant:getSubscription(vid);
         should_have = required_subscription_list.length();
       }
