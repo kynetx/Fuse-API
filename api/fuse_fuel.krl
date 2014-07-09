@@ -44,7 +44,7 @@ Operations for fuel
       utc_start = common:convertToUTC(start);
       utc_end = common:convertToUTC(end);
       
-      ent:fuel_purchases.query([], { 
+      ent:fuel_purchases.klog(">>>> fuel purchases>>>>>").query([], { 
        'requires' : '$and',
        'conditions' : [
           { 
