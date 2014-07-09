@@ -267,7 +267,7 @@ Fuse ruleset for a vehicle pico
       select when fuse subscription_check
       pre {
         vid = vehicle_id();
-        my_subs = cavoyant:getSubscription(vid);
+        my_subs = carvoyant:getSubscription(vid);
         should_have = required_subscription_list.length();
       }
       if(my_subs.length() < should_have) then
