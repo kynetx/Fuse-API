@@ -37,7 +37,7 @@ Application that manages the fleet
         picos = CloudOS:picoList()|| {}; // tolerate lookup failures
         picos_by_id = picos.values().collect(function(x){x{"id"}}).map(function(k,v){v.head()});
 	pico_ids = picos_by_id.keys();
-
+ 
 	// get the subscription IDs (we don't want to use the Pico channels here...)
         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle")
                     || [];   
