@@ -48,7 +48,7 @@ Application that manages the fleet
 
 	summaries = ent:fleet{["vehicle_info"]}
 	             .klog(">>>> vehicle_info >>>>")
-		     .map(function(k,v){v.put(["picoId"], k).put(["channel"], vehicle_ecis_by_name{k}) });
+		     .map(function(k,v){v.put(["picoId"], k).put(["channel"], vehicle_ecis_by_name{[k,"eventChannel"]}) });
 	summary_keys = summaries.keys();
 
 
