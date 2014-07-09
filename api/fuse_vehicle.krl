@@ -273,14 +273,14 @@ Fuse ruleset for a vehicle pico
       if(my_subs.length() < should_have) then
       {
         send_directive("not enough subscriptions") with
-	  my_subscriptions = my_subs
+	  my_subscriptions = my_subs and
 	  should_have = should_have
       }
       fired {
         log ">>>> vehicle #{vid} needs subscription check";
         // raise fuse event need_initial_carvoyant_subscriptions;
       } else {
-         log ">>>> vehicle #{vid} has plenty of subscriptions";
+        log ">>>> vehicle #{vid} has plenty of subscriptions";
       }
     
     }
