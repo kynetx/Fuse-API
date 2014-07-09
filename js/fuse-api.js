@@ -595,7 +595,7 @@
 			"end": end
 		       };
 
-	    return Fuse.ask_vehicle(vehicle_channel, "fillupsByDate", args, null, function(json) {
+	    return Fuse.ask_vehicle(vehicle_channel, "fillupByDate", args, null, function(json) {
 			Fuse.log("Retrieve fillups", json);
 			cb(json);
   		       }, options);

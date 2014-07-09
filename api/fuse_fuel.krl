@@ -41,8 +41,8 @@ Operations for fuel
 
     fillupByDate = function(start, end){
 
-      utc_start = convertToUTC(start);
-      utc_end = convertToUTC(end);
+      utc_start = common:convertToUTC(start);
+      utc_end = common:convertToUTC(end);
       
       ent:fuel_purchases.query([], { 
        'requires' : '$and',
