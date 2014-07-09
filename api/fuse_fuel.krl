@@ -102,7 +102,7 @@ Operations for fuel
 
       seconds = (time:strftime(current_time, "%s") - time:strftime(lastfillup{"timestamp"}, "%s"));
 
-      when_bought = common:convertToUTC(event:attr("whenBought") || time:now());
+      when_bought = common:convertToUTC(event:attr("when") || time:now());
 
       rec = {
         "key": key,	    
