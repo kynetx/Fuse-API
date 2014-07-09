@@ -51,6 +51,7 @@ Complete the following steps:
 
 When you load ```Fuse-console.html``` in a browser and open the console for the window.
 
+
 # Provisioning Users
 
 The following steps can be repeated for any new Fuse users. While you will be using the JavaScript console in your browser to complete these steps, they model the process your application will have to complete to provision a user.

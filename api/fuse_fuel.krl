@@ -87,7 +87,8 @@ Operations for fuel
 
       // if no key, assume new record and create one
       new_record = event:attr("key").isnull();
-      current_time = time:strftime(time:now(), "%Y%m%dT%H%M%S%z", {"tz":"UTC"});
+      current_time = common:convertToUTC(time:now());
+
       key = event:attr("key") || current_time;  // UTC; using time as key
 
       volume = event:attr("volume") || 1;
@@ -101,6 +102,7 @@ Operations for fuel
 
       seconds = (time:strftime(current_time, "%s") - time:strftime(lastfillup{"timestamp"}, "%s"));
 
+      when_bought = common:convertToUTC(event:attr("whenBought") || time:now());
 
       rec = {
         "key": key,	    
@@ -112,7 +114,7 @@ Operations for fuel
 	"mpg": (mpg < 100) => mpg.sprintf("%.2f") // throw out bad data
 	                    | 0,
 	"interval": seconds,
-	"timestamp": current_time
+	"timestamp": when_bought
       };
     }
     if( not volume.isnull() 
