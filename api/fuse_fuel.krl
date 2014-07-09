@@ -87,14 +87,14 @@ Operations for fuel
 
       // if no key, assume new record and create one
       new_record = event:attr("key").isnull();
-      key = event:attr("key") || time:now({"tz" : "UTC"});  // UTC; using time as key
+      current_time = time:strftime(time:now(), "%Y%m%dT%H%M%S%z", {"tz":"UTC"});
+      key = event:attr("key") || current_time;  // UTC; using time as key
 
       volume = event:attr("volume") || 1;
       unit_price = event:attr("unitPrice");
       odometer = event:attr("odometer");
       location = event:attr("location");
-      current_time = time:now({"tz": "UTC"});
-
+      
       lastfillup = fillup().klog(">>>> returned from fillup >>>> ") || {"odometer": 0, "timestamp": current_time};
       distance = odometer - lastfillup{"odometer"};
       mpg = distance/volume;
