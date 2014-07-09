@@ -429,8 +429,12 @@ The fillup object has the following properties:
 - ```unitPrice``` &mdash; the price of a unit of fuel
 - ```odometer``` &mdash; the odometer reading of the fuel purchase
 - ```location``` &mdash; a string giving the location of the purchase
+- ```when```&mdash;a DateTime string for the purchase; if missing, defaults to now. 
 
-Note:  The system is unitless, it's up to you to use consistent units.
+Note:
+
+- The system is unitless, it's up to you to use consistent units.
+- The fuel system relies on fuel purchases being entered in DateTime sequence to properly calculate MPG and distance traveled. New entries *do not* cause all entries with a later date to be updated. 
 
 ### Updating a Fillup Record
 
