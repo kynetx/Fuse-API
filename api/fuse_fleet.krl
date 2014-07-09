@@ -37,8 +37,21 @@ Application that manages the fleet
         picos = CloudOS:picoList()|| {}; // tolerate lookup failures
         picos_by_id = picos.values().collect(function(x){x{"id"}}).map(function(k,v){v.head()});
 	pico_ids = picos_by_id.keys();
-	summaries = ent:fleet{["vehicle_info"]}.klog(">>>> vehicle_info >>>>").map(function(k,v){v.put(["picoId"], k)});
+
+	// get the subscription IDs (we don't want to use the Pico channels here...)
+        vehicle_ecis = CloudOS:subscriptionList(namespace(),"Vehicle")
+                    || [];   
+
+        // collect returns arrays as values, and we only have one, so map head()
+        vehicle_ecis_by_name = vehicle_ecis.collect(function(x){x{"channelName"}}).map(function(k,v){v.head()}).klog(">>> ecis by name>>> ");
+
+
+	summaries = ent:fleet{["vehicle_info"]}
+	             .klog(">>>> vehicle_info >>>>")
+		     .map(function(k,v){v.put(["picoId"], k).put(["channel"], vehicle_ecis_by_name{k}) });
 	summary_keys = summaries.keys();
+
+
 
 	// which picos exist that have no summary yet? 
 	missing = pico_ids.difference(summary_keys).klog(">>>> missing vehicle data here >>>>");
