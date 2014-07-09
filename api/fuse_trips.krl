@@ -19,7 +19,7 @@ Manage trips. PDS is not well-suited to these operations
     use module b16x20 alias fuel
 
 	
-    provides trips, lastTrip, tripName, mileage,
+    provides trips, lastTrip, tripName, mileage, tripsByDate, newTrips,
              all_trips,   // for debugging
 	       icalForVehicle, icalSubscriptionUrl
   }
@@ -49,6 +49,29 @@ Manage trips. PDS is not well-suited to these operations
 	]},
 	"return_values"
 	)
+    };
+
+    tripsByDate = trips;
+
+    newTrips = function(id, limit, offset) {
+      id.isnull() => allTrips(limit, offset)
+                   | ent:trip_summaries{mkTid(id)};
+    };
+
+    allTrips = function(limit, offset) {
+      sort_opt = {
+        "path" : ["endTime"],
+	"reverse": true,
+	"compare" : "datetime"
+      };
+
+      global_opt = {
+        "limit": limit || 10,
+      	"index": offset || 0
+      };
+
+      sorted_keys = this2that:transform(ent:trip_summaries, sort_opt, global_opt);
+      sorted_keys
     };
 
     all_trips = function() {
