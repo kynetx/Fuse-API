@@ -287,7 +287,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     // subscription_type is optional, if left off, retrieves all subscriptions for vehicle
     // subscription_id is optional, if left off, retrieves all subscriptions of given type
     getSubscription = function(vehicle_id, subscription_type, subscription_id) {
-      config_data = get_config(vehicle_id);
+      config_data = get_config(vehicle_id).klog(">>>>>> config data in getSubscription>>>>> ");
       raw_result = carvoyant_get(carvoyant_subscription_url(subscription_type, config_data, subscription_id),
    	                         config_data);
       raw_result{"status_code"} eq 200 => raw_result{["content","subscriptions"]} |
