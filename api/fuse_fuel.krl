@@ -17,7 +17,7 @@ Operations for fuel
     use module b16x9 alias vehicle
 
 	
-    provides fillup, fillups
+    provides fillup, fillupByDate
   }
 
   global {
@@ -39,7 +39,7 @@ Operations for fuel
       //pds:get_item(common:fuel_namespace(), last_key.klog(">>>>> using this key <<<<<<<<<"));
     };
 
-    fillupsByDate = function(start, end){
+    fillupByDate = function(start, end){
 
       utc_start = convertToUTC(start);
       utc_end = convertToUTC(end);

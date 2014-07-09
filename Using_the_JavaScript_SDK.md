@@ -404,17 +404,24 @@ Note that the accepted categories for IRS purposes are "business," "medical," "m
 
 You can retrieve the last fillup or a specific fillup using the following function:
 
-	Fuse.getFillup(<vehicle_channel>, <callback>, <options>)
+	Fuse.fillup(<vehicle_channel>, <callback>, <options>)
 
 To retreive a specific fillup, you pass the key for the fillup as an option named ```key```.  Fillups are stored with the fill up time in UTC as the key.
 
 If no key is provided, the function returns the most recent fillup.
 
+You can also search fillups by date:
+
+	Fuse.fillupByDate(<vehicle_channel>, <start>, <end>, <callback>, <options>)
+
+where ```<start>``` and ```<end>``` are DateTime strings. 
+
+
 ### Recording a Fillup
 
 You record a fillup using the following function:
 
-	Fuse.recordFillUp(<vehicle_channel>, <fillup_obj>, <callback>, <options>)
+	Fuse.recordFillup(<vehicle_channel>, <fillup_obj>, <callback>, <options>)
 
 The fillup object has the following properties:
 - ```volume``` &mdash; the volume of the fuel purchase.
@@ -428,7 +435,7 @@ Note:  The system is unitless, it's up to you to use consistent units.
 
 You update a fillup using the following function:
 
-	Fuse.updateFillUp(<vehicle_channel>, <fillup_obj>, <callback>, <options>)
+	Fuse.updateFillup(<vehicle_channel>, <fillup_obj>, <callback>, <options>)
 
 In addition to the properties listed in the ```recordFillup()``` function above, you *must* supply a property called ```key``` that is the key of the fillup record you wish to update. 
 
@@ -437,7 +444,7 @@ In addition to the properties listed in the ```recordFillup()``` function above,
 
 You delete a fillup using the following function:
 
-	Fuse.deleteFillUp(<vehicle_channel>, <key>, <callback>, <options>)
+	Fuse.deleteFillup(<vehicle_channel>, <key>, <callback>, <options>)
 
 where ```key``` that is the key of the fillup record you wish to delete. 
 

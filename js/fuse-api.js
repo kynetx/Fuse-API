@@ -586,7 +586,7 @@
   		       }, options);
 	},
 
-	fillupsByDate: function(vehicle_channel, start, end, cb, options) {
+	fillupByDate: function(vehicle_channel, start, end, cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
 	    options.rid = "fuel";
@@ -602,7 +602,7 @@
 	},
 
 
-	recordFillUp: function(vehicle_channel, fillup_obj, cb, options)
+	recordFillup: function(vehicle_channel, fillup_obj, cb, options)
         {
 	    cb = cb || function(){};
 	    options = options || {};
@@ -627,7 +627,7 @@
             );
         },
 
-	updateFillUp: function(vehicle_channel, fillup_obj, cb, options)
+	updateFillup: function(vehicle_channel, fillup_obj, cb, options)
         {
 	    cb = cb || function(){};
 	    options = options || {};
@@ -653,7 +653,7 @@
             );
         },
 
-	deleteFillUp: function(vehicle_channel, key, cb, options)
+	deleteFillup: function(vehicle_channel, key, cb, options)
         {
 	    cb = cb || function(){};
 	    options = options || {};
