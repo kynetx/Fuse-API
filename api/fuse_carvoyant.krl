@@ -105,7 +105,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
        carvoyant_config_key = key || namespace();
        config_data = {"deviceId": vehicle_id() || "no device found"};
        base_url = api_url+ "/vehicle/";
-       url = base_url + vid.klog(">>>>> vid >>>>");
+       url = base_url + vid;
        account_info = getTokens() || {};
        access_token = (not account_info.isnull()) => account_info{"access_token"}
                                                    | "NOTOKEN"
@@ -410,6 +410,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
   }
 
+ 
   // this needs work
    // rule carvoyant_update_vehicle_account {
    //   select when carvoyant update_account

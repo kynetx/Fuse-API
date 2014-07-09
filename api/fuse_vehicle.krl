@@ -64,6 +64,23 @@ Fuse ruleset for a vehicle pico
 	raw_result
       }
 
+      // these are the required subscriptions for each vehicle. 
+      // they are set idempotently (only one)
+      required_subscription_list = 
+              [{"subscription_type": "ignitionStatus",
+                "minimumTime": 0},
+	       {"subscription_type": "lowBattery",
+	        "minimumTime": 60},
+	       {"subscription_type": "troubleCode",
+	        "notification_period": "INITIALSTATE",
+	        "minimumTime": 60},
+	       {"subscription_type": "numericDataKey",
+	        "minimumTime": 60,
+		"dataKey": "GEN_FUELLEVEL",
+		"thresholdValue": 20,
+		"relationship": "BELOW"}
+	      ];
+
     }
 
     // ---------- initialization ----------
@@ -234,21 +251,9 @@ Fuse ruleset for a vehicle pico
       }
     }
 
-    rule iniialize_subscriptions {
+    rule initialize_subscriptions {
       select when fuse need_initial_carvoyant_subscriptions
-      foreach [{"subscription_type": "ignitionStatus",
-                "minimumTime": 0},
-	       {"subscription_type": "lowBattery",
-	        "minimumTime": 60},
-	       {"subscription_type": "troubleCode",
-	        "notification_period": "INITIALSTATE",
-	        "minimumTime": 60},
-	       {"subscription_type": "numericDataKey",
-	        "minimumTime": 60,
-		"dataKey": "GEN_FUELLEVEL",
-		"thresholdValue": 20,
-		"relationship": "BELOW"}
-	      ] setting (subscription)
+      foreach required_subscription_list setting (subscription)
      	// send_directive("Adding initial subscription") with subscription = subscription;
         fired {	
           raise carvoyant event new_subscription_needed 
@@ -257,6 +262,29 @@ Fuse ruleset for a vehicle pico
 	        .put(["idempotent"], true);
         }
     }
+
+    rule check_subscriptions {
+      select when fuse subscription_check
+      pre {
+        vid = vehicle_id();
+        my_subs = getSubscription(vid);
+        should_have = required_subscription_list.length();
+      }
+      if(my_subs.length() < should_have) then
+      {
+        send_directive("not enough subscriptions") with
+	  my_subscriptions = my_subs
+	  should_have = should_have
+      }
+      fired {
+        log ">>>> vehicle #{vid} needs subscription check";
+        // raise fuse event need_initial_carvoyant_subscriptions;
+      } else {
+         log ">>>> vehicle #{vid} has plenty of subscriptions";
+      }
+    
+    }
+
 
     // ---------- vehicle data rules ----------
     rule update_vehicle_data {
