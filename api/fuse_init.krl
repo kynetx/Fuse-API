@@ -293,16 +293,15 @@ A new fleet was created for #{me.encode()};
 	  fleet_backchannel = CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.backChannel")
                            || "";   
 
-          sender = event:attr{"sender"} || "Fuse";
           subj = event:attr{"subj"} || "Message from Fuse";
-	  msg = event:attr{"msg"}
+	  msg = event:attr{"msg"} || "This email contains no message";
 
         }
 	if( meta:eci().klog(">>>> came thru channel >>>>") eq fleet_backchannel.klog(">>>> fleet channel >>>>")
          && not msg.isnull()
 	  ) then
         {
-            sendgrid:send(sender, me{"myProfileEmail"}, subj, msg);
+            sendgrid:send(me{"myProfileName"}, me{"myProfileEmail"}, subj, msg);
         }
     }
 
