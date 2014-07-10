@@ -66,7 +66,7 @@ Manage trips. PDS is not well-suited to these operations
       };
 
       global_opt = {
-        "index" : 0,
+        "index" : offset || 0,
 	"limit" : 10
       }; 
 
