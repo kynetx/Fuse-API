@@ -54,9 +54,9 @@ Manage trips. PDS is not well-suited to these operations
     tripsByDate = trips;
 
     newTrips = function(id, limit, offset) {
-      x_id = id.klog(">>>> id >>>>>");
-      x_limit = limit.klog(">>>> limit >>>>>");
-      x_offset = offset.klog(">>>> offset >>>>>");
+       // x_id = id.klog(">>>> id >>>>>");
+       // x_limit = limit.klog(">>>> limit >>>>>");
+       // x_offset = offset.klog(">>>> offset >>>>>");
 
       id.isnull() => allTrips(limit, offset)
                    | ent:trip_summaries{mkTid(id)};
@@ -70,7 +70,7 @@ Manage trips. PDS is not well-suited to these operations
       };
 
       global_opt = {
-        "index" : offset.isnull() => 0 | offset,
+        "index" : offset.isnull() => 0 | offset, // disjunction returns false with 0 as result
 	"limit" : limit || 10
       }; 
 
