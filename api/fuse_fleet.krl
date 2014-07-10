@@ -511,8 +511,7 @@ Application that manages the fleet
 This is a test email 
 >>;
 
-      email_map = { "sender" : sender,
-                    "subj" :  subj,
+      email_map = { "subj" :  subj,
 		    "msg" : msg
                   };
 
@@ -523,7 +522,7 @@ This is a test email
         content = email_map;
     }
     fired {
-      raise fuse event email_for_owner attributes email_map
+      raise fuse event email_for_owner attributes email_map.klog(">>>> sending with >>>>");
     }
     
   }
