@@ -70,7 +70,7 @@ Manage trips. PDS is not well-suited to these operations
       	"index": offset || 0
       };
 
-      sorted_keys = this2that:transform(ent:trip_summaries, sort_opt, global_opt);
+      sorted_keys = this2that:transform(ent:trip_summaries, sort_opt);
       sorted_keys
     };
 
