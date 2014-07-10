@@ -16,7 +16,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         use module a16x129 version "dev" alias sendgrid with
             api_user = keys:sendgrid("api_user") and 
             api_key = keys:sendgrid("api_key") and
-            from = "Fuse-NoReply <noreply@joinfuse.com>"
+            from = "noreply@joinfuse.com" and
+	    fromname = "Fuse-NoReply"
 	use module b16x19 alias common
 
         errors to b16x13
@@ -295,6 +296,7 @@ A new fleet was created for #{me.encode()};
 
           subj = event:attr{"subj"} || "Message from Fuse";
 	  msg = event:attr{"msg"} || "This email contains no message";
+ 	  html = event:attr{"html"} || "<p>This email contains no message</p>";
 
         }
 	if( meta:eci().klog(">>>> came thru channel >>>>") eq fleet_backchannel.klog(">>>> fleet channel >>>>")
