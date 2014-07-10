@@ -74,7 +74,7 @@ Manage trips. PDS is not well-suited to these operations
 	"limit" : limit || 10
       }; 
 
-      sorted_keys = this2that:transform(ent:trip_summaries, sort_opt, global_opt.klog(">>>> using global options >>>> "));
+      sorted_keys = this2that:transform(ent:trip_summaries, sort_opt, global_opt.klog(">>>> transform using global options >>>> "));
       sorted_keys
     };
 
