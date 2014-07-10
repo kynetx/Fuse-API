@@ -68,7 +68,7 @@ Manage trips. PDS is not well-suited to these operations
       global_opt = {
         "index" : 0,
 	"limit" : 10
-      }.klog(">>>> using global options >>>> ");
+      }.klog(">>>> using global options >>>> "); 
 
        // global_opt = {
        //   "limit": limit || 10,
