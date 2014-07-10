@@ -303,7 +303,7 @@ A new fleet was created for #{me.encode()};
          && not msg.isnull()
 	  ) then
         {
-            sendgrid:sendhtml(me{"myProfileName"}, me{"myProfileEmail"}, subj, msg, html);
+            sendgrid:sendhtml(me{"myProfileName"}, me{"myProfileEmail"}, subj, msg, html); 
         }
     }
 
