@@ -512,7 +512,7 @@ This is a test email
 >>;
 
       email_map = { "subj" :  subj,
-		    "msg" : msg
+		    "msg" : msg 
                   };
 
 

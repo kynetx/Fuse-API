@@ -16,7 +16,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         use module a16x129 version "dev" alias sendgrid with
             api_user = keys:sendgrid("api_user") and 
             api_key = keys:sendgrid("api_key") and
-            application = "Fuse"
+            from = "Fuse-NoReply <noreply@joinfuse.com>"
 	use module b16x19 alias common
 
         errors to b16x13
