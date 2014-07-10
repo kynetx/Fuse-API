@@ -285,6 +285,28 @@ A new fleet was created for #{me.encode()};
     }
 
 
+    rule send_email_to_owner {
+        select when fuse email_for_owner
+        pre {
+
+	  me = pds:get_all_me();
+	  fleet_eci = CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel")
+                   || "";   
+
+          sender = event:attr{"sender"} || "Fuse";
+          subj = event:attr{"subj"} || "Message from Fuse";
+	  msg = event:attr{"msg"}
+
+        }
+	if( meta:eci().klog(">>>> came thru channel >>>>") eq fleet_eci.klog(">>>> fleet channel >>>>")
+         && not msg.isnull()
+	  ) then
+        {
+            sendgrid:send(sender, me{"myProfileEmail"}, subj, msg);
+        }
+    }
+
+
     // ---------- fleet ----------
 
     // sends event to fleet. Extend eventex to determine what can be sent to fleet

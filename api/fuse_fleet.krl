@@ -162,6 +162,7 @@ Application that manages the fleet
     rule route_to_owner {
       select when fuse new_fleet
                or fuse reminders_ready
+	       or fuse email_for_owner
       pre {
         owner = CloudOS:subscriptionList(common:namespace(),"FleetOwner").head().pick("$.eventChannel");
       }
@@ -500,17 +501,43 @@ Application that manages the fleet
 
   }
   
+  // ---------- fleet emails ----------
+  rule send_email_to_owner {
+    select when fuse weekly_report
+    pre {
+      sender = "Phil Tester";
+      subj = "This is a test";
+      msg = <<
+This is a test email 
+>>;
+
+      email_map = { "sender" : sender,
+                    "subj" :  subj,
+		    "msg" : msg
+                  };
+
+
+    }
+    {
+      send_directive("sending email to fleet owner") with
+        content = email_map;
+    }
+    fired {
+      raise fuse event email_for_owner attributes email_map
+    }
+    
+  }
 
     
-    // ---------- housekeeping rules ----------
-    rule catch_complete {
-      select when system send_complete
-        foreach event:attr('send_results').pick("$.result") setting (result)
-        send_directive("event:send status")
-	  with status = result{"status"}
-	   and reason = result{"reason"}
-	   and body = result{"body"}
-	  ;
-   }
+  // ---------- housekeeping rules ----------
+  rule catch_complete {
+    select when system send_complete
+      foreach event:attr('send_results').pick("$.result") setting (result)
+      send_directive("event:send status")
+        with status = result{"status"}
+	 and reason = result{"reason"}
+	 and body = result{"body"}
+	 ;
+ }
 
 }
