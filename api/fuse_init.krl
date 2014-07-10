@@ -294,9 +294,11 @@ A new fleet was created for #{me.encode()};
 	  fleet_backchannel = CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.backChannel")
                            || "";   
 
-          subj = event:attr{"subj"} || "Message from Fuse";
-	  msg = event:attr{"msg"} || "This email contains no message";
- 	  html = event:attr{"html"} || "<p>This email contains no message</p>";
+          subj = event:attr("subj") || "Message from Fuse";
+	  msg = event:attr("msg") || "This email contains no message";
+ 	  html = event:attr("html") || msg;
+
+	  huh = event:attrs().klog(">>>> event attrs >>>>");
 
         }
 	if( meta:eci().klog(">>>> came thru channel >>>>") eq fleet_backchannel.klog(">>>> fleet channel >>>>")
