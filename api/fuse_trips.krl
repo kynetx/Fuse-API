@@ -69,9 +69,18 @@ Manage trips. PDS is not well-suited to these operations
 	"compare" : "datetime"
       };
 
+      max_returned = 25;
+
+      hard_offset = offset.isnull()     => 0               // default
+                  |                        offset;
+
+      hard_limit = limit.isnull()       => 10              // default
+                 | limit > max_returned => max_returned
+		 |                         limit;
+
       global_opt = {
-        "index" : offset.isnull() => 0 | offset, // disjunction returns false with 0 as result
-	"limit" : limit || 10
+        "index" : hard_offset,
+	"limit" : hard_limit
       }; 
 
       sorted_keys = this2that:transform(ent:trip_summaries, sort_opt, global_opt.klog(">>>> transform using global options >>>> "));
