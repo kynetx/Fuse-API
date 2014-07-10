@@ -68,14 +68,14 @@ Manage trips. PDS is not well-suited to these operations
       global_opt = {
         "index" : 0,
 	"limit" : 10
-      }.klog(">>>> using global options >>>> "); 
+      }; 
 
        // global_opt = {
        //   "limit": limit || 10,
        // 	"index": offset || 0
        // };
 
-      sorted_keys = this2that:transform(ent:trip_summaries, sort_opt, global_opt);
+      sorted_keys = this2that:transform(ent:trip_summaries, sort_opt, global_opt.klog(">>>> using global options >>>> "));
       sorted_keys
     };
 
