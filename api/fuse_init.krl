@@ -290,15 +290,15 @@ A new fleet was created for #{me.encode()};
         pre {
 
 	  me = pds:get_all_me();
-	  fleet_eci = CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel")
-                   || "";   
+	  fleet_backchannel = CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.backChannel")
+                           || "";   
 
           sender = event:attr{"sender"} || "Fuse";
           subj = event:attr{"subj"} || "Message from Fuse";
 	  msg = event:attr{"msg"}
 
         }
-	if( meta:eci().klog(">>>> came thru channel >>>>") eq fleet_eci.klog(">>>> fleet channel >>>>")
+	if( meta:eci().klog(">>>> came thru channel >>>>") eq fleet_backchannel.klog(">>>> fleet channel >>>>")
          && not msg.isnull()
 	  ) then
         {
