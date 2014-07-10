@@ -84,7 +84,7 @@ Manage trips. PDS is not well-suited to these operations
       }; 
 
       sorted_keys = this2that:transform(ent:trip_summaries, sort_opt, global_opt.klog(">>>> transform using global options >>>> "));
-      sorted_keys
+      sorted_keys.map(function(id){ ent:trip_summaries{mkTid(id)} })
     };
 
     all_trips = function() {
