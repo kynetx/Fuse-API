@@ -645,8 +645,9 @@ Application that manages the fleet
 <h1>#{title}</h1>
 #{vehicle_html}
 
-<div class="footer">
-<img align="center" src="https://s3.amazonaws.com/Fuse_assets/img/fuse_logo-30.png"/>
+<div class="footer" style="align:center">
+<img align="center" src="https://s3.amazonaws.com/Fuse_assets/img/fuse_logo-30.png"/><br/>
+&copy; Kynetx, Inc. 
 </div>
 >>;
 
