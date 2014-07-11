@@ -572,7 +572,7 @@ Application that manages the fleet
         
 
 	trips_raw = vehicle{"channel"}.isnull() => {}
-                  | common:skycloud(vehicle{"channel"},"b16x18","tripsByDate", {"start": before, "end": today});
+                  | common:skycloud(vehicle{"channel"},"b16x18","tripsByDate", {"start": before, "end": today}).klog(">>> skycloud return trips >>> ");
         trips = trips_raw{"error"} => [].klog(">>> error for trips query to " + vehicle{"channel"})
               | trips_raw.values(); 
 
