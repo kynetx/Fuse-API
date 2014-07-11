@@ -595,7 +595,7 @@ Application that manages the fleet
 	total_duration = trip_aggregates{"duration"}.sprintf("%.0f");	    
         total_miles = trip_aggregates{"mileage"}.sprintf("%.1f");
 	total_cost = trip_aggregates{"cost"}.sprintf("%.2f"); 
-	num_trips = trips.length(); 
+	num_trips = trips.length() || 1; 
 
 	longest = trips.reduce(function(a,b){
                     a{"mileage"} < b{"mileage"} => {"trip": b, "length": b{"mileage"}}
