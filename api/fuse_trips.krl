@@ -32,7 +32,7 @@ Manage trips. PDS is not well-suited to these operations
       utc_start = common:convertToUTC(start);
       utc_end = common:convertToUTC(end);
       
-      foo = ent:trip_summaries.klog(">>>> seeing these trips >>>>");
+      foo = ent:trip_summaries;
       ent:trip_summaries.query([], { 
        'requires' : '$and',
        'conditions' : [

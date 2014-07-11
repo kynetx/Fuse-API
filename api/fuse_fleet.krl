@@ -571,10 +571,10 @@ Application that manages the fleet
 	    | "VIN: " + vehicle{"vin"};
         
 
-	trips_raw = vehicle{"channel"}.isnull() => []
+	trips_raw = vehicle{"channel"}.isnull() => {}
                   | common:skycloud(vehicle{"channel"},"b16x18","tripsByDate", {"start": before, "end": today});
         trips = trips_raw{"error"} => [].klog(">>> error for trips query to " + vehicle{"channel"})
-              | trips_raw; 
+              | trips_raw.values(); 
 
         huh = trips.klog(">>>> trip data>>> ");
 	    
