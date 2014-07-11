@@ -595,11 +595,16 @@ Application that manages the fleet
 	total_duration = trip_aggregates{"duration"}.sprintf("%.0f");	    
         total_miles = trip_aggregates{"mileage"}.sprintf("%.1f");
 	total_cost = trip_aggregates{"cost"}.sprintf("%.2f"); 
-	num_trips = trips.length() || 1; 
+	num_trips = trips.length(); 
 
-	avg_duration = (trip_aggregates{"duration"}/num_trips).sprintf("%.0f");	    
-        avg_miles = (trip_aggregates{"mileage"}/num_trips).sprintf("%.1f");
-	avg_cost = (trip_aggregates{"cost"}/num_trips).sprintf("%.2f"); 
+	find_avg = function(x) {
+          num_trips > 0 => x / num_trips
+                         | 0;
+	};
+
+	avg_duration = find_avg(trip_aggregates{"duration"}).sprintf("%.0f");	    
+        avg_miles = find_avg(trip_aggregates{"mileage"}).sprintf("%.1f");
+	avg_cost = find_avg(trip_aggregates{"cost"}).sprintf("%.2f"); 
 
 	longest = trips.reduce(function(a,b){
                     a{"mileage"} < b{"mileage"} => {"trip": b, "length": b{"mileage"}}
