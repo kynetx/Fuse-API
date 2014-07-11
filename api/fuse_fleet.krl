@@ -510,7 +510,7 @@ Application that manages the fleet
       period = {"format": {"days" : -7}, // one week; must be negative
                 "readable" : "weekly"
                };
-      tz = "MDT";
+      tz = "-0600";
 
       today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz":"UTC"});
       yesterday = time:add(today, {"days": -1});
