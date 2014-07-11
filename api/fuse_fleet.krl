@@ -513,15 +513,22 @@ Application that manages the fleet
       today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz":"UTC"});
       before = time:add(today, period{"format"});
 
-      friendly_format = "%b %d";
+      friendly_format = "%b %e";
       title = "Fuse Report for #{time:strftime(before, friendly_format)} to #{time:strftime(time:add({'day':-1}, today), friendly_format)}"; 
       subj = "Your "+period{"readable"}+" report from Fuse!";
       msg = <<
 #{title}
 >>;
 
+      html = <<
+<h1>#{title}</h1>
+>>;
+
+
+
       email_map = { "subj" :  subj,
-		    "msg" : msg 
+		    "msg" : msg,
+		    "html" : html
                   };
 
 
