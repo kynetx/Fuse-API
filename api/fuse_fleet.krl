@@ -595,7 +595,7 @@ Application that manages the fleet
 	total_duration = trip_aggregates{"duration"}.sprintf("%.0f")+" min";	    
         total_miles = trip_aggregates{"mileage"}.sprintf("%.1f")+" miles";
 	total_cost = "$"+trip_aggregates{"cost"}.sprintf("%.2f"); 
-	num_trips = trip_aggregates.length();
+	num_trips = trip_aggregates.values().length();
 
         line = <<
 <div class="vehicle">
