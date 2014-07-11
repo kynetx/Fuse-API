@@ -592,10 +592,15 @@ Application that manages the fleet
         trips_html = trips.map(format_trip_line).join(" ");
 
 	trip_aggregates = trips.reduce(aggregate_two_trips, {"cost":0,"mileage":0,"duration":0}).klog(">>>> aggregates>>>>");
-	total_duration = trip_aggregates{"duration"}.sprintf("%.0f")+" min";	    
-        total_miles = trip_aggregates{"mileage"}.sprintf("%.1f")+" miles";
-	total_cost = "$"+trip_aggregates{"cost"}.sprintf("%.2f"); 
+	total_duration = trip_aggregates{"duration"}.sprintf("%.0f");	    
+        total_miles = trip_aggregates{"mileage"}.sprintf("%.1f");
+	total_cost = trip_aggregates{"cost"}.sprintf("%.2f"); 
 	num_trips = trips.length(); 
+
+	longest = trips.reduce(function(a,b){
+                    a{"mileage"} < b{"mileage"} => {"trip": b, "length": b{"mileage"}}
+                                                 | a
+	          }, {"trip": {}, "length": 0}).klog(">>>> longest >>>>");
 
         line = <<
 <div class="vehicle">
@@ -608,7 +613,8 @@ Application that manages the fleet
 <div class="vehicle_fuellevel">#{gas}</div>
 <br clear="left"/>
 <h3>Trips from Last Week</h3>
-<div>#{name} took #{num_trips} trips: #{total_miles}, #{total_duration}, #{total_cost}
+<div><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></div>
+<div>Avergages: #{total_miles/num_trips} miles, #{total_duration/num_trips} min, $#{total_cost/num_trips}</b></div>
 <div>
 #{trips_html}
 </div>
