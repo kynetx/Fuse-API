@@ -546,7 +546,7 @@ Application that manages the fleet
 
 	duration_val = (time:strftime(trip{"endTime"}, "%s") - time:strftime(trip{"startTime"}, "%s"))/60;
 	duration = duration_val < 0.1 => ""
-	         | wrap_in_div(duration_val + "min", "trip_duration");
+	         | wrap_in_div(duration_val.sprintf("%.2f") + "min", "trip_duration");
 	
         line = <<
 <div class="trip"
