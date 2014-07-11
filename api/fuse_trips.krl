@@ -32,8 +32,13 @@ Manage trips. PDS is not well-suited to these operations
       utc_start = common:convertToUTC(start);
       utc_end = common:convertToUTC(end);
       
-      foo = ent:trip_summaries;
-      ent:trip_summaries.query([], { 
+      sort_opt = {
+        "path" : ["endTime"],
+	"reverse": true,
+	"compare" : "datetime"
+      };
+
+      this2that:transform(ent:trip_summaries.query([], { 
        'requires' : '$and',
        'conditions' : [
           { 
@@ -48,7 +53,8 @@ Manage trips. PDS is not well-suited to these operations
 	  }
 	]},
 	"return_values"
-	)
+	), 
+       sort_opts)
     };
 
     tripsByDate = trips;
