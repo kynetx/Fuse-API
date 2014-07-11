@@ -591,7 +591,7 @@ Application that manages the fleet
 
         trips_html = trips.map(format_trip_line).join(" ");
 
-	trip_aggregates = trips.reduce(aggregate_two_trips, {"cost":0,"len":0,"duration":0}).klog(">>>> aggregates>>>>");
+	trip_aggregates = trips.reduce(aggregate_two_trips, {"cost":0,"mileage":0,"duration":0}).klog(">>>> aggregates>>>>");
 	total_duration = trip_aggregates{"duration"}.sprintf("%.0f")+" min";	    
         total_miles = trip_aggregates{"mileage"}.sprintf("%.1f")+" miles";
 	total_cost = "$"+trip_aggregates{"cost"}.sprintf("%.2f"); 
