@@ -566,7 +566,7 @@ Application that manages the fleet
 
       aggregate_two_trips = function(a,b) {
         {"cost": a{"cost"} + b{"cost"},
-	 "len" : a{"len"} + b{"len"},
+	 "mileage" : a{"mileage"} + b{"mileage"},
 	 "duration": a{"duration"} + tripDuration(b)
 	}
       };
@@ -592,6 +592,10 @@ Application that manages the fleet
         trips_html = trips.map(format_trip_line).join(" ");
 
 	trip_aggregates = trips.reduce(aggregate_two_trips, {"cost":0,"len":0,"duration":0}).klog(">>>> aggregates>>>>");
+	total_duration = trip_aggregates{"duration"}.sprintf("%.f0")+" min";	    
+        total_miles = trip_aggregates{"mileage"}.sprintf("%.1f")+" miles";
+	total_cost = "$"+trip_aggregates{"cost"}.sprintf("%.2f");
+	num_trips = trip_aggregates.length();
 
         line = <<
 <div class="vehicle">
@@ -604,6 +608,7 @@ Application that manages the fleet
 <div class="vehicle_fuellevel">#{gas}</div>
 <br clear="left"/>
 <h3>Trips from Last Week</h3>
+<div>#{name} took #{num_trips} trips: #{total_miles}, #{total_duration}, #{total_cost}
 <div>
 #{trips_html}
 </div>
