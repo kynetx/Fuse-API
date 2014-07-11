@@ -624,7 +624,7 @@ Application that manages the fleet
 <br clear="left"/>
 <h3>Trips from Last Week</h3>
 <div><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></div>
-<div>Avergages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></div>
+<div>Averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></div>
 <div>
 #{trips_html}
 </div>
@@ -645,6 +645,9 @@ Application that manages the fleet
 <h1>#{title}</h1>
 #{vehicle_html}
 
+<div class="footer">
+<img align="center" src="https://s3.amazonaws.com/Fuse_assets/img/fuse_logo-30.png"/>
+</div>
 >>;
 
 
