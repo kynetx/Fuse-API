@@ -536,17 +536,17 @@ Application that manages the fleet
 
       format_trip_line = function(trip) {
         cost = trip{"cost"}.isnull() || trip{"cost"} < 0.01 => ""
-	     | wrap_in_div("$" + trip{"cost"}, "trip_cost");
+	     | wrap_in_span("$" + trip{"cost"}.sprintf("%.2f"), "trip_cost");
         len = trip{"mileage"}.isnull() || trip{"mileage"} < 0.01 => ""
-	    | wrap_in_div(trip{"mileage"} + " miles", "trip_mileage");
+	    | wrap_in_span(trip{"mileage"} + " miles", "trip_mileage");
 	name = trip{"name"}.isnull() => ""
-             | wrap_in_div(trip{"name"}, "trip_name");
+             | wrap_in_span(trip{"name"}, "trip_name");
 	time = trip{"endTime"}.isnull() => ""
-	     | wrap_in_div(time:strftime(trip{"endTime"}, "%b %e %I:%M %p", {"tz": tz}), "trip_end");
+	     | wrap_in_span(time:strftime(trip{"endTime"}, "%b %e %I:%M %p", {"tz": tz}), "trip_end");
 
-	duration_val = (time:strftime(trip{"endTime"}, "%s") - time:strftime(trip{"startTime"}, "%s"))/60;
+	duration_val = tripDuration(trip);
 	duration = duration_val < 0.1 => ""
-	         | wrap_in_div(duration_val.sprintf("%.2f") + "min", "trip_duration");
+	         | wrap_in_span(duration_val.sprintf("%.01f") + " min", "trip_duration");
 	
         line = <<
 <div class="trip"
@@ -558,6 +558,17 @@ Application that manages the fleet
 </div>
 >>;
         line
+      };
+
+      tripDuration = function(trip) {
+        (time:strftime(trip{"endTime"}, "%s") - time:strftime(trip{"startTime"}, "%s"))/60
+      };
+
+      aggregate_two_trips = function(a,b) {
+        {"cost": a{"cost"} + b{"cost"},
+	 "len" : a{"len"} + b{"len"},
+	 "duration": a{"duration"} + tripDuration(b)
+	}
       };
 
       format_vehicle_summary = function(vehicle) {
@@ -580,6 +591,7 @@ Application that manages the fleet
 
         trips_html = trips.map(format_trip_line).join(" ");
 
+	trip_aggregates = trips.reduce(aggregate_two_trips, {"cost":0,"len":0,"duration":0}).klog(">>>> aggregates>>>>");
 
         line = <<
 <div class="vehicle">
