@@ -593,7 +593,7 @@ Application that manages the fleet
 <br clear="left"/>
 <h3>Trips from Last Week</h3>
 <div>
-#{trips}
+#{trips_html}
 </div>
 
 </div><!-- vehicle -->
