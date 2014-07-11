@@ -511,17 +511,37 @@ Application that manages the fleet
                };
 
       today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz":"UTC"});
+      yesterday = time:add({'day':-1}, today);
       before = time:add(today, period{"format"});
 
       friendly_format = "%b %e";
-      title = "Fuse Report for #{time:strftime(before, friendly_format)} to #{time:strftime(time:add({'day':-1}, today), friendly_format)}"; 
+      title = "Fuse Fleet Report for #{time:strftime(before, friendly_format)} to #{time:strftime(yesterday, friendly_format)}"; 
       subj = "Your "+period{"readable"}+" report from Fuse!";
+
+      summaries = vehicleSummary();
+
+      format_vehicle_summary = function(vehicle) {
+        name = vehicle{"profileName"};
+        photo = vehicle{"profilePhoto"};
+	address = vehicle{"address"} || "";
+	
+        line = <<
+<h2>#{name}</h2>
+Location: #{address}
+<img src="#{photo}" align="left"/><br clear="left"/>
+>>;
+	line
+      };
+      
+
       msg = <<
 #{title}
 >>;
 
       html = <<
 <h1>#{title}</h1>
+#{summaries.map(format_vehicle_summary)}
+
 >>;
 
 
