@@ -59,7 +59,7 @@ Manage trips. PDS is not well-suited to these operations
        // x_offset = offset.klog(">>>> offset >>>>>");
 
       id.isnull() => allTrips(limit, offset)
-                   | ent:trip_summaries{mkTid(id)};
+                   | ent:trips_by_id{mkTid(id)};
     };
 
     allTrips = function(limit, offset) {

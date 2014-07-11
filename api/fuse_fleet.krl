@@ -506,9 +506,11 @@ Application that manages the fleet
     select when fuse periodic_report
     pre {
 
+      // configurables
       period = {"format": {"days" : -7}, // one week; must be negative
                 "readable" : "weekly"
                };
+      tz = "MDT";
 
       today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz":"UTC"});
       yesterday = time:add(today, {"days": -1});
@@ -518,7 +520,43 @@ Application that manages the fleet
       title = "Fuse Fleet Report for #{time:strftime(before, friendly_format)} to #{time:strftime(yesterday, friendly_format)}"; 
       subj = "Your "+period{"readable"}+" report from Fuse!";
 
-      
+      wrap_in_div = function(obj, class) {
+        div = <<
+<div class="#{class}">#{obj}</div>
+>>;
+	div
+      };
+
+      wrap_in_span = function(obj, class) {
+        span = <<
+<span class="#{class}">#{obj}</span>
+>>;
+	span
+      };
+
+      format_trip_line = function(trip) {
+        cost = trip{"cost"}.isnull() => ""
+	     | wrap_in_div("$" + trip{"cost"}, "trip_cost");
+        len = trip{"mileage"}.isnull() && trip{"mileage"} < 0.01 => ""
+	    | wrap_in_div(trip{"mileage"} + " miles", "trip_mileage");
+	name = trip{"name"}.isnull() => ""
+             | wrap_in_div(trip{"name"}, "trip_name");
+	time = trip{"endTime"}.isnull() => ""
+	     | wrap_in_div(time:strftime(trip{"endTime"}, "%b %e %I:%M %p", {"tz": tz}), "trip_end");
+
+	duration_val = time:strftime(trip{"endTime"}, "%s") - time:strftime(trip{"startTime"}, "%s")/60;
+	duration = duration_val < 0.1 => ""
+	         | wrap_in_div(duration_val + "min", "trip_duration");
+	
+        line = <<
+#{time}
+#{name}
+#{len}
+#{cost}
+#{duration}
+>>;
+        line
+      };
 
       format_vehicle_summary = function(vehicle) {
         name = vehicle{"profileName"};
@@ -532,8 +570,13 @@ Application that manages the fleet
 	vin = vehicle{"vin"}.isnull() => "No VIN Recorded"
 	    | "VIN: " + vehicle{"vin"};
         
+
+	trips = vehicle{"channel"}.isnull() => []
+              | common:skycloud(vehicle{"channel"},"b16x18","tripsByDate", {"start": before, "end": today});
+
+        huh = trips.klog(">>>> trip data>>> ");
 	    
-        trips = "<div>trips go here</div>";
+        trips_html = trips.map(format_trip_line).join(" ");
 
 
         line = <<
