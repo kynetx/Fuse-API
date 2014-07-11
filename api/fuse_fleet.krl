@@ -502,11 +502,15 @@ Application that manages the fleet
   }
   
   // ---------- fleet emails ----------
-  rule send_email_to_owner {
-    select when fuse weekly_report
+  rule send_fuse_periodic_report {
+    select when fuse periodic_report
     pre {
-      sender = "Phil Tester";
-      subj = "This is a test";
+
+      period = {"days" : -7}; // one week; must be negative
+      today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz":"UTC"});
+      before = time:add(today, period);
+
+      subj = "Fuse Report for #{time:strftime('%F', before)} to #{time:strftime('%F', today)}";
       msg = <<
 This is a test email 
 >>;
