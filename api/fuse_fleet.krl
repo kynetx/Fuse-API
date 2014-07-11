@@ -511,7 +511,7 @@ Application that manages the fleet
                };
 
       today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz":"UTC"});
-      yesterday = time:add({"days": -1}, today);
+      yesterday = time:add(today, {"days": -1});
       before = time:add(today, period{"format"});
 
       friendly_format = "%b %e";
@@ -537,21 +537,24 @@ Application that manages the fleet
 
 
         line = <<
+<div class="vehicle">
 <img src="#{photo}" align="left"/>
 <h2>#{name}</h2>
 
-<div>#{vin}</div>
-<div>#{address}</div>
-<div>#{mileage}</div>
-<div>#{gas}</div>
+<div class="vehicle_address">#{address}</div>
+<div class="vehicle_vin">#{vin}</div>
+<div class="vehicle_mileage">#{mileage}</div>
+<div class="vehicle_fuellevel">#{gas}</div>
 <br clear="left"/>
 <h3>Trips from Last Week</h3>
 <div>
 #{trips}
 </div>
+
+</div><!-- vehicle -->
 >>;
 	line
-      };
+      }; // format_vehicle_summary
       
       summaries = vehicleSummary();
       vehicle_html = summaries.map(format_vehicle_summary).join(" ");
