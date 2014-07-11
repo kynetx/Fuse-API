@@ -511,7 +511,7 @@ Application that manages the fleet
                };
 
       today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz":"UTC"});
-      yesterday = time:add({'day':-1}, today);
+      yesterday = time:add({"days": -1}, today);
       before = time:add(today, period{"format"});
 
       friendly_format = "%b %e";
@@ -524,11 +524,31 @@ Application that manages the fleet
         name = vehicle{"profileName"};
         photo = vehicle{"profilePhoto"};
 	address = vehicle{"address"} || "";
-	
+	gas = vehicle{"fuellevel"}.isnull() => ""
+	    | "Fuel remaining: " + vehicle{"fuellevel"} + "%";
+	    
+	mileage = vehicle{"mileage"}.isnull() => ""
+	        | "Odometer: " + vehicle{"mileage"};
+	vin = vehicle{"vin"}.isnull() => "No VIN Recorded"
+	    | "VIN: " + vehicle{"vin"};
+        
+	    
+        trips = "<div>trips go here</div>";
+
+
         line = <<
+<img src="#{photo}" align="left"/>
 <h2>#{name}</h2>
-Location: #{address}
-<img src="#{photo}" align="left"/><br clear="left"/>
+
+<div>#{vin}</div>
+<div>#{address}</div>
+<div>#{mileage}</div>
+<div>#{gas}</div>
+<br clear="left"/>
+<h3>Trips from Last Week</h3>
+<div>
+#{trips}
+</div>
 >>;
 	line
       };
