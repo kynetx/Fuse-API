@@ -506,13 +506,17 @@ Application that manages the fleet
     select when fuse periodic_report
     pre {
 
-      period = {"days" : -7}; // one week; must be negative
-      today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz":"UTC"});
-      before = time:add(today, period);
+      period = {"format": {"days" : -7}, // one week; must be negative
+                "readable" : "weekly"
+               };
 
-      subj = "Fuse Report for #{time:strftime('%F', before)} to #{time:strftime('%F', today)}";
+      today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz":"UTC"});
+      before = time:add(today, period{"format"});
+
+      title = "Fuse Report for #{time:strftime('%b %d', before)} to #{time:strftime('%b %d', today)}";
+      subj = "Your "+period{"readable"}+" report from Fuse!";
       msg = <<
-This is a test email 
+#{title}
 >>;
 
       email_map = { "subj" :  subj,
@@ -543,4 +547,5 @@ This is a test email
 	 ;
  }
 
+// fuse_fleet.krl
 }

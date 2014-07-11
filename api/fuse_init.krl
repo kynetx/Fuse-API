@@ -298,7 +298,7 @@ A new fleet was created for #{me.encode()};
 	  msg = event:attr("msg") || "This email contains no message";
  	  html = event:attr("html") || msg;
 
-	  huh = event:attrs().klog(">>>> event attrs >>>>");
+//	  huh = event:attrs().klog(">>>> event attrs >>>>");
 
         }
 	if( meta:eci().klog(">>>> came thru channel >>>>") eq fleet_backchannel.klog(">>>> fleet channel >>>>")
