@@ -513,7 +513,8 @@ Application that manages the fleet
       today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz":"UTC"});
       before = time:add(today, period{"format"});
 
-      title = "Fuse Report for #{time:strftime('%b %d', before)} to #{time:strftime('%b %d', today)}";
+      friendly_format = "%b %d";
+      title = "Fuse Report for #{time:strftime(before, friendly_format)} to #{time:strftime(today, friendly_format)}";
       subj = "Your "+period{"readable"}+" report from Fuse!";
       msg = <<
 #{title}
