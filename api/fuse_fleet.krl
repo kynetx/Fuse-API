@@ -631,8 +631,6 @@ Application that manages the fleet
 <div>Averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></div>
 
 <table class="trip" style="border-collapse:collapse;border-spacing:0;border-color:#aaa;">
-#{trips_html}
-</table>
 <tr>
     <th style="#{trip_table_header_style}">Date</th>
     <th style="#{trip_table_header_style}">Name</th>
