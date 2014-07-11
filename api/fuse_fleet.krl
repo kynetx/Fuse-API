@@ -510,7 +510,7 @@ Application that manages the fleet
       period = {"format": {"days" : -7}, // one week; must be negative
                 "readable" : "weekly"
                };
-      tz = "-0600";
+      tz = "-06000";
 
       today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz":"UTC"});
       yesterday = time:add(today, {"days": -1});
@@ -535,25 +535,27 @@ Application that manages the fleet
       };
 
       format_trip_line = function(trip) {
-        cost = trip{"cost"}.isnull() => ""
+        cost = trip{"cost"}.isnull() || trip{"cost"} < 0.01 => ""
 	     | wrap_in_div("$" + trip{"cost"}, "trip_cost");
-        len = trip{"mileage"}.isnull() && trip{"mileage"} < 0.01 => ""
+        len = trip{"mileage"}.isnull() || trip{"mileage"} < 0.01 => ""
 	    | wrap_in_div(trip{"mileage"} + " miles", "trip_mileage");
 	name = trip{"name"}.isnull() => ""
              | wrap_in_div(trip{"name"}, "trip_name");
 	time = trip{"endTime"}.isnull() => ""
 	     | wrap_in_div(time:strftime(trip{"endTime"}, "%b %e %I:%M %p", {"tz": tz}), "trip_end");
 
-	duration_val = time:strftime(trip{"endTime"}, "%s") - time:strftime(trip{"startTime"}, "%s")/60;
+	duration_val = (time:strftime(trip{"endTime"}, "%s") - time:strftime(trip{"startTime"}, "%s"))/60;
 	duration = duration_val < 0.1 => ""
 	         | wrap_in_div(duration_val + "min", "trip_duration");
 	
         line = <<
+<div class="trip"
 #{time}
 #{name}
 #{len}
 #{cost}
 #{duration}
+</div>
 >>;
         line
       };
@@ -576,8 +578,6 @@ Application that manages the fleet
         trips = trips_raw.typeof() eq "hash" && trips_raw{"error"} => [].klog(">>> error for trips query to " + vehicle{"channel"})
               | trips_raw;  
 
-        huh = trips.klog(">>>> trip data>>> ");
-	    
         trips_html = trips.map(format_trip_line).join(" ");
 
 
