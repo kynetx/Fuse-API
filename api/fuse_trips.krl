@@ -54,7 +54,7 @@ Manage trips. PDS is not well-suited to these operations
 	]},
 	"return_values"
 	), 
-       sort_opts)
+       sort_opt)
     };
 
     tripsByDate = trips;
