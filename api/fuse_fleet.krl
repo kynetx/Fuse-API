@@ -597,6 +597,10 @@ Application that manages the fleet
 	total_cost = trip_aggregates{"cost"}.sprintf("%.2f"); 
 	num_trips = trips.length() || 1; 
 
+	avg_duration = (trip_aggregates{"duration"}/num_trips).sprintf("%.0f");	    
+        avg_miles = (trip_aggregates{"mileage"}/num_trips).sprintf("%.1f");
+	avg_cost = (trip_aggregates{"cost"}/num_trips).sprintf("%.2f"); 
+
 	longest = trips.reduce(function(a,b){
                     a{"mileage"} < b{"mileage"} => {"trip": b, "length": b{"mileage"}}
                                                  | a
@@ -614,7 +618,7 @@ Application that manages the fleet
 <br clear="left"/>
 <h3>Trips from Last Week</h3>
 <div><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></div>
-<div>Avergages: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></div>
+<div>Avergages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></div>
 <div>
 #{trips_html}
 </div>
