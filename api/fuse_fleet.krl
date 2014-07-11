@@ -514,7 +514,7 @@ Application that manages the fleet
       before = time:add(today, period{"format"});
 
       friendly_format = "%b %d";
-      title = "Fuse Report for #{time:strftime(before, friendly_format)} to #{time:strftime(today, friendly_format)}";
+      title = "Fuse Report for #{time:strftime(before, friendly_format)} to #{time:strftime(time:add({'day':-1}, today), friendly_format)}";
       subj = "Your "+period{"readable"}+" report from Fuse!";
       msg = <<
 #{title}
