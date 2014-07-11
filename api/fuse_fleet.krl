@@ -518,7 +518,7 @@ Application that manages the fleet
       title = "Fuse Fleet Report for #{time:strftime(before, friendly_format)} to #{time:strftime(yesterday, friendly_format)}"; 
       subj = "Your "+period{"readable"}+" report from Fuse!";
 
-      summaries = vehicleSummary();
+      
 
       format_vehicle_summary = function(vehicle) {
         name = vehicle{"profileName"};
@@ -533,6 +533,8 @@ Location: #{address}
 	line
       };
       
+      summaries = vehicleSummary();
+      vehicle_html = summaries.map(format_vehicle_summary).join(" ");
 
       msg = <<
 #{title}
@@ -540,7 +542,7 @@ Location: #{address}
 
       html = <<
 <h1>#{title}</h1>
-#{summaries.map(format_vehicle_summary)}
+#{vehicle_html}
 
 >>;
 
