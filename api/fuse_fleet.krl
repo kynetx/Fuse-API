@@ -614,7 +614,7 @@ Application that manages the fleet
 <br clear="left"/>
 <h3>Trips from Last Week</h3>
 <div><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></div>
-<div>Avergages: #{total_miles/num_trips} miles, #{total_duration/num_trips} min, $#{total_cost/num_trips}</b></div>
+<div>Avergages: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></div>
 <div>
 #{trips_html}
 </div>
