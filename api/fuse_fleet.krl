@@ -47,7 +47,6 @@ Application that manages the fleet
 
 
 	summaries = ent:fleet{["vehicle_info"]}
-	             .klog(">>>> vehicle_info >>>>")
 		     .map(function(k,v){v.put(["picoId"], k).put(["channel"], vehicle_ecis_by_name{[k,"eventChannel"]}) });
 	summary_keys = summaries.keys();
 
@@ -57,7 +56,7 @@ Application that manages the fleet
 	missing = pico_ids.difference(summary_keys).klog(">>>> missing vehicle data here >>>>");
 	responses = missing.map(function(k){CloudOS:sendEvent(picos_by_id{[k,"channel"]}, "fuse", "need_vehicle_data", account_info)}); 
 	
-	summaries.values();
+	summaries.values().klog(">>>> vehicle_info >>>>")
 
       };
 
@@ -607,9 +606,11 @@ Application that manages the fleet
 	avg_cost = find_avg(trip_aggregates{"cost"}).sprintf("%.2f"); 
 
 	longest = trips.reduce(function(a,b){
-                    a{"mileage"} < b{"mileage"} => {"trip": b, "length": b{"mileage"}}
+                    a{"mileage"} < b{"mileage"} => {"trip": b, "mileage": b{"mileage"}}
                                                  | a
-	          }, {"trip": {}, "length": 0}).klog(">>>> longest >>>>");
+	          }, {"trip": {}, "mileage": 0}).klog(">>>> longest >>>>");
+
+	
 
         line = <<
 <div class="vehicle">
