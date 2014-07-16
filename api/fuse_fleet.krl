@@ -677,13 +677,13 @@ Application that manages the fleet
 <tr><td width="600" bgcolor="#f1f1f1">
    <img src="https://s3.amazonaws.com/Fuse_assets/img/email-header.png" width="600" align="top"/>
 </td></tr>
-<tr><td style="background-color="ffffff;text-align=center;"><h2>#{title}</h2></td></tr>
+<tr><td style="background-color=ffffff;text-align=center;"><h2>#{title}</h2></td></tr>
 
-<tr style="background-color="ffffff;text-align=left;"><td>
+<tr style="background-color=ffffff;text-align=left;"><td>
 #{vehicle_html}
 </td></tr>
 
-<tr style="background-color="ffffff;text-align=left;"><td>
+<tr style="background-color=ffffff;text-align=left;"><td>
 <div class="footer" style="text-align:center">
 You are receiving this email because you have vehicles in Fuse. <br/>
 You can stop receiving them by <a href="http://joinfuse.com">editing your report preferences</a> at Joinfuse.com<br/>
