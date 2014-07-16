@@ -621,7 +621,7 @@ Application that manages the fleet
         line = <<
 <table width="100%" style="style="width:550px;border-collapse:collapse;border-spacing:0;">
 <tr>
- <td style="#{vehicle_table_header_style}">
+ <td style="width:120px;#{vehicle_table_header_style}">
   <img border="1" style="border:1px solid #e6e6e6;" src="#{photo}" align="left"/>
  </td>
  <td style="#{vehicle_table_header_style}">
@@ -634,16 +634,19 @@ Application that manages the fleet
  </td>
 </tr>
 <tr style="">
- <td colspan="2" style="margin-top:20px;#{vehicle_table_header_style}">
+ <td colspan="2" style="margin-top:50px;#{vehicle_table_header_style}">
   <h3>Trips from Last Week</h3>
  </td>
 </tr>
 
 <tr><td colspan="2" style="#{vehicle_table_header_style}"><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></td></tr>
-<tr><td colspan="2" style="#{vehicle_table_header_style}">Averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></td></tr>
+<tr><td colspan="2" style="#{vehicle_table_header_style}">Trip averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></td></tr>
 
 <tr><td colspan="2" style="#{vehicle_table_header_style}">
 <table class="trip" style="width:545px;border-collapse:collapse;border-spacing:0;border-color:#aaa;">
+<tr>
+    <th colspan="5" style="text-align:center;#{trip_table_header_style}">#{name} Trips</th>
+</tr>
 <tr>
     <th style="#{trip_table_header_style}">Date</th>
     <th style="#{trip_table_header_style}">Name</th>
@@ -667,7 +670,8 @@ Application that manages the fleet
 >>;
 
       html = <<
-<h1>#{title}</h1>
+<h2>#{title}</h2>
+
 #{vehicle_html}
 
 <div class="footer" style="text-align:center">
