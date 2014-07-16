@@ -123,7 +123,7 @@ Manage trips. PDS is not well-suited to these operations
       channel = channels.length() > 0 => channels.head()
                 		       | CloudOS:channelCreate(ical_channel_name);
       eci = channel{"cid"} || channel{"token"}; // CloudOS uses cid in one place and token in another 
-      {"url": "http://" + meta:hostname() + "/sky/cloud/" + meta:rid() + "/icalForVehicle?_eci=" + eci }
+      {"url": "webcal://" + meta:hostname() + "/sky/cloud/" + meta:rid() + "/icalForVehicle?_eci=" + eci }
     };
 
     icalForVehicleDoNothing = function(search){""};
