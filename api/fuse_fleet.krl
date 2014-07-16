@@ -621,22 +621,28 @@ Application that manages the fleet
         line = <<
 <table style="border-collapse:collapse;border-spacing:0;">
 <tr>
-<td><img border="1" style="border:1px solid #e6e6e6;" src="#{photo}" align="left"/></td>
-<td>
-<h2>#{name}</h2>
+ <td>
+  <img border="1" style="border:1px solid #e6e6e6;" src="#{photo}" align="left"/>
+ </td>
+ <td>
+  <h2>#{name}</h2>
 
-<div class="vehicle_address">#{address}</div>
-<div class="vehicle_vin">#{vin}</div>
-<div class="vehicle_mileage">#{mileage}</div>
-<div class="vehicle_fuellevel">#{gas}</div>
-</td>
+  <div class="vehicle_address">#{address}</div>
+  <div class="vehicle_vin">#{vin}</div>
+  <div class="vehicle_mileage">#{mileage}</div>
+  <div class="vehicle_fuellevel">#{gas}</div>
+ </td>
 </tr>
-<tr><td rowspan="2"><h3>Trips from Last Week</h3></td></tr>
+<tr>
+ <td colspan="2">
+  <h3>Trips from Last Week</h3>
+ </td>
+</tr>
 
-<tr><td rowspan="2"><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></td></tr>
-<tr><td rowspan="2">Averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></td></tr>
+<tr><td colspan="2"><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></td></tr>
+<tr><td colspan="2">Averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></td></tr>
 
-<td><td rowspan="2">
+<td><td colspan="2">
 <table width="100%" class="trip" style="border-collapse:collapse;border-spacing:0;border-color:#aaa;">
 <tr>
     <th style="#{trip_table_header_style}">Date</th>
