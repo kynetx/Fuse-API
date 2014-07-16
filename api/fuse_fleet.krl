@@ -628,7 +628,7 @@ Application that manages the fleet
   <h2>#{name}</h2>
 
   <div class="vehicle_address">#{address}</div>
-  <div class="vehicle_vin">#{vin}</div>
+  <div class="vehicle_vin">#{vin}</div> 
   <div class="vehicle_mileage">#{mileage}</div>
   <div class="vehicle_fuellevel">#{gas}</div>
  </td>
