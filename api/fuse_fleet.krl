@@ -673,7 +673,7 @@ Application that manages the fleet
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org=/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <body bgcolor="f1f1f1" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" style="margin:0;padding:0;">
-<table cellspacing="0" cellpadding="0" border="0" width="600" align="center">
+<table cellspacing="0" cellpadding="0" border="0" width="600" align="center" bgcolor="f1f1f1">
 
 <tr><td width="600" bgcolor="#f1f1f1">
    <img src="https://s3.amazonaws.com/Fuse_assets/img/email-header.png" width="600" border="0" align="top"/>
