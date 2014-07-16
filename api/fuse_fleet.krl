@@ -676,24 +676,22 @@ Application that manages the fleet
 <table cellspacing="0" cellpadding="0" border="0" width="600" align="center">
 
 <tr><td width="600" bgcolor="#f1f1f1">
-   <img src="https://s3.amazonaws.com/Fuse_assets/img/email-header.png" width="600" align="top"/>
+   <img src="https://s3.amazonaws.com/Fuse_assets/img/email-header.png" width="600" border="0" align="top"/>
 </td></tr>
 
-<tr><td style="text-align=center;"><h2>#{title}</h2></td></tr>
+<tr><td bgcolor="ffffff" style="text-align:center;"><h2>#{title}</h2></td></tr>
 
-<tr><td bgcolor="ffffff" style="text-align=left;">
+<tr><td bgcolor="ffffff" style="text-align:left;">
 #{vehicle_html}
 </td></tr>
  
-<tr><td bgcolor="f1f1f1" style="text-align=left;">
-<div class="footer" style="text-align:center">
+<tr><td bgcolor="f1f1f1" style="text-align:center;">
 You are receiving this email because you have vehicles in Fuse. <br/>
 You can stop receiving them by <a href="http://joinfuse.com">editing your report preferences</a> at Joinfuse.com<br/>
 <p>
 <img align="center" src="https://s3.amazonaws.com/Fuse_assets/img/fuse_logo-30.png"/>
 </p>
 &copy; Kynetx, Inc.
-</div>
 </td></tr>
 </table><!-- main -->
 </body>
