@@ -139,9 +139,9 @@ Manage trips. PDS is not well-suited to these operations
 	"limit" : 50
       }; 
       
-      t = this2that:transform(ent:trip_summaries, sort_opt, global_opt.klog(">>>> transform using global options >>>> "))
+      t = this2that:transform(ent:trip_summaries, sort_opt, global_opt)
               .map(function(k) {
-	        e = ent:trip_summaries{k}.klog(">>> working with summary <<<");
+	        e = ent:trip_summaries{k};
 	        start = e{["startWaypoint", "latitude"]} + "," + e{["startWaypoint", "longitude"]};
 	        dest = e{["endWaypoint", "latitude"]} + "," + e{["endWaypoint", "longitude"]};
 		miles = e{"mileage"} || "unknown";

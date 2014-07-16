@@ -535,13 +535,13 @@ Application that manages the fleet
 
       format_trip_line = function(trip) {
         cost = trip{"cost"}.isnull() || trip{"cost"} < 0.01 => ""
-	     | wrap_in_span("$" + trip{"cost"}.sprintf("%.2f"), "trip_cost");
+	     | "$" + trip{"cost"}.sprintf("%.2f");
         len = trip{"mileage"}.isnull() || trip{"mileage"} < 0.01 => ""
-	    | wrap_in_span(trip{"mileage"} + " miles", "trip_mileage");
-	name = trip{"name"}.isnull() => "none"
-             | wrap_in_span(trip{"name"}, "trip_name");
+	    | trip{"mileage"} + " miles";
+	name = trip{"name"}.isnull() || trip{"name"} eq "" => "none"
+             | trip{"name"};
 	time = trip{"endTime"}.isnull() => ""
-	     | wrap_in_span(time:strftime(trip{"endTime"}, "%b %e %I:%M %p", {"tz": tz}), "trip_end");
+	     | time:strftime(trip{"endTime"}, "%b %e %I:%M %p", {"tz": tz});
 
 	duration_val = tripDuration(trip);
 	duration = duration_val < 0.1 => ""
@@ -552,11 +552,11 @@ Application that manages the fleet
 
         line = <<
 <tr>
-<td style="#{even_line_style}">#{time}</td>
-<td style="#{even_line_style}">#{name}</td>
-<td style="#{even_line_style}">#{len}</td>
-<td style="#{even_line_style}">#{cost}</td>
-<td style="#{even_line_style}">#{duration}</td>
+<td style="#{odd_line_style}">#{time}</td>
+<td style="#{odd_line_style}">#{name}</td>
+<td style="#{odd_line_style}">#{len}</td>
+<td style="#{odd_line_style}">#{cost}</td>
+<td style="#{odd_line_style}">#{duration}</td>
 </tr>
 >>;
         line
@@ -616,16 +616,22 @@ Application that manages the fleet
 	
 	trip_table_header_style = "font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#fff;background-color:#f38630;";
 
+	vehicle_table_row_style = "font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;";
+
         line = <<
-<div class="vehicle">
-<img src="#{photo}" align="left"/>
+<table style="border-collapse:collapse;border-spacing:0;">
+<tr>
+<td><img src="#{photo}" align="left"/></td>
+<td>
 <h2>#{name}</h2>
 
 <div class="vehicle_address">#{address}</div>
 <div class="vehicle_vin">#{vin}</div>
 <div class="vehicle_mileage">#{mileage}</div>
 <div class="vehicle_fuellevel">#{gas}</div>
-<br clear="left"/>
+</td>
+</tr>
+</table>
 <h3>Trips from Last Week</h3>
 <div><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></div>
 <div>Averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></div>
