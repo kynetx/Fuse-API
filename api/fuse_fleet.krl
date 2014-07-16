@@ -684,7 +684,7 @@ Application that manages the fleet
 <tr><td bgcolor="ffffff" style="text-align=left;">
 #{vehicle_html}
 </td></tr>
-
+ 
 <tr><td bgcolor="f1f1f1" style="text-align=left;">
 <div class="footer" style="text-align:center">
 You are receiving this email because you have vehicles in Fuse. <br/>
