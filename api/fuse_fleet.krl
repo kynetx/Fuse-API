@@ -619,12 +619,12 @@ Application that manages the fleet
 	vehicle_table_row_style = "font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;";
 
         line = <<
-<table style="border-collapse:collapse;border-spacing:0;">
+<table width="100%" style="border-collapse:collapse;border-spacing:0;">
 <tr>
- <td>
+ <td style="#{vehicle_table_header_style}">
   <img border="1" style="border:1px solid #e6e6e6;" src="#{photo}" align="left"/>
  </td>
- <td>
+ <td style="#{vehicle_table_header_style}">
   <h2>#{name}</h2>
 
   <div class="vehicle_address">#{address}</div>
@@ -633,16 +633,16 @@ Application that manages the fleet
   <div class="vehicle_fuellevel">#{gas}</div>
  </td>
 </tr>
-<tr>
- <td colspan="2">
+<tr style="">
+ <td colspan="2" style="#{vehicle_table_header_style}">
   <h3>Trips from Last Week</h3>
  </td>
 </tr>
 
-<tr><td colspan="2"><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></td></tr>
-<tr><td colspan="2">Averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></td></tr>
+<tr><td colspan="2" style="#{vehicle_table_header_style}"><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></td></tr>
+<tr><td colspan="2" style="#{vehicle_table_header_style}">Averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></td></tr>
 
-<td><td colspan="2">
+<td><td colspan="2" style="#{vehicle_table_header_style}">
 <table width="100%" class="trip" style="border-collapse:collapse;border-spacing:0;border-color:#aaa;">
 <tr>
     <th style="#{trip_table_header_style}">Date</th>
