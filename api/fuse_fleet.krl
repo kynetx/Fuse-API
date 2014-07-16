@@ -616,10 +616,10 @@ Application that manages the fleet
 	
 	trip_table_header_style = "font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#fff;background-color:#f38630;";
 
-	vehicle_table_row_style = "font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;";
+	vehicle_table_row_style = "text-align=left;font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;";
 
         line = <<
-<table width="100%" style="border-collapse:collapse;border-spacing:0;">
+<table width="100%" style="style="width:550px;border-collapse:collapse;border-spacing:0;">
 <tr>
  <td style="#{vehicle_table_header_style}">
   <img border="1" style="border:1px solid #e6e6e6;" src="#{photo}" align="left"/>
@@ -634,7 +634,7 @@ Application that manages the fleet
  </td>
 </tr>
 <tr style="">
- <td colspan="2" style="#{vehicle_table_header_style}">
+ <td colspan="2" style="margin-top:10pm;#{vehicle_table_header_style}">
   <h3>Trips from Last Week</h3>
  </td>
 </tr>
@@ -643,7 +643,7 @@ Application that manages the fleet
 <tr><td colspan="2" style="#{vehicle_table_header_style}">Averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></td></tr>
 
 <td><td colspan="2" style="#{vehicle_table_header_style}">
-<table width="100%" class="trip" style="border-collapse:collapse;border-spacing:0;border-color:#aaa;">
+<table class="trip" style="width:545px;border-collapse:collapse;border-spacing:0;border-color:#aaa;">
 <tr>
     <th style="#{trip_table_header_style}">Date</th>
     <th style="#{trip_table_header_style}">Name</th>
