@@ -621,7 +621,7 @@ Application that manages the fleet
         line = <<
 <table style="border-collapse:collapse;border-spacing:0;">
 <tr>
-<td><img src="#{photo}" align="left"/></td>
+<td><img border="1" style="border:1px solid #e6e6e6;" src="#{photo}" align="left"/></td>
 <td>
 <h2>#{name}</h2>
 
@@ -631,12 +631,13 @@ Application that manages the fleet
 <div class="vehicle_fuellevel">#{gas}</div>
 </td>
 </tr>
-</table>
-<h3>Trips from Last Week</h3>
-<div><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></div>
-<div>Averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></div>
+<tr><td rowspan="2"><h3>Trips from Last Week</h3></td></tr>
 
-<table class="trip" style="border-collapse:collapse;border-spacing:0;border-color:#aaa;">
+<tr><td rowspan="2"><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></td></tr>
+<tr><td rowspan="2">Averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></td></tr>
+
+<td><td rowspan="2">
+<table width="100%" class="trip" style="border-collapse:collapse;border-spacing:0;border-color:#aaa;">
 <tr>
     <th style="#{trip_table_header_style}">Date</th>
     <th style="#{trip_table_header_style}">Name</th>
@@ -646,8 +647,8 @@ Application that manages the fleet
   </tr>
 #{trips_html}
 </table>
-
-</div><!-- vehicle -->
+</td></tr><!-- trips -->
+</table><!-- vehicle -->
 >>;
 	line
       }; // format_vehicle_summary
