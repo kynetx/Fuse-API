@@ -674,6 +674,9 @@ Application that manages the fleet
 <html>
 <body bgcolor="f1f1f1" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" style="margin:0;padding:0;">
 <table cellspacing="0" cellpadding="0" border="0" width="600" align="center">
+<tr><td width="600" bgcolor="#ffffff">
+   <img src="https://s3.amazonaws.com/Fuse_assets/img/email-header.png" width="600" align="top"/>
+</td></tr>
 <tr><td><h2>#{title}</h2></td></tr>
 
 <tr><td>
