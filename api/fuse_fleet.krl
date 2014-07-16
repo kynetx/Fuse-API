@@ -621,10 +621,10 @@ Application that manages the fleet
         line = <<
 <table width="100%" style="style="width:550px;border-collapse:collapse;border-spacing:0;">
 <tr>
- <td style="width:120px;#{vehicle_table_header_style}">
+ <td style="width:120px;#{vehicle_table_row_style}">
   <img border="1" style="border:1px solid #e6e6e6;" src="#{photo}" align="left"/>
  </td>
- <td style="#{vehicle_table_header_style}">
+ <td style="#{vehicle_table_row_style}">
   <h2>#{name}</h2>
 
   <div class="vehicle_address">#{address}</div>
@@ -634,15 +634,15 @@ Application that manages the fleet
  </td>
 </tr>
 <tr style="">
- <td colspan="2" style="margin-top:50px;#{vehicle_table_header_style}">
+ <td colspan="2" style="margin-top:50px;#{vehicle_table_row_style}">
   <h3>Trips from Last Week</h3>
  </td>
 </tr>
 
-<tr><td colspan="2" style="#{vehicle_table_header_style}"><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></td></tr>
-<tr><td colspan="2" style="#{vehicle_table_header_style}">Trip averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></td></tr>
+<tr><td colspan="2" style="#{vehicle_table_row_style}"><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></td></tr>
+<tr><td colspan="2" style="#{vehicle_table_row_style}">Trip averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></td></tr>
 
-<tr><td colspan="2" style="#{vehicle_table_header_style}">
+<tr><td colspan="2" style="#{vehicle_table_row_style}">
 <table class="trip" style="width:545px;border-collapse:collapse;border-spacing:0;border-color:#aaa;">
 <tr>
     <th colspan="5" style="text-align:center;#{trip_table_header_style}">#{name} Trips</th>
@@ -670,15 +670,27 @@ Application that manages the fleet
 >>;
 
       html = <<
-<h2>#{title}</h2>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org=/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<body bgcolor="f1f1f1" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" style="margin:0;padding:0;">
+<table cellspacing="0" cellpadding="0" border="0" width="600" align="center">
+<tr><td><h2>#{title}</h2></td></tr>
 
+<tr><td>
 #{vehicle_html}
+</td></tr>
 
+<tr><td>
 <div class="footer" style="text-align:center">
 You are receiving this email because you have vehicles in Fuse. <br/>
+You can stop receiving them by <a href="http://joinfuse.com">editing your report preferences</a> at Joinfuse.com<br/>
 <img align="center" src="https://s3.amazonaws.com/Fuse_assets/img/fuse_logo-30.png"/><br/>
-&copy; Kynetx, Inc. 
+&copy; Kynetx, Inc.
 </div>
+</td></tr>
+</table><!-- main -->
+</body>
+</html>
 >>;
 
 
