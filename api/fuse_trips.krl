@@ -116,10 +116,6 @@ Manage trips. PDS is not well-suited to these operations
                              | wp.split(re/,/)
     };
 
-    minimum = function(x,y) {
-      (x < y) => x | y
-    };
-
     icalSubscriptionUrl = function() {
       ical_channel_name = "iCal_for_vehicle";
       channel_list = CloudOS:channelList();
@@ -130,17 +126,20 @@ Manage trips. PDS is not well-suited to these operations
       {"url": "http://" + meta:hostname() + "/sky/cloud/" + meta:rid() + "/icalForVehicle?_eci=" + eci }
     };
 
-    icalForVehicle = function(search){""};
+    icalForVehicleDoNothing = function(search){""};
 
-    icalForVehicleDisabled = function(search){
-      num_trips = 25; // return last 50 trips
+    icalForVehicle = function(search){
       sort_opt = {
         "path" : ["endTime"],
 	"reverse": true,
 	"compare" : "datetime"
       };
-      sorted_keys = this2that:transform(ent:trip_summaries, sort_opt);
-      t = sorted_keys.slice(0, minimum(num_trips, sorted_keys.length())-1)
+      global_opt = {
+        "index" : 0,
+	"limit" : 50
+      }; 
+      
+      t = this2that:transform(ent:trip_summaries, sort_opt, global_opt.klog(">>>> transform using global options >>>> "))
               .map(function(k) {
 	        e = ent:trip_summaries{k}.klog(">>> working with summary <<<");
 	        start = e{["startWaypoint", "latitude"]} + "," + e{["startWaypoint", "longitude"]};
