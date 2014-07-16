@@ -634,7 +634,7 @@ Application that manages the fleet
  </td>
 </tr>
 <tr style="">
- <td colspan="2" style="margin-top:10pm;#{vehicle_table_header_style}">
+ <td colspan="2" style="margin-top:20px;#{vehicle_table_header_style}">
   <h3>Trips from Last Week</h3>
  </td>
 </tr>
@@ -642,7 +642,7 @@ Application that manages the fleet
 <tr><td colspan="2" style="#{vehicle_table_header_style}"><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></td></tr>
 <tr><td colspan="2" style="#{vehicle_table_header_style}">Averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></td></tr>
 
-<td><td colspan="2" style="#{vehicle_table_header_style}">
+<tr><td colspan="2" style="#{vehicle_table_header_style}">
 <table class="trip" style="width:545px;border-collapse:collapse;border-spacing:0;border-color:#aaa;">
 <tr>
     <th style="#{trip_table_header_style}">Date</th>
