@@ -129,7 +129,8 @@ Manage trips. PDS is not well-suited to these operations
     icalForVehicleDoNothing = function(){""};
 
     icalForVehicle = function(force){
-      last = time:strftime(lastTrip(), "%s").klog(">>>> last trip time in seconds from epoch >>> ");
+      last_trip = lastTrip();
+      last = time:strftime(last_trip{"endTime"}, "%s").klog(">>>> last trip time in seconds from epoch >>> ");
       ent:last_ical_time.klog(">>> last time") < last || force => generateIcalForVehicle()  
                                           | ent:last_ical    
     }
