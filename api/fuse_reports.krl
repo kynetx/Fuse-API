@@ -9,6 +9,8 @@ Functions for creating the Fuse reports
 
         errors to b16x13
 
+	use module b16x19 alias common
+
         sharing on
         provides fleetReport
     }
@@ -204,7 +206,7 @@ Functions for creating the Fuse reports
 <tr>
  <td bgcolor="f1f1f1" style="text-align:center;margin-top:30px">
 You are receiving this email because you have vehicles in Fuse. <br/>
-You can stop receiving them by <a href="http://joinfuse.com">editing your report preferences</a> at Joinfuse.com<br/>
+You can stop receiving them by <a href="http://joinfuse.com/app.html">editing your report preferences</a> at Joinfuse.com<br/>
 <p>
 <img align="center" src="https://s3.amazonaws.com/Fuse_assets/img/fuse_logo-30.png"/>
 </p>
