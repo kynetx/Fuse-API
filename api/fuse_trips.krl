@@ -128,6 +128,7 @@ Manage trips. PDS is not well-suited to these operations
 
     icalForVehicleDoNothing = function(){""};
 
+    // return cached copy unless new trip
     icalForVehicle = function(force){
       last_trip = lastTrip();
       last = time:strftime(last_trip{"endTime"}, "%s");
