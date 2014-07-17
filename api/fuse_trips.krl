@@ -130,8 +130,8 @@ Manage trips. PDS is not well-suited to these operations
 
     icalForVehicle = function(force){
       last_trip = lastTrip();
-      last = time:strftime(last_trip{"endTime"}, "%s").klog(">>>> last trip time in seconds from epoch >>> ");
-      ent:last_ical_time.klog(">>> last time>> ") < last || force => generateIcalForVehicle()  
+      last = time:strftime(last_trip{"endTime"}, "%s");
+      ent:last_ical_time < last || force => generateIcalForVehicle()  
                                           | ent:last_ical    
     }
 
@@ -144,7 +144,7 @@ Manage trips. PDS is not well-suited to these operations
       };
       global_opt = {
         "index" : 0,
-	"limit" : 50
+	"limit" : 100
       }; 
       
       t = this2that:transform(ent:trip_summaries, sort_opt, global_opt)
