@@ -133,7 +133,7 @@
 	    var attrs = {"setRID": Fuse.get_rid("owner"),
 			 "setData": json
 			};
-            return CloudOS.raiseEvent('pds', 'new_settings_data', json, {}, cb, {"eci": channel});
+            return CloudOS.raiseEvent('pds', 'new_settings_data', attrs, {}, cb, {"eci": channel});
         },
 
 	// ---------- account ----------
