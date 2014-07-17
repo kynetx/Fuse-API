@@ -514,7 +514,8 @@ Application that manages the fleet
 
       subj = "Your "+period{"readable"}+" report from Fuse!";
 
-      html = reports:fleetReport(period, tz);
+      html = reports:fleetReport(period, tz, vehicleSummary());
+
 
       msg = <<
 You need HTML email to see this report. 

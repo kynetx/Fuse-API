@@ -20,7 +20,7 @@ Functions for creating the Fuse reports
       };
 
 
-      fleetReport = function(period, tz) {
+      fleetReport = function(period, tz, summaries) {
 
         today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz":"UTC"});
         yesterday = time:add(today, {"days": -1});
@@ -174,7 +174,6 @@ Functions for creating the Fuse reports
           line
         }; // format_vehicle_summary
 
-        summaries = vehicleSummary();
         vehicle_html = summaries.map(format_vehicle_summary).join(" ");
 
 
