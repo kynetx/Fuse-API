@@ -121,6 +121,7 @@
 	    var attrs = {"setRID": Fuse.get_rid("owner")};
 	    return CloudOS.skyCloud("a169x676", "get_setting", attrs, function(res) {
 		CloudOS.clean(res);
+		res = res.setData;
 		if(typeof cb !== "undefined"){
 		    cb(res);
 		}
