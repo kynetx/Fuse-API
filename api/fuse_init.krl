@@ -166,6 +166,12 @@ Ruleset for initializing a Fuse account and managing vehicle picos
              and value = fleet_channel
              and _api = "sky";
 
+	  // set defaults for Fuse app
+	  raise pds event new_settings_available
+            with setRID = meta:rid() // this rid
+             and reportPreference = "on"
+             and _api = "sky";
+
 	  // make it a "pico" in CloudOS eyes
 	  raise cloudos event picoAttrsSet
             with picoChannel = fleet_channel // really ought to be using subscriber channel, but don't have it...
