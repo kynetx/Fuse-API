@@ -325,8 +325,8 @@ A new fleet was created for #{me.encode()};
 	evid = 0;
 	evtype = 1;
 	report_events = scheduled.filter(function(e){e[evtype] eq "#{use_domain}/#{use_type}"}).klog(">>>> report schedules >>>>");
-	hour = math:random(3) + 3; // between 3 and 7
-	minute = math:random(59);
+	hour = math:random(3).klog(">>> hour (plus 3)>>> ") + 3; // between 3 and 7
+	minute = math:random(59).klog(">>>> minute >>>> ");
       }
       if (report_events.length() < 1) then // idempotent
       {
