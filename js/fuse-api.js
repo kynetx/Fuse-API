@@ -112,6 +112,30 @@
             return CloudOS.raiseEvent('pds', 'new_profile_item_available', json, {}, cb, {"eci": channel});
         },
 
+	// ---------- preferences ----------
+        getPreferences: function(channel, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+            Fuse.log("Retrieving preferences for user");
+	    var attrs = {"setRID": Fuse.get_rid("owner")};
+	    return CloudOS.skyCloud("a169x676", "get_setting", attrs, function(res) {
+		CloudOS.clean(res);
+		if(typeof cb !== "undefined"){
+		    cb(res);
+		}
+	    },
+	    {"eci": channel});
+        },
+
+        savePreferences: function(channel, json, cb)
+        {
+	    var attrs = {"setRID": Fuse.get_rid("owner"),
+			 "setData": json
+			};
+            return CloudOS.raiseEvent('pds', 'new_settings_data', json, {}, cb, {"eci": channel});
+        },
+
 	// ---------- account ----------
 	// this is called in _layouts/code.html when the account is created
 	initAccount: function(attrs, cb, options)
