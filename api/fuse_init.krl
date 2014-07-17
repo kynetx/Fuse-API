@@ -341,7 +341,7 @@ A new fleet was created for #{me.encode()};
       } else {
         log ">>>> event #{use_domain}/#{use_type} already scheduled " + report_events.encode();
       }
-      
+       
     }
 
 
