@@ -315,6 +315,35 @@ A new fleet was created for #{me.encode()};
         }
     }
 
+    // ---------- scheduled items ----------
+    rule schedule_report {
+      select when fuse sched_report 
+      pre {
+        use_domain = "fuse";
+	use_type = "periodic_report";
+        scheduled = event:get_list().klog("scheduled events");
+	evid = 0;
+	evtype = 1;
+	report_events = scheduled.filter(function(e){e[evtype] eq "#{use_domain}/#{use_type}"}).klog(">>>> report schedules >>>>");
+	hour = math:random(3) + 3; // between 3 and 7
+	minute = math:random(59);
+      }
+      if (report_events.length() < 1) then // idempotent
+      {
+        send_directive("schedule event for report") with
+	  domain = use_domain and
+ 	  type = use_type
+      }
+      fired {
+        log ">>>> scheduling event for #{use_domain}/#{use_type}";
+ 	 // five minutes after midnight on sun
+	schedule use_domain event use_type repeat "#{hour} #{minute} * * sun";
+      } else {
+        log ">>>> event #{use_domain}/#{use_type} already scheduled " + report_events.encode();
+      }
+      
+    }
+
 
     // ---------- fleet ----------
 
