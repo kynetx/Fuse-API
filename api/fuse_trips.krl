@@ -144,7 +144,7 @@ Manage trips. PDS is not well-suited to these operations
       };
       global_opt = {
         "index" : 0,
-	"limit" : 100
+	"limit" : 100 
       }; 
       
       t = this2that:transform(ent:trip_summaries, sort_opt, global_opt)
