@@ -127,7 +127,7 @@
 	    },
 	    {"eci": channel});
         },
-
+  
         savePreferences: function(channel, json, cb) 
         {
 	    var attrs = json;
