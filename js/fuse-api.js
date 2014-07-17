@@ -130,9 +130,8 @@
 
         savePreferences: function(channel, json, cb)
         {
-	    var attrs = {"setRID": Fuse.get_rid("owner"),
-			 "reportPreferences": json.reportPreferences
-			};
+	    var attrs = json;
+	    attrs.setRID = Fuse.get_rid("owner");
             return CloudOS.raiseEvent('pds', 'new_settings_available', attrs, {}, cb, {"eci": channel});
         },
 
