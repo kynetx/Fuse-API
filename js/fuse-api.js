@@ -131,9 +131,9 @@
         savePreferences: function(channel, json, cb)
         {
 	    var attrs = {"setRID": Fuse.get_rid("owner"),
-			 "setData": {reportPreference: json.report}
+			 "reportPreferences": json.report
 			};
-            return CloudOS.raiseEvent('pds', 'new_settings_data', attrs, {}, cb, {"eci": channel});
+            return CloudOS.raiseEvent('pds', 'new_settings_availablep', {}, attrs, cb, {"eci": channel});
         },
 
 	// ---------- account ----------
