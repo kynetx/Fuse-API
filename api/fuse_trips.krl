@@ -126,9 +126,16 @@ Manage trips. PDS is not well-suited to these operations
       {"url": "webcal://" + meta:hostname() + "/sky/cloud/" + meta:rid() + "/icalForVehicle?_eci=" + eci }
     };
 
-    icalForVehicleDoNothing = function(search){""};
+    icalForVehicleDoNothing = function(){""};
 
-    icalForVehicle = function(search){
+    icalForVehicle = function(force){
+      last = time:strftime(lastTrip(), "%s");
+      ent:last_ical_time < last || force => generateIcalForVehicle()  
+                                          | ent:last_ical    
+    }
+
+
+    generateIcalForVehicle = function(){
       sort_opt = {
         "path" : ["endTime"],
 	"reverse": true,
@@ -158,9 +165,10 @@ Manage trips. PDS is not well-suited to these operations
 		}
 	      });
       vdata = vehicle:vehicleSummary();
+      gen_time =  time:strftime(time:now(), "%s").pset(ent:last_ical_time); // save time generated
       ical:from_array(t, {"name": vdata{"label"}, 
                           "desc": "Calendar of trips for " + vdata{"label"}}
-	             ).replace(re#\\;#g, ";");
+	             ).replace(re#\\;#g, ";").pset(ent:last_ical);
     };
 
     // find latlong within 365 feet
