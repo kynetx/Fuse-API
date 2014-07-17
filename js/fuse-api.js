@@ -128,7 +128,7 @@
 	    {"eci": channel});
         },
 
-        savePreferences: function(channel, json, cb)
+        savePreferences: function(channel, json, cb) 
         {
 	    var attrs = json;
 	    attrs.setRID = Fuse.get_rid("owner");
