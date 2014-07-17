@@ -219,3 +219,4 @@ You can stop receiving them by <a href="http://joinfuse.com">editing your report
     }
   }
 }
+// fuse_reports.krl
