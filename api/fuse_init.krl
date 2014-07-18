@@ -319,7 +319,7 @@ A new fleet was created for #{me.encode()};
     rule schedule_report {
       select when fuse sched_report 
       pre {
-        use_domain = "fuse";
+        use_domain = "explicit";
 	use_type = "periodic_report";
         scheduled = event:get_list().klog("scheduled events").klog(">>>> scheduled events >>>> ");
 	evid = 0;
@@ -340,7 +340,7 @@ A new fleet was created for #{me.encode()};
       fired {
         log ">>>> scheduling event for #{use_domain}/#{use_type}";
  	 // five minutes after midnight on sun
-	schedule use_domain event use_type repeat "#{minute} #{hour} * * #{dow}";
+	schedule explicit event use_type repeat "#{minute} #{hour} * * #{dow}";
       } else {
         log ">>>> event #{use_domain}/#{use_type} already scheduled " + report_events.encode();
       }
