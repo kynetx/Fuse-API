@@ -321,7 +321,7 @@ A new fleet was created for #{me.encode()};
       pre {
         use_domain = "fuse";
 	use_type = "periodic_report";
-        scheduled = event:get_list().klog("scheduled events");
+        scheduled = event:get_list().klog("scheduled events").klog(">>>> scheduled events >>>> ");
 	evid = 0;
 	evtype = 1;
 	report_events = scheduled.filter(function(e){e[evtype] eq "#{use_domain}/#{use_type}"}).klog(">>>> report schedules >>>>");
