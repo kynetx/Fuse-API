@@ -318,7 +318,7 @@ A new fleet was created for #{me.encode()};
     // ---------- scheduled items ----------
     rule schedule_report {
       select when fuse sched_report 
-                    or pds new_settings_available re/reportPreference/
+               or pds new_settings_available re/reportPreference/
       pre {
         use_domain = "explicit";
 	use_type = "periodic_report";
