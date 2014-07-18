@@ -325,8 +325,11 @@ A new fleet was created for #{me.encode()};
 	evid = 0;
 	evtype = 1;
 	report_events = scheduled.filter(function(e){e[evtype] eq "#{use_domain}/#{use_type}"}).klog(">>>> report schedules >>>>");
+	
+	// for cron spec
 	hour = math:random(3).klog(">>> hour (plus 3)>>> ") + 3; // between 3 and 7
 	minute = math:random(59).klog(">>>> minute >>>> ");
+	dow = 0; // sunday
       }
       if (report_events.length() < 1) then // idempotent
       {
@@ -337,7 +340,7 @@ A new fleet was created for #{me.encode()};
       fired {
         log ">>>> scheduling event for #{use_domain}/#{use_type}";
  	 // five minutes after midnight on sun
-	schedule use_domain event use_type repeat "#{minute} #{hour} * * sun";
+	schedule use_domain event use_type repeat "#{minute} #{hour} * * #{dow}";
       } else {
         log ">>>> event #{use_domain}/#{use_type} already scheduled " + report_events.encode();
       }
