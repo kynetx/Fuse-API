@@ -331,7 +331,7 @@ A new fleet was created for #{me.encode()};
 	minute = math:random(59).klog(">>>> minute >>>> ");
 	dow = 0; // sunday
       }
-      if (report_events.length() < 1) then // idempotent
+      if (report_events.length() < 1) then // idempotent 
       {
         send_directive("schedule event for report") with
 	  domain = use_domain and
