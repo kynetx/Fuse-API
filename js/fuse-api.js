@@ -602,7 +602,7 @@
 	    options = options || {};
 	    options.rid = "fuel";
 	    
-	    var args = options.key ? {"key": options.key} : {};
+	    var args = options.id ? {"id": options.id} : {};
 
 	    return Fuse.ask_vehicle(vehicle_channel, "fillup", args, null, function(json) {
 			Fuse.log("Retrieve last fillup", json);
@@ -661,7 +661,7 @@
 	    Fuse.requireParams({volume: fillup_obj.volume,
 				unitPrice: fillup_obj.unitPrice,
 				odometer: fillup_obj.odometer,
-				key: fillup_obj.key
+				id: fillup_obj.id
 			       });
 
             return CloudOS.raiseEvent("fuse", "updated_fuel_purchase", fillup_obj, {}, function(response)
@@ -677,16 +677,16 @@
             );
         },
 
-	deleteFillup: function(vehicle_channel, key, cb, options)
+	deleteFillup: function(vehicle_channel, id, cb, options)
         {
 	    cb = cb || function(){};
 	    options = options || {};
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
 		throw "Vehicle channel is null; can't record fuel fillup for vehicle";
 	    };
-	    Fuse.requireParams({key: key});
+	    Fuse.requireParams({id: id});
 
-	    var attrs = {"key": key};
+	    var attrs = {"id": id};
             return CloudOS.raiseEvent("fuse", "unneeded_fuel_purchase", attrs, {}, function(response)
             {
                 Fuse.log("Deleted fillup for vehicle: " + vehicle_channel);

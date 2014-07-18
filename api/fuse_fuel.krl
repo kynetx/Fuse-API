@@ -23,20 +23,20 @@ Operations for fuel
   global {
 
     // external decls
-    fillup = function(key){
+    fillup = function(id){
       sort_opt = {
         "path" : ["timestamp"],
 	"reverse": true,
 	"compare" : "datetime"
       };
-      last_key = not key.isnull()                     => key.klog(">>>> using the parameter key <<<<<") 
+      last_id = not id.isnull()                     => id.klog(">>>> using the parameter id <<<<<") 
                |  not ent:last_fuel_purchase.isnull()
-               && ent:last_fuel_purchase              => ent:last_fuel_purchase.klog(">>>> using entity var key <<<<")
+               && ent:last_fuel_purchase              => ent:last_fuel_purchase.klog(">>>> using entity var id <<<<")
 		                                       | pds:get_keys(common:fuel_namespace(), sort_opt, 1)
                                                            .head()
- 						 	   .klog(">>>>> had to punt on key for last fuel entry <<<<<<");
-      ent:fuel_purchases{last_key.klog(">>>>> retrieving fuel purchase record using this key <<<<<<<<<")}
-      //pds:get_item(common:fuel_namespace(), last_key.klog(">>>>> using this key <<<<<<<<<"));
+ 						 	   .klog(">>>>> had to punt on id for last fuel entry <<<<<<");
+      ent:fuel_purchases{last_id.klog(">>>>> retrieving fuel purchase record using this id <<<<<<<<<")}
+      //pds:get_item(common:fuel_namespace(), last_id.klog(">>>>> using this id <<<<<<<<<"));
     };
 
     fillupByDate = function(start, end){
@@ -70,7 +70,7 @@ Operations for fuel
     select when fuse new_fuel_purchase
     pre {
       rec = event:attrs()
-              .delete(["key"]) // new records can't have key
+              .delete(["id"]) // new records can't have id
 	      ; 
     }      
     {
@@ -85,11 +85,11 @@ Operations for fuel
     select when fuse updated_fuel_purchase
     pre {
 
-      // if no key, assume new record and create one
-      new_record = event:attr("key").isnull();
+      // if no id, assume new record and create one
+      new_record = event:attr("id").isnull();
       current_time = common:convertToUTC(time:now());
 
-      key = event:attr("key") || current_time;  // UTC; using time as key
+      id = event:attr("id") || current_time;  // UTC; using time as id
 
       volume = event:attr("volume") || 1;
       unit_price = event:attr("unitPrice");
@@ -105,7 +105,7 @@ Operations for fuel
       when_bought = common:convertToUTC(event:attr("when") || time:now());
 
       rec = {
-        "key": key,	    
+        "id": id,	    
         "volume": volume,
 	"unit_price": unit_price,
 	"location": location,
@@ -120,7 +120,7 @@ Operations for fuel
     if( not volume.isnull() 
      && not unit_price.isnull()
      && not odometer.isnull()
-     && not key.isnull()
+     && not id.isnull()
       ) then
     {
       send_directive("Updating fill up") with
@@ -130,14 +130,14 @@ Operations for fuel
        // raise pds event new_data_available
        //   attributes {
        // 	    "namespace": common:fuel_namespace(),
-       // 	    "keyvalue": key,
+       // 	    "keyvalue": id,
        // 	    "value": rec,
        //       "_api": "sky"
  		   
        // 	  };
       log(">>>>>> Storing fuel purchase >>>>>> " + rec.encode());
-      set ent:fuel_purchases{key} rec;
-      set ent:last_fuel_purchase key if new_record
+      set ent:fuel_purchases{id} rec;
+      set ent:last_fuel_purchase id if new_record
     } else {
       log(">>>>>> Could not store fuel record " + rec.encode());
     }
@@ -146,9 +146,9 @@ Operations for fuel
   rule delete_fuel_purchase {
     select when fuse unneeded_fuel_purchase
     pre {
-      key = event:attr("key");
+      id = event:attr("id");
     }
-    if( not key.isnull() 
+    if( not id.isnull() 
       ) then
     {
       send_directive("Deleting fill up") with
@@ -158,11 +158,11 @@ Operations for fuel
        // raise pds event remove_old_data
        //   attributes {
        // 	    "namespace": common:fuel_namespace(),
-       // 	    "keyvalue": key,
+       // 	    "keyvalue": id,
        //       "_api": "sky"
  		   
        // 	  };
-      clear ent:fuel_purchases{key} 
+      clear ent:fuel_purchases{id} 
     }
   }
 
@@ -174,10 +174,10 @@ Operations for fuel
 	"reverse": true,
 	"compare" : "datetime"
       };
-      last_key = pds:get_keys(common:fuel_namespace(), sort_opt, 1).head().klog(">>>> resetting pds key <<<<");
+      last_id = pds:get_keys(common:fuel_namespace(), sort_opt, 1).head().klog(">>>> resetting pds id <<<<");
     }
     always {
-      set ent:last_fuel_purchase last_key;
+      set ent:last_fuel_purchase last_id;
     }
   }
 
