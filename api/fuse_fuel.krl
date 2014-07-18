@@ -102,12 +102,15 @@ Operations for fuel
 
       seconds = (time:strftime(current_time, "%s") - time:strftime(lastfillup{"timestamp"}, "%s"));
 
+      cost = volume * unitprice;
+
       when_bought = common:convertToUTC(event:attr("when") || time:now());
 
       rec = {
         "id": id,	    
         "volume": volume,
 	"unit_price": unit_price,
+	"cost": cost.sprintf("%.2f"),
 	"location": location,
 	"odometer": odometer.sprintf("%.1f"),
 	"distance": distance.sprintf("%.1f"),
