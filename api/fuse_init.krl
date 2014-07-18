@@ -321,10 +321,11 @@ A new fleet was created for #{me.encode()};
       pre {
         use_domain = "explicit";
 	use_type = "periodic_report";
-        scheduled = event:get_list().klog("scheduled events").klog(">>>> scheduled events >>>> ");
+        scheduled = event:get_list().klog("scheduled events");
 	evid = 0;
 	evtype = 1;
-	report_events = scheduled.filter(function(e){e[evtype] eq "#{use_domain}/#{use_type}"}).klog(">>>> report schedules >>>>");
+        evrid = 3;
+	report_events = scheduled.filter(function(e){e[evtype] eq "#{use_domain}/#{use_type}" && e[evrid] eq meta:rid()}).klog(">>>> report schedules >>>>");
 	
 	// for cron spec
 	hour = math:random(3).klog(">>> hour (plus 3)>>> ") + 3; // between 3 and 7
