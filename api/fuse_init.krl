@@ -326,7 +326,9 @@ A new fleet was created for #{me.encode()};
 	evtype = 1;
         evrid = 3; 
 	report_events = scheduled.filter(function(e){e[evtype] eq "#{use_domain}/#{use_type}" && e[evrid] eq meta:rid()}).klog(">>>> report schedules >>>>");
-	
+	// clean up all but first
+	isDeleted = report_events.tail().map(function(e){event:delete(e[evid])}).klog(">>> deleted events >>> ");
+
 	// for cron spec
 	hour = math:random(3).klog(">>> hour (plus 3)>>> ") + 3; // between 3 and 7
 	minute = math:random(59).klog(">>>> minute >>>> ");
