@@ -17,7 +17,7 @@ Operations for fuel
     use module b16x9 alias vehicle
 
 	
-    provides fillup, fillupByDate
+    provides fillups, fillupsByDate
   }
 
   global {
