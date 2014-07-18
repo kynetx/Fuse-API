@@ -604,7 +604,7 @@
 	    
 	    var args = options.id ? {"id": options.id} : {};
 
-	    return Fuse.ask_vehicle(vehicle_channel, "fillup", args, null, function(json) {
+	    return Fuse.ask_vehicle(vehicle_channel, "fillups", args, null, function(json) {
 			Fuse.log("Retrieve last fillup", json);
 			cb(json);
   		       }, options);
@@ -619,7 +619,7 @@
 			"end": end
 		       };
 
-	    return Fuse.ask_vehicle(vehicle_channel, "fillupByDate", args, null, function(json) {
+	    return Fuse.ask_vehicle(vehicle_channel, "fillupsByDate", args, null, function(json) {
 			Fuse.log("Retrieve fillups", json);
 			cb(json);
   		       }, options);

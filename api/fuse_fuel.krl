@@ -23,7 +23,7 @@ Operations for fuel
   global {
 
     // external decls
-    fillup = function(id){
+    fillups = function(id){
       sort_opt = {
         "path" : ["timestamp"],
 	"reverse": true,
@@ -39,7 +39,7 @@ Operations for fuel
       //pds:get_item(common:fuel_namespace(), last_id.klog(">>>>> using this id <<<<<<<<<"));
     };
 
-    fillupByDate = function(start, end){
+    fillupsByDate = function(start, end){
 
       utc_start = common:convertToUTC(start);
       utc_end = common:convertToUTC(end);
