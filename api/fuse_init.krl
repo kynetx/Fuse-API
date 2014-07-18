@@ -350,6 +350,25 @@ A new fleet was created for #{me.encode()};
        
     }
 
+    rule catch_periodic_report {
+      select when explicit periodic_report
+      pre {
+        settings = pds:get_setting_data(meta:rid()).klog(">>>> my settings >>>> ");
+	reportPreference = settings{"reportPreference"}; // on or off
+	fleet_channel = pico{"authChannel"};
+        fleet = {
+          "cid": fleet_channel
+        };
+	owner_name = pds:get_me("myProfileName");
+      }
+      if(reportPreference eq "on") then {
+        send_directive("Sending event for report") with settings = settings;
+        event:send(fleet, "fuse", "periodic_report") with 
+            attrs = {"owner_name": owner_name
+		    };
+      }
+    }
+
 
     // ---------- fleet ----------
 
