@@ -355,10 +355,7 @@ A new fleet was created for #{me.encode()};
       pre {
         settings = pds:get_setting_data(meta:rid()).klog(">>>> my settings >>>> ");
 	reportPreference = settings{"reportPreference"}; // on or off
-	fleet_channel = pico{"authChannel"};
-        fleet = {
-          "cid": fleet_channel
-        };
+	fleet = fleetChannel();
 	owner_name = pds:get_me("myProfileName");
       }
       if(reportPreference eq "on") then {
