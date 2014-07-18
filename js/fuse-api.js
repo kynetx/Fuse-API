@@ -597,7 +597,7 @@
 
 
 	// ---------- Fuel ----------
-	fillup: function(vehicle_channel, cb, options) {
+	fillups: function(vehicle_channel, cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
 	    options.rid = "fuel";
@@ -610,7 +610,7 @@
   		       }, options);
 	},
 
-	fillupByDate: function(vehicle_channel, start, end, cb, options) {
+	fillupsByDate: function(vehicle_channel, start, end, cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
 	    options.rid = "fuel";
