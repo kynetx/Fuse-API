@@ -324,7 +324,7 @@ A new fleet was created for #{me.encode()};
         scheduled = event:get_list();
 	evid = 0;
 	evtype = 1;
-        evrid = 3;
+        evrid = 3; 
 	report_events = scheduled.filter(function(e){e[evtype] eq "#{use_domain}/#{use_type}" && e[evrid] eq meta:rid()}).klog(">>>> report schedules >>>>");
 	
 	// for cron spec
