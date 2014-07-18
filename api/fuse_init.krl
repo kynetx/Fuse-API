@@ -337,7 +337,7 @@ A new fleet was created for #{me.encode()};
       fired {
         log ">>>> scheduling event for #{use_domain}/#{use_type}";
  	 // five minutes after midnight on sun
-	schedule use_domain event use_type repeat "#{hour} #{minute} * * sun";
+	schedule use_domain event use_type repeat "#{minute} #{hour} * * sun";
       } else {
         log ">>>> event #{use_domain}/#{use_type} already scheduled " + report_events.encode();
       }
