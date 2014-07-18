@@ -321,7 +321,7 @@ A new fleet was created for #{me.encode()};
       pre {
         use_domain = "explicit";
 	use_type = "periodic_report";
-        scheduled = event:get_list().klog("scheduled events");
+        scheduled = event:get_list();
 	evid = 0;
 	evtype = 1;
         evrid = 3;
