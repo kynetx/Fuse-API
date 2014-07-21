@@ -18,7 +18,8 @@ Operations for maintenance
     use module b16x9 alias vehicle
 
 	
-    provides activeReminders, maintenaceHistory
+    provides activeReminders, 
+             alerts, maintanceRecords, reminders
 
   }
 
@@ -44,9 +45,6 @@ Operations for maintenance
   global {
 
     // external decls
-    maintenanceHistory = function(start, end){
-      1;
-    };
 
     activeReminders = function(current_time, mileage){
       utc_ct = common:convertToUTC(current_time);
@@ -75,20 +73,267 @@ Operations for maintenance
       math:abs(math:int((sec_a-sec_b)/86400));
     };
 
-    // for use with scheduled events  
-    use_domain = "explicit";    
-    use_type = "maintenance_due";
-    evid = 0;
-    event = 1;
-    sctype = 2;
-    evrid = 3; 
+    alerts = function(id, limit, offset) {
+       // x_id = id.klog(">>>> id >>>>>");
+       // x_limit = limit.klog(">>>> limit >>>>>");
+       // x_offset = offset.klog(">>>> offset >>>>>");
 
+      id.isnull() => allAlerts(limit, offset)
+                   | ent:alerts{id};
+    };
+
+    allAlerts = function(limit, offset) {
+      sort_opt = {
+        "path" : ["timestamp"],
+	"reverse": true,
+	"compare" : "datetime"
+      };
+
+      max_returned = 25;
+
+      hard_offset = offset.isnull()     => 0               // default
+                  |                        offset;
+
+      hard_limit = limit.isnull()       => 10              // default
+                 | limit > max_returned => max_returned
+		 |                         limit;
+
+      global_opt = {
+        "index" : hard_offset,
+	"limit" : hard_limit
+      }; 
+
+      sorted_keys = this2that:transform(ent:alerts, sort_opt, global_opt).klog(">>> sorted keys for alerts >>>> ");
+      sorted_keys.map(function(id){ ent:alerts{id} })
+    };
+
+    maintenanceRecords = function(id, limit, offset) {
+       // x_id = id.klog(">>>> id >>>>>");
+       // x_limit = limit.klog(">>>> limit >>>>>");
+       // x_offset = offset.klog(">>>> offset >>>>>");
+
+      id.isnull() => allMaintenanceRecords(limit, offset)
+                   | ent:maintenance_records{id};
+    };
+
+    allMaintenanceRecords = function(limit, offset) {
+      sort_opt = {
+        "path" : ["timestamp"],
+	"reverse": true,
+	"compare" : "datetime"
+      };
+
+      max_returned = 25;
+
+      hard_offset = offset.isnull()     => 0               // default
+                  |                        offset;
+
+      hard_limit = limit.isnull()       => 10              // default
+                 | limit > max_returned => max_returned
+		 |                         limit;
+
+      global_opt = {
+        "index" : hard_offset,
+	"limit" : hard_limit
+      }; 
+
+      sorted_keys = this2that:transform(ent:maintenance_records, sort_opt, global_opt).klog(">>> sorted keys for maintenance records >>>> ");
+      sorted_keys.map(function(id){ ent:maintenance_records{id} })
+    };
+
+    reminders = function () { {} };
 
   }
 
-  
-  // ---------- create reminders ----------
-  rule schedule_reminder {
+  // ---------- alerts ----------
+  rule record_alert {
+    select when fuse new_alert
+    pre {
+      rec = event:attrs()
+              .delete(["id"]) // new records can't have id
+	      ; 
+    }      
+    {
+      send_directive("Recording alert") with rec = rec
+    }
+    fired {
+      raise fuse event updated_alert attributes rec; // Keeping it DRY
+    }
+  }
+
+  rule update_alert {
+    select when fuse updated_alert
+    pre {
+
+      // if no id, assume new record and create one
+      new_record = event:attr("id").isnull();
+      current_time = common:convertToUTC(time:now());
+
+      id = event:attr("id") || random:uuid();
+
+      reminder = reminder(event:attr("reminder_ref")) || {};
+
+      activity = event:attr("activity") || reminder{"activity"};
+
+      vdata = vehicle:vehicleSummary();
+
+      odometer = event:attr("odometer") || vdata{"odometer"};
+
+      rec = {
+        "id": id,
+	"trouble_codes": event:attr("trouble_codes"),
+	"odometer": odometer,
+	"reminder_ref": event:attr("reminder_ref") || "organic",
+	"activity": activity,
+	"timestamp": current_time
+      };
+    }
+    if( not rec{"odometer"}.isnull() 
+     && not rec{"activity"}.isnull()
+     && not id.isnull()
+      ) then
+    {
+      send_directive("Updating alert") with
+        rec = rec
+    }
+    fired {
+      log(">>>>>> Storing alert >>>>>> " + rec.encode());
+      set ent:alerts{id} rec;
+    } else {
+      log(">>>>>> Could not store alert " + rec.encode());
+    }
+  }
+
+  rule delete_alert {
+    select when fuse unneeded_alert
+    pre {
+      id = event:attr("id");
+    }
+    if( not id.isnull() 
+      ) then
+    {
+      send_directive("Deleting alert") with
+        rec = rec
+    }
+    fired {
+      clear ent:alerts{id} 
+    }
+  }
+
+  rule process_alert {
+    select when fuse maintenance_alert
+    pre {
+      id = event:attr("id");
+      alert = alerts(id);
+      status = event:attr("status");
+
+      rec = {
+        "alert_ref": id,
+	"status": status,
+	"agent": event:attr("agent"),
+	"receipt": event:attr("receipt")
+      };
+    }
+    if( not id.isnull()
+     && not alert.isnull()
+      ) then {
+        send_directive("processing alert to create maintenance record") with 
+	 rec = rec and
+  	 alert = alert
+      }
+    fired {
+      log ">>>> processing alert for maintenance  >>>> " + alert.encode();
+      raise fuse event new_maintenance_record attributes rec
+    } else {
+    }
+  }
+
+  // ---------- maintenance_records ----------
+  rule record_maintenance_record {
+    select when fuse new_maintenance_record
+    pre {
+      rec = event:attrs()
+              .delete(["id"]) // new records can't have id
+	      ; 
+    }      
+    {
+      send_directive("Recording maintenance_record") with rec = rec
+    }
+    fired {
+      raise fuse event updated_maintenance_record attributes rec; // Keeping it DRY
+    }
+  }
+
+
+  rule update_maintenance_record {
+    select when fuse updated_maintenance_record
+    pre {
+
+      // if no id, assume new record and create one
+      new_record = event:attr("id").isnull();
+      current_time = common:convertToUTC(time:now());
+
+      id = event:attr("id") || random:uuid();
+
+      alert = alerts(event:attr("alert_ref")) || {};
+
+      vdata = vehicle:vehicleSummary();
+
+      status = event:attr("status") eq "completed" 
+            || event:attr("status") eq "deferred" => event:attr("status")
+             |                                       "unknown";
+
+      activity = event:attr("activity") || alert{"activity"};
+      odometer = event:attr("odometer") || vdata{"odometer"};
+
+      completed_time = event:attr("timestamp") || current_time;
+
+      rec = {
+        "id": id,
+	"activity": activity,
+	"agent": event:attr("agent"),
+	"status": status,
+	"receipt": event:attr("receipt"),
+	"odometer": odometer,
+	"timestamp": completed_time
+      };
+    }
+    if( not rec{"odometer"}.isnull() 
+     && not rec{"activity"}.isnull()
+     && not id.isnull()
+      ) then
+    {
+      send_directive("Updating maintenance_record") with
+        rec = rec
+    }
+    fired {
+      log(">>>>>> Storing maintenance_record >>>>>> " + rec.encode());
+      set ent:maintenance_records{id} rec;
+    } else {
+      log(">>>>>> Could not store maintenance_record " + rec.encode());
+    }
+  }
+
+  rule delete_maintenance_record {
+    select when fuse unneeded_maintenance_record
+    pre {
+      id = event:attr("id");
+    }
+    if( not id.isnull() 
+      ) then
+    {
+      send_directive("Deleting maintenance_record") with
+        rec = rec
+    }
+    fired {
+      clear ent:maintenance_records{id} 
+    }
+  }
+
+
+
+  // ---------- reminders ----------
+  rule record_reminder {
     select when fuse new_reminder
     pre {
       rec = event:attrs()
@@ -96,7 +341,7 @@ Operations for maintenance
 	      ; 
     }      
     {
-      send_directive("Recording maintenance reminder") with rec = rec;
+      send_directive("Recording reminder") with rec = rec
     }
     fired {
       raise fuse event updated_reminder attributes rec; // Keeping it DRY
@@ -106,132 +351,57 @@ Operations for maintenance
   rule update_reminder {
     select when fuse updated_reminder
     pre {
+
+      // if no id, assume new record and create one
       new_record = event:attr("id").isnull();
       current_time = common:convertToUTC(time:now());
 
       id = event:attr("id") || random:uuid();
-      rec = event:attrs()
-              .put(["id"], id)
-              .put(["timestamp"], current_time);
-
-    }
-    if( event:attr("type") eq "mileage") then 
-    {
-      send_directive("Processing mileage reminder") with attrs = rec
-    }
-    fired {
-      raise explicit event "mileage_reminder" attributes rec;
-      set ent:reminders{id} rec;
-    } else {
-      raise explicit event "date_reminder" attributes rec;
-      set ent:reminders{id} rec;
-    }
-  }   
-
-   rule process_date_reminder {
-     select when explicit date_reminder
-     pre {
-
-      id = event:attr("id");
-
-      // if no id, assume new record and create one
-      scheduled_ev_id = ent:reminders{id}.pick("$..schedEv");
-
-      scheduled = event:get_list();
-      this_event = scheduled.filter(function(e){e[evid] eq scheduled_ev_id
-                                               }).head().klog(">>>> this event >>>>");
-
-      // event schedule system doesn't allow updates, so we delete than then recreate 
-      isDeleted = this_event.isnull() => 0
-                                       | event:delete(id);
-      
-
- // reminder record
- // {<datetime> : { "timestamp" : <datetime>,
- // 	            "type" : mileage | date,
- // 		    "recurring": "once" | "repeat",
- // 		    "activity" : <string>,
- // 		    "due" : DateTime | Integer
- // 	          },
-    
-      recurring = event:attr("recurring");
 
       rec = {
-	"type": event:attr("type"),  // should always be "date" here
-	"recurring": recurring,
+        "id": id,
+	"troubleCodes": event:attr("troubleCodes"),
+	"odometer": event:attr("odometer"),
+	"reminderRef": event:attr("reminderRef") || "organic",
 	"activity": event:attr("activity"),
-	"due": event:attr("due"),
 	"timestamp": current_time
       };
     }
-    if( not rec{"activity"}.isnull()
-     && (recurring eq "once" || recurring eq "repeat")
-     && not rec{"due"}.isnull()
+    if( not rec{"odometer"}.isnull() 
+     && not rec{"activity"}.isnull()
+     && not id.isnull()
       ) then
     {
-      send_directive("Updating maintenance reminder") with
+      send_directive("Updating reminder") with
         rec = rec
     }
     fired {
-      log(">>>>>> Processing date-based maintenance reminder >>>>>> " + rec.encode());
-      raise explicit event "schedule_#{recurring}" attributes rec;
+      log(">>>>>> Storing reminder >>>>>> " + rec.encode());
+      set ent:reminders{id} rec;
     } else {
-      log(">>>>>> Could not store maintenance reminder >>>>  " + rec.encode());
+      log(">>>>>> Could not store reminder " + rec.encode());
     }
   }
 
-  rule create_recurring_reminder {
-    select when explicit schedule_repeat
-    pre {
-      hour = math:random(3).klog(">>> hour (plus 3)>>> ") + 3; // between 3 and 7
-      minute = math:random(59).klog(">>>> minute >>>> ");
-      current_day = time:strftime("%d");
-      
-      due = (event:attr("due") % 12) + 1; // ensure it's 1-12
-      current_month = time:strftime("%m");
-      num_reminders = math:round(12/due);
-      month_array = (0).range(num_reminders).map(function(x){((x + current_month) % 12) + 1}).klog(">> reminder array for months >>>> ");
-      month = (num_reminders == 1) => "*"
-                                    | month_array;
-      id = event:attr("id");
-      rec = event:attrs();
-				   
-    }
-    {
-      send_directive("schedule repeat reminder") with
-        attrs = rec and
-        cronspec = "#{minute} #{hour} #{day} #{month} *";
-    }
-    
-    always {
-      schedule explicit event "fuse_reminder" repeat "#{minute} #{hour} #{day} #{month} *" 
-        attributes rec
-        setting (sched_ev_id);
-      set ent:reminders{[id, "schedEv"]} sched_ev_id;
-    }
-  }
-
-  rule create_single_reminder {
-    select when explicit schedule_once
+  rule delete_reminder {
+    select when fuse unneeded_reminder
     pre {
       id = event:attr("id");
-      rec = event:attrs();
     }
+    if( not id.isnull() 
+      ) then
     {
-      send_directive("schedule single reminder") with
-        attrs = rec;
+      send_directive("Deleting reminder") with
+        rec = rec
     }
-    always {
-      schedule explicit event "fuse_reminder" at event:attr("due") 
-        attributes rec
-        setting (sched_ev_id);
-      set ent:reminders{[id, "schedEv"]} sched_ev_id;
+    fired {
+      clear ent:reminders{id} 
     }
   }
 
-  rule move_to_history {
-    select when fuse task_complete
-  }
+
+  
+  
 
 
 }

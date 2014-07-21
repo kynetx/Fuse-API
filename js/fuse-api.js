@@ -865,6 +865,110 @@
 	    });
 	},
 
+	// ---------- Alerts ----------
+	alerts: function(vehicle_channel, cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    options.rid = "fuel";
+	    
+	    var args = options.id ? {"id": options.id} : {};
+
+	    return Fuse.ask_vehicle(vehicle_channel, "alerts", args, null, function(json) {
+			Fuse.log("Retrieve last alert", json);
+			cb(json);
+  		       }, options);
+	},
+
+	alertsByDate: function(vehicle_channel, start, end, cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    options.rid = "fuel";
+	    
+	    var args = {"start": start,
+			"end": end
+		       };
+
+	    return Fuse.ask_vehicle(vehicle_channel, "alertsByDate", args, null, function(json) {
+			Fuse.log("Retrieve alerts", json);
+			cb(json);
+  		       }, options);
+	},
+
+
+	recordAlert: function(vehicle_channel, alert_obj, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record fuel alert for vehicle";
+	    };
+	    Fuse.requireParams({volume: alert_obj.volume,
+				unitPrice: alert_obj.unitPrice,
+				odometer: alert_obj.odometer
+			       });
+
+            return CloudOS.raiseEvent("fuse", "new_fuel_purchase", alert_obj, {}, function(response)
+				      {
+					  Fuse.log("Recorded alert for vehicle: " + vehicle_channel);
+					  if(response.length < 2) {
+					      throw "Fuel alert record failed for vehicle: "  + vehicle_channel;
+					  }
+					  cb(response);
+				      },
+				      {"eci": vehicle_channel
+				      } 
+            );
+        },
+
+	updateAlert: function(vehicle_channel, alert_obj, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record fuel alert for vehicle";
+	    };
+	    Fuse.requireParams({volume: alert_obj.volume,
+				unitPrice: alert_obj.unitPrice,
+				odometer: alert_obj.odometer,
+				id: alert_obj.id
+			       });
+
+            return CloudOS.raiseEvent("fuse", "updated_fuel_purchase", alert_obj, {}, function(response)
+				      {
+					  Fuse.log("Updateded alert for vehicle: " + vehicle_channel);
+					  if(response.length < 1) {
+					      throw "Fuel alert update failed for vehicle: "  + vehicle_channel;
+					  }
+					  cb(response);
+				      },
+				      {"eci": vehicle_channel
+				      } 
+            );
+        },
+
+	deleteAlert: function(vehicle_channel, id, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record fuel alert for vehicle";
+	    };
+	    Fuse.requireParams({id: id});
+
+	    var attrs = {"id": id};
+            return CloudOS.raiseEvent("fuse", "unneeded_fuel_purchase", attrs, {}, function(response)
+            {
+                Fuse.log("Deleted alert for vehicle: " + vehicle_channel);
+		if(response.length < 1) {
+		    throw "Fuel alert record delete failed for vehicle: "  + vehicle_channel;
+		}
+                cb(response);
+            },
+	    {"eci": vehicle_channel
+	    } 
+            );
+        },
+
     };
 
     function isEmpty(obj) {

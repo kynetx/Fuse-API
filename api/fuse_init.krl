@@ -367,6 +367,22 @@ A new fleet was created for #{me.encode()};
       }
     }
 
+    rule show_report_history {
+      select when fuse show_history
+      pre {
+        use_domain = "explicit";
+	use_type = "periodic_report";
+        scheduled = event:get_list();
+	evid = 0;
+	evtype = 1;
+        evrid = 3; 
+	report_events = scheduled.filter(function(e){e[evtype] eq "#{use_domain}/#{use_type}" && e[evrid] eq meta:rid()}).klog(">>>> report schedules >>>>").head();
+	report_history = event:get_history(report_events[evid]);
+      }
+      send_directive("report event history") with
+        report_events = report_events and
+        report_history = report_history
+    }
 
     // ---------- fleet ----------
 
