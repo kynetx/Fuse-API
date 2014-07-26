@@ -198,7 +198,7 @@ Operations for maintenance
     if( not rec{"odometer"}.isnull() 
      && not rec{"activity"}.isnull()
      && not id.isnull()
-      ) then
+      ) then 
     {
       send_directive("Updating alert") with
         rec = rec
