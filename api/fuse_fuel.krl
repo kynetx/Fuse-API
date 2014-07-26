@@ -165,7 +165,8 @@ Operations for fuel
        //       "_api": "sky"
  		   
        // 	  };
-      clear ent:fuel_purchases{id} 
+      clear ent:fuel_purchases{id};
+      clear ent:last_fuel_purchase;
     }
   }
 
