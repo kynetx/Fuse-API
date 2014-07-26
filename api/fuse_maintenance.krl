@@ -338,6 +338,7 @@ Operations for maintenance
     }
   }
 
+  // to make this work with a AWS IAM user (fuse_admin) I had to create a bucket policy
   rule store_maintenance_receipt {
     select when fuse new_receipt
     pre {
@@ -354,6 +355,21 @@ Operations for maintenance
 	;
       S3:upload(S3Bucket, img_name, img_value)
         with object_type = img_type;
+    }
+
+  }
+
+// to make this work with a AWS IAM user (fuse_admin) I had to create a bucket policy
+  rule delete_maintenance_receipt {
+    select when fuse unneeded_receipt
+    pre {
+      img_name = event:attr("img_name");
+    }
+    {
+      send_directive("deleting receipt at Amazon") with
+        name = img_name 
+	;
+      S3:del(S3Bucket, img_name);
     }
 
   }
