@@ -181,7 +181,7 @@ Operations for maintenance
 
       vdata = vehicle:vehicleSummary();
 
-      odometer = event:attr("odometer") || vdata{"odometer"};
+      odometer = event:attr("odometer") || vdata{"mileage"};
 
       when_alerted = common:convertToUTC(event:attr("when") || time:now());
 
