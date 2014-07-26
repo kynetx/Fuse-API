@@ -29,10 +29,14 @@ Operations for fuel
 	"reverse": true,
 	"compare" : "datetime"
       };
+      global_opt = {
+        "index" : 0,
+	"limit" : 1
+      }; 
       last_id = not id.isnull()                     => id.klog(">>>> using the parameter id <<<<<") 
                |  not ent:last_fuel_purchase.isnull()
                && ent:last_fuel_purchase              => ent:last_fuel_purchase.klog(">>>> using entity var id <<<<")
-		                                       | pds:get_keys(common:fuel_namespace(), sort_opt, 1)
+		                                       | this2that:transform(ent:fuel_purchases, sort_opt, global_opt)
                                                            .head()
  						 	   .klog(">>>>> had to punt on id for last fuel entry <<<<<<");
       ent:fuel_purchases{last_id.klog(">>>>> retrieving fuel purchase record using this id <<<<<<<<<")}
