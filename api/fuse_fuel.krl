@@ -89,7 +89,7 @@ Operations for fuel
       new_record = event:attr("id").isnull();
       current_time = common:convertToUTC(time:now());
 
-      id = event:attr("id") || current_time;  // UTC; using time as id
+      id = event:attr("id") || random:uuid();  // UTC; using time as id
 
       volume = event:attr("volume") || 1;
       unit_price = event:attr("unitPrice");
