@@ -303,8 +303,7 @@ Operations for maintenance
       img_is_new = img_source.match(re/^data:image/); // might get an http:// URL for updates
       vehicle_id = CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.channelName").klog(">>>> vehicle ID >>>>> ");
       img_name   = "fuse_vehicle_files/#{meta:eci()}/#{vehicle_id}/#{id}.img";
-      seed       = math:random(100000);
-      img_url    = img_is_new => "https://s3.amazonaws.com/#{S3Bucket}/#{img_name}.img?q=#{seed}" 
+      img_url    = img_is_new => S3:makeAwsUrl(S3Bucket,img_name)
                                | img_source;
      
 
