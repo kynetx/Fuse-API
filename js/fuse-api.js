@@ -869,7 +869,7 @@
 	alerts: function(vehicle_channel, cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
-	    options.rid = "fuel";
+	    options.rid = "maintenance";
 	    
 	    var args = options.id ? {"id": options.id} : {};
 
@@ -882,7 +882,7 @@
 	alertsByDate: function(vehicle_channel, start, end, cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
-	    options.rid = "fuel";
+	    options.rid = "maintenance";
 	    
 	    var args = {"start": start,
 			"end": end
