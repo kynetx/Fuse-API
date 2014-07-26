@@ -18,8 +18,8 @@ Operations for maintenance
     use module b16x9 alias vehicle
 
 	
-    provides activeReminders, 
-             alerts, maintanceRecords, reminders
+    provides activeReminders, reminders,
+             alerts, maintanceRecords
 
   }
 
@@ -45,6 +45,8 @@ Operations for maintenance
   global {
 
     // external decls
+
+    reminders = function () { {} };
 
     activeReminders = function(current_time, mileage){
       utc_ct = common:convertToUTC(current_time);
@@ -141,7 +143,7 @@ Operations for maintenance
       sorted_keys.map(function(id){ ent:maintenance_records{id} })
     };
 
-    reminders = function () { {} };
+    
 
   }
 
@@ -170,11 +172,12 @@ Operations for maintenance
 
       id = event:attr("id") || random:uuid();
 
-      reminder = reminder(event:attr("reminder_ref")) || {};
+      reminder = reminders(event:attr("reminder_ref")) || {};
 
       trouble_codes = event:attr("trouble_codes");
 
       activity = event:attr("activity") || reminder{"activity"};
+      reason = event:attr("reason") || reminder{"reason"};
 
       vdata = vehicle:vehicleSummary();
 
@@ -188,6 +191,7 @@ Operations for maintenance
 	"odometer": odometer,
 	"reminderRef": event:attr("reminder_ref"),
 	"activity": activity,
+	"reason": reason,
 	"timestamp": when_alerted
       };
     }
