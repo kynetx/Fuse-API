@@ -13,6 +13,8 @@ Operations for maintenance
 
     use module a169x625 alias CloudOS
     use module a169x676 alias pds
+    use module a41x174 alias S3
+       with AWSKeys = keys:aws()
     use module b16x19 alias common
     use module b16x11 alias carvoyant
     use module b16x9 alias vehicle
@@ -143,7 +145,8 @@ Operations for maintenance
       sorted_keys.map(function(id){ ent:maintenance_records{id} })
     };
 
-    
+    // internal use only
+    S3Bucket = "Fuse_assets";    
 
   }
 
@@ -291,16 +294,26 @@ Operations for maintenance
              |                                       "unknown";
 
       activity = event:attr("activity") || alert{"activity"};
-      odometer = event:attr("odometer") || vdata{"odometer"};
+      odometer = event:attr("odometer") || vdata{"mileage"};
 
-      completed_time = event:attr("timestamp") || current_time;
+      completed_time = event:attr("when") || current_time;
+
+      // receipt photo 
+      img_source = event:attr("receipt");
+      img_is_new = img_source.match(re/^data:image/); // might get an http:// URL for updates
+      vehicle_id = CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.channelName").klog(">>>> vehicle ID >>>>> ");
+      img_name   = "fuse_vehicle_files/#{meta:eci()}/#{vehicle_id}/#{id}.img";
+      seed       = math:random(100000);
+      img_url    = img_is_new => "https://s3.amazonaws.com/#{S3Bucket}/#{img_name}.img?q=#{seed}" 
+                               | img_source;
+     
 
       rec = {
         "id": id,
 	"activity": activity,
 	"agent": event:attr("agent"),
 	"status": status,
-	"receipt": event:attr("receipt"),
+	"receipt": img_url,
 	"odometer": odometer,
 	"timestamp": completed_time
       };
@@ -312,13 +325,36 @@ Operations for maintenance
     {
       send_directive("Updating maintenance_record") with
         rec = rec
+	
     }
     fired {
       log(">>>>>> Storing maintenance_record >>>>>> " + rec.encode());
       set ent:maintenance_records{id} rec;
+      raise fuse event new_receipt with
+        image_name = image_name and
+	image_source = image_source      if img_is_new;
     } else {
       log(">>>>>> Could not store maintenance_record " + rec.encode());
     }
+  }
+
+  rule store_maintenance_receipt {
+    select when fuse new_receipt
+    pre {
+      img_name = event:attr("img_name");
+      img_source = event:attr("img_source");
+      img_value  = this2that:base642string(S3:getValue(img_source));
+      img_type   = S3:getType(img_source);
+    }
+    if(img_source.match(re/^data:image/)) then
+    {
+      send_directive("storing receipt at Amazon") with
+        name = img_name
+	;
+      S3:upload(S3Bucket, img_name, img_value)
+        with object_type = img_type;
+    }
+
   }
 
   rule delete_maintenance_record {
