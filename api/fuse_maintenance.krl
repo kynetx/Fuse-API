@@ -359,7 +359,7 @@ Operations for maintenance
 
   }
 
-// to make this work with a AWS IAM user (fuse_admin) I had to create a bucket policy
+  // to make this work with a AWS IAM user (fuse_admin) I had to create a bucket policy
   rule delete_maintenance_receipt {
     select when fuse unneeded_receipt
     pre {
