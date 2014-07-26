@@ -902,14 +902,11 @@
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
 		throw "Vehicle channel is null; can't record fuel alert for vehicle";
 	    };
-	    Fuse.requireParams({volume: alert_obj.volume,
-				unitPrice: alert_obj.unitPrice,
-				odometer: alert_obj.odometer
-			       });
+	 
 
-            return CloudOS.raiseEvent("fuse", "new_fuel_purchase", alert_obj, {}, function(response)
+            return CloudOS.raiseEvent("fuse", "new_alert", alert_obj, {}, function(response)
 				      {
-					  Fuse.log("Recorded alert for vehicle: " + vehicle_channel);
+					  Fuse.log("Recorded alert for vehicle: " + vehicle_channel + ": " + response);
 					  if(response.length < 2) {
 					      throw "Fuel alert record failed for vehicle: "  + vehicle_channel;
 					  }
@@ -927,15 +924,12 @@
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
 		throw "Vehicle channel is null; can't record fuel alert for vehicle";
 	    };
-	    Fuse.requireParams({volume: alert_obj.volume,
-				unitPrice: alert_obj.unitPrice,
-				odometer: alert_obj.odometer,
-				id: alert_obj.id
+	    Fuse.requireParams({id: alert_obj.id
 			       });
 
-            return CloudOS.raiseEvent("fuse", "updated_fuel_purchase", alert_obj, {}, function(response)
+            return CloudOS.raiseEvent("fuse", "updated_alert", alert_obj, {}, function(response)
 				      {
-					  Fuse.log("Updateded alert for vehicle: " + vehicle_channel);
+					  Fuse.log("Updateded alert for vehicle: " + vehicle_channel + ": " + response);
 					  if(response.length < 1) {
 					      throw "Fuel alert update failed for vehicle: "  + vehicle_channel;
 					  }

@@ -167,11 +167,12 @@ Operations for maintenance
 
       // if no id, assume new record and create one
       new_record = event:attr("id").isnull();
-      current_time = common:convertToUTC(time:now());
 
       id = event:attr("id") || random:uuid();
 
       reminder = reminder(event:attr("reminder_ref")) || {};
+
+      trouble_codes = event:attr("trouble_codes");
 
       activity = event:attr("activity") || reminder{"activity"};
 
@@ -179,13 +180,15 @@ Operations for maintenance
 
       odometer = event:attr("odometer") || vdata{"odometer"};
 
+      when_alerted = common:convertToUTC(event:attr("when") || time:now());
+
       rec = {
         "id": id,
-	"trouble_codes": event:attr("trouble_codes"),
+	"troubleCodes": trouble_codes,
 	"odometer": odometer,
-	"reminder_ref": event:attr("reminder_ref") || "organic",
+	"reminderRef": event:attr("reminder_ref"),
 	"activity": activity,
-	"timestamp": current_time
+	"timestamp": when_alerted
       };
     }
     if( not rec{"odometer"}.isnull() 
