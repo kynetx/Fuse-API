@@ -349,7 +349,8 @@ Operations for maintenance
     if(img_source.match(re/^data:image/)) then
     {
       send_directive("storing receipt at Amazon") with
-        name = img_name
+        name = img_name and
+        type = img_type
 	;
       S3:upload(S3Bucket, img_name, img_value)
         with object_type = img_type;
