@@ -96,7 +96,7 @@ Operations for fuel
       odometer = event:attr("odometer");
       location = event:attr("location");
       
-      lastfillup = fillup().klog(">>>> returned from fillup >>>> ") || {"odometer": 0, "timestamp": current_time};
+      lastfillup = fillups().klog(">>>> returned from fillup >>>> ") || {"odometer": 0, "timestamp": current_time};
       distance = odometer - lastfillup{"odometer"};
       mpg = distance/volume;
 
