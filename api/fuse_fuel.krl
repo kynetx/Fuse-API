@@ -106,7 +106,7 @@ Operations for fuel
 
       seconds = (time:strftime(current_time, "%s") - time:strftime(lastfillup{"timestamp"}, "%s"));
 
-      cost = volume * unitprice;
+      cost = volume * unit_price;
 
       when_bought = common:convertToUTC(event:attr("when") || time:now());
 
