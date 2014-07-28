@@ -64,8 +64,8 @@ Manage trips. PDS is not well-suited to these operations
        x_limit = limit.klog(">>>> limit >>>>>");
        x_offset = offset.klog(">>>> offset >>>>>");
 
-      id.isnull() => allTrips(limit, offset)
-                   | ent:trips_by_id{mkTid(id)};
+      id.isnull() || id eq "" => allTrips(limit, offset)
+                               | ent:trips_by_id{mkTid(id)};
     };
 
     allTrips = function(limit, offset) {
