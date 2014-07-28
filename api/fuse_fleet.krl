@@ -410,7 +410,7 @@ Application that manages the fleet
     rule update_vehicle_data_in_fleet {
       select when fuse updated_vehicle
       pre {
-	keyvalue = event:attr("keyvalue").split(re/,/);
+	keyvalue = event:attr("keyvalue").split(re/,/).klog(">>>> key value should be array >>>");
         vehicle_info = event:attr("value").decode();
 
 	// why am I gettting this?  Oh, yeah, we need to match vehicle_id and vehicle channel so we'll do that here...
