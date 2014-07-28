@@ -189,4 +189,46 @@ Operations for fuel
     }
   }
 
+
+  rule update_vehicle_totals {
+    select when fuse fuel_purchase_saved
+    pre {
+
+      // do current month if no month given
+      raw_month = event:attr("month") || time:now();
+      month = time:strftime(raw_month, "%m");
+      year = time:strftime(raw_month, "%Y");
+
+      start = time:strftime(raw_month, "%Y%m01T000000%z");
+      end = time:add(start, {"months": 1});
+      month_totals = fillupsByDate(start, end)
+                      .reduce(function(a, b){ 
+	                                      {"cost": a{"cost"} + b{"cost"}, 
+		                               "distance": a{"distance"} + b{"distance"},
+					       "volume": a{"volume"} + b{"volume"},
+					       "fillups": a{"fillups"} + 1
+					      }
+					    },
+			      {"cost": 0, 
+			       "distance": 0,
+			       "volume": 0,
+			       "fillups": 0
+			      }
+                             );
+
+    }
+    {send_directive("Updated fuel summary for #{month}/#{year}") with
+       values =  month_totals;
+     event:send({"cid": vehicle:fleetChannel()}, "fuse", "updated_vehicle") with
+        attrs = {"keyvalue": "fuel_summaries,Y#{year},M#{month}",
+	         "value": month_totals.encode()
+	        };
+      }
+
+    always {
+      set ent:monthly_fuel_summary{[year, month]} month_totals;
+    }
+  }
+
 }
+// fuse_fuel.krl

@@ -18,7 +18,8 @@ Application that manages the fleet
 	use module b16x26 alias reports
 
         sharing on
-        provides vehicleChannels, seeFleetData, vehicleSummary, vehicleStatus, tripSummaries
+        provides vehicleChannels, vehicleSummary, vehicleStatus, tripSummaries,
+	seeFleetData // delete after testing
     }
 
     global {
