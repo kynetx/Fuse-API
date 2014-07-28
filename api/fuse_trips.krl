@@ -378,11 +378,12 @@ Manage trips. PDS is not well-suited to these operations
     select when fuse new_trip_saved
     pre {
       // do current month if no month given
-      raw_month = event:attr("month") || time:strftime(time:now()); 
+      raw_month = event:attr("month") || time:now();
       month = time:strftime(raw_month, "%m");
       year = time:strftime(raw_month, "%Y");
 
-      start = time:strftime(year_month, "%Y%m01T0000").klog(">>> start time >>>>"); // strip off all by year, month, tz
+      start = time:strftime(raw_month, "%Y%m%dT000000%z");
+      start = time:strftime(year_month, "%Y%m").klog(">>> start time >>>>"); // strip off all by year, month, tz
       end = time:add(month, {"months": 1});
       all_trips = tripsByDate(start, end);
       month_totals = all_trips
