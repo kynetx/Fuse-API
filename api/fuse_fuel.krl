@@ -47,8 +47,14 @@ Operations for fuel
 
       utc_start = common:convertToUTC(start);
       utc_end = common:convertToUTC(end);
+
+      sort_opt = {
+        "path" : ["endTime"],
+	"reverse": true,
+	"compare" : "datetime"
+      };
       
-      ent:fuel_purchases.query([], { 
+      this2that:transform(ent:fuel_purchases.query([], { 
        'requires' : '$and',
        'conditions' : [
           { 
@@ -63,8 +69,10 @@ Operations for fuel
 	  }
 	]},
 	"return_values"
-	)
-    };
+	),
+	sort_opt
+      )
+    }
 
 
   }
