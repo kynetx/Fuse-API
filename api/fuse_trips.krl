@@ -382,8 +382,7 @@ Manage trips. PDS is not well-suited to these operations
       month = time:strftime(raw_month, "%m");
       year = time:strftime(raw_month, "%Y");
 
-      start = time:strftime(raw_month, "%Y%m%dT000000%z");
-      start = time:strftime(year_month, "%Y%m").klog(">>> start time >>>>"); // strip off all by year, month, tz
+      start = time:strftime(raw_month, "%Y%m01T000000%z").klog(">>> start time >>>>");
       end = time:add(month, {"months": 1});
       all_trips = tripsByDate(start, end);
       month_totals = all_trips
