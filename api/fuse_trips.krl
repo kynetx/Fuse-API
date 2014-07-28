@@ -77,10 +77,12 @@ Manage trips. PDS is not well-suited to these operations
 
       max_returned = 25;
 
-      hard_offset = offset.isnull()     => 0               // default
+      hard_offset = offset.isnull() 
+                 || offset eq ""        => 0               // default
                   |                        offset;
 
-      hard_limit = limit.isnull()       => 10              // default
+      hard_limit = limit.isnull() 
+                || limit eq ""          => 10              // default
                  | limit > max_returned => max_returned
 		 |                         limit;
 
