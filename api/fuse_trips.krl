@@ -382,11 +382,9 @@ Manage trips. PDS is not well-suited to these operations
       month = time:strftime(raw_month, "%m");
       year = time:strftime(raw_month, "%Y");
 
-      start = time:strftime(raw_month, "%Y%m01T000000%z").klog(">>> start time >>>>");
+      start = time:strftime(raw_month, "%Y%m01T000000%z");
       end = time:add(start, {"months": 1});
-      all_trips = tripsByDate(start, end);
-      month_totals = all_trips
-                      .klog(">>>> trips for month >>>>")
+      month_totals = tripsByDate(start, end)
                       .reduce(function(a, b){ {"cost": a{"cost"} + b{"cost"}, 
 		                               "interval": a{"interval"} + b{"interval"},
 					       "mileage": a{"mileage"} + b{"mileage"}
@@ -397,10 +395,10 @@ Manage trips. PDS is not well-suited to these operations
 			       "mileage": 0
 			      }
                              );
-     
+      num_trips = month_totals.length().klog(">>>> number of trips >>>> ");
     }
     always {
-      set ent:monthly_trip_summary{[year, month]} month_totals
+      set ent:monthly_trip_summary{[year, month]} month_totals.put(["trip_count"], num_trips);
     }
   }
 
