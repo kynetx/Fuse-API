@@ -429,7 +429,7 @@ Application that manages the fleet
       }
 
       always {
-        set ent:fleet{new_key} vehicle_info
+        set ent:fleet{["trip_summary", vehicle_name]} vehicle_info
       }
 
     }
