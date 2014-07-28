@@ -232,7 +232,7 @@ Manage trips. PDS is not well-suited to these operations
                                        |  trip{"mileage"}.sprintf("%.2f");
       cost = math:round((mileage.klog(">>>> mileage <<<<<") / fillup{"mpg"}) * fillup{"unit_price"} * 1000) / 1000;
 
-      interval = (time:strftime(trip{"endTime"}, "%s") - time:strftime(trip{startTime}, "%s"));
+      interval = (time:strftime(trip{"endTime"}, "%s") - time:strftime(trip{"startTime"}, "%s"));
       
       avg_speed = mileage * 3600 / interval;
       
