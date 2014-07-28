@@ -404,12 +404,13 @@ Application that manages the fleet
     }
 
     // ---------- cache vehicle data ----------
-
+    // this is a general rule for catching updates from the vehicle and storing them in ent:fleet. 
+    //   possible key values include: vehicle_info, vehicle_status, [trip_summaries,#{year},#{month}]
+    //   they are appended with the vehicle name so that leaving off the name gives values for fleet
     rule update_vehicle_data_in_fleet {
       select when fuse updated_vehicle
       pre {
-        vid = event:attr("vehicleId");
-	keyvalue = event:attr("keyvalue");
+	keyvalue = event:attr("keyvalue").split(re/,/);
         vehicle_info = event:attr("value").decode();
 
 	// why am I gettting this?  Oh, yeah, we need to match vehicle_id and vehicle channel so we'll do that here...
@@ -419,8 +420,7 @@ Application that manages the fleet
 	new_key = keyvalue.append(vehicle_name).klog(" >>> storing vehicle data here >>>> ")
 
       }
-      {send_directive("Updated vehicle data for #{keyvalue} in fleet") with
-         id = vid and
+      {send_directive("Updated vehicle data for #{new_key.encode()} in fleet") with
          values = vehicle_info and
 	 keyvalue = keyvalue and
 	 namespace = carvoyant_namespace and 
@@ -429,7 +429,7 @@ Application that manages the fleet
       }
 
       always {
-        set ent:fleet{[keyvalue, vehicle_name]} vehicle_info.put(["deviceId"], vid)
+        set ent:fleet{new_key} vehicle_info
       }
 
     }

@@ -378,6 +378,7 @@ Manage trips. PDS is not well-suited to these operations
   rule update_vehicle_totals {
     select when fuse new_trip_saved
     pre {
+
       // do current month if no month given
       raw_month = event:attr("month") || time:now();
       month = time:strftime(raw_month, "%m");
@@ -403,9 +404,43 @@ Manage trips. PDS is not well-suited to these operations
                              );
 
     }
+    {send_directive("Updated trip summary for #{month}/#{year}") with
+       values =  month_totals;
+     event:send({"cid": vehicle:fleetChannel()}, "fuse", "updated_vehicle") with
+        attrs = {"keyvalue": "trip_summaries,#{year},#{month}",
+	         "value": month_totals.encode()
+	        };
+      }
+
     always {
       set ent:monthly_trip_summary{[year, month]} month_totals;
     }
   }
 
+
+
+ rule update_vehicle_status {
+      select when fuse need_vehicle_status
+      pre {
+        vid = carvoyant:vehicle_id();
+        vehicle_status = carvoyant:vehicleStatus() || {}; 
+      }
+
+      always {
+        raise fuse event updated_vehicle_status attributes vehicle_status;
+        raise pds event new_data_available 
+            attributes
+              {"namespace": carvoyant:namespace(),
+               "keyvalue": "vehicle_status",
+	       "value": vehicle_status
+	              	 .delete(["_generatedby"])
+	              	 .delete(["deviceId"]),
+	       "_api": "sky"
+              };
+	raise fuse event updated_mileage
+	  with mileage = vehicle_status{["GEN_ODOMETER","value"]}
+	   and timestamp = vehicle_status{["GEN_ODOMETER","timestamp"]};
+      }
+
+    }
 }

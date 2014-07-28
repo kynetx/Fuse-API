@@ -331,7 +331,6 @@ Fuse ruleset for a vehicle pico
 	 namespace = carvoyant:namespace();
        event:send({"cid": fleetChannel().klog(">>>> fleet channel >>>>> ")}, "fuse", "updated_vehicle") with
          attrs = {"keyvalue": "vehicle_info",
-	          "vehicleId": vid,
 	          "value": vehicle_info.encode()
 		 };
       }
@@ -369,7 +368,6 @@ Fuse ruleset for a vehicle pico
 	 namespace = carvoyant:namespace();
        event:send({"cid": fleetChannel()}, "fuse", "updated_vehicle") with
          attrs = {"keyvalue": "vehicle_status",
-	          "vehicleId": vid,
 	          "value": vehicle_status.encode()
 		 };
       }
