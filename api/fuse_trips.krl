@@ -387,18 +387,20 @@ Manage trips. PDS is not well-suited to these operations
       month_totals = tripsByDate(start, end)
                       .reduce(function(a, b){ {"cost": a{"cost"} + b{"cost"}, 
 		                               "interval": a{"interval"} + b{"interval"},
-					       "mileage": a{"mileage"} + b{"mileage"}
+					       "mileage": a{"mileage"} + b{"mileage"},
+					       "trip_count": a{"trip_count"} + b{"trip_count"}
 					      }
 					    },
 			      {"cost": 0, 
 		               "interval": 0,
-			       "mileage": 0
+			       "mileage": 0,
+			       "trip_count": 0
 			      }
                              );
-      num_trips = month_totals.length().klog(">>>> number of trips >>>> ");
+
     }
     always {
-      set ent:monthly_trip_summary{[year, month]} month_totals.put(["trip_count"], num_trips);
+      set ent:monthly_trip_summary{[year, month]} month_totals;
     }
   }
 
