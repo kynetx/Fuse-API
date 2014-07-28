@@ -382,10 +382,11 @@ Manage trips. PDS is not well-suited to these operations
       month = time:strftime(raw_month, "%m");
       year = time:strftime(raw_month, "%Y");
 
-      start = time:strftime(year_month, "%Y%m00T000000%z"); // strip off all by year, month, tz
+      start = time:strftime(year_month, "%Y%m00T000000%z").klog(">>> start time >>>>"); // strip off all by year, month, tz
       end = time:add(month, {"month": 1});
       all_trips = tripsByDate(start, end);
       month_totals = all_trips
+                      .klog(">>>> trips for month >>>>")
                       .reduce(function(a, b){ {"cost": a{"cost"} + b{"cost"}, 
 		                               "interval": a{"interval"} + b{"interval"},
 					       "mileage": a{"mileage"} + b{"mileage"}
