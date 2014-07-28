@@ -152,7 +152,8 @@ Operations for fuel
        // 	  };
       log(">>>>>> Storing fuel purchase >>>>>> " + rec.encode());
       set ent:fuel_purchases{id} rec;
-      set ent:last_fuel_purchase id if new_record
+      set ent:last_fuel_purchase id if new_record;
+      raise fuse event fuel_purchase_saved;
     } else {
       log(">>>>>> Could not store fuel record " + rec.encode());
     }
