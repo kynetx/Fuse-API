@@ -60,7 +60,7 @@ Manage trips. PDS is not well-suited to these operations
 
 
     trips = function(id, limit, offset) {
-       // x_id = id.klog(">>>> id >>>>>");
+       x_id = id.klog(">>>> id >>>>>");
        // x_limit = limit.klog(">>>> limit >>>>>");
        // x_offset = offset.klog(">>>> offset >>>>>");
 
