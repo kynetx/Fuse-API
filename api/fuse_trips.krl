@@ -20,6 +20,7 @@ Manage trips. PDS is not well-suited to these operations
 
 	
     provides trips, lastTrip, tripName, mileage, tripsByDate, newTrips,
+             monthlyTripSummary,
              all_trips,   // for debugging
 	       icalForVehicle, icalSubscriptionUrl
   }
@@ -109,6 +110,10 @@ Manage trips. PDS is not well-suited to these operations
 
     tripName = function(start, end) {
       ent:trip_names{[reducePrecision(end), reducePrecision(start)]}
+    }
+
+    monthlyTripSummary = function(year, month) {
+      ent:monthly_trip_summary{[year, month]}
     }
 
     waypointToArray = function(wp) {
@@ -299,6 +304,8 @@ Manage trips. PDS is not well-suited to these operations
       set ent:trips_by_id{tid} trip_info;
       set ent:trip_summaries{tid} trip_summary;
       // set ent:trips_by_week{week_number} = (ent:trips_by_week{week_number} || []).append(tid);
+      raise fuse event new_trip_saved with 
+        tripId = tid
     } else {
       log ">>>>>>>>>>>>>>>>>>>>>>>>> save_trip failed <<<<<<<<<<<<<<<<<<<<<<<<<";
       log "End time: #{end_time}; mileage: " + trip_info{"mileage"};
@@ -364,6 +371,35 @@ Manage trips. PDS is not well-suited to these operations
     } else {
       log "===========================================================================";
       log "Bad trip: " + trip.encode();
+    }
+  }
+
+  rule update_vehicle_totals {
+    select when fuse new_trip_saved
+    pre {
+      // do current month if no month given
+      raw_month = event:attr("month") || time:strftime(time:now()); 
+      month = time:strftime(raw_month, "%m");
+      year = time:strftime(raw_month, "%Y");
+
+      start = time:strftime(year_month, "%Y%m00T000000%z"); // strip off all by year, month, tz
+      end = time:add(month, {"month": 1});
+      all_trips = tripsByDate(start, end);
+      month_totals = all_trips
+                      .reduce(function(a, b){ {"cost": a{"cost"} + b{"cost"}, 
+		                               "interval": a{"interval"} + b{"interval"},
+					       "mileage": a{"mileage"} + b{"mileage"}
+					      }
+					    },
+			      {"cost": 0, 
+		               "interval": 0,
+			       "mileage": 0
+			      }
+                             );
+     
+    }
+    always {
+      set ent:monthly_trip_summary{[year, month]} month_totals
     }
   }
 
