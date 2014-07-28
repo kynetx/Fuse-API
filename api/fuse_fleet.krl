@@ -18,7 +18,7 @@ Application that manages the fleet
 	use module b16x26 alias reports
 
         sharing on
-        provides vehicleChannels, seeFleetData, vehicleSummary, vehicleStatus
+        provides vehicleChannels, seeFleetData, vehicleSummary, vehicleStatus, tripSummaries
     }
 
     global {
@@ -63,6 +63,10 @@ Application that manages the fleet
 
       vehicleStatus = function() {
         ent:fleet{["vehicle_status"]}
+      };
+
+      tripSummaries = function(year, month) {
+        ent:fleet{["vehicle_status", "Y" + year, "M" + month]}
       };
 
       findVehicleByBackchannel = function (bc) {
@@ -435,6 +439,7 @@ Application that manages the fleet
 
     }
 
+    // [FIXME] this needs some protection on it (system key or something)
     rule clear_fleet_cache {
       select when fuse clear_fleet_cache
       always {
