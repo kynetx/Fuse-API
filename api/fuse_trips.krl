@@ -28,7 +28,7 @@ Manage trips. PDS is not well-suited to these operations
   global {
 
     // external decls
-    trips = function(start, end){
+    tripsByDate = function(start, end){
 
       utc_start = common:convertToUTC(start);
       utc_end = common:convertToUTC(end);
@@ -58,9 +58,8 @@ Manage trips. PDS is not well-suited to these operations
        sort_opt)
     };
 
-    tripsByDate = trips;
 
-    newTrips = function(id, limit, offset) {
+    trips = function(id, limit, offset) {
        // x_id = id.klog(">>>> id >>>>>");
        // x_limit = limit.klog(">>>> limit >>>>>");
        // x_offset = offset.klog(">>>> offset >>>>>");
@@ -386,6 +385,7 @@ Manage trips. PDS is not well-suited to these operations
       end = time:add(start, {"months": 1});
       month_totals = tripsByDate(start, end)
                       .reduce(function(a, b){ 
+		                              // for some early trips for a few people. Kill later... [PJW]
                                               new_interval = (time:strftime(b{"endTime"}, "%s") - time:strftime(b{"startTime"}, "%s"));
 	                                      {"cost": a{"cost"} + b{"cost"}, 
 		                               "interval": a{"interval"} + new_interval.klog(">>> trip interval >>> "),

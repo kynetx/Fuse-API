@@ -717,7 +717,23 @@
   		       }, options);
 	},
 
-	trips: function(vehicle_channel, start, end, cb, options) {
+	trips: function(vehicle_channel, id, limit, offset, cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    options.rid = "trips";
+	    
+	    var args = {"id": id,
+			"limit": limit,
+			"offset": offset
+		       };
+
+	    return Fuse.ask_vehicle(vehicle_channel, "trips", args, null, function(json) {
+			Fuse.log("Retrieve trips", json);
+			cb(json);
+  		       }, options);
+	},
+
+	tripsByDate: function(vehicle_channel, start, end, cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
 	    options.rid = "trips";
@@ -726,7 +742,7 @@
 			"end": end
 		       };
 
-	    return Fuse.ask_vehicle(vehicle_channel, "trips", args, null, function(json) {
+	    return Fuse.ask_vehicle(vehicle_channel, "tripsByDate", args, null, function(json) {
 			Fuse.log("Retrieve trips", json);
 			cb(json);
   		       }, options);

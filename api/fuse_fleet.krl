@@ -410,12 +410,13 @@ Application that manages the fleet
       pre {
         vid = event:attr("vehicleId");
 	keyvalue = event:attr("keyvalue");
-        vehicle_info = event:attr("value").decode().klog(">>>> vehicle info >>>>>");
+        vehicle_info = event:attr("value").decode();
 
 	// why am I gettting this?  Oh, yeah, we need to match vehicle_id and vehicle channel so we'll do that here...
 	vehicle_channel_data = findVehicleByBackchannel(meta:eci());
 	vehicle_name = vehicle_channel_data{"channelName"}.klog(">>>> vehicle name >>>> ");
 
+	new_key = keyvalue.append(vehicle_name).klog(" >>> storing vehicle data here >>>> ")
 
       }
       {send_directive("Updated vehicle data for #{keyvalue} in fleet") with
