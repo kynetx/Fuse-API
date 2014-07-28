@@ -66,7 +66,7 @@ Application that manages the fleet
       };
 
       tripSummaries = function(year, month) {
-        ent:fleet{["vehicle_status", "Y" + year, "M" + month]}
+        ent:fleet{["trip_summaries", "Y" + year, "M" + month]}
       };
 
       findVehicleByBackchannel = function (bc) {
