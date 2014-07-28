@@ -48,7 +48,9 @@ Application that manages the fleet
 
 
 	summaries = ent:fleet{["vehicle_info"]}
-		     .map(function(k,v){v.put(["picoId"], k).put(["channel"], vehicle_ecis_by_name{[k,"eventChannel"]}) });
+		     .map(function(k,v){v.put(["picoId"], k)
+                                         .put(["channel"], vehicle_ecis_by_name{[k,"eventChannel"]})
+                                       });
 	summary_keys = summaries.keys();
 
 
@@ -62,11 +64,19 @@ Application that manages the fleet
       };
 
       vehicleStatus = function() {
-        ent:fleet{["vehicle_status"]}
+        summaries = ent:fleet{["vehicle_status"]}
+		     .map(function(k,v){v.put(["picoId"], k)
+                                       });
+        summaries.values();
+        
       };
 
       tripSummaries = function(year, month) {
-        ent:fleet{["trip_summaries", "Y" + year, "M" + month]}  
+	summaries = ent:fleet{["trip_summaries", "Y" + year, "M" + month]}  
+		     .map(function(k,v){v.put(["picoId"], k)
+                                       });
+        summaries.values();
+        
       };
 
       findVehicleByBackchannel = function (bc) {
