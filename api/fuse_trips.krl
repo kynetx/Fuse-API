@@ -386,8 +386,9 @@ Manage trips. PDS is not well-suited to these operations
       end = time:add(start, {"months": 1});
       month_totals = tripsByDate(start, end)
                       .reduce(function(a, b){ 
-                                              new_interval = b{"interval"} > 86400 => (time:strftime(b{"endTime"}, "%s") - time:strftime(b{"startTime"}, "%s"))
-                                                                                    | b{"interval"};
+                                              new_interval = not b{"interval"}.isnull()
+                                                          && b{"interval"} > 86400 => (time:strftime(b{"endTime"}, "%s") - time:strftime(b{"startTime"}, "%s"))
+                                                           | b{"interval"};
 	                                      {"cost": a{"cost"} + b{"cost"}, 
 		                               "interval": a{"interval"} + new_interval.klog(">>> trip interval >>> "),
 					       "mileage": a{"mileage"} + b{"mileage"},
