@@ -84,7 +84,7 @@ Manage trips. PDS is not well-suited to these operations
       hard_limit = limit.isnull() 
                 || limit eq ""          => 10              // default
                  | limit > max_returned => max_returned
-		 |                         limit;
+		 |                         limit; 
 
       global_opt = {
         "index" : hard_offset,
