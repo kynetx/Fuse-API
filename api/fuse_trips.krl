@@ -407,7 +407,7 @@ Manage trips. PDS is not well-suited to these operations
     {send_directive("Updated trip summary for #{month}/#{year}") with
        values =  month_totals;
      event:send({"cid": vehicle:fleetChannel()}, "fuse", "updated_vehicle") with
-        attrs = {"keyvalue": "trip_summaries,#{year},#{month}",
+        attrs = {"keyvalue": "trip_summaries,Y#{year},M#{month}",
 	         "value": month_totals.encode()
 	        };
       }
