@@ -21,7 +21,7 @@ Operations for maintenance
 
 	
     provides activeReminders, reminders,
-             alerts, maintanceRecords
+             alerts, alertsByDate, maintanceRecords, maintanceRecordsByDate
 
   }
 
@@ -111,6 +111,37 @@ Operations for maintenance
       sorted_keys.map(function(id){ ent:alerts{id} })
     };
 
+    alertsByDate = function(start, end){
+
+      utc_start = common:convertToUTC(start);
+      utc_end = common:convertToUTC(end);
+      
+      sort_opt = {
+        "path" : ["endTime"],
+	"reverse": true,
+	"compare" : "datetime"
+      };
+
+      this2that:transform(ent:alerts.query([], { 
+       'requires' : '$and',
+       'conditions' : [
+          { 
+     	   'search_key' : [ 'timestamp'],
+       	   'operator' : '$gte',
+       	   'value' : utc_start 
+	  },
+     	  {
+       	   'search_key' : [ 'timestamp' ],
+       	   'operator' : '$lte',
+       	   'value' : utc_end 
+	  }
+	]},
+	"return_values"
+	), 
+       sort_opt)
+    };
+
+
     maintenanceRecords = function(id, limit, offset) {
        // x_id = id.klog(">>>> id >>>>>");
        // x_limit = limit.klog(">>>> limit >>>>>");
@@ -145,8 +176,40 @@ Operations for maintenance
       sorted_keys.map(function(id){ ent:maintenance_records{id} })
     };
 
+    maintenanceRecordsByDate = function(start, end){
+
+      utc_start = common:convertToUTC(start);
+      utc_end = common:convertToUTC(end);
+      
+      sort_opt = {
+        "path" : ["endTime"],
+	"reverse": true,
+	"compare" : "datetime"
+      };
+
+      this2that:transform(ent:maintenance_records.query([], { 
+       'requires' : '$and',
+       'conditions' : [
+          { 
+     	   'search_key' : [ 'timestamp'],
+       	   'operator' : '$gte',
+       	   'value' : utc_start 
+	  },
+     	  {
+       	   'search_key' : [ 'timestamp' ],
+       	   'operator' : '$lte',
+       	   'value' : utc_end 
+	  }
+	]},
+	"return_values"
+	), 
+       sort_opt)
+    };
+
+
     // internal use only
-    S3Bucket = "Fuse_assets";    
+    S3Bucket = "Fuse_assets";   
+    default_receipt_url = null; 
 
   }
 
@@ -182,6 +245,11 @@ Operations for maintenance
       activity = event:attr("activity") || reminder{"activity"};
       reason = event:attr("reason") || reminder{"reason"};
 
+      status = event:attr("status").isnull()      => "active"
+             | event:attr("status") eq "active" 
+            || event:attr("status") eq "inactive" => event:attr("status")
+             |                                       "unknown";
+
       vdata = vehicle:vehicleSummary();
 
       odometer = event:attr("odometer") || vdata{"mileage"};
@@ -214,6 +282,25 @@ Operations for maintenance
     }
   }
 
+  rule update_alert_status {
+    select when fuse new_alert_status
+    pre {
+      id = event:attr("id");
+      new_status = event:attr("status");
+    }
+    if( not id.isnull()
+     && not new_status.isnull()
+      ) then 
+    {
+      send_directive("Updating alert status") with
+        id = id and
+        status = new_status
+    }
+    always {
+      set ent:alerts{[id, "status"]} new_status;
+    }
+  }
+
   rule delete_alert {
     select when fuse unneeded_alert
     pre {
@@ -234,7 +321,6 @@ Operations for maintenance
     select when fuse handled_alert
     pre {
       id = event:attr("id");
-      alert = alerts(id);
       status = event:attr("status");
 
       rec = {
@@ -245,11 +331,9 @@ Operations for maintenance
       };
     }
     if( not id.isnull()
-     && not alert.isnull()
       ) then {
         send_directive("processing alert to create maintenance record") with 
-	 rec = rec and
-  	 alert = alert
+	 rec = rec
       }
     fired {
       log ">>>> processing alert for maintenance  >>>> " + alert.encode();
@@ -299,7 +383,7 @@ Operations for maintenance
       completed_time = event:attr("when") || current_time;
 
       // receipt photo 
-      img_source = event:attr("receipt");
+      img_source = event:attr("receipt") || default_receipt_url;
       img_is_new = img_source.match(re/^data:image/); // might get an http:// URL for updates
       vehicle_id = CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.channelName").klog(">>>> vehicle ID >>>>> ");
       img_name   = "fuse_vehicle_files/#{meta:eci()}/#{vehicle_id}/#{id}.img";
@@ -310,6 +394,7 @@ Operations for maintenance
       rec = {
         "id": id,
 	"activity": activity,
+	"alertRef": event:attr("alert_ref"),
 	"agent": event:attr("agent"),
 	"status": status,
 	"receipt": img_url,
@@ -459,8 +544,5 @@ Operations for maintenance
   }
 
 
-  
-  
-
-
 }
+// fuse_maintenance.krl

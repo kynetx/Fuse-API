@@ -962,10 +962,10 @@
 
             return CloudOS.raiseEvent("fuse", "new_alert", alert_obj, {}, function(response)
 				      {
-					  Fuse.log("Recorded alert for vehicle: " + vehicle_channel + ": " + response);
 					  if(response.length < 2) {
-					      throw "Fuel alert record failed for vehicle: "  + vehicle_channel;
+					      throw "Alert record failed for vehicle: "  + vehicle_channel;
 					  }
+					  Fuse.log("Recorded alert for vehicle: " + vehicle_channel + ": " + response);
 					  cb(response);
 				      },
 				      {"eci": vehicle_channel
@@ -985,10 +985,10 @@
 
             return CloudOS.raiseEvent("fuse", "updated_alert", alert_obj, {}, function(response)
 				      {
-					  Fuse.log("Updated alert for vehicle: " + vehicle_channel + ": " + response);
 					  if(response.length < 1) {
-					      throw "Fuel alert update failed for vehicle: "  + vehicle_channel;
+					      throw "Alert update failed for vehicle: "  + vehicle_channel;
 					  }
+					  Fuse.log("Updated alert for vehicle: " + vehicle_channel + ": " + response);
 					  cb(response);
 				      },
 				      {"eci": vehicle_channel
@@ -1006,13 +1006,13 @@
 	    Fuse.requireParams({id: id});
 
 	    var attrs = {"id": id};
-            return CloudOS.raiseEvent("fuse", "unneeded_fuel_purchase", attrs, {}, function(response)
+            return CloudOS.raiseEvent("fuse", "unneeded_alert", attrs, {}, function(response)
             {
-                Fuse.log("Deleted alert for vehicle: " + vehicle_channel);
 		if(response.length < 1) {
-		    throw "Fuel alert record delete failed for vehicle: "  + vehicle_channel;
-		}
-                cb(response);
+		    throw "Alert delete failed for vehicle: "  + vehicle_channel;
+		} 
+                Fuse.log("Deleted alert for vehicle: " + vehicle_channel);
+		cb(response);
             },
 	    {"eci": vehicle_channel
 	    } 
@@ -1042,6 +1042,105 @@
 				      } 
             );
         },
+
+	// ---------- maintenance records ----------
+	maintenanceRecords: function(vehicle_channel, cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    options.rid = "maintenance";
+	    
+	    var args = options.id ? {"id": options.id} : {};
+
+	    return Fuse.ask_vehicle(vehicle_channel, "maintenanceRecords", args, null, function(json) {
+			Fuse.log("Retrieve maintenance records", json);
+			cb(json);
+  		       }, options);
+	},
+
+	maintenanceRecordsByDate: function(vehicle_channel, start, end, cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    options.rid = "maintenance";
+	    
+	    var args = {"start": start,
+			"end": end
+		       };
+
+	    return Fuse.ask_vehicle(vehicle_channel, "maintenanceRecordsByDate", args, null, function(json) {
+			Fuse.log("Retrieve maintenance records", json);
+			cb(json);
+  		       }, options);
+	},
+
+
+	recordMaintenanceRecord: function(vehicle_channel, maintenance_record_obj, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record fuel maintenance_record for vehicle";
+	    };
+	 
+
+            return CloudOS.raiseEvent("fuse", "new_maintenance_record", maintenance_record_obj, {}, function(response)
+				      {
+					  if(response.length < 1) {
+					      throw "Maintenance record record failed for vehicle: "  + vehicle_channel;
+					  }
+					  Fuse.log("Recorded maintenance record for vehicle: " + vehicle_channel + ": " + response);
+					  cb(response);
+				      },
+				      {"eci": vehicle_channel
+				      } 
+            );
+        },
+
+	updateMaintenanceRecord: function(vehicle_channel, maintenance_record_obj, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record fuel maintenance_record for vehicle";
+	    };
+	    Fuse.requireParams({id: maintenance_record_obj.id
+			       });
+
+            return CloudOS.raiseEvent("fuse", "updated_maintenance_record", maintenance_record_obj, {}, function(response)
+				      {
+					  if(response.length < 1) {
+					      throw "Maintenance record update failed for vehicle: "  + vehicle_channel;
+					  }
+					  Fuse.log("Updated maintenance record for vehicle: " + vehicle_channel + ": " + response);
+					  cb(response);
+				      },
+				      {"eci": vehicle_channel
+				      } 
+            );
+        },
+
+	deleteMaintenanceRecord: function(vehicle_channel, id, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record fuel maintenance_record for vehicle";
+	    };
+	    Fuse.requireParams({id: id});
+
+	    var attrs = {"id": id};
+            return CloudOS.raiseEvent("fuse", "unneeded_maintenance_record", attrs, {}, function(response)
+            {
+		if(response.length < 1) {
+		    throw "Maintenance Record delete failed for vehicle: "  + vehicle_channel;
+		} 
+                Fuse.log("Deleted maintenance record for vehicle: " + vehicle_channel);
+		cb(response);
+            },
+	    {"eci": vehicle_channel
+	    } 
+            );
+        },
+
 
     };
 
