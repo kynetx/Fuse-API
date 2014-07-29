@@ -337,7 +337,10 @@ Operations for maintenance
       }
     fired {
       log ">>>> processing alert for maintenance  >>>> " + alert.encode();
-      raise fuse event new_maintenance_record attributes rec
+      raise fuse event new_maintenance_record attributes rec;
+      raise fuse event new_alert_status with
+        id = id and
+	status = "inactive";
     } else {
     }
   }
@@ -383,8 +386,8 @@ Operations for maintenance
       completed_time = event:attr("when") || current_time;
 
       // receipt photo 
-      img_source = event:attr("receipt") || default_receipt_url;
-      img_is_new = img_source.match(re/^data:image/); // might get an http:// URL for updates
+      img_source = event:attr("receipt");
+      img_is_new = img_source.match(re/^data:image/).klog(">>>> image is new >>>>"); // might get an http:// URL for updates
       vehicle_id = CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.channelName").klog(">>>> vehicle ID >>>>> ");
       img_name   = "fuse_vehicle_files/#{meta:eci()}/#{vehicle_id}/#{id}.img";
       img_url    = img_is_new => S3:makeAwsUrl(S3Bucket,img_name)
@@ -394,7 +397,7 @@ Operations for maintenance
       rec = {
         "id": id,
 	"activity": activity,
-	"alertRef": event:attr("alert_ref"),
+	"alertRef": event:attr("alert_ref") || "none",
 	"agent": event:attr("agent"),
 	"status": status,
 	"receipt": img_url,
