@@ -387,13 +387,16 @@
   	    }, options);
 	},
 
-	tripSummaries: function(cb, options) {
+	tripSummaries: function(year, month, cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
 	    if(isEmpty(Fuse.vehicle_summary)) {
 		options.force = true;
 	    }
-	    return Fuse.ask_fleet("tripSummaries", {}, Fuse.trip_summaries, function(json) {
+	    var args = {"month": month,
+			"year": year
+		       };
+	    return Fuse.ask_fleet("tripSummaries", args, Fuse.trip_summaries, function(json) {
 		if(typeof json.error === "undefined") {
 			Fuse.trip_summaries = json;
 			Fuse.log("Retrieve trip summaries", json);
@@ -404,13 +407,16 @@
   	    }, options);
 	},
 
-	fuelSummaries: function(cb, options) {
+	fuelSummaries: function(year, month, cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
 	    if(isEmpty(Fuse.vehicle_summary)) {
 		options.force = true;
 	    }
-	    return Fuse.ask_fleet("fuelSummaries", {}, Fuse.fuel_summaries, function(json) {
+	    var args = {"month": month,
+			"year": year
+		       };
+	    return Fuse.ask_fleet("fuelSummaries", args, Fuse.fuel_summaries, function(json) {
 		if(typeof json.error === "undefined") {
 			Fuse.fuel_summaries = json;
 			Fuse.log("Retrieve fuel summaries", json);
