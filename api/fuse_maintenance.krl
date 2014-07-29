@@ -107,7 +107,7 @@ Operations for maintenance
 	"limit" : hard_limit
       }; 
 
-      sorted_keys = this2that:transform(ent:alerts, sort_opt, global_opt).klog(">>> sorted keys for alerts >>>> ");
+      sorted_keys = this2that:transform(ent:alerts || [], sort_opt, global_opt).klog(">>> sorted keys for alerts >>>> ");
       sorted_keys.map(function(id){ ent:alerts{id} })
     };
 
@@ -172,7 +172,7 @@ Operations for maintenance
 	"limit" : hard_limit
       }; 
 
-      sorted_keys = this2that:transform(ent:maintenance_records, sort_opt, global_opt).klog(">>> sorted keys for maintenance records >>>> ");
+      sorted_keys = this2that:transform(ent:maintenance_records || [], sort_opt, global_opt).klog(">>> sorted keys for maintenance records >>>> ");
       sorted_keys.map(function(id){ ent:maintenance_records{id} })
     };
 
@@ -209,7 +209,6 @@ Operations for maintenance
 
     // internal use only
     S3Bucket = "Fuse_assets";   
-    default_receipt_url = null; 
 
   }
 

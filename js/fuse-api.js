@@ -1150,9 +1150,9 @@
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
 		throw "Vehicle channel is null; can't record fuel maintenance_record for vehicle";
 	    };
-	    Fuse.requireParams({id: id});
-
 	    var attrs = {"id": id};
+	    Fuse.requireParams(attrs); // require all
+
             return CloudOS.raiseEvent("fuse", "unneeded_maintenance_record", attrs, {}, function(response)
             {
 		if(response.length < 1) {
