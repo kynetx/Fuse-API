@@ -149,34 +149,9 @@ Fuse ruleset for a vehicle pico
 	       "_api": "sky"
 	      };
 
-	   // just use pds:profile_updated instead
-	   // send this all to the fleet	      
-	    // raise fuse event "need_vehicle_data"
-            //  attributes
-	    //    {"vin": vin // this keeps it from asking Carvoyant before it's ready
-	    //    };
-
-
-	   // // create the carvoyant vehicle
-	   // raise carvoyant event update_account
-           //    attributes
-           //      {"deviceId" : device_id,
-	   //       "label" : name,
-	   // 	"vin" : vin,
-	   // 	"mileage": mileage,
-	   //       "_api": "sky"
-           //      } if vin && device_id  // need to ensure carvoyant has been set up? 
 
 	  log(">>>>>>>> device_id >>>>>>> " + device_id);
 
-           // // send the device ID 
-	   // raise carvoyant event new_device_id
-           //   attributes
-           //     {"deviceId" : device_id,
-	   //      "_api": "sky"
-           //     } if device_id;
-
-	   // log(">>>>>>>> device_id >>>>>>> " + device_id);
 
         }
     }
