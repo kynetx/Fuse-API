@@ -927,7 +927,7 @@
 	    options = options || {};
 	    options.rid = "maintenance";
 	    
-	    var args = options.id ? {"id": options.id} : {};
+	    var args = options;
 
 	    return Fuse.ask_vehicle(vehicle_channel, "alerts", args, null, function(json) {
 			Fuse.log("Retrieve last alert", json);
