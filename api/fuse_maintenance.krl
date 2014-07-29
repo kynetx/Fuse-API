@@ -77,22 +77,20 @@ Operations for maintenance
       math:abs(math:int((sec_a-sec_b)/86400));
     };
 
-    alerts = function(id, limit, offset) {
+    alerts = function(id, status, limit, offset) {
        // x_id = id.klog(">>>> id >>>>>");
        // x_limit = limit.klog(">>>> limit >>>>>");
        // x_offset = offset.klog(">>>> offset >>>>>");
 
-      id.isnull() => allAlerts(limit, offset)
+      id.isnull() => allAlerts(status, limit, offset)
                    | ent:alerts{id};
     };
 
-    allAlerts = function(limit, offset) {
-      sort_opt = {
-        "path" : ["timestamp"],
-	"reverse": true,
-	"compare" : "datetime"
-      };
+    allAlerts = function(status, limit, offset) {
 
+      status_val = status || "active";
+
+    
       max_returned = 25;
 
       hard_offset = offset.isnull()     => 0               // default
@@ -102,13 +100,29 @@ Operations for maintenance
                  | limit > max_returned => max_returned
 		 |                         limit;
 
+      sort_opt = {
+        "path" : ["timestamp"],
+	"reverse": true,
+	"compare" : "datetime"
+      };
+
       global_opt = {
         "index" : hard_offset,
 	"limit" : hard_limit
       }; 
 
-      sorted_keys = this2that:transform(ent:alerts || [], sort_opt, global_opt).klog(">>> sorted keys for alerts >>>> ");
-      sorted_keys.map(function(id){ ent:alerts{id} })
+      sorted_keys = this2that:transform(ent:alerts.query([], { 
+       'requires' : '$and',
+       'conditions' : [
+     	  {
+       	   'search_key' : [ 'status' ],
+       	   'operator' : '$eq',
+       	   'value' : status_val
+	  }
+	]},
+	"return_values"
+	), sort_opt, global_opt).klog(">>> sorted keys for alerts >>>> ");
+      sorted_keys
     };
 
     alertsByDate = function(start, end){
