@@ -424,7 +424,7 @@
 		} else {
 		    console.log("Bad fuel summaries fetch ", json);
 		}
-  	    }, options);
+  	    }, options); 
 	},
 
 	updateVehicleSummary: function(id, profile) {
