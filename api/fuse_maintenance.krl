@@ -231,7 +231,7 @@ Operations for maintenance
   }
 
   rule process_alert {
-    select when fuse maintenance_alert
+    select when fuse handled_alert
     pre {
       id = event:attr("id");
       alert = alerts(id);
