@@ -155,6 +155,7 @@ Common definitions
 	   id = p{"id"};
 	   p.put(["channel"],vehicle_ecis_by_name{[id,"eventChannel"]})
             .put(["picoId"], id)
+	    .delete(["id"])
             .delete(["name"])
             .delete(["photo"])
 	}).values();
