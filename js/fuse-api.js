@@ -387,6 +387,40 @@
   	    }, options);
 	},
 
+	tripSummaries: function(cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(isEmpty(Fuse.vehicle_summary)) {
+		options.force = true;
+	    }
+	    return Fuse.ask_fleet("tripSummaries", {}, Fuse.trip_summaries, function(json) {
+		if(typeof json.error === "undefined") {
+			Fuse.trip_summaries = json;
+			Fuse.log("Retrieve trip summaries", json);
+			cb(json);
+		} else {
+		    console.log("Bad trip summaries fetch ", json);
+		}
+  	    }, options);
+	},
+
+	fuelSummaries: function(cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(isEmpty(Fuse.vehicle_summary)) {
+		options.force = true;
+	    }
+	    return Fuse.ask_fleet("fuelSummaries", {}, Fuse.fuel_summaries, function(json) {
+		if(typeof json.error === "undefined") {
+			Fuse.fuel_summaries = json;
+			Fuse.log("Retrieve fuel summaries", json);
+			cb(json);
+		} else {
+		    console.log("Bad fuel summaries fetch ", json);
+		}
+  	    }, options);
+	},
+
 	updateVehicleSummary: function(id, profile) {
 	    Fuse.vehicle_summary = Fuse.vehicle_summary || [];
 
