@@ -1033,10 +1033,35 @@
             return CloudOS.raiseEvent("fuse", "handled_alert", status_obj, {}, function(response)
 				      {
 					  if(response.length < 1) {
-					      throw "Fuel alert update failed for vehicle: "  + vehicle_channel;
+					      throw "Alert processing failed for vehicle: "  + vehicle_channel;
 					  }
 					  Fuse.log("Handled alert for vehicle: " + vehicle_channel + ": " + response);
 					  cb(response);
+				      },
+				      {"eci": vehicle_channel
+				      } 
+            );
+        },
+
+	updateAlertStatus: function(vehicle_channel, id, new_status, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record fuel alert for vehicle";
+	    };
+	    var attrs = {id: id,
+			 status: new_status
+			};
+	    Fuse.requireParams(attrs); // require all
+            return CloudOS.raiseEvent("fuse", "new_alert_status", attrs, {}, function(response)
+				      {
+					  if(response.length < 1) {
+					      throw "Alert status update failed for vehicle: "  + vehicle_channel;
+					  }
+					  Fuse.log("Updated alert status for vehicle: " + vehicle_channel + ": " + response);
+					  cb(response);
+
 				      },
 				      {"eci": vehicle_channel
 				      } 
