@@ -21,7 +21,7 @@ Operations for maintenance
 
 	
     provides activeReminders, reminders,
-             alerts, alertsByDate, maintanceRecords, maintanceRecordsByDate
+             alerts, alertsByDate, maintenanceRecords, maintenanceRecordsByDate
 
   }
 
