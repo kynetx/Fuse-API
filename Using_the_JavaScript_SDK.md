@@ -346,13 +346,81 @@ This command updates the trip for trip "271563" on the same vehicle
 
 	Fuse.updateVehicleDataCarvoyant("ABC", "trip", show_res,{"tripId": "271563"});
 
-You can use the following commands to see this data.
+Normally, there's no need to do this since the vehicles themselves force this update on ignition events. 
 
-	Fuse.vehicleStatus()
+## Fleet Functions
 
-	Fuse.vehicleSummary()
+There are several functions that provide fleet summary data. Each returns an array of objects. One of the properties in each object is ```picoId```. This is the system identifier of the vehicle in Fuse and will not change.
 
 __Note:__ you won't see any data until the vehicle with the new device has been driven.
+
+### Vehicle Channels
+
+The following function returns an array of objects that associate a ```picoId``` with the current channel for that vehicle.
+
+	Fuse.vehicleChannels(<callback>, <options>)
+
+You should avoid using the channel as a means of identifying the vehicle since it could change. This function always provides the current mapping from the vehicle canonical name in the system, the ```picoId```, and the pico channel. 
+
+### Vehicle Status
+
+The following function returns an array of vehicle status information (i.e., lastest data elements from Carvoyant):
+
+	Fuse.vehicleStatus(<callback>, <options>)
+
+### Vehicle Summary
+
+The following function returns an array of vehicle summary information for all the active vehicles in the system. 
+
+	Fuse.vehicleSummary(<callback>, <options>)
+
+The following properties are part of the objects that make up the array:
+
+- address &mdash; the latest human readable address where the vehicle is located
+- channel &mdash; the channel that can be used to communicate with this vehicle
+- deviceId &mdash; the Carvoyant device ID in the vehicle
+- fuellevel &mdash; current fuel leve
+- heading &mdash; current heading
+- label &mdash; current label for the vehicle (usually the same as the name below)
+- lastRunningTimestamp &mdash; the time the vehicle was last running
+- lastWaypoint &mdash; the lastest LatLong coordinates for the vehicle
+- mileage &mdash; current odometer reading
+- name &mdash; make/model of vehicle based on VIN lookup
+- picoId &mdash; the Fuse system identifier for the vehicle
+- profileName &mdash; owners name for the vehicle
+- profilePhoto &mdash; owners picture for the vehicle
+- running &mdash; boolean indicating the current engine status
+- speed &mdash; current speed 
+- vehicleId &mdash; Carvoyant vehicle identifier
+- vin &mdash; manufacturer's VIN; owner reported
+
+### Trip Summaries
+
+The following function takes a year and month and returns an array of  trip summary objects  for that month:
+
+	Fuse.tripSummaries(<year>, <month>, <callback>, <options>)
+
+The trip summary contains the following elements for each vehicle:
+
+- cost &mdash; total cost of all trips
+- interval &mdash; total length of all trips in seconds
+- mileage &mdash; total length of all trips in distance units (Fuse is unit agnostic)
+- picoId &mdash; pico identifier
+- trip_count &mdash; total number of trips for month
+
+### Fuel Summaries
+
+The following function takes a year and month and returns an array of  fuel summary objects  for that month:
+
+	Fuse.fuelSummaries(<year>, <month>, <callback>, <options>)
+
+The fuel summary contains the following elements for each vehicle:
+
+- cost &mdash; total cost of all fillups in the given month
+- distance &mdash; total distance driven between fillups
+- fillups &mdash; number of fillups
+- picoId &mdash; pico identifier
+- volume &mdash; volume of fillups (e.g. gallons, liters, etc.)
 
 
 ## Trips
