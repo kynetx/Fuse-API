@@ -259,8 +259,8 @@ Operations for maintenance
       id = event:attr("id") || random:uuid();
 
       // can't default since the "due" type has to match
-      type =  event:attr("type") eq "date" 
-           || event:attr("type") eq "mileage"  => event:attr("type")
+      type =  event:attr("kind") eq "date" 
+           || event:attr("kind") eq "mileage"  => event:attr("type")
             |                                     "unknown";
 
       recurring = event:attr("recurring").isnull()      => "once"
