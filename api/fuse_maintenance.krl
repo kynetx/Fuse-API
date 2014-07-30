@@ -49,12 +49,21 @@ Operations for maintenance
                  | limit > max_returned => max_returned
 		 |                         limit;
 
-      sort_opt = {
-        "path" : ["timestamp"],
-	"reverse": true,
-	"compare" : "datetime"
-      };
-
+      sort_opt = type_val eq "date"     => {
+      	       	 	     	            "path" : ["duedate"],	     
+   					    "reverse": false,
+					    "compare" : "datetime"
+					   }
+               | type_val eq "mileage"  => {
+      	       	 	     	            "path" : ["duemileage"],	     
+					    "reverse": false,
+					    "compare" : "numeric"
+					   }
+               |                           {
+      	       	 	     	            "path" : ["timestamp"],	     
+					    "reverse": false,
+					    "compare" : "datetime"
+					   };
       global_opt = {
         "index" : hard_offset,
 	"limit" : hard_limit
@@ -230,7 +239,7 @@ Operations for maintenance
 	  }
 	]},
 	"return_values"
-	).klog(">>> unsorted vals >>>>   "), sort_opt, global_opt).klog(">>> sorted keys for maintenance records >>>> ");
+	), sort_opt, global_opt).klog(">>> sorted keys for maintenance records >>>> ");
       sorted_keys  
     };
 
