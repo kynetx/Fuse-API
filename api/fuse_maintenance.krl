@@ -207,7 +207,7 @@ Operations for maintenance
 	]},
 	"return_values"
 	), sort_opt, global_opt).klog(">>> sorted keys for maintenance records >>>> ");
-      sorted_keys
+      sorted_keys 
     };
 
     maintenanceRecordsByDate = function(status, start, end){
