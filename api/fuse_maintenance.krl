@@ -278,7 +278,7 @@ Operations for maintenance
               | type eq "date" && recurring eq "once"      => event:attr("due")
               |                                               time:now(); // everything's after this
 
-      duemileage = type eq "mileage" && recurring eq "repeat" => vdate{"mileage"} + interval
+      duemileage = type eq "mileage" && recurring eq "repeat" => vdata{"mileage"} + interval
                  | type eq "mileage" && recurring eq "once"   => event:attr("due")
                  |                                               "0"; // everything's after thig
 
