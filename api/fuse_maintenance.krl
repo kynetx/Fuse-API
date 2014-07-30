@@ -38,12 +38,12 @@ Operations for maintenance
        'requires' : '$or',
        'conditions' : [
           { 
-     	   'search_key' : [ 'timestamp'],
+     	   'search_key' : [ 'duedate'],
        	   'operator' : '$lte',
        	   'value' : utc_ct 
 	  },
      	  {
-       	   'search_key' : [ 'mileage' ],
+       	   'search_key' : [ 'duemileage' ],
        	   'operator' : '$lte',
        	   'value' : mileage 
 	  }
