@@ -510,21 +510,168 @@ You update a fillup using the following function:
 
 	Fuse.updateFillup(<vehicle_channel>, <fillup_obj>, <callback>, <options>)
 
-In addition to the properties listed in the ```recordFillup()``` function above, you *must* supply a property called ```key``` that is the key of the fillup record you wish to update. 
+In addition to the properties listed in the ```recordFillup()``` function above, you *must* supply a property called ```id``` that is the identifier of the fillup record you wish to update. 
 
 
 ### Deleting a Fillup Record
 
 You delete a fillup using the following function:
 
-	Fuse.deleteFillup(<vehicle_channel>, <key>, <callback>, <options>)
+	Fuse.deleteFillup(<vehicle_channel>, <id>, <callback>, <options>)
 
-where ```key``` that is the key of the fillup record you wish to delete. 
+where ```id``` that is the key of the fillup record you wish to delete. 
 
+
+## Maintenance
+
+There are three different kinds of objects associated with maintenance.
+
+- __Reminders__ &mdash; Reminders are the initial objects in a maintenance process. Reminders tell the owner that  scheduled maintenance is due. They can be one time or repeating and be mileage or time based.
+- __Alerts__ &mdash; Alerts are the objects that tell an owner that something needs to be done. They can be created by a reminder that comes due, or some emergent activity in the vehicle such as a diagnostic code or low battery. Alerts can be active or inactive. When an alert is handled, it is made in active and a maintenance record is created. 
+- __Maintenance Records__ &mdash; Maintenance records are usually created when an alert is handled, although they can be created directly as well.
+
+### Alerts
+
+#### Retrieving an Alert
+
+You can retrieve the a paginated list of alerts (most recent first) or a specific alert using the following function:
+
+	Fuse.alerts(<vehicle_channel>, <callback>, <options>)
+
+To retreive a specific alert, you pass the ID for the  as an option named ```id```.  If no ID is given, a paginated list of alerts is returned. You can control the stating position of what is returned with ```offset``` and the number of items returned with ```limit```. By default these are 0 and 10 respectively.
+
+By default, ```alerts()``` returns only ```active``` alerts. You can pass an optional parameter called ```status``` to modify the conditions of the search. Valid values of ```status``` are ```active```, ```inactive```, or ```.*```. The latter retrieves all alerts regardless of status.
+
+You can also retrieve alerts by date:
+
+	Fuse.alertsByDate(<vehicle_channel>, <start>, <end> <callback>, <options>)
+
+The ```<start>``` and ```<end>``` parameters are DateTime objects.
+
+ By default, only active alerts are returned.  As with ```alerts()``` you can pass an optional ```status``` parameter to change the status of the returned results.
+
+#### Creating an Alert
+
+You create an alert  using the following function:
+
+	Fuse.recordAlert(<vehicle_channel>, <alert_obj>, <callback>, <options>)
+
+The alert object has the following properties:
+
+- activity &mdash;  activity being alerted (e.g. "Oil Change")
+- odometer &mdash; odometer reading that the alert occured at; defaults to vehicle's current odomoeter reading. 
+- reason &mdash; cause of  the alert (e.g. "5000 miles since previous oil change")
+- reminder_ref &mdash; the ID of the reminder that created the alert (if any)
+- status &mdash; status of alert; defaults to "active"
+- when &mdash; time when alert is created; defaults to now
+- trouble_codes &mdash; trouble codes that led to alert (if any)
+
+Note:
+
+- Activity and reason are free-form strings
+
+#### Updating a Alert Record
+
+You update an alert using the following function:
+
+	Fuse.updateAlert(<vehicle_channel>, <alert_obj>, <callback>, <options>)
+
+In addition to the properties listed in the ```recordAlert()``` function above, you *must* supply a property called ```id``` that is the id of the alert record you wish to update. 
+
+
+#### Deleting a Alert Record
+
+You delete an alert using the following function:
+
+	Fuse.deleteAlert(<vehicle_channel>, <id>, <callback>, <options>)
+
+where ```id``` that is the key of the alert record you wish to delete.
+
+### Process Alert
+
+Processing an alert makes the alert inactive and creates a new maintenance record that references it. The maintenance record will transfer information about activity, reason, and the generating reminder or trouble codes. 
+
+You process an alert using the following function:
+
+	Fuse.processAlert(<vehicle_channel>, <status_ob>, <callback>, <options>)
+
+The status object has the following properties:
+
+- id &mdash; the identifier for the alert to process
+- status &mdash; the disposition of the alert. One of ```completed``` or ```deferred```
+- agent &mdash; the person or organization who performed the maintenance
+- receipt &mdash; the URL of the receipt or a ```data:image``` encoded picture of the receipt 
+
+#### Alert Status
+
+You can update the status of an alert with the following function:
+
+	Fuse.updateAlertStatus(<vehicle_channel>, <id>, <new_status>, <callback>, <options>)
+
+where ```id``` that is the key of the alert record you wish to update and ```new_status``` is the new status.
+
+### Maintenance Records
+
+#### Retrieving an Maintenance Record
+
+You can retrieve the a paginated list of maintenance records (most recent first) or a specific maintenance record using the following function:
+
+	Fuse.maintenanceRecords(<vehicle_channel>, <callback>, <options>)
+
+To retreive a specific maintenance record, you pass the ID for the  as an option named ```id```.  If no ID is given, a paginated list of maintenance records is returned. You can control the stating position of what is returned with ```offset``` and the number of items returned with ```limit```. By default these are 0 and 10 respectively.
+
+By default, ```maintenanceRecords()``` returns  all maintenance records. You can pass an optional parameter called ```status``` to modify the conditions of the search. Valid values of ```status``` are ```completed```, ```deferred```, or ```.*```. The latter retrieves all maintenance records regardless of status.
+
+You can also retrieve maintenance records by date:
+
+	Fuse.maintenanceRecordsByDate(<vehicle_channel>, <start>, <end> <callback>, <options>)
+
+The ```<start>``` and ```<end>``` parameters are DateTime objects.
+
+ By default, all maintenance records are returned.  As with ```maintenanceRecords()``` you can pass an optional ```status``` parameter to change the status of the returned results.
+
+#### Creating an Maintenance Record
+
+You create an maintenance record  using the following function:
+
+	Fuse.recordMaintenanceRecord(<vehicle_channel>, <maintenance record_obj>, <callback>, <options>)
+
+The maintenance record object has the following properties:
+
+
+- status &mdash; the disposition of the alert. One of ```completed``` or ```deferred```; defaults to "unknown"
+- agent &mdash; the person or organization who performed the maintenance
+- receipt &mdash; the URL of the receipt or a ```data:image``` encoded picture of the receipt 
+- activity &mdash;  activity being maintenance recorded (e.g. "Oil Change")
+- odometer &mdash; odometer reading that the maintenance record occured at; defaults to vehicle's current odomoeter reading. 
+- reason &mdash; cause of  the maintenance record (e.g. "5000 miles since previous oil change")
+- alert_ref &mdash; the ID of the alert that created the maintenance record (if any)
+- reminder_ref &mdash; the ID of the reminder that created the alert that led to this maintenance record (if any)
+- when &mdash; time when maintenance record is created; defaults to now
+
+Note:
+
+- Agent, activity, and reason are free-form strings
+- If maintenance record is created from an alert, the activity and reason for the alert are transferred to the maintenance record by default. 
+
+#### Updating a Maintenance Record Record
+
+You update an maintenance record using the following function:
+
+	Fuse.updateMaintenance Record(<vehicle_channel>, <maintenance record_obj>, <callback>, <options>)
+
+In addition to the properties listed in the ```recordMaintenance Record()``` function above, you *must* supply a property called ```id``` that is the id of the maintenance record record you wish to update. 
+
+
+#### Deleting a Maintenance Record Record
+
+You delete an maintenance record using the following function:
+
+	Fuse.deleteMaintenance Record(<vehicle_channel>, <id>, <callback>, <options>)
+
+where ```id``` that is the key of the maintenance record record you wish to delete.
 
 # Notes
-
-1. This initial test uses direct login via user credentials. This will be allowed for mobile apps, but not from server-based cloud apps which will have to use OAuth.
 
 2.  ```fuse:clean_up_subscriptions``` cleans up Carvoyant subscriptions, deleting any that don't point at the current vehicle pico.
 

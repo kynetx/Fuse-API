@@ -163,21 +163,18 @@ Operations for maintenance
     };
 
 
-    maintenanceRecords = function(id, limit, offset) {
+    maintenanceRecords = function(id, status, limit, offset) {
        // x_id = id.klog(">>>> id >>>>>");
        // x_limit = limit.klog(">>>> limit >>>>>");
        // x_offset = offset.klog(">>>> offset >>>>>");
 
-      id.isnull() => allMaintenanceRecords(limit, offset)
+      id.isnull() => allMaintenanceRecords(status, limit, offset)
                    | ent:maintenance_records{id};
     };
 
     allMaintenanceRecords = function(limit, offset) {
-      sort_opt = {
-        "path" : ["timestamp"],
-	"reverse": true,
-	"compare" : "datetime"
-      };
+
+      status_val = status || ".*"; // find them all if missing
 
       max_returned = 25;
 
@@ -188,16 +185,34 @@ Operations for maintenance
                  | limit > max_returned => max_returned
 		 |                         limit;
 
+      sort_opt = {
+        "path" : ["timestamp"],
+	"reverse": true,
+	"compare" : "datetime"
+      };
+
       global_opt = {
         "index" : hard_offset,
 	"limit" : hard_limit
       }; 
 
-      sorted_keys = this2that:transform(ent:maintenance_records || [], sort_opt, global_opt).klog(">>> sorted keys for maintenance records >>>> ");
+      sorted_keys = this2that:transform(ent:maintenance_records.query([], { 
+       'requires' : '$and',
+       'conditions' : [
+     	  {
+       	   'search_key' : [ 'status' ],
+       	   'operator' : '$regex',
+       	   'value' : "^#{status_val}$"
+	  }
+	]},
+	"return_values"
+	), sort_opt, global_opt).klog(">>> sorted keys for maintenance records >>>> ");
       sorted_keys.map(function(id){ ent:maintenance_records{id} })
     };
 
-    maintenanceRecordsByDate = function(start, end){
+    maintenanceRecordsByDate = function(status, start, end){
+
+      status_val = status || ".*"; // find them all if missing
 
       utc_start = common:convertToUTC(start);
       utc_end = common:convertToUTC(end);
@@ -220,8 +235,12 @@ Operations for maintenance
        	   'search_key' : [ 'timestamp' ],
        	   'operator' : '$lte',
        	   'value' : utc_end 
-	  }
-	]},
+	  },
+     	  {
+       	   'search_key' : [ 'status' ],
+       	   'operator' : '$regex',
+       	   'value' : "^#{status_val}$"
+	  }	]},
 	"return_values"
 	), 
        sort_opt)
@@ -278,9 +297,9 @@ Operations for maintenance
 
       rec = {
         "id": id,
-	"troubleCodes": trouble_codes,
+	"trouble_codes": trouble_codes,
 	"odometer": odometer,
-	"reminderRef": event:attr("reminder_ref"),
+	"reminder_ref": event:attr("reminder_ref"),
 	"activity": activity,
 	"reason": reason,
 	"timestamp": when_alerted
@@ -341,11 +360,10 @@ Operations for maintenance
     select when fuse handled_alert
     pre {
       id = event:attr("id");
-      status = event:attr("status");
 
       rec = {
         "alert_ref": id,
-	"status": status,
+	"status": event:attr("status"),
 	"agent": event:attr("agent"),
 	"receipt": event:attr("receipt")
       };
@@ -401,6 +419,7 @@ Operations for maintenance
              |                                       "unknown";
 
       activity = event:attr("activity") || alert{"activity"};
+      reason = event:attr("reason") || alert{"reason"};
       odometer = event:attr("odometer") || vdata{"mileage"};
 
       completed_time = event:attr("when") || current_time;
@@ -417,7 +436,10 @@ Operations for maintenance
       rec = {
         "id": id,
 	"activity": activity,
-	"alertRef": event:attr("alert_ref") || "none",
+	"activity": reason,
+	"alert_ref": event:attr("alert_ref") || "none",
+	"reminder_ref": alert{"reminder_ref"},
+	"trouble_codes": alert{"trouble_codes"},
 	"agent": event:attr("agent"),
 	"status": status,
 	"receipt": img_url,
@@ -527,9 +549,9 @@ Operations for maintenance
 
       rec = {
         "id": id,
-	"troubleCodes": event:attr("troubleCodes"),
+	"trouble_codes": event:attr("trouble_codes"),
 	"odometer": event:attr("odometer"),
-	"reminderRef": event:attr("reminderRef") || "organic",
+	"reminder_ref": event:attr("reminder_ref") || "organic",
 	"activity": event:attr("activity"),
 	"timestamp": current_time
       };

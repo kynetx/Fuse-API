@@ -1077,8 +1077,7 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    options.rid = "maintenance";
-	    
-	    var args = options.id ? {"id": options.id} : {};
+	    var args = options; // use them all...
 
 	    return Fuse.ask_vehicle(vehicle_channel, "maintenanceRecords", args, null, function(json) {
 			Fuse.log("Retrieve maintenance records", json);
@@ -1094,7 +1093,9 @@
 	    var args = {"start": start,
 			"end": end
 		       };
-
+	    if(typeof options.status !== "undefined") {
+		args.status = options.status;
+	    }
 	    return Fuse.ask_vehicle(vehicle_channel, "maintenanceRecordsByDate", args, null, function(json) {
 			Fuse.log("Retrieve maintenance records", json);
 			cb(json);
