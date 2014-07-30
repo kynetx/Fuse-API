@@ -88,7 +88,7 @@ Operations for maintenance
 
     allAlerts = function(status, limit, offset) {
 
-      status_val = status || "active";
+      status_val = "^#{status}$" || "^active$";
 
     
       max_returned = 25;
@@ -116,7 +116,7 @@ Operations for maintenance
        'conditions' : [
      	  {
        	   'search_key' : [ 'status' ],
-       	   'operator' : '$eq',
+       	   'operator' : '$regex',
        	   'value' : status_val
 	  }
 	]},
