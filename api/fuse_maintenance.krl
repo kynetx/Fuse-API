@@ -32,7 +32,7 @@ Operations for maintenance
     reminders = function (id, limit, offset) { 
       f00 = ent:reminders.klog(">>>> all reminders   >>>>");  
 //      id.isnull() => allReminders(limit, offset)
-      id.isnull() => ent:reminders
+      id.isnull() => ent:reminders.values()
                    | ent:reminders{id};
     };
 
