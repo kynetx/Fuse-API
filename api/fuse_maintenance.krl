@@ -57,7 +57,7 @@ Operations for maintenance
 	"limit" : hard_limit
       }; 
 
-      sorted_keys = this2that:transform(ent:alerts || [], sort_opt, global_opt).klog(">>> sorted keys for reminders >>>> ");
+      sorted_keys = this2that:transform(ent:reminders || [], sort_opt, global_opt).klog(">>> sorted keys for reminders >>>> ");
       sorted_keys.map(function(k){ent:reminders{k}})
     };
 
