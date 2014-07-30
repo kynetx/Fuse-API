@@ -30,7 +30,8 @@ Operations for maintenance
     // external decls
 
     reminders = function (id, limit, offset) { 
-      f00 = ent:reminders.klog(">>>> all reminders   >>>>");  
+       x_id = id.klog(">>>> id >>>>>");
+       f00 = ent:reminders.klog(">>>> all reminders   >>>>");  
 //      id.isnull() => allReminders(limit, offset)
       id.isnull() => ent:reminders.values()
                    | ent:reminders{id};
