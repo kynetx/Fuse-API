@@ -260,7 +260,7 @@ Operations for maintenance
 
       // can't default since the "due" type has to match
       type =  event:attr("kind") eq "date" 
-           || event:attr("kind") eq "mileage"  => event:attr("type")
+           || event:attr("kind") eq "mileage"  => event:attr("kind")
             |                                     "unknown";
 
       recurring = event:attr("recurring").isnull()      => "once"
