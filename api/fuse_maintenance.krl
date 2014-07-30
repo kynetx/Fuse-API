@@ -219,7 +219,7 @@ Operations for maintenance
         "index" : hard_offset,
 	"limit" : hard_limit
       }; 
-
+ 
       sorted_keys = this2that:transform(ent:maintenance_records.query([], { 
        'requires' : '$and',
        'conditions' : [
