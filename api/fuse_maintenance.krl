@@ -79,7 +79,7 @@ Operations for maintenance
 	  }
 	]},
 	"return_values"
-	).klog(">>> query vals >>>>   ");
+	).klog(">>> query vals >>>>   "); 
       sorted_keys = this2that:transform(query_results, sort_opt);
       sorted_keys
     };
