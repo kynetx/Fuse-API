@@ -145,7 +145,7 @@ Operations for maintenance
 	  }
 	]},
 	"return_values"
-	).klog(">>> unsorted vals >>>>   "), sort_opt, global_opt).klog(">>> sorted keys for alerts >>>> ");
+	), sort_opt, global_opt).klog(">>> sorted keys for alerts >>>> ");
       sorted_keys
     };
 
@@ -230,7 +230,7 @@ Operations for maintenance
 	  }
 	]},
 	"return_values"
-	), sort_opt, global_opt).klog(">>> sorted keys for maintenance records >>>> ");
+	).klog(">>> unsorted vals >>>>   "), sort_opt, global_opt).klog(">>> sorted keys for maintenance records >>>> ");
       sorted_keys  
     };
 
