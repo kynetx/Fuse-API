@@ -56,7 +56,7 @@ Operations for maintenance
       global_opt = {
         "index" : hard_offset,
 	"limit" : hard_limit
-      }; 
+      };  
 
       sorted_keys = this2that:transform(ent:reminders, sort_opt, global_opt).klog(">>> sorted keys for reminders >>>> ");
       sorted_keys.map(function(k){ ent:reminders{k} })
