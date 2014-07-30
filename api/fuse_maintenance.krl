@@ -268,7 +268,20 @@ Operations for maintenance
                || event:attr("recurring") eq "repeat"   => event:attr("recurring")
                 |                                          "unknown";
 
+      interval = event:attr("interval");
+
+      vdata = vehicle:vehicleSummary();
+
       when_reminded = common:convertToUTC(event:attr("when") || time:now());
+
+      duedate = type eq "date" && recurring eq "repeat"    => time:add(when_reminded, {"months": interval})
+              | type eq "date" && recurring eq "once"      => event:attr("due")
+              |                                               time:now(); // everything's after this
+
+      duemileage = type eq "mileage" && recurring eq "repeat" => vdate{"mileage"} + interval
+                 | type eq "mileage" && recurring eq "once"   => event:attr("due")
+                 |                                               "0"; // everything's after thig
+
 
  // reminder record
  // {<datetime> : { "timestamp" : <datetime>,
@@ -281,13 +294,15 @@ Operations for maintenance
         "id": id,
 	"type": type,
 	"recurring": recurring,
+	"interval": interval,
 	"activity": event:attr("activity"),
-	"due": event:attr("due"),
-	"timestamp": when_remminded
+	"duedate": duedate,
+	"duemileage": duemileage,
+	"mileagestamp" : vdata{"mileage"},
+	"timestamp": when_reminded
       };
     }
     if( not rec{"activity"}.isnull()
-     && not rec{"due"}.isnull()
      && rec{"type"} neq "unknown"
      && rec{"recurring"} neq "unknown"
       ) then
