@@ -76,7 +76,8 @@ Operations for maintenance
 
     activeReminders = function(current_time, mileage){
       utc_ct = common:convertToUTC(current_time);
-      
+      f00 = ent:reminders.klog(">>>> all reminders   >>>>");  
+
       ent:reminders.query([], { 
        'requires' : '$or',
        'conditions' : [
