@@ -276,11 +276,11 @@ Operations for maintenance
 
       duedate = type eq "date" && recurring eq "repeat"    => time:add(when_reminded, {"months": interval})
               | type eq "date" && recurring eq "once"      => event:attr("due")
-              |                                               time:now(); // everything's after this
+              |                                               time:add(time:now(), {"years": 25}); // never
 
       duemileage = type eq "mileage" && recurring eq "repeat" => vdata{"mileage"} + interval
                  | type eq "mileage" && recurring eq "once"   => event:attr("due")
-                 |                                               "0"; // everything's after thig
+                 |                                               "999999"; // everything's before this
 
 
  // reminder record
