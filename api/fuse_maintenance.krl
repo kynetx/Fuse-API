@@ -125,8 +125,10 @@ Operations for maintenance
       sorted_keys
     };
 
-    alertsByDate = function(start, end){
+    alertsByDate = function(status, start, end){
 
+      status_val = status || "active";
+    
       utc_start = common:convertToUTC(start);
       utc_end = common:convertToUTC(end);
       
@@ -148,6 +150,11 @@ Operations for maintenance
        	   'search_key' : [ 'timestamp' ],
        	   'operator' : '$lte',
        	   'value' : utc_end 
+	  },
+     	  {
+       	   'search_key' : [ 'status' ],
+       	   'operator' : '$regex',
+       	   'value' : "^#{status_val}$"
 	  }
 	]},
 	"return_values"

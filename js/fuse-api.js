@@ -927,7 +927,7 @@
 	    options = options || {};
 	    options.rid = "maintenance";
 	    
-	    var args = options;
+	    var args = options; // use them all...
 
 	    return Fuse.ask_vehicle(vehicle_channel, "alerts", args, null, function(json) {
 			Fuse.log("Retrieve last alert", json);
@@ -943,6 +943,10 @@
 	    var args = {"start": start,
 			"end": end
 		       };
+
+	    if(typeof options.status !== "undefined") {
+		args.status = options.status;
+	    }
 
 	    return Fuse.ask_vehicle(vehicle_channel, "alertsByDate", args, null, function(json) {
 			Fuse.log("Retrieve alerts", json);
