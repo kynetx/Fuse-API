@@ -69,7 +69,7 @@ Operations for maintenance
 	"limit" : hard_limit
       };  
 
-      sorted_keys = this2that:transform(ent:reminders.query([], { 
+      query_results = ent:reminders.query([], { 
        'requires' : '$and',
        'conditions' : [
           { 
@@ -79,7 +79,8 @@ Operations for maintenance
 	  }
 	]},
 	"return_values"
-	).klog(">>> unsorted vals >>>>   "), sort_opt, global_opt).klog(">>> sorted keys for reminders >>>> ");
+	).klog(">>> unsorted vals >>>>   ");
+      sorted_keys = this2that:transform(query_results, sort_opt).klog(">>> sorted keys for reminders >>>> ");
       sorted_keys
     };
 
