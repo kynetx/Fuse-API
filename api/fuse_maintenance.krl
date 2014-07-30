@@ -30,6 +30,7 @@ Operations for maintenance
     // external decls
 
     reminders = function (id, limit, offset) { 
+      f00 = ent:reminders.klog(">>>> all reminders >>>>");
       id.isnull() => allReminders(limit, offset)
                    | ent:reminders{id};
     };
@@ -56,8 +57,6 @@ Operations for maintenance
         "index" : hard_offset,
 	"limit" : hard_limit
       }; 
-
-      f00 = ent:reminders.klog(">>>> all reminders >>>>");
 
       sorted_keys = this2that:transform(ent:reminders, sort_opt, global_opt).klog(">>> sorted keys for reminders >>>> ");
       sorted_keys.map(function(k){ ent:reminders{k} })
