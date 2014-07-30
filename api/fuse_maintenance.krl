@@ -172,7 +172,7 @@ Operations for maintenance
                    | ent:maintenance_records{id};
     };
 
-    allMaintenanceRecords = function(statis, limit, offset) {
+    allMaintenanceRecords = function(status, limit, offset) {
 
       status_val = status || ".*"; // find them all if missing
 
