@@ -70,7 +70,7 @@ Operations for maintenance
 	  }
 	]},
 	"return_values"
-	).klog(">>> unsorted vals >>>> "), sort_opt, global_opt).klog(">>> sorted keys for reminders >>>> ");
+	).klog(">>> unsorted vals >>>>  "), sort_opt, global_opt).klog(">>> sorted keys for reminders >>>> ");
       sorted_keys
     };
 
