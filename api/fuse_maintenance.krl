@@ -29,7 +29,37 @@ Operations for maintenance
 
     // external decls
 
-    reminders = function () { {} };
+    reminders = function (id, limit, offset) { 
+      id.isnull() => allReminders(limit, offset)
+                   | ent:reminders{id};
+    };
+
+    allReminders = function(limit, offset) {
+
+      max_returned = 25;
+
+
+      hard_offset = offset.isnull()     => 0               // default
+                  |                        offset;
+
+      hard_limit = limit.isnull()       => 10              // default
+                 | limit > max_returned => max_returned
+		 |                         limit;
+
+      sort_opt = {
+        "path" : ["timestamp"],
+	"reverse": true,
+	"compare" : "datetime"
+      };
+
+      global_opt = {
+        "index" : hard_offset,
+	"limit" : hard_limit
+      }; 
+
+      sorted_keys = this2that:transform(ent:alerts || [], sort_opt, global_opt).klog(">>> sorted keys for reminders >>>> ");
+      sorted_keys.map(function(k){ent:reminders{k}})
+    };
 
     activeReminders = function(current_time, mileage){
       utc_ct = common:convertToUTC(current_time);
