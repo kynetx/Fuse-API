@@ -30,10 +30,8 @@ Operations for maintenance
     // external decls
 
     reminders = function (id, limit, offset) { 
-       x_id = id.klog(">>>> id >>>>>");
-       f00 = ent:reminders.klog(">>>> all reminders   >>>>");  
-//      id.isnull() => allReminders(limit, offset)
-      id.isnull() => ent:reminders.values()
+      x_id = id.klog(">>>> id >>>>>");
+      id.isnull() => allReminders(limit, offset)
                    | ent:reminders{id};
     };
 
@@ -60,8 +58,18 @@ Operations for maintenance
 	"limit" : hard_limit
       };  
 
-      sorted_keys = this2that:transform(ent:reminders, sort_opt, global_opt).klog(">>> sorted keys for reminders >>>> ");
-      sorted_keys.map(function(k){ ent:reminders{k} })
+      sorted_keys = this2that:transform(ent:reminders.query([], { 
+       'requires' : '$and',
+       'conditions' : [
+          { 
+     	   'search_key' : [ 'mileagestamp'],
+       	   'operator' : '$gte',
+       	   'value' : 0 
+	  }
+	]},
+	"return_values"
+	), sort_opt, global_opt).klog(">>> sorted keys for reminders >>>> ");
+      sorted_keys
     };
 
     activeReminders = function(current_time, mileage){
