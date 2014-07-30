@@ -276,7 +276,7 @@ Operations for maintenance
 
       duedate = type eq "date" && recurring eq "repeat"    => time:add(when_reminded, {"months": interval})
               | type eq "date" && recurring eq "once"      => event:attr("due")
-              |                                               common:convertToUTC(time:now()); // everything's after this
+              |                                               time:now(); // everything's after this
 
       duemileage = type eq "mileage" && recurring eq "repeat" => vdata{"mileage"} + interval
                  | type eq "mileage" && recurring eq "once"   => event:attr("due")
@@ -296,7 +296,7 @@ Operations for maintenance
 	"recurring": recurring,
 	"interval": interval,
 	"activity": event:attr("activity"),
-	"duedate": duedate,
+	"duedate": common:convertToUTC(duedate),
 	"duemileage": duemileage,
 	"mileagestamp" : vdata{"mileage"},
 	"timestamp": when_reminded

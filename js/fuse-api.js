@@ -935,6 +935,21 @@
   		       }, options);
 	},
 
+	activeReminders: function(vehicle_channel, date, mileage, cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    options.rid = "maintenance";
+	    
+	    var args = {"current_time": date,
+			"mileage": mileage
+		       };
+
+	    return Fuse.ask_vehicle(vehicle_channel, "activeReminders", args, null, function(json) {
+			Fuse.log("Retrieve active reminders", json);
+			cb(json);
+  		       }, options);
+	},
+
 	remindersByDate: function(vehicle_channel, start, end, cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
