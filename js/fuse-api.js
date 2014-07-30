@@ -921,6 +921,157 @@
 	    });
 	},
 
+	// ---------- Reminders ----------
+	reminders: function(vehicle_channel, cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    options.rid = "maintenance";
+	    
+	    var args = options; // use them all...
+
+	    return Fuse.ask_vehicle(vehicle_channel, "reminders", args, null, function(json) {
+			Fuse.log("Retrieve last reminder", json);
+			cb(json);
+  		       }, options);
+	},
+
+	remindersByDate: function(vehicle_channel, start, end, cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    options.rid = "maintenance";
+	    
+	    var args = {"start": start,
+			"end": end
+		       };
+
+	    if(typeof options.status !== "undefined") {
+		args.status = options.status;
+	    }
+
+	    return Fuse.ask_vehicle(vehicle_channel, "remindersByDate", args, null, function(json) {
+			Fuse.log("Retrieve reminders", json);
+			cb(json);
+  		       }, options);
+	},
+
+
+	recordReminder: function(vehicle_channel, reminder_obj, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record reminder for vehicle";
+	    };
+	 
+
+            return CloudOS.raiseEvent("fuse", "new_reminder", reminder_obj, {}, function(response)
+				      {
+					  if(response.length < 2) {
+					      throw "Reminder record failed for vehicle: "  + vehicle_channel;
+					  }
+					  Fuse.log("Recorded reminder for vehicle: " + vehicle_channel + ": " + response);
+					  cb(response);
+				      },
+				      {"eci": vehicle_channel
+				      } 
+            );
+        },
+
+	updateReminder: function(vehicle_channel, reminder_obj, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record reminder for vehicle";
+	    };
+	    Fuse.requireParams({id: reminder_obj.id
+			       });
+
+            return CloudOS.raiseEvent("fuse", "updated_reminder", reminder_obj, {}, function(response)
+				      {
+					  if(response.length < 1) {
+					      throw "Reminder update failed for vehicle: "  + vehicle_channel;
+					  }
+					  Fuse.log("Updated reminder for vehicle: " + vehicle_channel + ": " + response);
+					  cb(response);
+				      },
+				      {"eci": vehicle_channel
+				      } 
+            );
+        },
+
+	deleteReminder: function(vehicle_channel, id, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record reminder for vehicle";
+	    };
+	    Fuse.requireParams({id: id});
+
+	    var attrs = {"id": id};
+            return CloudOS.raiseEvent("fuse", "unneeded_reminder", attrs, {}, function(response)
+            {
+		if(response.length < 1) {
+		    throw "Reminder delete failed for vehicle: "  + vehicle_channel;
+		} 
+                Fuse.log("Deleted reminder for vehicle: " + vehicle_channel);
+		cb(response);
+            },
+	    {"eci": vehicle_channel
+	    } 
+            );
+        },
+
+	processReminder: function(vehicle_channel, status_obj, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record reminder for vehicle";
+	    };
+	    Fuse.requireParams({id: status_obj.id,
+				status: status_obj.status
+			       });
+
+            return CloudOS.raiseEvent("fuse", "handled_reminder", status_obj, {}, function(response)
+				      {
+					  if(response.length < 1) {
+					      throw "Reminder processing failed for vehicle: "  + vehicle_channel;
+					  }
+					  Fuse.log("Handled reminder for vehicle: " + vehicle_channel + ": " + response);
+					  cb(response);
+				      },
+				      {"eci": vehicle_channel
+				      } 
+            );
+        },
+
+	updateReminderStatus: function(vehicle_channel, id, new_status, cb, options)
+        {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
+		throw "Vehicle channel is null; can't record reminder for vehicle";
+	    };
+	    var attrs = {id: id,
+			 status: new_status
+			};
+	    Fuse.requireParams(attrs); // require all
+            return CloudOS.raiseEvent("fuse", "new_reminder_status", attrs, {}, function(response)
+				      {
+					  if(response.length < 1) {
+					      throw "Reminder status update failed for vehicle: "  + vehicle_channel;
+					  }
+					  Fuse.log("Updated reminder status for vehicle: " + vehicle_channel + ": " + response);
+					  cb(response);
+
+				      },
+				      {"eci": vehicle_channel
+				      } 
+            );
+        },
+
 	// ---------- Alerts ----------
 	alerts: function(vehicle_channel, cb, options) {
 	    cb = cb || function(){};
@@ -960,7 +1111,7 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
-		throw "Vehicle channel is null; can't record fuel alert for vehicle";
+		throw "Vehicle channel is null; can't record alert for vehicle";
 	    };
 	 
 
@@ -982,7 +1133,7 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
-		throw "Vehicle channel is null; can't record fuel alert for vehicle";
+		throw "Vehicle channel is null; can't record alert for vehicle";
 	    };
 	    Fuse.requireParams({id: alert_obj.id
 			       });
@@ -1005,7 +1156,7 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
-		throw "Vehicle channel is null; can't record fuel alert for vehicle";
+		throw "Vehicle channel is null; can't record alert for vehicle";
 	    };
 	    Fuse.requireParams({id: id});
 
@@ -1028,7 +1179,7 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
-		throw "Vehicle channel is null; can't record fuel alert for vehicle";
+		throw "Vehicle channel is null; can't record alert for vehicle";
 	    };
 	    Fuse.requireParams({id: status_obj.id,
 				status: status_obj.status
@@ -1052,7 +1203,7 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
-		throw "Vehicle channel is null; can't record fuel alert for vehicle";
+		throw "Vehicle channel is null; can't record alert for vehicle";
 	    };
 	    var attrs = {id: id,
 			 status: new_status
@@ -1108,7 +1259,7 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
-		throw "Vehicle channel is null; can't record fuel maintenance_record for vehicle";
+		throw "Vehicle channel is null; can't record maintenance_record for vehicle";
 	    };
 	 
 
@@ -1130,7 +1281,7 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
-		throw "Vehicle channel is null; can't record fuel maintenance_record for vehicle";
+		throw "Vehicle channel is null; can't record maintenance_record for vehicle";
 	    };
 	    Fuse.requireParams({id: maintenance_record_obj.id
 			       });
@@ -1153,7 +1304,7 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
-		throw "Vehicle channel is null; can't record fuel maintenance_record for vehicle";
+		throw "Vehicle channel is null; can't record maintenance_record for vehicle";
 	    };
 	    var attrs = {"id": id};
 	    Fuse.requireParams(attrs); // require all

@@ -641,6 +641,7 @@ The maintenance record object has the following properties:
 
 - status &mdash; the disposition of the alert. One of ```completed``` or ```deferred```; defaults to "unknown"
 - agent &mdash; the person or organization who performed the maintenance
+- cost &mdash; the cost of the maintenance item
 - receipt &mdash; the URL of the receipt or a ```data:image``` encoded picture of the receipt 
 - activity &mdash;  activity being maintenance recorded (e.g. "Oil Change")
 - odometer &mdash; odometer reading that the maintenance record occured at; defaults to vehicle's current odomoeter reading. 
