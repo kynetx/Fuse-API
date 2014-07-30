@@ -145,7 +145,7 @@ Operations for maintenance
 	  }
 	]},
 	"return_values"
-	), sort_opt, global_opt).klog(">>> sorted keys for alerts >>>> ");
+	).klog(">>> unsorted vals >>>>   "), sort_opt, global_opt).klog(">>> sorted keys for alerts >>>> ");
       sorted_keys
     };
 
