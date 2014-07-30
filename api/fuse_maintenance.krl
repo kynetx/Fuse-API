@@ -64,19 +64,18 @@ Operations for maintenance
        'requires' : '$and',
        'conditions' : [
           { 
-     	   'search_key' : [ 'type'],
+     	   'search_key' : ['type'],
        	   'operator' : '$regex',
        	   'value' : "^#{type_val}$" 
 	  }
 	]},
 	"return_values"
-	), sort_opt, global_opt).klog(">>> sorted keys for reminders >>>> ");
+	).klog(">>> unsorted vals >>>> "), sort_opt, global_opt).klog(">>> sorted keys for reminders >>>> ");
       sorted_keys
     };
 
     activeReminders = function(current_time, mileage){
       utc_ct = common:convertToUTC(current_time);
-      f00 = ent:reminders.klog(">>>> all reminders   >>>>");  
 
       ent:reminders.query([], { 
        'requires' : '$or',
