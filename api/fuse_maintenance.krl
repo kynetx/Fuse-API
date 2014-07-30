@@ -29,15 +29,17 @@ Operations for maintenance
 
     // external decls
 
-    reminders = function (id, limit, offset) { 
+    reminders = function (id, type, limit, offset) { 
       x_id = id.klog(">>>> id >>>>>");
-      id.isnull() => allReminders(limit, offset)
+      id.isnull() => allReminders(type, limit, offset)
                    | ent:reminders{id};
     };
 
-    allReminders = function(limit, offset) {
+    allReminders = function(type, limit, offset) {
 
       max_returned = 25;
+
+      type_val = type || ".*";
 
 
       hard_offset = offset.isnull()     => 0               // default
@@ -62,9 +64,9 @@ Operations for maintenance
        'requires' : '$and',
        'conditions' : [
           { 
-     	   'search_key' : [ 'mileagestamp'],
-       	   'operator' : '$gte',
-       	   'value' : 0 
+     	   'search_key' : [ 'type'],
+       	   'operator' : '$regex',
+       	   'value' : "^#{type_val}$" 
 	  }
 	]},
 	"return_values"
