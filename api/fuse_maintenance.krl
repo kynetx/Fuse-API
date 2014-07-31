@@ -436,7 +436,7 @@ Operations for maintenance
       if( not reminder{"id"}.isnull()
         ) then {
 	  send_directive("processing reminder to create alert") with 
-	   rec = rec
+	   id = id
       }
       fired {
         log ">>> reminder due because #{reason}";
