@@ -422,8 +422,8 @@ Operations for maintenance
 	
 
         reason = "Reminder to " + reminder{"activity"} +
-	            reminder{"kind"} eq "mileage"  => " at #{duemileage} #{unit}" | 
-	                                              " on #{duedate}";
+	            (reminder{"kind"} eq "mileage"  => " at #{duemileage} #{unit}" | 
+	                                               " on #{duedate}");
 	id = reminder{"id"};
 	 // rec = {
 	 //   "id": id,
