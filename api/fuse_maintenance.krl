@@ -419,7 +419,7 @@ Operations for maintenance
         reason = "Reminder to " + reminder{"activity"} +
 	          reminder{"kind"} eq "mileage"  => " at #{duemileage} #{unit}" | 
 	                                            " on #{duedate}";
-
+	id = reminder{"id"};
 	 // rec = {
 	 //   "id": id,
 	 //   "kind": kind,
@@ -433,7 +433,7 @@ Operations for maintenance
 	 // };
 
       }
-      if( not reminder{"id"}.isnull()
+      if( not id.isnull()
         ) then {
 	  send_directive("processing reminder to create alert") with 
 	   id = id
