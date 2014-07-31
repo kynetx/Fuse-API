@@ -402,7 +402,7 @@ Operations for maintenance
 
   rule process_reminder {
     select when fuse updated_mileage
-    foreach activeReminders(time:now(), event:attr("new_mileage")) setting(reminder)
+    foreach activeReminders(common:convertToUTC(time:now()), event:attr("new_mileage")) setting(reminder)
       pre {
         unit = "miles"; // could be parameterized later
 
