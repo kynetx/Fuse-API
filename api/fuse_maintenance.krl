@@ -416,9 +416,14 @@ Operations for maintenance
       pre {
         unit = "miles"; // could be parameterized later
 
+	f00 = reminder.klog(">>>>> look at this reminder >>>> ");
+	duemileage = reminder{"duemileage"};
+	duedate = reminder{"duedate"};
+	
+
         reason = "Reminder to " + reminder{"activity"} +
-	          reminder{"kind"} eq "mileage"  => " at #{duemileage} #{unit}" | 
-	                                            " on #{duedate}";
+	            reminder{"kind"} eq "mileage"  => " at #{duemileage} #{unit}" | 
+	                                              " on #{duedate}";
 	id = reminder{"id"};
 	 // rec = {
 	 //   "id": id,
@@ -485,32 +490,32 @@ Operations for maintenance
     select when fuse new_reminder_status
     pre {
       id = event:attr("id");
-      reminder = reminders(id);
-      recurring = reminders{"recurring"};
-      kind = reminders("kind");
-      interval = reminders{"interval"};
+      rem = reminders(id);
+      recurring = rem{"recurring"};
+      kind = rem{"kind"};
+      interval = rem{"interval"};
 
       vdata = vehicle:vehicleSummary();
       current_time = time:now();
 
       rec = event:attrs()
              .put(["duemileage"], recurring eq "repeat" && kind eq "mileage" => newDuemileage(vdata{"mileage"}, interval) 
-                                                                              | reminder{"duemileage"})
+                                                                              | rem{"duemileage"})
              .put(["duedate"], recurring eq "repeat" && kind eq "date" => newDuedate(current_time, interval, "months") 
-                                                                        | reminder{"duedate"})
+                                                                        | rem{"duedate"})
 	     .put(["timestamp"],  common:convertToUTC(current_time))
 	     .put(["mileagestamp"],  common:strToNum(vdata{"mileage"}))
              ;
 
     }
-    if(reminder{"recurring"} eq "repeat") then {
+    if(rem{"recurring"} eq "repeat") then {
       send_directive("updating repeating reminder");
     }
     fired {
       log "updating reminder #{id} because it's recurring " + rec.encode();
       raise fuse event updated_reminder attributes rec;
     } else {
-      log "deleting reminder #{id} because it's onetime " + reminder.encode();
+      log "deleting reminder #{id} because it's onetime " + rem.encode();
       raise fuse event unneeded_reminder with id = id;
     }
   }
@@ -568,6 +573,7 @@ Operations for maintenance
 	"reminder_ref": event:attr("reminder_ref"),
 	"activity": activity,
 	"reason": reason,
+	"status": status,
 	"timestamp": when_alerted
       };
     }
