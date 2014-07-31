@@ -88,6 +88,7 @@ Operations for maintenance
     activeReminders = function(current_time, mileage){
       utc_ct = common:convertToUTC(current_time);
 
+      mil_val = mileage.as("num") + 0; // number
       ent:reminders.query([], { 
        'requires' : '$or',
        'conditions' : [
@@ -99,7 +100,7 @@ Operations for maintenance
      	  {
        	   'search_key' : [ 'duemileage' ],
        	   'operator' : '$lte',
-       	   'value' : mileage 
+       	   'value' : mil_val
 	  }
 	]},
 	"return_values"
@@ -340,11 +341,11 @@ Operations for maintenance
       when_reminded = common:convertToUTC(event:attr("when") || time:now());
 
       duedate = kind eq "date" && recurring eq "repeat"    => newDuedate(when_reminded, interval, "months")
-              | kind eq "date" && recurring eq "once"      => event:attr("due")
+              | kind eq "date" && recurring eq "once"      => event:attr("due") 
               |                                               newDuedate(time:now(), 25, "years"); // never
 
       duemileage = kind eq "mileage" && recurring eq "repeat" => newDuemileage(vdata{"mileage"}, interval)
-                 | kind eq "mileage" && recurring eq "once"   => event:attr("due")
+                 | kind eq "mileage" && recurring eq "once"   => event:attr("due") 
                  |                                               "999999"; // everything's before this
 
 
