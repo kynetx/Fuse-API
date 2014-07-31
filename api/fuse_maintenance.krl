@@ -112,7 +112,7 @@ Operations for maintenance
 	]},
 	"return_values"
 	);
-      sorted_keys = this2that:transform(query_results, sort_opt);
+      sorted_keys = this2that:transform(query_results, sort_opt).klog(">>> sorted results >>>>");
       sorted_keys
     };
 
