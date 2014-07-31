@@ -31,7 +31,7 @@ Operations for maintenance
 
     reminders = function (id, kind, limit, offset) { 
       x_id = id.klog(">>>> id >>>>>");
-      id.isnull() => allReminders(kind, limit, offset)
+      id.isnull() => allReminders(kind, limit, offset) 
 //      id.isnull() => ent:reminders 
                    | ent:reminders{id};
     };
