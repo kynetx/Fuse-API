@@ -112,8 +112,9 @@ Operations for maintenance
 	]},
 	"return_values"
 	);
-      sorted_keys = this2that:transform(query_results, sort_opt).klog(">>> sorted results >>>>");
-      sorted_keys
+       // sorted_keys = this2that:transform(query_results, sort_opt).klog(">>> sorted results >>>>");
+       // sorted_keys
+       query_results
     };
 
     daysBetween = function(time_a, time_b) {
