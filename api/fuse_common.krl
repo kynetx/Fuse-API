@@ -11,7 +11,7 @@ Common definitions
 
 
 	provides S3Bucket, namespace, find_pico_by_id, fuel_namespace, trips_namespace, maint_namespace,
-	         convertToUTC, vehicleChannels, fleet_photo, factory,
+	         convertToUTC, strToNum, vehicleChannels, fleet_photo, factory,
 	         skycloud, allowedRids
     }
 
