@@ -498,7 +498,7 @@ Operations for maintenance
       vdata = vehicle:vehicleSummary();
       current_time = time:now();
 
-      rec = event:attrs()
+      rec = rem
              .put(["duemileage"], recurring eq "repeat" && kind eq "mileage" => newDuemileage(vdata{"mileage"}, interval) 
                                                                               | rem{"duemileage"})
              .put(["duedate"], recurring eq "repeat" && kind eq "date" => newDuedate(current_time, interval, "months") 
