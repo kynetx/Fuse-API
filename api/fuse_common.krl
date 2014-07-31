@@ -109,6 +109,9 @@ Common definitions
        time:strftime(dt, "%Y%m%dT%H%M%S%z", {"tz":"UTC"}).klog(">>>>> convertToUTC() returning for #{dt} >>>>> ")
      };
 
+     strToNum = function(s) {
+       s.as("num") + 0
+     };
  
      // TODO: reduce error loquaciousness once on production.
      skycloud = function(eci, mod, func, params) {

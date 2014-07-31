@@ -88,7 +88,7 @@ Operations for maintenance
     activeReminders = function(current_time, mileage){
       utc_ct = common:convertToUTC(current_time);
 
-      mil_val = mileage.as("num") + 0; // number
+      mil_val = common:strToNum(mileage); // must be number
       ent:reminders.query([], { 
        'requires' : '$or',
        'conditions' : [
@@ -345,8 +345,8 @@ Operations for maintenance
               |                                               newDuedate(time:now(), 25, "years"); // never
 
       duemileage = kind eq "mileage" && recurring eq "repeat" => newDuemileage(vdata{"mileage"}, interval)
-                 | kind eq "mileage" && recurring eq "once"   => event:attr("due") 
-                 |                                               "999999"; // everything's before this
+                 | kind eq "mileage" && recurring eq "once"   => common:strToNum(event:attr("due"))
+                 |                                               999999; // everything's before this
 
 
  // reminder record
