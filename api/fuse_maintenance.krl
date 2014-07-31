@@ -292,7 +292,7 @@ Operations for maintenance
     };
     newDuemileage = function(mileage, interval){
       m = mileage + interval 
-      m + ""  // make sure it's a string for comparion purposes
+      m.as("num") + 0  // make sure it's a number for comparion purposes
     };
        
 
