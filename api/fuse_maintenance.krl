@@ -230,7 +230,7 @@ Operations for maintenance
 	"limit" : hard_limit
       }; 
  
-      sorted_keys = this2that:transform(ent:maintenance_records.query([], { 
+      query_results = ent:maintenance_records.query([], { 
        'requires' : '$and',
        'conditions' : [
      	  {
@@ -240,7 +240,8 @@ Operations for maintenance
 	  }
 	]},
 	"return_values"
-	), sort_opt, global_opt).klog(">>> sorted keys for maintenance records >>>> ");
+      ).klog(">>>> query results >>>>>");
+      sorted_keys = this2that:transform(query_results, sort_opt, global_opt).klog(">>> sorted keys for maintenance records >>>> ");
       sorted_keys  
     };
 
@@ -283,6 +284,15 @@ Operations for maintenance
 
     // internal use only
     S3Bucket = "Fuse_assets";   
+    newDuedate = function(current_time, interval, unit) {
+      increment = {}.put([unit], interval); // necessary cause of time:add() syntax, unit is name
+      common:convertToUTC(time:add(current_time, increment))
+    };
+    newDuemilage = function(mileage, interval){
+      mileage + interval
+    };
+       
+
 
   }
 
@@ -327,11 +337,11 @@ Operations for maintenance
 
       when_reminded = common:convertToUTC(event:attr("when") || time:now());
 
-      duedate = type eq "date" && recurring eq "repeat"    => time:add(when_reminded, {"months": interval})
+      duedate = type eq "date" && recurring eq "repeat"    => newDuedate(when_reminded, interval, "months")
               | type eq "date" && recurring eq "once"      => event:attr("due")
-              |                                               time:add(time:now(), {"years": 25}); // never
+              |                                               newDuedate(time:now(), 25, "years"); // never
 
-      duemileage = type eq "mileage" && recurring eq "repeat" => vdata{"mileage"} + interval
+      duemileage = type eq "mileage" && recurring eq "repeat" => newDuemileage(vdata{"mileage"}, interval)
                  | type eq "mileage" && recurring eq "once"   => event:attr("due")
                  |                                               "999999"; // everything's before this
 
@@ -388,31 +398,88 @@ Operations for maintenance
   }
 
   rule process_reminder {
-    select when fuse handled_reminder
+    select when fuse new_mileage
+    foreach activeReminders(time:now(), event:attr("mileage")) setting(reminder)
+
+      pre {
+	id = reminder{"id"};
+	 // rec = {
+	 //   "id": id,
+	 //   "type": type,
+	 //   "recurring": recurring,
+	 //   "interval": interval,
+	 //   "activity": event:attr("activity"),
+	 //   "duedate": common:convertToUTC(duedate),
+	 //   "duemileage": duemileage,
+	 //   "mileagestamp" : vdata{"mileage"},
+	 //   "timestamp": when_reminded
+	 // };
+
+	 unit = "miles"; // could be parameterized later
+
+	 reason = "Reminder to " + reminder{"activity"} +
+	          reminder{"type"} eq "mileage"  => " at #{duemileage} #{unit}" | 
+		                                    " on #{duedate}";
+
+  	 rec = {
+	   "reminder_ref": id,
+	   "status": "active",
+	   "activity": reminder{"activity"},
+	   "reason": reason
+	 };
+      }
+      if( not id.isnull()
+	) then {
+	  send_directive("processing reminder to create alert") with 
+	   rec = rec
+	}
+      fired {
+	log ">>>> processing reminder for alert  >>>> " + rec.encode();
+	raise fuse event new_alert attributes rec;
+	// send to fleet...
+	raise fuse event new_reminder_status with
+	  id = id;
+      } else {
+        log ">>>> processing reminder failed " + reminder.encode();
+      }
+
+  }
+
+  // delete reminder or update it depending on type
+  rule update_reminder_status {
+    select when fuse new_reminder_status
     pre {
       id = event:attr("id");
+      reminder = reminders(id);
+      recurring = reminders{"recurring"};
+      type = reminders("type");
+      interval = reminders{"interval"};
 
-      rec = {
-        "reminder_ref": id,
-	"status": event:attr("status"),
-	"agent": event:attr("agent"),
-	"receipt": event:attr("receipt")
-      };
+      vdata = vehicle:vehicleSummary();
+      current_time = time:now();
+
+      rec = event:attrs()
+             .put(["duemileage"], recurring eq "repeat" && type eq "mileage" => newDuemileage(vdata{"mileage"}, interval) 
+                                                                              | reminder{"duemileage"})
+             .put(["duedate"], recurring eq "repeat" && type eq "date" => newDuedate(current_time, interval, "months") 
+                                                                        | reminder{"duedate"})
+	     .put(["timestamp"],  common:convertToUTC(current_time))
+	     .put(["mileagestamp"],  vdata{"mileage"})
+             ;
+
     }
-    if( not id.isnull()
-      ) then {
-        send_directive("processing reminder to create maintenance record") with 
-	 rec = rec
-      }
+    if(reminder{"recurring"} eq "repeat") then {
+      send_directive("updating repeating reminder");
+    }
     fired {
-      log ">>>> processing reminder for maintenance  >>>> " + reminder.encode();
-      raise fuse event new_alert attributes rec;
-      raise fuse event new_reminder_status with
-        id = id and
-	status = "inactive";
+      log "updating reminder #{id} because it's recurring " + rec.encode();
+      raise fuse event updated_reminder attributes rec;
     } else {
+      log "deleting reminder #{id} because it's onetime " + reminder.encode();
+      raise fuse event unneeded_reminder with id = id;
     }
   }
+  
 
 
 
@@ -688,3 +755,4 @@ Operations for maintenance
 
 }
 // fuse_maintenance.krl
+ 
