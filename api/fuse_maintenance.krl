@@ -112,9 +112,9 @@ Operations for maintenance
 	]},
 	"return_values"
 	);
-       // sorted_keys = this2that:transform(query_results, sort_opt).klog(">>> sorted results >>>>");
-       // sorted_keys
-       query_results.klog(">>> now just query >>>")
+       sorted_keys = this2that:transform(query_results, sort_opt).klog(">>> sorted results >>>>");
+       sorted_keys
+       // query_results.klog(">>> now just query >>>")
     };
 
     daysBetween = function(time_a, time_b) {
@@ -433,7 +433,7 @@ Operations for maintenance
 	 // };
 
       }
-      if( not id.isnull()
+      if( not reminder{"id"}.isnull()
         ) then {
 	  send_directive("processing reminder to create alert") with 
 	   rec = rec
