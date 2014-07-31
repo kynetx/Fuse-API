@@ -29,17 +29,17 @@ Operations for maintenance
 
     // external decls
 
-    reminders = function (id, type, limit, offset) { 
+    reminders = function (id, kind, limit, offset) { 
       x_id = id.klog(">>>> id >>>>>");
-      id.isnull() => allReminders(type, limit, offset)
+      id.isnull() => allReminders(kind, limit, offset)
                    | ent:reminders{id};
     };
 
-    allReminders = function(type, limit, offset) {
+    allReminders = function(kind, limit, offset) {
 
       max_returned = 25;
 
-      type_val = type || ".*";
+      kind_val = kind || ".*";
 
 
       hard_offset = offset.isnull()     => 0               // default
@@ -49,12 +49,12 @@ Operations for maintenance
                  | limit > max_returned => max_returned
 		 |                         limit;
 
-      sort_opt = type_val eq "date"     => {
+      sort_opt = kind_val eq "date"     => {
       	       	 	     	            "path" : ["duedate"],	     
    					    "reverse": false,
 					    "compare" : "datetime"
 					   }
-               | type_val eq "mileage"  => {
+               | kind_val eq "mileage"  => {
       	       	 	     	            "path" : ["duemileage"],	     
 					    "reverse": false,
 					    "compare" : "numeric"
@@ -73,9 +73,9 @@ Operations for maintenance
        'requires' : '$and',
        'conditions' : [
           { 
-     	   'search_key' : ['type'],
+     	   'search_key' : ['kind'],
        	   'operator' : '$regex',
-       	   'value' : "^#{type_val}$" 
+       	   'value' : "^#{kind_val}$" 
 	  }
 	]},
 	"return_values"
@@ -321,8 +321,8 @@ Operations for maintenance
 
       id = event:attr("id") || random:uuid();
 
-      // can't default since the "due" type has to match
-      type =  event:attr("kind") eq "date" 
+      // can't default since the "due" kind has to match
+      kind =  event:attr("kind") eq "date" 
            || event:attr("kind") eq "mileage"  => event:attr("kind")
             |                                     "unknown";
 
@@ -337,25 +337,25 @@ Operations for maintenance
 
       when_reminded = common:convertToUTC(event:attr("when") || time:now());
 
-      duedate = type eq "date" && recurring eq "repeat"    => newDuedate(when_reminded, interval, "months")
-              | type eq "date" && recurring eq "once"      => event:attr("due")
+      duedate = kind eq "date" && recurring eq "repeat"    => newDuedate(when_reminded, interval, "months")
+              | kind eq "date" && recurring eq "once"      => event:attr("due")
               |                                               newDuedate(time:now(), 25, "years"); // never
 
-      duemileage = type eq "mileage" && recurring eq "repeat" => newDuemileage(vdata{"mileage"}, interval)
-                 | type eq "mileage" && recurring eq "once"   => event:attr("due")
+      duemileage = kind eq "mileage" && recurring eq "repeat" => newDuemileage(vdata{"mileage"}, interval)
+                 | kind eq "mileage" && recurring eq "once"   => event:attr("due")
                  |                                               "999999"; // everything's before this
 
 
  // reminder record
  // {<datetime> : { "timestamp" : <datetime>,
- // 	            "type" : mileage | date,
+ // 	            "kind" : mileage | date,
  // 		    "recurring": "once" | "repeat",
  // 		    "activity" : <string>,
  // 		    "due" : DateTime | Integer
  // 	          },
       rec = {
         "id": id,
-	"type": type,
+	"kind": kind,
 	"recurring": recurring,
 	"interval": interval,
 	"activity": event:attr("activity"),
@@ -366,7 +366,7 @@ Operations for maintenance
       };
     }
     if( not rec{"activity"}.isnull()
-     && rec{"type"} neq "unknown"
+     && rec{"kind"} neq "unknown"
      && rec{"recurring"} neq "unknown"
       ) then
     {
@@ -405,7 +405,7 @@ Operations for maintenance
 	id = reminder{"id"};
 	 // rec = {
 	 //   "id": id,
-	 //   "type": type,
+	 //   "kind": kind,
 	 //   "recurring": recurring,
 	 //   "interval": interval,
 	 //   "activity": event:attr("activity"),
@@ -418,7 +418,7 @@ Operations for maintenance
 	 unit = "miles"; // could be parameterized later
 
 	 reason = "Reminder to " + reminder{"activity"} +
-	          reminder{"type"} eq "mileage"  => " at #{duemileage} #{unit}" | 
+	          reminder{"kind"} eq "mileage"  => " at #{duemileage} #{unit}" | 
 		                                    " on #{duedate}";
 
   	 rec = {
@@ -445,23 +445,23 @@ Operations for maintenance
 
   }
 
-  // delete reminder or update it depending on type
+  // delete reminder or update it depending on kind
   rule update_reminder_status {
     select when fuse new_reminder_status
     pre {
       id = event:attr("id");
       reminder = reminders(id);
       recurring = reminders{"recurring"};
-      type = reminders("type");
+      kind = reminders("kind");
       interval = reminders{"interval"};
 
       vdata = vehicle:vehicleSummary();
       current_time = time:now();
 
       rec = event:attrs()
-             .put(["duemileage"], recurring eq "repeat" && type eq "mileage" => newDuemileage(vdata{"mileage"}, interval) 
+             .put(["duemileage"], recurring eq "repeat" && kind eq "mileage" => newDuemileage(vdata{"mileage"}, interval) 
                                                                               | reminder{"duemileage"})
-             .put(["duedate"], recurring eq "repeat" && type eq "date" => newDuedate(current_time, interval, "months") 
+             .put(["duedate"], recurring eq "repeat" && kind eq "date" => newDuedate(current_time, interval, "months") 
                                                                         | reminder{"duedate"})
 	     .put(["timestamp"],  common:convertToUTC(current_time))
 	     .put(["mileagestamp"],  vdata{"mileage"})
