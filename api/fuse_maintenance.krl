@@ -289,7 +289,7 @@ Operations for maintenance
       increment = {}.put([unit], interval); // necessary cause of time:add() syntax, unit is name
       common:convertToUTC(time:add(current_time, increment))
     };
-    newDuemilage = function(mileage, interval){
+    newDuemileage = function(mileage, interval){
       mileage + interval
     };
        
