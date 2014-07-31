@@ -114,7 +114,7 @@ Operations for maintenance
 	);
        // sorted_keys = this2that:transform(query_results, sort_opt).klog(">>> sorted results >>>>");
        // sorted_keys
-       query_results
+       query_results.klog(">>> now just query >>>")
     };
 
     daysBetween = function(time_a, time_b) {
