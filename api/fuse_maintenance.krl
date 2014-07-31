@@ -89,7 +89,14 @@ Operations for maintenance
       utc_ct = common:convertToUTC(current_time);
 
       mil_val = common:strToNum(mileage); // must be number
-      ent:reminders.query([], { 
+
+      sort_opt = {
+      	       	  "path" : ["timestamp"],	     
+		  "reverse": false,
+		  "compare" : "datetime"
+		 };
+
+      query_results = ent:reminders.query([], { 
        'requires' : '$or',
        'conditions' : [
           { 
@@ -104,7 +111,9 @@ Operations for maintenance
 	  }
 	]},
 	"return_values"
-	)
+	);
+      sorted_keys = this2that:transform(query_results, sort_opt);
+      sorted_keys
     };
 
     daysBetween = function(time_a, time_b) {
