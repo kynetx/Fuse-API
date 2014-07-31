@@ -291,7 +291,7 @@ Operations for maintenance
     };
     newDuemileage = function(mileage, interval){
       m = mileage + interval 
-      m.as("string")  // make sure it's a string for comparion purposes
+      m.as("str")  // make sure it's a string for comparion purposes
     };
        
 
