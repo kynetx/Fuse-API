@@ -290,7 +290,7 @@ Operations for maintenance
       common:convertToUTC(time:add(current_time, increment))
     };
     newDuemileage = function(mileage, interval){
-      mileage + interval
+      mileage + interval + "" // make sure it's a string for comparion purposes
     };
        
 
