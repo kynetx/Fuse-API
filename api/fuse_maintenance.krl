@@ -334,7 +334,7 @@ Operations for maintenance
                || event:attr("recurring") eq "repeat"   => event:attr("recurring")
                 |                                          "unknown";
 
-      interval = event:attr("interval");
+      interval = common:strToNum(event:attr("interval"));
 
       vdata = vehicle:vehicleSummary();
 
@@ -364,7 +364,7 @@ Operations for maintenance
 	"activity": event:attr("activity"),
 	"duedate": common:convertToUTC(duedate),
 	"duemileage": duemileage,
-	"mileagestamp" : vdata{"mileage"},
+	"mileagestamp" : common:strToNum(vdata{"mileage"}),
 	"timestamp": when_reminded
       };
     }
@@ -467,7 +467,7 @@ Operations for maintenance
              .put(["duedate"], recurring eq "repeat" && kind eq "date" => newDuedate(current_time, interval, "months") 
                                                                         | reminder{"duedate"})
 	     .put(["timestamp"],  common:convertToUTC(current_time))
-	     .put(["mileagestamp"],  vdata{"mileage"})
+	     .put(["mileagestamp"],  common:strToNum(vdata{"mileage"}))
              ;
 
     }
