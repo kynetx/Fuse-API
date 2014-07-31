@@ -423,7 +423,7 @@ Operations for maintenance
 
         reason = "Reminder to " + reminder{"activity"} +
 	            (reminder{"kind"} eq "mileage"  => " at #{duemileage} #{unit}" | 
-	                                               " on #{duedate}");
+	                                               " on #{time:strftime(duedate, '%d %b %Y')}");
 	id = reminder{"id"};
 	 // rec = {
 	 //   "id": id,
