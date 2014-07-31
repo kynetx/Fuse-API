@@ -579,6 +579,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     pre {
       threshold = event:attr("thresholdVoltage");
       recorded = event:attr("recordedVoltage");
+      id = event:attr("id");
     }
     noop();
     always {
@@ -595,7 +596,10 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       raise fuse event "updated_battery"
 	  with threshold = threshold
 	   and recorded = recorded
-	   and timestamp = event:attr("_timestamp");
+	   and activity = "Battery dropped below #{threshold}V to #{recorded}V"
+	   and reason = "Low battery report from vehicle."
+	   and id = id
+          ;
 
     }
   }
@@ -604,6 +608,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     select when carvoyant troubleCode
     pre {
       codes = event:attr("troubleCodes");
+      id = event:attr("id");
     }
     noop();
     always {
@@ -619,7 +624,12 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	  };
      raise fuse event "updated_dtc"
 	  with dtc = codes
-	   and timestamp = event:attr("_timestamp");
+	   and timestamp = event:attr("_timestamp") 
+	   and activity = "Vehicle reported the following diagnostic codes: " + codes.encode()
+	   and reason = "Diagnostic code report from vehicle."
+	   and id = id
+          ;
+
     }
   }
 
@@ -629,6 +639,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       threshold = event:attr("thresholdValue");
       recorded = event:attr("recordedValue");
       relationship = event:attr("relationship");
+      id = event:attr("id");
     }
     noop();
     always {
@@ -645,7 +656,11 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
      raise fuse event "updated_fuel_level"
        with threshold = threshold
 	and recorded = recorded
-	and timestamp = event:attr("_timestamp");
+	and timestamp = event:attr("_timestamp")
+	and activity = "Fuel level of #{recorded}% is #{relationship.lc()} threshold value of #{threshold}%"
+	and reason = "Fuel report from vehicle."
+	and id = id
+      ;
     }
   }
 

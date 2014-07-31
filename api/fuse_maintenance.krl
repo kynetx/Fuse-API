@@ -401,11 +401,15 @@ Operations for maintenance
   }
 
   rule process_reminder {
-    select when fuse new_mileage
-    foreach activeReminders(time:now(), event:attr("mileage")) setting(reminder)
-
+    select when fuse updated_mileage
+    foreach activeReminders(time:now(), event:attr("new_mileage")) setting(reminder)
       pre {
-	id = reminder{"id"};
+        unit = "miles"; // could be parameterized later
+
+        reason = "Reminder to " + reminder{"activity"} +
+	          reminder{"kind"} eq "mileage"  => " at #{duemileage} #{unit}" | 
+	                                            " on #{duedate}";
+
 	 // rec = {
 	 //   "id": id,
 	 //   "kind": kind,
@@ -418,33 +422,51 @@ Operations for maintenance
 	 //   "timestamp": when_reminded
 	 // };
 
-	 unit = "miles"; // could be parameterized later
-
-	 reason = "Reminder to " + reminder{"activity"} +
-	          reminder{"kind"} eq "mileage"  => " at #{duemileage} #{unit}" | 
-		                                    " on #{duedate}";
-
-  	 rec = {
-	   "reminder_ref": id,
-	   "status": "active",
-	   "activity": reminder{"activity"},
-	   "reason": reason
-	 };
       }
       if( not id.isnull()
-	) then {
+        ) then {
 	  send_directive("processing reminder to create alert") with 
 	   rec = rec
-	}
-      fired {
-	log ">>>> processing reminder for alert  >>>> " + rec.encode();
-	raise fuse event new_alert attributes rec;
-	// send to fleet...
-	raise fuse event new_reminder_status with
-	  id = id;
-      } else {
-        log ">>>> processing reminder failed " + reminder.encode();
       }
+      fired {
+        log ">>> reminder due because #{reason}";
+        raise explicit event reminder_due
+          with reminder = reminder
+	   and id = reminder{"id"}
+	   and activity = reminder{"activity"}
+	   and reason = reason;
+        raise fuse event new_reminder_status with
+          id = id;
+      } else {
+        log ">>> bad reminder; no ID"
+      }
+
+  }
+
+  rule create_alert_for_reason {
+    select when explicit reminder_due
+             or fuse updated_battery
+	     or fuse updated_dtc
+             or fuse updated_fuel_level
+
+    pre {
+      id = event:attr("id");
+      rec = {
+	   "reminder_ref": id,
+	   "status": "active",
+	   "activity": event:attr("activity"),
+	   "reason": event:attr("reason")
+      };
+    }
+    {
+	send_directive("creating new alert") with 
+	 rec = rec
+    }
+    always {
+      log ">>>> processing reminder for alert  >>>> " + rec.encode();
+      raise fuse event new_alert attributes rec;
+      // send to fleet...
+    } 
 
   }
 

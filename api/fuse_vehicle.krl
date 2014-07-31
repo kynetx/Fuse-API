@@ -358,9 +358,6 @@ Fuse ruleset for a vehicle pico
 	              	 .delete(["deviceId"]),
 	       "_api": "sky"
               };
-	raise fuse event updated_mileage
-	  with mileage = vehicle_status{["GEN_ODOMETER","value"]}
-	   and timestamp = vehicle_status{["GEN_ODOMETER","timestamp"]};
       }
 
     }
