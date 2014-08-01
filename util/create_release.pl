@@ -20,9 +20,9 @@ my $app_map = {
 		"fuse_carvoyant.krl" => {"dev" => "b16x11",
 					 "prod" => "fuse_carvoyant"
 					},
-		"b16x12.krl" => {"dev" => "b16x12",
-				 "prod" => "b16x12",            
-				},
+		"carvoyant_module_test.krl" => {"dev" => "b16x12",
+					 "prod" => "carvoyant_module_test"
+					},
 		"fuse_error.krl" => {"dev" => "b16x13",
 				     "prod" => "fuse_error"
 				    },
@@ -44,12 +44,15 @@ my $app_map = {
 		"fuse_maintenance.krl" => {"dev" => "b16x21",
 					   "prod" => "fuse_maintenance"
 					  },
-		"fuse_boostrap.krl" => {"dev" => "b16x22",
+		"fuse_bootstrap.krl" => {"dev" => "b16x22",
 					"prod" => "fuse_bootstrap"
 				       },
 		"fuse_fleet_oauth.krl" => {"dev" => "b16x23",
 					   "prod" => "fuse_fleet_oauth"
 					  },
+	        "fuse_reports.krl" => {"dev" => "b16x26",
+				       "prod" => "fuse_reports"
+				      },
 	      };
 
 my %new_name_map =  map { $_->{"dev"} => $_->{"prod"} }  values(%{ $app_map });
