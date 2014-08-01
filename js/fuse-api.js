@@ -950,26 +950,6 @@
   		       }, options);
 	},
 
-	remindersByDate: function(vehicle_channel, start, end, cb, options) {
-	    cb = cb || function(){};
-	    options = options || {};
-	    options.rid = "maintenance";
-	    
-	    var args = {"start": start,
-			"end": end
-		       };
-
-	    if(typeof options.status !== "undefined") {
-		args.status = options.status;
-	    }
-
-	    return Fuse.ask_vehicle(vehicle_channel, "remindersByDate", args, null, function(json) {
-			Fuse.log("Retrieve reminders", json);
-			cb(json);
-  		       }, options);
-	},
-
-
 	recordReminder: function(vehicle_channel, reminder_obj, cb, options)
         {
 	    cb = cb || function(){};
