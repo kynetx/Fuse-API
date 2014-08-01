@@ -366,3 +366,14 @@ This command updates the trip for trip "271563" on the same vehicle
 	Fuse.updateVehicleDataCarvoyant("ABC", "trip", show_res,{"tripId": "271563"});
 
 Normally, there's no need to do this since the vehicles themselves force this update on ignition events. 
+
+# Notes
+
+2.  ```fuse:clean_up_subscriptions``` cleans up Carvoyant subscriptions, deleting any that don't point at the current vehicle pico.
+
+
+
+
+
+
+https://github.com/kynetx/Fuse-API/blob/master/docs/Using_the_JavaScript_SDK.md

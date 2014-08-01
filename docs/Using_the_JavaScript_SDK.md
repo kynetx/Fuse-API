@@ -415,9 +415,5 @@ You delete an maintenance record using the following function:
 
 where ```id``` that is the key of the maintenance record record you wish to delete.
 
-# Notes
-
-2.  ```fuse:clean_up_subscriptions``` cleans up Carvoyant subscriptions, deleting any that don't point at the current vehicle pico.
-
 
 
