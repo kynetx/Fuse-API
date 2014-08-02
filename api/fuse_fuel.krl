@@ -85,7 +85,7 @@ Operations for fuel
 
     allFillups = function(limit, offset) {
       sort_opt = {
-        "path" : ["endTime"],
+        "path" : ["timestamp"],
 	"reverse": true,
 	"compare" : "datetime"
       };
