@@ -172,12 +172,12 @@ You are being redirected to <a href="#{url}">#{url}</a>
       // only give tokens to pico who identify themselves and we confirm they came in on the channel
       //   that they are subscribed on
       //   (i.e. to get tokens, you need to know ID and channel for the pico making request)
-      getTokensForVehicle = function(id) {
+      getTokensForVehicle = function(id, return_tokens) {
         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle").klog(">>>> some vehicle ECIs >>>>");
 	vehicle_ecis_by_id = vehicle_ecis.collect(function(x){x{"channelName"}}).map(function(k,v){v.head()});
 	caller = vehicle_ecis_by_id{id}.klog(">>>> this caller >>>>>") || {};
 	incoming_eci = meta:eci().klog(">>>> incoming ECI >>>>>");
-	caller{"backChannel"} eq incoming_eci => ent:account_info
+	caller{"backChannel"} eq incoming_eci => return_tokens
 	                                        | {}
       };
 
@@ -186,8 +186,16 @@ You are being redirected to <a href="#{url}">#{url}</a>
         caller = meta:callingRID().klog(">>>> calling rid >>>>>");
 	allowed = common:allowedRids().klog(">>>> allowed rids >>>>");
 	account_info = ent:account_info.klog(">>>> seeing account_info >>>>") || {};
-        allowed.any(function(x){x eq caller}) => account_info
-	                               	      | getTokensForVehicle(id)
+        created = account_info{"timestamp"} || time:now(); 
+        expires_in =  account_info{"expires_in"} || -1 ; // if we don't find it, it's expired
+        time_expires = time:add(created, {"seconds": expires_in});
+        expired = time:compare(time_expires,
+                               time:now()) // less than 1 if expired
+                < 1;      
+        return_tokens = expired => refreshTokenForAccessToken() | account_info;
+
+        allowed.any(function(x){x eq caller}) => return_tokens
+	                               	       | getTokensForVehicle(id, return_tokens)
       };	
 	
 
