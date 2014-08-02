@@ -116,6 +116,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	      })
     }
 
+    // [FIXME] fix to update tokens using nomalizeTokens, etc. 
     isAuthorized = function() {
       account_info = getTokens() || {};
       created = account_info{"timestamp"} || time:now(); 
@@ -163,6 +164,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                   
     };
 
+    // this needs to be removed, can't work from vehicle...
     fix_and_try_again = function (url, config_data, params) {
       new_tokens = carvoyant_oauth:fixToken();
       new_tokens{"access_token"} => carvoyant_get(url,   
