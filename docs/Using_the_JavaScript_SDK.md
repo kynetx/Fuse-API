@@ -152,7 +152,7 @@ Note that the accepted categories for IRS purposes are "business," "medical," "m
 
 You can retrieve the last fillup or a specific fillup using the following function:
 
-	Fuse.fillup(<vehicle_channel>, <callback>, <options>)
+	Fuse.fillups(<vehicle_channel>, <callback>, <options>)
 
 To retreive a specific fillup, you pass the key for the fillup as an option named ```key```.  Fillups are stored with the fill up time in UTC as the key.
 
@@ -160,7 +160,7 @@ If no key is provided, the function returns the most recent fillup.
 
 You can also search fillups by date:
 
-	Fuse.fillupByDate(<vehicle_channel>, <start>, <end>, <callback>, <options>)
+	Fuse.fillupsByDate(<vehicle_channel>, <start>, <end>, <callback>, <options>)
 
 where ```<start>``` and ```<end>``` are DateTime strings. 
 

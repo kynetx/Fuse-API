@@ -1,4 +1,4 @@
-ruleset fuse_fuel {
+ ruleset fuse_fuel {
   meta {
     name "Fuse Fuel App"
     description <<
@@ -23,7 +23,7 @@ Operations for fuel
   global {
 
     // external decls
-    fillups = function(id){
+    old_fillups = function(id){
       sort_opt = {
         "path" : ["timestamp"],
 	"reverse": true,
@@ -74,6 +74,43 @@ Operations for fuel
       )
     }
 
+    fillups = function(id, limit, offset) {
+       // x_id = id.isnull().klog(">>>> id >>>>>");
+       // x_limit = limit.klog(">>>> limit >>>>>");
+       // x_offset = offset.klog(">>>> offset >>>>>"); 
+
+      id.isnull() || id eq "" => allFillups(limit, offset)
+                               | ent:fuel_purchases{id};
+    };
+
+    allFillups = function(limit, offset) {
+      sort_opt = {
+        "path" : ["endTime"],
+	"reverse": true,
+	"compare" : "datetime"
+      };
+
+      max_returned = 25;
+
+      hard_offset = offset.isnull() 
+                 || offset eq ""        => 0               // default
+                  |                        offset;
+
+      hard_limit = limit.isnull() 
+                || limit eq ""          => 10              // default
+                 | limit > max_returned => max_returned
+		 |                         limit; 
+
+      global_opt = {
+        "index" : hard_offset,
+	"limit" : hard_limit
+      }; 
+
+      sorted_keys = this2that:transform(ent:fuel_purchases, sort_opt, global_opt.klog(">>>> transform using global options >>>> "));
+      sorted_keys.map(function(id){ ent:fuel_purchases{id} })
+    };
+
+
 
   }
 
@@ -108,7 +145,7 @@ Operations for fuel
       odometer = event:attr("odometer");
       location = event:attr("location");
       
-      lastfillup = fillups().klog(">>>> returned from fillup >>>> ") || {"odometer": 0, "timestamp": current_time};
+      lastfillup = fillups(null, 1,0).klog(">>>> returned from fillup >>>> ") || {"odometer": 0, "timestamp": current_time};
       distance = odometer - lastfillup{"odometer"};
       mpg = distance/volume;
 
