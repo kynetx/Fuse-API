@@ -158,23 +158,21 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                                                "status_code": raw_result{"status_code"}
                                               } |
       (raw_result{"status_code"} eq "401") &&
-      redo.isnull()                        => fix_token(raw_result, url, config_data, params) 
+      redo.isnull()                        => fix_and_try_again(url, config_data, params)
                                             | raw_result.klog(">>>>>>> carvoyant_get() error >>>>>>")
                   
     };
 
-    fix_token = function(result, url, config_data, param) {
-      account_info = getTokens();
-      try_refresh = not account_info{"refresh_token"}.isnull();
-      new_tokens = try_refresh => carvoyant_oauth:refreshTokenForAccessToken().klog(">>>>> refreshing for carvoyant_get() >>> ")
-                                | {};
-      new_tokens{"access_token"} => carvoyant_get(url, 
+    fix_and_try_again = function (url, config_data, params) {
+      new_tokens = carvoyant_oauth:fixToken();
+      new_tokens{"access_token"} => carvoyant_get(url,   
                                                   config_data.put(["access_token"], new_tokens{"access_token"}),
 						  params,
 						  true
                                                  )
-                                  | result.put(["refresh_token_tried"], try_refresh).klog(">>>> giving up on fix token ")
-    };
+                                  | result.put(["refresh_token_tried"], new_tokens).klog(">>>> giving up on fix token ")
+
+    }
 
     // actions
     carvoyant_post = defaction(url, payload, config_data) { // updated for Mashery

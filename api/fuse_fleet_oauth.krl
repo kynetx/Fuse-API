@@ -18,7 +18,7 @@ Ruleset for fleet OAuth stuff
 
 
 	provides clientAccessToken,  refreshTokenForAccessToken, showTokens, forgetTokens, forgetAllTokens, // don't provide after debug
-             isAuthorized, redirectUri, carvoyantOauthUrl, codeForAccessToken, getTokens
+             isAuthorized, redirectUri, carvoyantOauthUrl, codeForAccessToken, getTokens, fixToken
 
     }
 
@@ -121,9 +121,17 @@ You are being redirected to <a href="#{url}">#{url}</a>
         page
       };
 
+    fixToken = function() {
+      account_info = ent:account_info || {};
+      try_refresh = not account_info{"refresh_token"}.isnull();
+      new_tokens = try_refresh => refreshTokenForAccessToken().klog(">>>>> refreshing for carvoyant_get() >>> ")
+                                | {};
+      new_tokens
+    };
+
 
       refreshTokenForAccessToken = function() {
-        account_info = ent:account_info;
+        account_info = ent:account_info || {};
         header = 
             {"credentials": {
                "username": keys:carvoyant_client("client_id"),
