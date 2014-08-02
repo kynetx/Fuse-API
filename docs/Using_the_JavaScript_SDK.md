@@ -106,9 +106,15 @@ The fuel summary contains the following elements for each vehicle:
 
 ### Query Trips
 
-The call to query trips is
+You can retrieve a list of trips or a specific trip using the following function:
 
-	Fuse.trips(<vehicle_channel>,<start-time>,<end-time>, <callback>)
+	Fuse.trips(<vehicle_channel>, <callback>, <options>)
+
+To retreive a specific trips, you pass the ID for the  as an option named ```id```.  If no ID is given, a paginated list of trips is returned. You can control the stating position of what is returned with ```offset``` and the number of items returned with ```limit```. By default these are 0 and 10 respectively.
+
+You can get trips by date using the following function:
+
+	Fuse.tripsByDate(<vehicle_channel>,<start-time>,<end-time>, <callback>)
 
 The parameters are
 	- vehicle channel
@@ -150,13 +156,11 @@ Note that the accepted categories for IRS purposes are "business," "medical," "m
 
 ### Retrieving a Fillup Record
 
-You can retrieve the last fillup or a specific fillup using the following function:
+You can retrieve fillups or a specific fillup using the following function:
 
 	Fuse.fillups(<vehicle_channel>, <callback>, <options>)
 
-To retreive a specific fillup, you pass the key for the fillup as an option named ```key```.  Fillups are stored with the fill up time in UTC as the key.
-
-If no key is provided, the function returns the most recent fillup.
+To retreive a specific fillup, you pass the ID for the  as an option named ```id```.  If no ID is given, a paginated list of fillups is returned. You can control the stating position of what is returned with ```offset``` and the number of items returned with ```limit```. By default these are 0 and 10 respectively.
 
 You can also search fillups by date:
 
