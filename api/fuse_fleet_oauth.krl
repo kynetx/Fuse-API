@@ -188,9 +188,9 @@ You are being redirected to <a href="#{url}">#{url}</a>
 	account_info = ent:account_info.klog(">>>> seeing account_info >>>>") || {};
         created = account_info{"timestamp"} || time:now(); 
         expires_in =  account_info{"expires_in"} || -1 ; // if we don't find it, it's expired
-        time_expires = time:add(created, {"seconds": expires_in});
+        time_expires = time:add(created, {"seconds": expires_in}).klog(">>> token expires on ");
         expired = time:compare(time_expires,
-                               time:now()) // less than 1 if expired
+                               time:now()).klog(">>> expired?  < 1 >>>>") // less than 1 if expired
                 < 1;      
         return_tokens = expired => refreshTokenForAccessToken() | account_info;
 
