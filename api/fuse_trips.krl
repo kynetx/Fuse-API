@@ -321,7 +321,7 @@ Manage trips. PDS is not well-suited to these operations
       tid = mkTid(carvoyant_tid);
       tname = event:attr("tripName");
       tcategory = event:attr("tripCategory");
-      trip_summary = trip_summaries{tid}.klog(">>>> trip summary for #{tid} >>>> ") || {};
+      trip_summary = ent:trip_summaries{tid}.klog(">>>> trip summary for #{tid} >>>> ") || {};
       start =reducePrecision(trip_summary{"startWaypoint"});
       end = reducePrecision(trip_summary{"endWaypoint"});
 
