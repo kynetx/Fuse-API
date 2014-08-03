@@ -143,7 +143,7 @@ You are being redirected to <a href="#{url}">#{url}</a>
 	                 "refresh_token": account_info{"refresh_token"}
 	                }
             };
-        raw_result = http:post(oauth_url, header);
+        raw_result = http:post(oauth_url, header).klog(">>> refresh request result >>> ");
         invalid_grant = raw_result{"status_code"} eq "400" && 
 	                raw_result{"content"}.decode().pick("$.error") eq "invalid_grant";
         (raw_result{"status_code"} eq "200") => normalizeAccountInfo(raw_result{"content"}.decode()) |
