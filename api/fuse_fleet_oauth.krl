@@ -144,7 +144,10 @@ You are being redirected to <a href="#{url}">#{url}</a>
 	                }
             };
         raw_result = http:post(oauth_url, header);
-        (raw_result{"status_code"} eq "200") => normalizeAccountInfo(raw_result{"content"}.decode())
+        invalid_grant = raw_result{"status_code"} eq "400" && 
+	                raw_result{"content"}.decode().pick("$.error") eq "invalid_grant";
+        (raw_result{"status_code"} eq "200") => normalizeAccountInfo(raw_result{"content"}.decode()) |
+        invalid_grant                        => tellOwner()
                                               | raw_result.decode()
       };
 
@@ -197,7 +200,26 @@ You are being redirected to <a href="#{url}">#{url}</a>
         allowed.any(function(x){x eq caller}) => return_tokens
 	                               	       | getTokensForVehicle(id, return_tokens)
       };	
-	
+
+      tellOwner = function() {
+        owner = CloudOS:subscriptionList(common:namespace(),"FleetOwner").head().pick("$.eventChannel");
+	msg = <<
+Important Message From Fuse!
+
+Something has gone wrong with the link between your Fuse device and you Carvoyant account. 
+
+Please login to Joinfuse.com/app.html and relink your Carvoyant account. 
+
+Sorry for the inconvenience. 
+
+>>;
+	attrs = {
+	  "subj": "Fuse Needs Attention",
+	  "msg": msg
+	};
+        email_response = cloudos:sendEvent(owner, "fuse", "email_for_owner", attrs);
+	email_response
+      }
 
     }
 
