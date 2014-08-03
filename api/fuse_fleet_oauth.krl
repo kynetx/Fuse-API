@@ -218,7 +218,7 @@ Sorry for the inconvenience.
 	  "subj": "Fuse Needs Attention",
 	  "msg": msg
 	};
-        email_response = cloudos:sendEvent(owner, "fuse", "email_for_owner", attrs);
+        email_response = CloudOS:sendEvent(owner, "fuse", "email_for_owner", attrs);
 	{}
       }
 
