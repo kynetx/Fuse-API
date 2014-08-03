@@ -157,7 +157,8 @@ You are being redirected to <a href="#{url}">#{url}</a>
 //        response = cloudos:sendEvent(meta:eci(), "fuse", "config_outdated", account_info);
 	
         // add the timestamp and then store the info in an entity var (ugh; evil)
-        account_info.put(["timestamp"], time:now()).pset(ent:account_info);
+	account_info{"access_token"}.isnull() => ent:account_info |
+                                                 account_info.put(["timestamp"], time:now()).pset(ent:account_info);
       }
 
       forgetTokens = function(){
@@ -218,7 +219,7 @@ Sorry for the inconvenience.
 	  "msg": msg
 	};
         email_response = cloudos:sendEvent(owner, "fuse", "email_for_owner", attrs);
-	email_response
+	{}
       }
 
     }
