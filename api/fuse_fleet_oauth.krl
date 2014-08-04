@@ -18,8 +18,8 @@ Ruleset for fleet OAuth stuff
 
 
 
-	provides clientAccessToken,  refreshTokenForAccessToken, showTokens, forgetTokens, forgetAllTokens, // don't provide after debug
-             isAuthorized, redirectUri, carvoyantOauthUrl, codeForAccessToken, getTokens, fixToken
+	provides clientAccessToken,  refreshTokenForAccessToken, showTokens, forgetTokens, forgetAllTokens, tellOwner, // don't provide after debug
+             isAuthorized, redirectUri, carvoyantOauthUrl, codeForAccessToken, getTokens, fixToken 
 
     }
 
