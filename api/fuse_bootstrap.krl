@@ -72,11 +72,15 @@ ruleset fuse_bootstrap {
             send_directive("New Fuse user bootstrapped") with
 	      profile = profile;
 	    // we do this to force a recalculation of the salienace graph
-	    event:send({"eci": meta:eci()}, "fuse", "bootstrap_rulesets_installed");
+//	    event:send({"eci": meta:eci()}, "fuse", "bootstrap_rulesets_installed");
         }
 
         fired {
             log "Fuse user bootstrap succeeded";
+	    // explicitly send event to RID since salience graph isn't updated yet
+            raise pds event "new_profile_item_available" for a169x676
+                attributes profile;
+            raise fuse event "need_fleet" for b16x16
         } else {
             log "Fuse user bootstrap failed";
         }
