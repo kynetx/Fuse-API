@@ -40,7 +40,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 </p>
 &copy; Kynetx, Inc.
  </td>
-</tr>
+</tr> 
 
 <!-- some grey at the bottom -->
 <tr>
