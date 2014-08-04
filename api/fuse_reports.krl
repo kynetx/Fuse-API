@@ -12,7 +12,7 @@ Functions for creating the Fuse reports
 	use module b16x19 alias common
 
         sharing on
-        provides fleetReport
+        provides fleetReport, emailBody
     }
 
     global {
