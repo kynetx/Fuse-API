@@ -29,7 +29,7 @@ Functions for creating the Fuse reports
 <table cellspacing="0" cellpadding="0" border="0" width="600" align="center" bgcolor="f1f1f1">
 
 
-#{html}
+#{html} 
 
 <tr>
  <td bgcolor="f1f1f1" style="padding-top:30px;text-align:center;margin-top:30px">
@@ -42,12 +42,6 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
  </td>
 </tr> 
 
-<!-- some grey at the bottom -->
-<tr>
- <td bgcolor="f1f1f1" style="padding-top: 20px; text-align:center;">
-  <h2>  </h2>
- </td>
-</tr>
 
 </table><!-- main -->
 </body>
