@@ -215,25 +215,25 @@ You are being redirected to <a href="#{url}">#{url}</a>
 </tr>
 
 <tr>
- <td bgcolor="ffffff" style="padding-top: 20px; text-align:center;">
-  <h2>You Account Needs Attention</h2>
+ <td bgcolor="ffffff" style="padding: 10px; text-align:center;">
+  <h2>You Fuse Account Needs Attention</h2>
  </td>
 </tr>
 
 <tr>
- <td bgcolor="ffffff" style="padding-top: 20px; text-align:left;">
+ <td bgcolor="ffffff" style="padding: 10px; text-align:left;">
 Something has gone wrong with the link between your Fuse device and you Carvoyant account. 
  </td>
 </tr>
 
 <tr>
- <td bgcolor="ffffff" style="padding-top: 20px; text-align:left;">
+ <td bgcolor="ffffff" style="padding: 10px; text-align:left;">
 Please login to <a href="http://joinfuse.com/app.html">Joinfuse.com</a> and relink your Carvoyant account. 
  </td>
 </tr>
 
 <tr>
- <td bgcolor="ffffff" style="padding-top: 20px; text-align:left;">
+ <td bgcolor="ffffff" style="padding: 10px; text-align:left;">
 We're sorry for the inconvenience. 
  </td>
 </tr>
