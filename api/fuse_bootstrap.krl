@@ -71,8 +71,6 @@ ruleset fuse_bootstrap {
         if (installed) then {
             send_directive("New Fuse user bootstrapped") with
 	      profile = profile;
-	    // we do this to force a recalculation of the salienace graph
-//	    event:send({"eci": meta:eci()}, "fuse", "bootstrap_rulesets_installed");
         }
 
         fired {
@@ -85,27 +83,5 @@ ruleset fuse_bootstrap {
             log "Fuse user bootstrap failed";
         }
     }
-
-
-    rule setup_fleet {
-        select when fuse bootstrap_rulesets_installed
-        pre {
-	  account_profile = CloudOS:accountProfile();
-          profile = {
-            "myProfileName": account_profile{"firstname"} + " " + account_profile{"lastname"},
-            "myProfileEmail": account_profile{"email"}
-          };
-        }
-
-        always {
-            raise pds event "new_profile_item_available"
-                attributes profile.put(["_api"], "sky");
-            raise fuse event "need_fleet"
-	        with _api = "sky";
-            log "Fuse user fleet created and profile updated";
-        }
-    }
-
-
 
 }

@@ -171,6 +171,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             with setRID = meta:rid() // this rid
              and reportPreference = "on"
              and _api = "sky";
+      
 
 	  // make it a "pico" in CloudOS eyes
 	  raise cloudos event picoAttrsSet
