@@ -28,8 +28,26 @@ Functions for creating the Fuse reports
 <body bgcolor="f1f1f1" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" style="margin:0;padding:0;">
 <table cellspacing="0" cellpadding="0" border="0" width="600" align="center" bgcolor="f1f1f1">
 
+
 #{html}
 
+<tr>
+ <td bgcolor="f1f1f1" style="text-align:center;margin-top:30px">
+You are receiving this email because you have vehicles in Fuse. <br/>
+You can stop receiving them by <a href="http://joinfuse.com/app.html">editing your report preferences</a> at Joinfuse.com<br/>
+<p>
+<img align="center" src="https://s3.amazonaws.com/Fuse_assets/img/fuse_logo-30.png"/>
+</p>
+&copy; Kynetx, Inc.
+ </td>
+</tr>
+
+<!-- some grey at the bottom -->
+<tr>
+ <td bgcolor="f1f1f1" style="padding-top: 20px; text-align:center;">
+  <h2>  </h2>
+ </td>
+</tr>
 
 </table><!-- main -->
 </body>
@@ -215,16 +233,7 @@ Functions for creating the Fuse reports
  </td>
 </tr>
 
-<tr>
- <td bgcolor="f1f1f1" style="text-align:center;margin-top:30px">
-You are receiving this email because you have vehicles in Fuse. <br/>
-You can stop receiving them by <a href="http://joinfuse.com/app.html">editing your report preferences</a> at Joinfuse.com<br/>
-<p>
-<img align="center" src="https://s3.amazonaws.com/Fuse_assets/img/fuse_logo-30.png"/>
-</p>
-&copy; Kynetx, Inc.
- </td>
-</tr>
+
 
 >>;
       emailBody(html)

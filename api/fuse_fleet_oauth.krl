@@ -207,6 +207,7 @@ You are being redirected to <a href="#{url}">#{url}</a>
       tellOwner = function() {
         owner = CloudOS:subscriptionList(common:namespace(),"FleetOwner").head().pick("$.eventChannel");
 	html = <<
+<!-- header -->
 <tr>
  <td bgcolor="f1f1f1" style="text-align:center;">
   <h2>  </h2>
@@ -237,11 +238,7 @@ We're sorry for the inconvenience.
  </td>
 </tr>
 
-<tr>
- <td bgcolor="f1f1f1" style="padding-top: 20px; text-align:center;">
-  <h2>  </h2>
- </td>
-</tr>
+
 
 >>;
 	attrs = {
