@@ -56,7 +56,7 @@ Ruleset for fleet OAuth stuff
 
       redirectUri = function() {
         "https://" + meta:host() + "/sky/event/" + keys:anonymous_pico("eci")  + "/" + math:random(9999) +  "/oauth/new_oauth_code";
-      }
+      } 
 
 
 
