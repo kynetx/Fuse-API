@@ -4,15 +4,16 @@ ruleset fuse_fleet_oauth {
         description <<
 Ruleset for fleet OAuth stuff
         >>
+	
+	errors to b16x13
+
+	use module b16x10 alias fuse_keys
 
         use module a169x625 alias CloudOS
         use module a169x676 alias pds
 	use module b16x19 alias common
 	use module b16x26 alias reports
 
-	use module b16x10 alias fuse_keys
-
-	errors to b16x13
 	
 	sharing on
 
