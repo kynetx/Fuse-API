@@ -198,7 +198,9 @@ You are being redirected to <a href="#{url}">#{url}</a>
         expired = time:compare(time_expires,
                                time:now()).klog(">>> expired?  < 1 >>>>") // less than 1 if expired
                 < 1;      
-        return_tokens = expired => refreshTokenForAccessToken() | account_info;
+        return_tokens = expired 
+                     && not account_info{"refresh_token"}.isnull() => refreshTokenForAccessToken() 
+                      |                                               account_info;
 
         allowed.any(function(x){x eq caller}) => return_tokens
 	                               	       | getTokensForVehicle(id, return_tokens)
