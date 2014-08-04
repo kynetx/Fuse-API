@@ -167,10 +167,9 @@ Ruleset for initializing a Fuse account and managing vehicle picos
              and _api = "sky";
 
 	  // set defaults for Fuse app
-	  raise pds event new_settings_available
+	  raise pds event new_settings_available for a169x676
             with setRID = meta:rid() // this rid
-             and reportPreference = "on"
-             and _api = "sky";
+             and reportPreference = "on";
       
 
 	  // make it a "pico" in CloudOS eyes
