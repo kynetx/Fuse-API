@@ -303,6 +303,7 @@ A new fleet was created for #{me.encode()};
           subj = event:attr("subj") || "Message from Fuse";
 	  msg = event:attr("msg") || "This email contains no message";
  	  html = event:attr("html") || msg;
+	  recipient =  me{"myProfileEmail"}.klog(">>>> email address >>>>") ;
 
 //	  huh = event:attrs().klog(">>>> event attrs >>>>");
 
@@ -311,7 +312,7 @@ A new fleet was created for #{me.encode()};
          && not msg.isnull()
 	  ) then
         {
-            sendgrid:sendhtml(me{"myProfileName"}, me{"myProfileEmail"}, subj, msg, html); 
+            sendgrid:sendhtml(me{"myProfileName"}, recipient, subj, msg, html); 
         }
     }
 
