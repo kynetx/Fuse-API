@@ -34,6 +34,7 @@ ruleset fuse_error {
             gid = page:env("g_id");
             session = CloudOS:currentSession() || "none";
             ent_keys = rsm:entity_keys().encode();
+	    kre = meta:host();
 
             error_email = <<
                 A Fuse tour error occured with the following details:
@@ -47,6 +48,7 @@ ruleset fuse_error {
                 g_id: #{gid}
                 PCI Session Token: #{session}
                 RSM Entity Keys: #{ent_keys}
+		Host: #{kre}
             >>;
         }
 
