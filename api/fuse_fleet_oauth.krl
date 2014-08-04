@@ -206,7 +206,7 @@ You are being redirected to <a href="#{url}">#{url}</a>
 
       tellOwner = function() {
         owner = CloudOS:subscriptionList(common:namespace(),"FleetOwner").head().pick("$.eventChannel");
-	msg = <<
+	html = <<
 <tr>
  <td bgcolor="ffffff" style="text-align:center;">
   <h2>You Account Needs Attention</h2>
