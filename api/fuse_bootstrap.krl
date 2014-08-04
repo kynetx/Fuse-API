@@ -72,7 +72,7 @@ ruleset fuse_bootstrap {
             send_directive("New Fuse user bootstrapped") with
 	      profile = profile;
 	    // we do this to force a recalculation of the salienace graph
-	    event:send(meta:eci(), "fuse", "bootstrap_rulesets_installed");
+	    event:send({"eci": meta:eci()}, "fuse", "bootstrap_rulesets_installed");
         }
 
         fired {
