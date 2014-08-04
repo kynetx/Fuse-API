@@ -221,7 +221,7 @@ Something has gone wrong with the link between your Fuse device and you Carvoyan
 
 <tr>
  <td bgcolor="ffffff" style="text-align:left;">
-Please login to Joinfuse.com/app.html and relink your Carvoyant account. 
+Please login to <a href="http://joinfuse.com/app.html">Joinfuse.com</a> and relink your Carvoyant account. 
  </td>
 </tr>
 
