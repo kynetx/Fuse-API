@@ -21,6 +21,22 @@ Functions for creating the Fuse reports
         (time:strftime(trip{"endTime"}, "%s") - time:strftime(trip{"startTime"}, "%s"))/60
       };
 
+      emailBody = function(html) {
+        body = <<
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org=/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<body bgcolor="f1f1f1" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" style="margin:0;padding:0;">
+<table cellspacing="0" cellpadding="0" border="0" width="600" align="center" bgcolor="f1f1f1">
+
+#{html}
+
+
+</table><!-- main -->
+</body>
+</html>
+>>;
+	body
+      }
 
       fleetReport = function(period, tz, summaries) {
 
@@ -180,10 +196,6 @@ Functions for creating the Fuse reports
 
 
         html = <<
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org=/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
-<body bgcolor="f1f1f1" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" style="margin:0;padding:0;">
-<table cellspacing="0" cellpadding="0" border="0" width="600" align="center" bgcolor="f1f1f1">
 
 <tr>
  <td width="600" bgcolor="#f1f1f1">
@@ -213,11 +225,9 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 &copy; Kynetx, Inc.
  </td>
 </tr>
-</table><!-- main -->
-</body>
-</html>
+
 >>;
-      html
+      emailBody(html)
     }
   }
 }

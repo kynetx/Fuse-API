@@ -91,7 +91,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                 not saved_tokens{"tokens"}.isnull()                   && 
 		not saved_tokens{["tokens", "access_token"]}.isnull() => saved_tokens{"tokens"}.klog(">>>> using cached tokens >>>> ")
                                                                        | getTokensAux();
-      // cache the tokens			
+      // cache the tokens for this transaction only
       new_save = {"tokens": tokens,
                   "txn_id" : meta:txnId()
                  }.pset(ent:saved_tokens);
@@ -119,13 +119,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     // [FIXME] fix to update tokens using nomalizeTokens, etc. 
     isAuthorized = function() {
       account_info = getTokens() || {};
-      created = account_info{"timestamp"} || time:now(); 
-      expires_in =  account_info{"expires_in"} || -1 ; // if we don't find it, it's expired
-      time_expires = time:add(created, {"seconds": expires_in});
-      expired = time:compare(time_expires,
-                             time:now()) // less than 1 if expired
-                < 1;      
-//      access_token = expired => refreshTokenForAccessToken() | account_info{"access_token"};
+      
 
       config_data = get_config();
       vehicle_info = expired => {} | carvoyant_get(api_url+"/vehicle/", config_data) || {};

@@ -8,6 +8,7 @@ Ruleset for fleet OAuth stuff
         use module a169x625 alias CloudOS
         use module a169x676 alias pds
 	use module b16x19 alias common
+	use module b16x26 alias reports
 
 	use module b16x10 alias fuse_keys
 
@@ -205,18 +206,35 @@ You are being redirected to <a href="#{url}">#{url}</a>
       tellOwner = function() {
         owner = CloudOS:subscriptionList(common:namespace(),"FleetOwner").head().pick("$.eventChannel");
 	msg = <<
-Important Message From Fuse!
+<tr>
+ <td bgcolor="ffffff" style="text-align:center;">
+  <h2>You Account Needs Attention</h2>
+ </td>
+</tr>
 
+<tr>
+ <td bgcolor="ffffff" style="text-align:left;">
 Something has gone wrong with the link between your Fuse device and you Carvoyant account. 
+ </td>
+</tr>
 
+<tr>
+ <td bgcolor="ffffff" style="text-align:left;">
 Please login to Joinfuse.com/app.html and relink your Carvoyant account. 
+ </td>
+</tr>
 
-Sorry for the inconvenience. 
+<tr>
+ <td bgcolor="ffffff" style="text-align:left;">
+We're sorry for the inconvenience. 
+ </td>
+</tr>
+
 
 >>;
 	attrs = {
 	  "subj": "Fuse Needs Attention",
-	  "msg": msg
+	  "html": reports:emailBody(html)
 	};
         email_response = CloudOS:sendEvent(owner, "fuse", "email_for_owner", attrs);
 	{}
