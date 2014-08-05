@@ -102,7 +102,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         };
 
 	fuseOwners = function(password) {
-	  password.klog(">>> got >>>") eq keys:fuse_admin("password").klog(">>>> want >>>> ") =>  (app:fuse_users || {})
+	  password eq keys:fuse_admin("password") =>  (app:fuse_users || {})
 	                                           | {"error":"Password not accepted"}
 	};
 	
