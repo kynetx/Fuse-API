@@ -314,11 +314,15 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
           row
         };
 	
-        vehicle_data = summaries.map(format_vehicle_summary);
+        vehicle_data = summaries.map(format_vehicle_summary).reduce(function(a, b){a.map(function(k,v){ v.append( b{k}) })}).klog(">>>> did it work??? >>>>>");
+
+
 	vehicle_html = vehicle_data{"html"}.map(mk_main_row).join(" ");
 
-        fleet_trip_totals = vehicle_data{"total_trips"}.values().reduce(add_maps).klog(">>>> fleet trip totals >>>>");
-        fleet_fillups_totals = vehicle_data{"total_fillups"}.values().reduce(add_maps).klog(">>>> fleet fillups totals >>>>");
+
+
+        fleet_trip_totals = vehicle_data{"total_trips"}.reduce(add_maps).klog(">>>> fleet trip totals >>>>");
+        fleet_fillups_totals = vehicle_data{"total_fillups"}.reduce(add_maps).klog(">>>> fleet fillups totals >>>>");
 
         html = <<
 <tr>
