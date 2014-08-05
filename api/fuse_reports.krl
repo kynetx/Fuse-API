@@ -190,7 +190,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
           fillups = fillups_raw.typeof() eq "hash" && fillups_raw{"error"} => [].klog(">>> error for fillups query to " + vehicle{"channel"})
                                                                       | fillups_raw;  
    	  
-	  fuel_html = fillups.map(format_fillip_line).join(" ");
+	  fuel_html = fillups.map(format_fillup_line).join(" ");
 
           line = <<
 <table width="100%" style="style="width:550px;border-collapse:collapse;border-spacing:0;">
@@ -238,11 +238,11 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
   <table class="trip" style="width:545px;border-collapse:collapse;border-spacing:0;border-color:#aaa;">
    <tr>
     <tr>
-    <td style="#{trip_table_header_style}">#{time}</td>
-    <td style="#{trip_table_header_style}">#{location}</td>
-    <td style="#{trip_table_header_style}">#{volume}</td>
-    <td style="#{trip_table_header_style}">#{cost}</td>
-    <td style="#{trip_table_header_style}">#{mpg}</td>
+    <td style="#{trip_table_header_style}">Date</td>
+    <td style="#{trip_table_header_style}">Where</td>
+    <td style="#{trip_table_header_style}">Gallons</td>
+    <td style="#{trip_table_header_style}">Cost</td>
+    <td style="#{trip_table_header_style}">MPG</td>
     </tr>
 #{fillups_html} 
 
