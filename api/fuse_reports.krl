@@ -347,9 +347,9 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 </tr>
 
 
-<tr><td style="#{vehicle_table_row_style}"><b>Fleet totals:</b></td></tr>
-<tr><td style="#{vehicle_table_row_style}">Trips: #{fleet_trip_totals.pick("$.num")} trips, #{fleet_trip_totals.pick("$.miles")} miles, #{fleet_trip_totals.pick("$.durattion")} min, $#{fleet_trip_totals.pick("$.cost")}</td></tr>
-<tr><td style="#{vehicle_table_row_style}">Fillups: #{fleet_fillups_totals.pick("$.num")} fillups, #{fleet_fillups_totals.pick("$.volume")} gal, $#{fleet_fillups_totals.pick("$.cost")}</td></tr>
+<tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}"><b>Fleet totals:</b></td></tr>
+<tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Trips: #{fleet_trip_totals.pick("$.num")} trips, #{fleet_trip_totals.pick("$.miles").sprintf("%.1f")} miles, #{fleet_trip_totals.pick("$.duration").sprintf("%.1f")} min, $#{fleet_trip_totals.pick("$.cost").sprintf("%.2f")}</td></tr>
+<tr><td style="#{vehicle_table_row_style}">Fillups: #{fleet_fillups_totals.pick("$.num")} fillups, #{fleet_fillups_totals.pick("$.volume").sprintf("%.1f")} gal, $#{fleet_fillups_totals.pick("$.cost").sprintf("%.2f")}</td></tr>
 
 
 
