@@ -25,7 +25,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         sharing on
         provides apps, S3Bucket, 
                  makeImageURLForPico, uploadPicoImage, updatePicoProfile, 
-                 fleetChannel, fuseOwner
+                 fleetChannel, fuseOwners
     }
 
     global {
