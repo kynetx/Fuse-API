@@ -193,8 +193,8 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
           no_fillups = <<
 <tr>
- <td colspan="5" style="#{trip_table_header_style}">
-  <span style="text-align:center">No fillups in the last week</span>
+ <td colspan="5" style="text-align:center;font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#333;background-color:#fff;">
+  No fillups in the last week
  </td>
 </tr>
 >>;
@@ -241,6 +241,12 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
   </table>
  </td>
 </tr><!-- trips -->
+
+<tr>
+ <td colspan="2" style="#{vehicle_table_row_style}">
+  <span style="font-size:18px;font-weight:bold;margin-top:50px;">Fillups from Last Week</span>
+ </td>
+</tr>
 
 <tr><!-- fillups -->
  <td colspan="2" style="#{vehicle_table_row_style}">
