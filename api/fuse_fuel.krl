@@ -140,9 +140,11 @@ Operations for fuel
 
       id = event:attr("id") || random:uuid();  // UTC; using time as id
 
+      vdata = vehicle:vehicleSummary();
+
       volume = event:attr("volume") || 1;
       unit_price = event:attr("unitPrice");
-      odometer = event:attr("odometer");
+      odometer = event:attr("odometer") || vdata{"mileage"};
       location = event:attr("location");
       
       lastfillup = fillups(null, 1,0).head().klog(">>>> returned from fillup >>>> ") || {"odometer": 0, "timestamp": current_time};

@@ -178,7 +178,7 @@ You record a fillup using the following function:
 The fillup object has the following properties:
 - ```volume``` &mdash; the volume of the fuel purchase.
 - ```unitPrice``` &mdash; the price of a unit of fuel
-- ```odometer``` &mdash; the odometer reading of the fuel purchase
+- ```odometer``` &mdash; the odometer reading of the fuel purchase; if missing, defaults to current odometer reading
 - ```location``` &mdash; a string giving the location of the purchase
 - ```when```&mdash;a DateTime string for the purchase; if missing, defaults to now. 
 
