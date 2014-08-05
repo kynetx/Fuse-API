@@ -127,7 +127,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
           trips = trips_raw.typeof() eq "hash" && trips_raw{"error"} => [].klog(">>> error for trips query to " + vehicle{"channel"})
                                                                       | trips_raw;  
 
-          
+          trips_html = trips.map(format_trip_line).join(" ");	      
 
           trip_aggregates = trips.reduce(aggregate_two_trips, {"cost":0,"mileage":0,"duration":0}).klog(">>>> aggregates>>>>");
           total_duration = trip_aggregates{"duration"}.sprintf("%.0f");       
@@ -157,7 +157,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
           vehicle_table_row_style = "text-align=left;font-family:Arial,sans-serif;font-size:14px;padding-left:10px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;";
 
 
-   	  trips_html = trips.map(format_trip_line).join(" ");
+   	  
 
           line = <<
 <table width="100%" style="style="width:550px;border-collapse:collapse;border-spacing:0;">
