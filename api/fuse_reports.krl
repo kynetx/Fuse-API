@@ -157,7 +157,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
           vehicle_table_row_style = "text-align=left;font-family:Arial,sans-serif;font-size:14px;padding-left:10px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;";
 
 
-   	  trips_html = trips.map(format_trip_line).join();
+   	  trips_html = trips.map(format_trip_line).join(" ");
 
           line = <<
 <table width="100%" style="style="width:550px;border-collapse:collapse;border-spacing:0;">
@@ -176,7 +176,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 </tr>
 <tr>
  <td colspan="2" style="#{vehicle_table_row_style}">
-  <span style="font-size:large;font-weight:bold;margin-top:50px;">Trips from Last Week</span>
+  <span style="font-size:18px;font-weight:bold;margin-top:50px;">Trips from Last Week</span>
  </td>
 </tr>
 
