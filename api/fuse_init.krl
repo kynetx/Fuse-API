@@ -280,7 +280,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
     }
 
 
-    rule send_user_creation_email {
+    rule finalize_new_users {
         select when fuse new_fleet_initialized
         pre {
 
@@ -300,6 +300,7 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 	      me
                .delete(["_generatedby"])
                .delete(["myProfilePhoto"])
+	       .put(["timestamp"], common:convertToUTC(time:now()))
                .put(["eci"], meta:eci());
 	}
     }
