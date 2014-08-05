@@ -25,7 +25,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         sharing on
         provides apps, S3Bucket, 
                  makeImageURLForPico, uploadPicoImage, updatePicoProfile, 
-                 fleetChannel, fuseUsers
+                 fleetChannel, fuseOwner
     }
 
     global {
@@ -101,9 +101,9 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             {"eci": cid}
         };
 
-	fuseUsers = function(password) {
+	fuseOwners = function(password) {
 	  password eq keys:fuse_admin{"password"} => app:fuse_users || {}
-	                                           | "Password not accepted"
+	                                           | {"error":"Password not accepted"}
 	};
 	
     }
