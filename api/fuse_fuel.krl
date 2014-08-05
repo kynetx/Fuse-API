@@ -49,7 +49,7 @@ Operations for fuel
       utc_end = common:convertToUTC(end);
 
       sort_opt = {
-        "path" : ["endTime"],
+        "path" : ["timestamp"],
 	"reverse": true,
 	"compare" : "datetime"
       };

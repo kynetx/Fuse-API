@@ -168,6 +168,19 @@ You can also search fillups by date:
 
 where ```<start>``` and ```<end>``` are DateTime strings. 
 
+A fillup record contains the following fields:
+
+- cost &mdash; the total cost of the fillup
+- distance &mdash; the distance between this fillup and the previous one
+- interval &mdash; the length of time in seconds between this fillup and the previous one
+- id &mdash; record identifier
+- location &mdash; string giving location of fillup
+- mpg &mdash; calculated distance/volume
+- odometer &mdash; odometer reading at time of fillup
+- timestamp &mdash; time of fillup
+- unit_price &mdash; the price for a unit of fuel
+- volume &mdash; the volume of fuel purchased
+
 
 ### Recording a Fillup
 
