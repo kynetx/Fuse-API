@@ -152,9 +152,9 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
                                 ).klog(">>>> longest >>>>");
 
 
-          trip_table_header_style = "font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#fff;background-color:#f38630;";
+          trip_table_header_style = "font-family:Arial, sans-serif;font-size:14px;font-weight:normal;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#fff;background-color:#f38630;";
 
-          vehicle_table_row_style = "text-align=left;font-family:Arial,sans-serif;font-size:14px;padding:10px 5px  0px 10px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;";
+          vehicle_table_row_style = "text-align=left;font-family:Arial,sans-serif;font-size:14px;padding-left:10px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;";
 
           line = <<
 <table width="100%" style="style="width:550px;border-collapse:collapse;border-spacing:0;">
@@ -171,21 +171,18 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
   <div class="vehicle_fuellevel">#{gas}</div>
  </td>
 </tr>
-<tr style="">
- <td colspan="2" style="font-size:large;margin-top:50px;#{vehicle_table_row_style}">
-  Trips from Last Week
+<tr>
+ <td colspan="2" style="#{vehicle_table_row_style}">
+  <span style="font-size:large;font-weight:bold;margin-top:50px;">Trips from Last Week</span>
  </td>
 </tr>
 
-<tr><td colspan="2" style="#{vehicle_table_row_style}"><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></td></tr>
-<tr><td colspan="2" style="#{vehicle_table_row_style}">Trip averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></td></tr>
+<tr><td colspan="2" style=""><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></td></tr>
+<tr><td colspan="2" style="">Trip averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></td></tr>
 
 <tr>
  <td colspan="2" style="#{vehicle_table_row_style}">
   <table class="trip" style="width:545px;border-collapse:collapse;border-spacing:0;border-color:#aaa;">
-   <tr>
-    <th colspan="5" style="text-align:center;#{trip_table_header_style}">#{name} Trips</th>
-   </tr>
    <tr>
     <th style="#{trip_table_header_style}">Date</th>
     <th style="#{trip_table_header_style}">Name</th>
