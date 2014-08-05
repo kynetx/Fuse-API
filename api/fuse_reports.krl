@@ -314,15 +314,17 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
           row
         };
 	
-        vehicle_data = summaries.map(format_vehicle_summary).reduce(function(a, b){a.map(function(k,v){ v.append( b{k}) })}).klog(">>>> did it work??? >>>>>");
+	// turn it inside out: array of maps becomes map of arrays
+        vehicle_data = summaries
+                         .map(format_vehicle_summary)
+                         .reduce(function(a, b){a.map(function(k,v){ v.append( b{k}) })});
 
 
 	vehicle_html = vehicle_data{"html"}.map(mk_main_row).join(" ");
 
+        fleet_trip_totals = vehicle_data{"total_trips"}.reduce(add_maps);
+        fleet_fillups_totals = vehicle_data{"total_fillups"}.reduce(add_maps);
 
-
-        fleet_trip_totals = vehicle_data{"total_trips"}.reduce(add_maps).klog(">>>> fleet trip totals >>>>");
-        fleet_fillups_totals = vehicle_data{"total_fillups"}.reduce(add_maps).klog(">>>> fleet fillups totals >>>>");
 
         html = <<
 <tr>
@@ -346,8 +348,8 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
 
 <tr><td style="#{vehicle_table_row_style}"><b>Fleet totals:</b></td></tr>
-<tr><td style="#{vehicle_table_row_style}">Trips: #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</td></tr>
-<tr><td style="#{vehicle_table_row_style}">Fillups: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></td></tr>
+<tr><td style="#{vehicle_table_row_style}">Trips: #{fleet_trip_totals.pick("$.num")} trips, #{fleet_trip_totals.pick("$.miles")} miles, #{fleet_trip_totals.pick("$.durattion")} min, $#{fleet_trip_totals.pick("$.cost")}</td></tr>
+<tr><td style="#{vehicle_table_row_style}">Fillups: #{fleet_fillups_totals.pick("$.num")} fillups, #{fleet_fillups_totals.pick("$.volume")} gal, $#{fleet_fillups_totals.pick("$.cost")}</td></tr>
 
 
 
