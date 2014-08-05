@@ -186,9 +186,9 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
           vehicle_table_row_style = "text-align=left;font-family:Arial,sans-serif;font-size:14px;padding-left:10px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;";
 
 	  fillups_raw = vehicle{"channel"}.isnull() => []
-                      | common:skycloud(vehicle{"channel"},"b16x20","fillupsByDate", {"start": before, "end": today});
+                      | common:skycloud(vehicle{"channel"},"b16x20","fillupsByDate", {"start": before, "end": today}).klog(">>>>> seeing fillups >>>>>>");
           fillups = fillups_raw.typeof() eq "hash" && fillups_raw{"error"} => [].klog(">>> error for fillups query to " + vehicle{"channel"})
-                                                                      | fillups_raw;  
+                                                                            | fillups_raw;  
    	  
 	  fuel_html = fillups.map(format_fillup_line).join(" ");
 
