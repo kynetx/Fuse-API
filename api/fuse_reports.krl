@@ -325,13 +325,13 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
         fleet_trip_totals = vehicle_data{"total_trips"}.reduce(add_maps);
         fleet_fillups_totals = vehicle_data{"total_fillups"}.reduce(add_maps);
 
-	fleet_total_trip_num = fleet_trip_totals.pick("$.num");
-	fleet_total_trip_miles = fleet_trip_totals.pick("$.miles").sprintf("%.1f");
-	fleet_total_trip_duration = fleet_trip_totals.pick("$.duration").sprintf("%.1f");
-	fleet_total_trip_cost =fleet_trip_totals.pick("$.cost").sprintf("%.2f");
-	fleet_total_fuel_num = fleet_fillups_totals.pick("$.num");
-	fleet_total_fuel_volume = fleet_fillups_totals.pick("$.volume").sprintf("%.1f");
-	fleet_total_fuel_cost = fleet_fillups_totals.pick("$.cost").sprintf("%.2f");
+	fleet_total_trip_num = fleet_trip_totals{"num"};
+	fleet_total_trip_miles = fleet_trip_totals{"miles"}.sprintf("%.1f");
+	fleet_total_trip_duration = fleet_trip_totals{"duration"}.sprintf("%.1f");
+	fleet_total_trip_cost =fleet_trip_totals{"cost"}.sprintf("%.2f");
+	fleet_total_fuel_num = fleet_fillups_totals{"num"};
+	fleet_total_fuel_volume = fleet_fillups_totals{"volume"}.sprintf("%.1f");
+	fleet_total_fuel_cost = fleet_fillups_totals{"cost"}.sprintf("%.2f");
 	
         html = <<
 <tr>
@@ -356,7 +356,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
 <tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}"><b>Fleet totals:</b></td></tr>
 <tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Trips: #{fleet_total_trip_num} trips, #{fleet_total_trip_miles} miles, #{fleet_total_trip_duration} min, $#{fleet_total_trip_cost}</td></tr>
-<tr><td style="#{vehicle_table_row_style}">Fillups: #{fleet_total_fuel_num} fillups, #{fleet_total_fuel_volume} gal, $#{fleet_total_fuel_cost}</td></tr>
+<tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Fillups: #{fleet_total_fuel_num} fillups, #{fleet_total_fuel_volume} gal, $#{fleet_total_fuel_cost}</td></tr>
 
 
 
