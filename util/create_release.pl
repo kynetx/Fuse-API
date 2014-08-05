@@ -6,7 +6,7 @@ use File::Path;
 
 use Data::Dumper;
 
-my $server = "kibdev.kobj.net";
+my $server = "cs.kobj.net";
 
 # map for dev names to prod names
 

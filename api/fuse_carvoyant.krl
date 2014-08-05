@@ -564,8 +564,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     noop();
     always {
       raise fuse event "new_trip" with tripId = tid if status eq "OFF";
-      raise fuse event "need_vehicle_data";
       raise fuse event "need_vehicle_status";
+      raise fuse event "need_vehicle_data";
     }
   }
 
