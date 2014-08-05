@@ -93,7 +93,7 @@ Ruleset for fleet OAuth stuff
 	                 "code": code,
 			 "redirect_uri": redirect_uri
 	                }
-            }.klog(">>>>>> client header <<<<<<<<");
+            }; //.klog(">>>>>> client header <<<<<<<<");
         raw_result = http:post(oauth_url, header);
         results = (raw_result{"status_code"} eq "200") => normalizeAccountInfo(raw_result{"content"}.decode())
                                                         | raw_result.decode();
@@ -144,7 +144,7 @@ You are being redirected to <a href="#{url}">#{url}</a>
              "params" : {"grant_type": "refresh_token",
 	                 "refresh_token": account_info{"refresh_token"}
 	                }
-            }.klog(">>>>>> client header <<<<<<<<");
+            }; //.klog(">>>>>> client header <<<<<<<<");
         raw_result = http:post(oauth_url, header).klog(">>> refresh request result >>> ");
         invalid_grant = raw_result{"status_code"} eq "400" && 
 	                raw_result{"content"}.decode().pick("$.error") eq "invalid_grant";
