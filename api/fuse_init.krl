@@ -23,76 +23,10 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         errors to b16x13
 
         sharing on
-        provides apps, S3Bucket, 
-                 makeImageURLForPico, uploadPicoImage, updatePicoProfile, 
-                 fleetChannel, fuseOwners
+        provides fleetChannel, fuseOwners
     }
 
     global {
-
-
-        /* =========================================================
-           PUBLIC FUNCTIONS & INDENTIFIERS
-           ========================================================= */
-
-       
-
-
-        initPicoProfile = defaction(pico_channel, profile) {
-            pico = {
-                "cid": pico_channel
-            };
-
-            {
-                event:send(pico, "pds", "new_profile_item_available")
-                    with attrs = profile;
-            }
-        };
-
-        makeImageURLForPico = function(pico_channel) {
-            image_seed = math:random(100000);
-
-            "https://s3.amazonaws.com/#{common:S3Bucket()}/#{meta:rid()}/#{pico_channel}.img?q=#{image_seed}"
-        };
-
-        uploadPicoImage = defaction(pico_channel, image_url, image) {
-            pico = {
-                "cid": pico_channel
-            };
-            image_id = "#{meta:rid()}/#{pico_channel}.img";
-            image_value = this2that:base642string(AWSS3:getValue(image));
-            image_type = AWSS3:getType(image);
-            old_details = sky:cloud(pico_channel, "b501810x6", "detail");
-            details = old_details.put(["photo"], image_url);
-
-            {
-                event:send(pico, "pds", "updated_profile_item_available")
-                    with attrs = {
-                        "image": image_url
-                    };
-
-                event:send(pico, "pds", "new_data_available")
-                    with attrs = {
-                        "namespace": "data",
-                        "keyvalue": "detail",
-                        "value": details.encode()
-                    };
-
-                AWSS3:upload(common:S3Bucket(), image_id, image_value)
-                    with object_type = image_type;
-            }
-        };
-
-        updatePicoProfile = defaction(pico_channel, profile) {
-            pico = {
-                "cid": pico_channel
-            };
-
-            {
-                event:send(pico, "pds", "updated_profile_item_available")
-                    with attrs = profile;
-            }
-        };
 
         fleetChannel = function() {
             cid =  CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel") 
@@ -105,7 +39,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	  password eq keys:fuse_admin("password") =>  (app:fuse_users || {})
 	                                           | {"error":"Password not accepted"}
 	};
-	
+
     }
 
     // ---------- manage fleet singleton ----------
@@ -416,28 +350,6 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
     }
 
 
-
-    // not updated for Fuse
-    rule store_tag_coupling {
-        select when gtour should_couple_tag
-        pre {
-            lid = event:attr("lid");
-            tid = event:attr("tid");
-        }
-
-        {
-            coupleTagWithVehicle(tid, lid);
-        }
-
-        fired {
-            set ent:tagCouplings {} if not ent:tagCouplings;
-            log "COUPLING TAG #{tid} WITH VEHICLE #{lid}";
-            set ent:tagCouplings{tid} lid;
-            log "###############[TAG COUPLINGS]####################";
-            log ent:tagCouplings;
-            log "###############[TAG COUPLINGS]####################";
-        }
-    }
 
     // ---------- reminders ----------
     rule process_reminders {

@@ -154,7 +154,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
           trip_table_header_style = "font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#fff;background-color:#f38630;";
 
-          vehicle_table_row_style = "text-align=left;font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;";
+          vehicle_table_row_style = "text-align=left;font-family:Arial,sans-serif;font-size:14px;padding:10px 5px  0px 10px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;";
 
           line = <<
 <table width="100%" style="style="width:550px;border-collapse:collapse;border-spacing:0;">
@@ -163,7 +163,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
   <img border="1" style="border:1px solid #e6e6e6;" src="#{photo}" align="left"/>
  </td>
  <td style="#{vehicle_table_row_style}">
-  <h2>#{name}</h2>
+  <div style="font-size:x-large">#{name}</div>
 
   <div class="vehicle_address">#{address}</div>
   <div class="vehicle_vin">#{vin}</div> 
@@ -172,8 +172,8 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
  </td>
 </tr>
 <tr style="">
- <td colspan="2" style="margin-top:50px;#{vehicle_table_row_style}">
-  <h3>Trips from Last Week</h3>
+ <td colspan="2" style="font-size:large;margin-top:50px;#{vehicle_table_row_style}">
+  Trips from Last Week
  </td>
 </tr>
 
