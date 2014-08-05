@@ -296,7 +296,11 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
         }
 
 	always {
-	  set app:fuse_users{my_email} me.put(["eci"], meta:eci());
+	  set app:fuse_users{my_email} 
+	      me
+               .delete(["_generatedby"])
+               .delete(["myProfilePhoto"])
+               .put(["eci"], meta:eci());
 	}
     }
 
