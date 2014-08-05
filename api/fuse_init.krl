@@ -281,14 +281,19 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         pre {
 
 	  me = pds:get_all_me();
+	  my_email =  me{"myProfileEmail"} || random:uuid();
           msg = <<
-A new fleet was created for #{me.encode()};
+A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 >>;
         }
 
         {
             sendgrid:send("Kynetx Fleet Team", "pjw@kynetx.com", "New Fuse Fleet", msg);
         }
+
+	always {
+	  set app:fuse_users{my_email} me.put(["eci"], meta:eci());
+	}
     }
 
 
