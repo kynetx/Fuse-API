@@ -256,7 +256,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
 <tr><!-- trips -->
  <td colspan="2" style="#{vehicle_table_row_style}">
-  <table class="trip" style="width:590px;border-collapse:collapse;border-spacing:0;border-color:#aaa;">
+  <table class="trip" style="width:585px;border-collapse:collapse;border-spacing:0;border-color:#aaa;">
    <tr>
     <th style="#{trip_table_header_style}">Date</th>
     <th style="#{trip_table_header_style}">Name</th>
@@ -279,7 +279,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
 <tr><!-- fillups -->
  <td colspan="2" style="#{vehicle_table_row_style}">
-  <table class="trip" style="width:590px;border-collapse:collapse;border-spacing:0;border-color:#aaa;">
+  <table class="trip" style="width:585px;border-collapse:collapse;border-spacing:0;border-color:#aaa;">
    <tr>
     <tr>
     <td style="#{trip_table_header_style}">Date</td>
@@ -354,7 +354,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 </tr>
 
 
-<tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}"><b>Fleet totals:</b></td></tr>
+<tr><td bgcolor="ffffff" style="font-size:18px;#{vehicle_table_row_style}"><b>Fleet totals:</b></td></tr>
 <tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Trips: #{fleet_total_trip_num} trips, #{fleet_total_trip_miles} miles, #{fleet_total_trip_duration} min, $#{fleet_total_trip_cost}</td></tr>
 <tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Fillups: #{fleet_total_fuel_num} fillups, #{fleet_total_fuel_volume} gal, $#{fleet_total_fuel_cost}</td></tr>
 
