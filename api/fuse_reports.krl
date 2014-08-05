@@ -109,7 +109,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
           }
         };
 
-        format_fuel_line = function(fillup) {
+        format_fillup_line = function(fillup) {
           cost = fillup{"cost"}.isnull() || fillup{"cost"} < 0.01 => ""
                                                                | "$" + fillup{"cost"}.sprintf("%.2f");
           volume = fillup{"volume"}.isnull() || fillup{"volume"} < 0.01 => ""
@@ -189,8 +189,17 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
                       | common:skycloud(vehicle{"channel"},"b16x20","fillupsByDate", {"start": before, "end": today}).klog(">>>>> seeing fillups >>>>>>");
           fillups = fillups_raw.typeof() eq "hash" && fillups_raw{"error"} => [].klog(">>> error for fillups query to " + vehicle{"channel"})
                                                                             | fillups_raw;  
-   	  
-	  fuel_html = fillups.map(format_fillup_line).join(" ");
+   
+
+          no_fillups = <<
+<tr>
+ <td colspan="5" style="#{trip_table_header_style}">
+  <span style="text-align:center">No fillups in the last week</span>
+ </td>
+</tr>
+>>;
+          fillups_html = fillups.length() > 0 => fillups.map(format_fillup_line).join(" ")
+                                               | no_fillups;
 
           line = <<
 <table width="100%" style="style="width:550px;border-collapse:collapse;border-spacing:0;">
