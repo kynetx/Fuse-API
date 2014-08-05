@@ -50,6 +50,10 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 	body
       };
 
+      add_maps = function(a, b) {
+        a.map(function(k,v) {v + b{k}} )
+      };
+
       fleetReport = function(period, tz, summaries) {
 
         today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz":"UTC"});
@@ -58,6 +62,12 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
         friendly_format = "%b %e";
 	title = "Fuse Fleet Report for #{time:strftime(before, friendly_format)} to #{time:strftime(yesterday, friendly_format)}"; 
+
+
+	total_trips = {};
+	total_fillups = {};
+	
+
 
 	wrap_in_div = function(obj, class) {
   	  div = <<
@@ -73,6 +83,13 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
           span
         };
 
+        odd_line_style = "font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#333;background-color:#fff;";
+        even_line_style = "font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#333;background-color:#fff;background-color:#FCFBE3";
+        trip_table_header_style = "font-family:Arial, sans-serif;font-size:14px;font-weight:normal;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#fff;background-color:#f38630;";
+        vehicle_table_row_style = "text-align=left;font-family:Arial,sans-serif;font-size:14px;padding-left:10px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;";
+
+
+
         format_trip_line = function(trip) {
           cost = trip{"cost"}.isnull() || trip{"cost"} < 0.01 => ""
                                                                | "$" + trip{"cost"}.sprintf("%.2f");
@@ -86,9 +103,6 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
           duration_val = tripDuration(trip);
           duration = duration_val < 0.1 => ""
                                          | wrap_in_span(duration_val.sprintf("%.01f") + " min", "trip_duration");
-
-          odd_line_style = "font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#333;background-color:#fff;";
-          even_line_style = "font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#333;background-color:#fff;background-color:#FCFBE3";
 
           line = <<
 <tr>
@@ -109,6 +123,12 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
           }
         };
 
+        aggregate_two_fillups = function(a,b) {
+          {"cost": a{"cost"} + b{"cost"},
+           "volume" : a{"volume"} + b{"volume"}
+          }
+        };
+
         format_fillup_line = function(fillup) {
           cost = fillup{"cost"}.isnull() || fillup{"cost"} < 0.01 => ""
                                                                | "$" + fillup{"cost"}.sprintf("%.2f");
@@ -121,9 +141,6 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
           mpg = fillup{"mpg"} < 0.1 => ""
                                      | fillup{"mpg"}.sprintf("%.1f");
-
-          odd_line_style = "font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#333;background-color:#fff;";
-          even_line_style = "font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#333;background-color:#fff;background-color:#FCFBE3";
 
           line = <<
 <tr>
@@ -158,11 +175,17 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
           trips_html = trips.map(format_trip_line).join(" ");	      
 
-          trip_aggregates = trips.reduce(aggregate_two_trips, {"cost":0,"mileage":0,"duration":0}).klog(">>>> aggregates>>>>");
+          trip_aggregates = trips.reduce(aggregate_two_trips, {"cost":0,"mileage":0,"duration":0}).klog(">>>> trip aggregates >>>>");
           total_duration = trip_aggregates{"duration"}.sprintf("%.0f");       
           total_miles = trip_aggregates{"mileage"}.sprintf("%.1f");
           total_cost = trip_aggregates{"cost"}.sprintf("%.2f"); 
           num_trips = trips.length(); 
+
+	  total_trips = {"num": num_trips,
+	                 "miles": total_miles,
+			 "cost": total_cost,
+			 "duration": total_duration
+	                };
 
           find_avg = function(x, n) {
             num_trips > 0 => x / n
@@ -181,14 +204,18 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
                                 ).klog(">>>> longest >>>>");
 
 
-          trip_table_header_style = "font-family:Arial, sans-serif;font-size:14px;font-weight:normal;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#fff;background-color:#f38630;";
-
-          vehicle_table_row_style = "text-align=left;font-family:Arial,sans-serif;font-size:14px;padding-left:10px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;";
-
 	  fillups_raw = vehicle{"channel"}.isnull() => []
                       | common:skycloud(vehicle{"channel"},"b16x20","fillupsByDate", {"start": before, "end": today}).klog(">>>>> seeing fillups >>>>>>");
           fillups = fillups_raw.typeof() eq "hash" && fillups_raw{"error"} => [].klog(">>> error for fillups query to " + vehicle{"channel"})
                                                                             | fillups_raw;  
+
+
+          fillups_aggregates = fillups.reduce(aggregate_two_fillups, {"cost":0,"volume":0}).klog(">>>> fillups aggregates >>>>");
+	  total_fillups = {"num": fillups.length(),
+	   	           "cost": fillups_aggregates{"cost"},
+	   	           "volume": fillups_aggregates{"volume"}
+	                  };
+
    
 
           no_fillups = <<
@@ -200,6 +227,8 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 >>;
           fillups_html = fillups.length() > 0 => fillups.map(format_fillup_line).join(" ")
                                                | no_fillups;
+
+
 
           line = <<
 <table width="100%" style="style="width:550px;border-collapse:collapse;border-spacing:0;">
@@ -218,7 +247,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 </tr>
 <tr>
  <td colspan="2" style="#{vehicle_table_row_style}">
-  <span style="font-size:18px;font-weight:bold;margin-top:50px;">Trips from Last Week</span>
+  <span style="font-size:18px;font-weight:bold;margin-top:50px;">Trips</span>
  </td>
 </tr>
 
@@ -227,7 +256,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
 <tr><!-- trips -->
  <td colspan="2" style="#{vehicle_table_row_style}">
-  <table class="trip" style="width:545px;border-collapse:collapse;border-spacing:0;border-color:#aaa;">
+  <table class="trip" style="width:590px;border-collapse:collapse;border-spacing:0;border-color:#aaa;">
    <tr>
     <th style="#{trip_table_header_style}">Date</th>
     <th style="#{trip_table_header_style}">Name</th>
@@ -244,13 +273,13 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
 <tr>
  <td colspan="2" style="#{vehicle_table_row_style}">
-  <span style="font-size:18px;font-weight:bold;margin-top:50px;">Fillups from Last Week</span>
+  <span style="font-size:18px;font-weight:bold;margin-top:50px;">Fillups</span>
  </td>
 </tr>
 
 <tr><!-- fillups -->
  <td colspan="2" style="#{vehicle_table_row_style}">
-  <table class="trip" style="width:545px;border-collapse:collapse;border-spacing:0;border-color:#aaa;">
+  <table class="trip" style="width:590px;border-collapse:collapse;border-spacing:0;border-color:#aaa;">
    <tr>
     <tr>
     <td style="#{trip_table_header_style}">Date</td>
@@ -266,9 +295,12 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 </tr><!-- fillups -->
 
 
-</table><!-- vehicle -->
+</table><!-- vehicle "-->
 >>;
-          line
+          {"html": line,
+	   "total_trips": total_trips,
+	   "total_fillups": total_fillups
+          }
         }; // format_vehicle_summary
 
 	mk_main_row = function(content) {
@@ -282,8 +314,11 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
           row
         };
 	
-        vehicle_html = summaries.map(format_vehicle_summary).map(mk_main_row).join(" ");
+        vehicle_data = summaries.map(format_vehicle_summary);
+	vehicle_html = vehicle_data{"html"}.map(mk_main_row).join(" ");
 
+        fleet_trip_totals = vehicle_data{"total_trips"}.values().reduce(add_maps).klog(">>>> fleet trip totals >>>>");
+        fleet_fillups_totals = vehicle_data{"total_fillups"}.values().reduce(add_maps).klog(">>>> fleet fillups totals >>>>");
 
         html = <<
 <tr>
@@ -297,6 +332,20 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
   <h2>#{title}</h2>
  </td>
 </tr>
+
+
+<tr>
+ <td bgcolor="ffffff" style="text-align:center;">
+
+ </td>
+</tr>
+
+
+<tr><td style="#{vehicle_table_row_style}"><b>Fleet totals:</b></td></tr>
+<tr><td style="#{vehicle_table_row_style}">Trips: #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</td></tr>
+<tr><td style="#{vehicle_table_row_style}">Fillups: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></td></tr>
+
+
 
 #{vehicle_html}
 
