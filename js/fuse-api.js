@@ -155,6 +155,7 @@
 		}
 		var check = function(i){
 		    if(typeof Fuse.fleetChannel() === "undefined" || i-- < 0){
+			console.log("Waiting for fleet channel ", i);
 			setTimeout(check, 1000); // check again in a second
 			return 0;
 		    } else {
