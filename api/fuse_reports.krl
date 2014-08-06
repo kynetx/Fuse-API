@@ -21,11 +21,87 @@ Functions for creating the Fuse reports
         (time:strftime(trip{"endTime"}, "%s") - time:strftime(trip{"startTime"}, "%s"))/60
       };
 
+      find_avg = function(x, n) {
+        num_trips > 0 => x / n
+                       | 0;
+      };
+
+      fleetDetails = function(start, end, summaries) {
+  	fleet_data = summaries
+                         .map(vehicleDetails(start, end));
+//                         .reduce(function(a, b){a.map(function(k,v){ v.append( b{k}) })});
+
+	fleet_data
+      }
+
+      vehicleDetails = function(start, end) {
+        function(vehicle) {
+          trips_raw = vehicle{"channel"}.isnull() => []
+                    | common:skycloud(vehicle{"channel"},"b16x18","tripsByDate", {"start": before, "end": today});
+          trips = trips_raw.typeof() eq "hash" && trips_raw{"error"} => [].klog(">>> error for trips query to " + vehicle{"channel"})
+                                                                      | trips_raw;  
+
+          trip_aggregates = trips.reduce(aggregate_two_trips, {"cost":0,"mileage":0,"duration":0}).klog(">>>> trip aggregates >>>>");
+          total_duration = trip_aggregates{"duration"}.sprintf("%.0f");       
+          total_miles = trip_aggregates{"mileage"}.sprintf("%.1f");
+          total_cost = trip_aggregates{"cost"}.sprintf("%.2f"); 
+          num_trips = trips.length(); 
+
+	  total_trips = {"num": num_trips,
+	                 "miles": total_miles,
+			 "cost": total_cost,
+			 "duration": total_duration
+	                };
+
+          avg_duration = find_avg(trip_aggregates{"duration"}, num_trips).sprintf("%.0f");       
+          avg_miles = find_avg(trip_aggregates{"mileage"}, num_trips).sprintf("%.1f");
+          avg_cost = find_avg(trip_aggregates{"cost"}, num_trips).sprintf("%.2f"); 
+
+          longest = trips.reduce(function(a,b){
+                                  a{"mileage"} < b{"mileage"} => {"trip": b, "mileage": b{"mileage"}}
+                                                               | a
+                                 }, 
+                                 {"trip": {}, "mileage": 0}
+                                ).klog(">>>> longest >>>>");
+
+
+	  fillups_raw = vehicle{"channel"}.isnull() => []
+                      | common:skycloud(vehicle{"channel"},"b16x20","fillupsByDate", {"start": before, "end": today}).klog(">>>>> seeing fillups >>>>>>");
+          fillups = fillups_raw.typeof() eq "hash" && fillups_raw{"error"} => [].klog(">>> error for fillups query to " + vehicle{"channel"})
+                                                                            | fillups_raw;  
+
+
+          fillups_aggregates = fillups.reduce(aggregate_two_fillups, {"cost":0,"volume":0}).klog(">>>> fillups aggregates >>>>");
+	  total_fillups = {"num": fillups.length(),
+	   	           "cost": fillups_aggregates{"cost"},
+	   	           "volume": fillups_aggregates{"volume"}
+	                  };
+
+	  {"profileName" : vehicle{"profileName"},
+	   "profilePhoto" : vehicle{"profilePhoto"},
+	   "address" : vehicle{"address"} || "",
+	   "fuellevel" : vehicle{"fuellevel"},
+	   "mileage" : vehicle{"mileage"},
+	   "vin": vehicle{"vin"},
+	   "tripTotals" : total_trips,
+	   "tripAverages": {"avgDuration" : avg_duration,
+	                    "avgMiles" : avg_miles,
+			    "avgCost" : avg_cost
+	                   },
+	   "trips" : trips, 
+	   "fuelTotals" : total_fillups,
+	   "fillups" : fillups
+	  }   
+
+
+        }
+      }
+
       emailBody = function(html) {
         body = <<
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org=/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
-<body bgcolor="f1f1f1" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" style="margin:0;padding:0;">
+<body bgcolor="f1f1f1" topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" style="margin:0,padding:0;">
 <table cellspacing="0" cellpadding="0" border="0" width="600" align="center" bgcolor="f1f1f1">
 
 
@@ -62,11 +138,6 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
         friendly_format = "%b %e";
 	title = "Fuse Fleet Report for #{time:strftime(before, friendly_format)} to #{time:strftime(yesterday, friendly_format)}"; 
-
-
-	total_trips = {};
-	total_fillups = {};
-	
 
 
 	wrap_in_div = function(obj, class) {
