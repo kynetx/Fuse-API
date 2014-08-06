@@ -23,26 +23,6 @@ Operations for fuel
   global {
 
     // external decls
-    old_fillups = function(id){
-      sort_opt = {
-        "path" : ["timestamp"],
-	"reverse": true,
-	"compare" : "datetime"
-      };
-      global_opt = {
-        "index" : 0,
-	"limit" : 1
-      }; 
-      last_id = not id.isnull()                     => id.klog(">>>> using the parameter id <<<<<") 
-               |  not ent:last_fuel_purchase.isnull()
-               && ent:last_fuel_purchase              => ent:last_fuel_purchase.klog(">>>> using entity var id <<<<")
-		                                       | this2that:transform(ent:fuel_purchases, sort_opt, global_opt)
-                                                           .head()
- 						 	   .klog(">>>>> had to punt on id for last fuel entry <<<<<<");
-      ent:fuel_purchases{last_id.klog(">>>>> retrieving fuel purchase record using this id <<<<<<<<<")}
-      //pds:get_item(common:fuel_namespace(), last_id.klog(">>>>> using this id <<<<<<<<<"));
-    };
-
     fillupsByDate = function(start, end){
 
       utc_start = common:convertToUTC(start);
@@ -193,7 +173,6 @@ Operations for fuel
        // 	  };
       log(">>>>>> Storing fuel purchase >>>>>> " + rec.encode());
       set ent:fuel_purchases{id} rec;
-      set ent:last_fuel_purchase id if new_record;
       raise fuse event fuel_purchase_saved;
     } else {
       log(">>>>>> Could not store fuel record " + rec.encode());
@@ -220,22 +199,6 @@ Operations for fuel
  		   
        // 	  };
       clear ent:fuel_purchases{id};
-      clear ent:last_fuel_purchase;
-    }
-  }
-
-  rule reset_last_fuel_entry {
-    select when pds data_deleted namespace "fuse-fuel"
-    pre {
-      sort_opt = {
-        "path" : ["timestamp"],
-	"reverse": true,
-	"compare" : "datetime"
-      };
-      last_id = pds:get_keys(common:fuel_namespace(), sort_opt, 1).head().klog(">>>> resetting pds id <<<<");
-    }
-    always {
-      set ent:last_fuel_purchase last_id;
     }
   }
 
