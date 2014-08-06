@@ -246,9 +246,13 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
           trips_html = trips.map(format_trip_line).join(" ");	      
 
 	  total_trips = vehicle{"tripTotals"};
+	  num_trips = total_trips{"num"};
+	  total_miles = total_trips{"miles"};
+	  total_duration = (total_trips{"duration"}/60).sprintf("%.0f");
+	  total_cost = total_trips{"cost"};
 
 	  trip_avgs = vehicle{"tripAverages"};
-          avg_duration = ((trip_avgs{"duration"} || 0)/60).sprintf("%.0f");       
+          avg_duration = (trip_avgs{"duration"}/60).sprintf("%.0f");       
           avg_miles = trip_avgs{"miles"};
           avg_cost = trip_avgs{"cost"};
 
