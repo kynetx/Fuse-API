@@ -79,6 +79,8 @@ The following function takes a year and month and returns an array of  trip summ
 
 	Fuse.tripSummaries(<year>, <month>, <callback>, <options>)
 
+```<year>``` and ```<month>``` are strings. Months must be two characters (i.e. ```"08"``` for August, not ```8```).
+
 The trip summary contains the following elements for each vehicle:
 
 - cost &mdash; total cost of all trips
@@ -87,11 +89,14 @@ The trip summary contains the following elements for each vehicle:
 - picoId &mdash; pico identifier
 - trip_count &mdash; total number of trips for month
 
+
 ### Fuel Summaries
 
 The following function takes a year and month and returns an array of  fuel summary objects  for that month:
 
 	Fuse.fuelSummaries(<year>, <month>, <callback>, <options>)
+
+```<year>``` and ```<month>``` are strings. Months must be two characters (i.e. ```"08"``` for August, not ```8```).
 
 The fuel summary contains the following elements for each vehicle:
 
