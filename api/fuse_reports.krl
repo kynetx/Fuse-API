@@ -248,7 +248,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 	  total_trips = vehicle{"tripTotals"};
 
 	  trip_avgs = vehicle{"tripAverages"};
-          avg_duration = (trip_avgs{"duration"} || 0).sprintf("%.0f");       
+          avg_duration = ((trip_avgs{"duration"} || 0)/60).sprintf("%.0f");       
           avg_miles = trip_avgs{"miles"};
           avg_cost = trip_avgs{"cost"};
 
