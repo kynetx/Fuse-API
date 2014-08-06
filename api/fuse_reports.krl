@@ -356,8 +356,12 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 			 .map(mk_main_row)
 			 .join(" ");
 
-        fleet_trip_totals = fleet_details{"tripTotals"}.reduce(add_maps);
-        fleet_fillups_totals = fleet_details{"fuelTotals"}.reduce(add_maps);
+        fleet_trip_totals = fleet_details{"tripTotals"}
+	                       .map(function(v){v{"tripTotals"}})
+	                       .reduce(add_maps);
+        fleet_fillups_totals = fleet_details{"fuelTotals"}
+  	                         .map(function(v){v{"fuelTotals"}})
+	                         .reduce(add_maps);
 
 	fleet_total_trip_num = fleet_trip_totals{"num"};
 	fleet_total_trip_miles = fleet_trip_totals{"miles"}.sprintf("%.1f");
