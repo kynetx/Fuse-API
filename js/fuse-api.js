@@ -396,7 +396,10 @@
 	    var args = {"month": month,
 			"year": year
 		       };
-	    return Fuse.ask_fleet("tripSummaries", args, Fuse.trip_summary[year][month], function(json) {
+	    var ts_cache =  (typeof Fuse.trip_summary !== "undefined") 
+		         && (typeof Fuse.trip_summary[year] !== "undefined") ? Fuse.trip_summary[year][month]
+                                                                             : null;
+	    return Fuse.ask_fleet("tripSummaries", args, ts_cache, function(json) {
 		if(typeof json.error === "undefined") {
 			Fuse.trip_summary[year][month] = json;
 			Fuse.log("Retrieve trip summaries", json);
