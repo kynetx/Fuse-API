@@ -396,9 +396,9 @@
 	    var args = {"month": month,
 			"year": year
 		       };
-	    return Fuse.ask_fleet("tripSummaries", args, Fuse.trip_summaries, function(json) {
+	    return Fuse.ask_fleet("tripSummaries", args, Fuse.trip_summary[year][month], function(json) {
 		if(typeof json.error === "undefined") {
-			Fuse.trip_summaries = json;
+			Fuse.trip_summary[year][month] = json;
 			Fuse.log("Retrieve trip summaries", json);
 			cb(json);
 		} else {
@@ -416,9 +416,9 @@
 	    var args = {"month": month,
 			"year": year
 		       };
-	    return Fuse.ask_fleet("fuelSummaries", args, Fuse.fuel_summaries, function(json) {
+	    return Fuse.ask_fleet("fuelSummaries", args, null, function(json) {
 		if(typeof json.error === "undefined") {
-			Fuse.fuel_summaries = json;
+			Fuse.fuel_summaries = null;
 			Fuse.log("Retrieve fuel summaries", json);
 			cb(json);
 		} else {
