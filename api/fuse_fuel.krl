@@ -252,7 +252,6 @@ Operations for fuel
       start = time:strftime(raw_month, "%Y%m01T000000%z");
       end = time:add(start, {"months": 1});
       month_totals = fillupsByDate(start, end)
-                      .klog(">>>> fillups for #{year}/#{month} >>>> ")
                       .reduce(function(a, b){ 
 	                                      {"cost": a{"cost"} + b{"cost"}, 
 		                               "distance": a{"distance"} + b{"distance"},
