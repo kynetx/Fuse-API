@@ -391,14 +391,15 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    Fuse.trip_summary = Fuse.trip_summary || {};
+	    Fuse.trip_summary[year] = Fuse.trip_summary[year] || {};
 	    if(isEmpty(Fuse.vehicle_summary)) {
 		options.force = true;
 	    }
+	    var ts_cache = (typeof Fuse.trip_summary[year] !== "undefined") ? Fuse.trip_summary[year][month]
+                                                                            : null; 
 	    var args = {"month": month,
 			"year": year
 		       };
-	    var ts_cache = (typeof Fuse.trip_summary[year] !== "undefined") ? Fuse.trip_summary[year][month]
-                                                                            : null; 
 	    return Fuse.ask_fleet("tripSummaries", args, ts_cache, function(json) {
 		if(typeof json.error === "undefined") {
 			Fuse.trip_summary[year][month] = json;
@@ -413,15 +414,19 @@
 	fuelSummaries: function(year, month, cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
+	    Fuse.fuel_summary = Fuse.fuel_summary || {};
+	    Fuse.fuel_summary[year] = Fuse.fuel_summary[year] || {};
 	    if(isEmpty(Fuse.vehicle_summary)) {
 		options.force = true;
 	    }
+	    var ts_cache = (typeof Fuse.fuel_summary[year] !== "undefined") ? Fuse.fuel_summary[year][month]
+                                                                            : null; 
 	    var args = {"month": month,
 			"year": year
 		       };
-	    return Fuse.ask_fleet("fuelSummaries", args, null, function(json) {
+	    return Fuse.ask_fleet("fuelSummaries", args, ts_cache, function(json) {
 		if(typeof json.error === "undefined") {
-			Fuse.fuel_summaries = null;
+			Fuse.fuel_summary[year][month] = json;
 			Fuse.log("Retrieve fuel summaries", json);
 			cb(json);
 		} else {
