@@ -147,15 +147,17 @@ Operations for fuel
       odometer = event:attr("odometer") || vdata{"mileage"};
       location = event:attr("location");
       
-      lastfillup = fillups(null, 1,0).head().klog(">>>> returned from fillup >>>> ") || {"odometer": 0, "timestamp": current_time};
+      offset = new_record => 0 | 1; // new record isn't already on the list
+      lastfillup = fillups(null, 1, offset).head().klog(">>>> returned from fillup >>>> ") || {"odometer": 0, "timestamp": current_time};
       distance = odometer - lastfillup{"odometer"};
       mpg = distance/volume;
 
-      seconds = (time:strftime(current_time, "%s") - time:strftime(lastfillup{"timestamp"}, "%s"));
+      when_bought = common:convertToUTC(event:attr("when") || time:now());
+
+      seconds = (time:strftime(when_bought, "%s") - time:strftime(lastfillup{"timestamp"}, "%s"));
 
       cost = volume * unit_price;
 
-      when_bought = common:convertToUTC(event:attr("when") || time:now());
 
       rec = {
         "id": id,	    
