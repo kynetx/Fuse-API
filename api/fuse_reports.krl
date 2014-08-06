@@ -22,8 +22,8 @@ Functions for creating the Fuse reports
       };
 
       find_avg = function(x, n) {
-        num_trips > 0 => x / n
-                       | 0;
+        n > 0 => x / n
+               | 0;
       };
 
       aggregate_two_trips = function(a,b) {
