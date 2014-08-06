@@ -357,7 +357,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 			 .join(" ");
 
         fleet_trip_totals = fleet_details
-	                       .map(function(v){v{"tripTotals"}})
+	                       .map(function(v){v{"tripTotals"}}).klog(">>>> array of trip totals: >>>> ")
 	                       .reduce(add_maps);
         fleet_fillups_totals = fleet_details
   	                         .map(function(v){v{"fuelTotals"}})
