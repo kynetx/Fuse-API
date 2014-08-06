@@ -19,7 +19,8 @@ Application that manages the fleet
 
         sharing on
         provides vehicleChannels, vehicleSummary, vehicleStatus, tripSummaries, fuelSummaries,
-	seeFleetData // delete after testing
+	seeFleetData, // delete after testing
+	fleetDetails
     }
 
     global {
@@ -33,6 +34,10 @@ Application that manages the fleet
       seeFleetData = function(){
         ent:fleet
       };
+      
+      fleetDetails = function(start, end) {
+        reports:fleetDetails(start, end, vehicleSummary());
+      }
 
       vehicleSummary = function() {
 

@@ -12,7 +12,7 @@ Functions for creating the Fuse reports
 	use module b16x19 alias common
 
         sharing on
-        provides fleetReport, emailBody 
+        provides fleetReport, emailBody, fleetDetails
     }
 
     global {
@@ -37,7 +37,7 @@ Functions for creating the Fuse reports
       vehicleDetails = function(start, end) {
         function(vehicle) {
           trips_raw = vehicle{"channel"}.isnull() => []
-                    | common:skycloud(vehicle{"channel"},"b16x18","tripsByDate", {"start": before, "end": today});
+                    | common:skycloud(vehicle{"channel"},"b16x18","tripsByDate", {"start": start, "end": end});
           trips = trips_raw.typeof() eq "hash" && trips_raw{"error"} => [].klog(">>> error for trips query to " + vehicle{"channel"})
                                                                       | trips_raw;  
 
@@ -66,7 +66,7 @@ Functions for creating the Fuse reports
 
 
 	  fillups_raw = vehicle{"channel"}.isnull() => []
-                      | common:skycloud(vehicle{"channel"},"b16x20","fillupsByDate", {"start": before, "end": today}).klog(">>>>> seeing fillups >>>>>>");
+                      | common:skycloud(vehicle{"channel"},"b16x20","fillupsByDate", {"start": start, "end": end}).klog(">>>>> seeing fillups >>>>>>");
           fillups = fillups_raw.typeof() eq "hash" && fillups_raw{"error"} => [].klog(">>> error for fillups query to " + vehicle{"channel"})
                                                                             | fillups_raw;  
 
