@@ -26,6 +26,23 @@ Functions for creating the Fuse reports
                        | 0;
       };
 
+      aggregate_two_trips = function(a,b) {
+        {"cost": a{"cost"} + b{"cost"},
+         "mileage" : a{"mileage"} + b{"mileage"},
+         "duration": a{"duration"} + tripDuration(b)
+        }
+      };
+
+      aggregate_two_fillups = function(a,b) {
+        {"cost": a{"cost"} + b{"cost"},
+         "volume" : a{"volume"} + b{"volume"}
+        }
+      };
+
+      add_maps = function(a, b) {
+        a.map(function(k,v) {v + b{k}} )
+      };
+
       fleetDetails = function(start, end, summaries) {
   	fleet_data = summaries
                          .map(vehicleDetails(start, end));
@@ -126,10 +143,6 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 	body
       };
 
-      add_maps = function(a, b) {
-        a.map(function(k,v) {v + b{k}} )
-      };
-
       fleetReport = function(period, tz, summaries) {
 
         today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz":"UTC"});
@@ -185,19 +198,6 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 </tr>
 >>;
           line
-        };
-
-        aggregate_two_trips = function(a,b) {
-          {"cost": a{"cost"} + b{"cost"},
-           "mileage" : a{"mileage"} + b{"mileage"},
-           "duration": a{"duration"} + tripDuration(b)
-          }
-        };
-
-        aggregate_two_fillups = function(a,b) {
-          {"cost": a{"cost"} + b{"cost"},
-           "volume" : a{"volume"} + b{"volume"}
-          }
         };
 
         format_fillup_line = function(fillup) {
