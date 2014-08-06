@@ -154,9 +154,9 @@
 		    throw "Account initialization failed";
 		}
 		var check = function(i){
-		    var fc = Fuse.fleetChannel();
-		    if(typeof fc.eci === "undefined" || i-- > 0){
-			console.log("Waiting for fleet channel ", i);
+		    var fc = Fuse.carvoyantOauthUrl();
+		    if(typeof fc.url === "undefined" && i-- > 0){
+			console.log("Waiting for url ", i); // means it's done...
 			setTimeout(check, 1000); // check again in a second
 			return 0;
 		    } else {
