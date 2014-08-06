@@ -101,9 +101,9 @@ Functions for creating the Fuse reports
 	   "mileage" : vehicle{"mileage"},
 	   "vin": vehicle{"vin"},
 	   "tripTotals" : total_trips,
-	   "tripAverages": {"avgDuration" : avg_duration,
-	                    "avgMiles" : avg_miles,
-			    "avgCost" : avg_cost
+	   "tripAverages": {"duration" : avg_duration,
+	                    "miles" : avg_miles,
+			    "cost" : avg_cost
 	                   },
 	   "trips" : trips, 
 	   "fuelTotals" : total_fillups,
@@ -149,6 +149,8 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
         yesterday = time:add(today, {"days": -1});
         before = time:add(today, period{"format"});
 
+	fleet_details = fleetDetails(before, today, summaries);
+
         friendly_format = "%b %e";
 	title = "Fuse Fleet Report for #{time:strftime(before, friendly_format)} to #{time:strftime(yesterday, friendly_format)}"; 
 
@@ -184,7 +186,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
           time = trip{"endTime"}.isnull() => ""
                                            | time:strftime(trip{"endTime"}, "%b %e %I:%M %p", {"tz": tz});
 
-          duration_val = tripDuration(trip);
+          duration_val = tripDuration(trip)/60; // minutes
           duration = duration_val < 0.1 => ""
                                          | wrap_in_span(duration_val.sprintf("%.01f") + " min", "trip_duration");
 
@@ -239,55 +241,21 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
                                          | "VIN: " + vehicle{"vin"};
 
 
-          trips_raw = vehicle{"channel"}.isnull() => []
-                    | common:skycloud(vehicle{"channel"},"b16x18","tripsByDate", {"start": before, "end": today});
-          trips = trips_raw.typeof() eq "hash" && trips_raw{"error"} => [].klog(">>> error for trips query to " + vehicle{"channel"})
-                                                                      | trips_raw;  
+          trips = vehicle{"trips"};
 
           trips_html = trips.map(format_trip_line).join(" ");	      
 
-          trip_aggregates = trips.reduce(aggregate_two_trips, {"cost":0,"mileage":0,"duration":0}).klog(">>>> trip aggregates >>>>");
-          total_duration = trip_aggregates{"duration"}.sprintf("%.0f");       
-          total_miles = trip_aggregates{"mileage"}.sprintf("%.1f");
-          total_cost = trip_aggregates{"cost"}.sprintf("%.2f"); 
-          num_trips = trips.length(); 
+	  total_trips = vehicle{"tripTotals"};
 
-	  total_trips = {"num": num_trips,
-	                 "miles": total_miles,
-			 "cost": total_cost,
-			 "duration": total_duration
-	                };
+	  trip_avgs = vehicle{"tripAvg"};
+          avg_duration = (trip_avg{"duration"}).sprintf("%.0f");       
+          avg_miles = trip_avgs{"miles"};
+          avg_cost = trip_avgs{"cost"};
 
-          find_avg = function(x, n) {
-            num_trips > 0 => x / n
-                           | 0;
-          };
-
-          avg_duration = find_avg(trip_aggregates{"duration"}, num_trips).sprintf("%.0f");       
-          avg_miles = find_avg(trip_aggregates{"mileage"}, num_trips).sprintf("%.1f");
-          avg_cost = find_avg(trip_aggregates{"cost"}, num_trips).sprintf("%.2f"); 
-
-          longest = trips.reduce(function(a,b){
-                                  a{"mileage"} < b{"mileage"} => {"trip": b, "mileage": b{"mileage"}}
-                                                               | a
-                                 }, 
-                                 {"trip": {}, "mileage": 0}
-                                ).klog(">>>> longest >>>>");
+          fillups = vehicle{"fillups"};
 
 
-	  fillups_raw = vehicle{"channel"}.isnull() => []
-                      | common:skycloud(vehicle{"channel"},"b16x20","fillupsByDate", {"start": before, "end": today}).klog(">>>>> seeing fillups >>>>>>");
-          fillups = fillups_raw.typeof() eq "hash" && fillups_raw{"error"} => [].klog(">>> error for fillups query to " + vehicle{"channel"})
-                                                                            | fillups_raw;  
-
-
-          fillups_aggregates = fillups.reduce(aggregate_two_fillups, {"cost":0,"volume":0}).klog(">>>> fillups aggregates >>>>");
-	  total_fillups = {"num": fillups.length(),
-	   	           "cost": fillups_aggregates{"cost"},
-	   	           "volume": fillups_aggregates{"volume"}
-	                  };
-
-   
+	  total_fillups = vehicle{"fuelTotals"};
 
           no_fillups = <<
 <tr>
@@ -368,10 +336,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
 </table><!-- vehicle "-->
 >>;
-          {"html": line,
-	   "total_trips": total_trips,
-	   "total_fillups": total_fillups
-          }
+          html
         }; // format_vehicle_summary
 
 	mk_main_row = function(content) {
@@ -386,15 +351,13 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
         };
 	
 	// turn it inside out: array of maps becomes map of arrays
-        vehicle_data = summaries
+        vehicle_html = fleet_details
                          .map(format_vehicle_summary)
-                         .reduce(function(a, b){a.map(function(k,v){ v.append( b{k}) })});
+			 .map(mk_main_row)
+			 .join(" ");
 
-
-	vehicle_html = vehicle_data{"html"}.map(mk_main_row).join(" ");
-
-        fleet_trip_totals = vehicle_data{"total_trips"}.reduce(add_maps);
-        fleet_fillups_totals = vehicle_data{"total_fillups"}.reduce(add_maps);
+        fleet_trip_totals = fleet_detail{"tripTotals"}.reduce(add_maps);
+        fleet_fillups_totals = fleet_detail{"fuelTotals"}.reduce(add_maps);
 
 	fleet_total_trip_num = fleet_trip_totals{"num"};
 	fleet_total_trip_miles = fleet_trip_totals{"miles"}.sprintf("%.1f");
