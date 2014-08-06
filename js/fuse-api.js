@@ -398,7 +398,7 @@
 			"year": year
 		       };
 	    var ts_cache = (typeof Fuse.trip_summary[year] !== "undefined") ? Fuse.trip_summary[year][month]
-                                                                            : null;
+                                                                            : null; 
 	    return Fuse.ask_fleet("tripSummaries", args, ts_cache, function(json) {
 		if(typeof json.error === "undefined") {
 			Fuse.trip_summary[year][month] = json;
