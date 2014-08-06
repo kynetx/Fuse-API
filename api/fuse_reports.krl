@@ -18,7 +18,7 @@ Functions for creating the Fuse reports
     global {
 
       tripDuration = function(trip) {
-        (time:strftime(trip{"endTime"}, "%s") - time:strftime(trip{"startTime"}, "%s"))/60
+        (time:strftime(trip{"endTime"}, "%s") - time:strftime(trip{"startTime"}, "%s"))
       };
 
       find_avg = function(x, n) {
