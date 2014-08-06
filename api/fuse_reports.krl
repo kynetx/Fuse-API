@@ -46,8 +46,6 @@ Functions for creating the Fuse reports
       fleetDetails = function(start, end, summaries) {
   	fleet_data = summaries
                          .map(vehicleDetails(start, end));
-//                         .reduce(function(a, b){a.map(function(k,v){ v.append( b{k}) })});
-
 	fleet_data
       }
 

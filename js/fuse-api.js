@@ -153,6 +153,15 @@
 		if(response.length < 1) {
 		    throw "Account initialization failed";
 		}
+		var check = function(i){
+		    if(typeof Fuse.fleetChannel() === "undefined" || i-- < 0){
+			setTimeout(check, 1000); // check again in a second
+			return 0;
+		    } else {
+			return 0;
+		    }
+		};
+		check(10);
 		cb(response);
             });
         },
