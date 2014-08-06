@@ -269,7 +269,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
 
 
-          line = <<
+          html = <<
 <table width="100%" style="style="width:550px;border-collapse:collapse;border-spacing:0;">
 <tr>
  <td style="width:120px;#{vehicle_table_row_style}">
@@ -357,7 +357,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 			 .join(" ");
 
         fleet_trip_totals = fleet_details
-	                       .map(function(v){v{"tripTotals"}}).klog(">>>> array of trip totals: >>>> ")
+	                       .map(function(v){v{"tripTotals"}})
 	                       .reduce(add_maps);
         fleet_fillups_totals = fleet_details
   	                         .map(function(v){v{"fuelTotals"}})
@@ -365,8 +365,9 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
 	fleet_total_trip_num = fleet_trip_totals{"num"};
 	fleet_total_trip_miles = fleet_trip_totals{"miles"}.sprintf("%.1f");
-	fleet_total_trip_duration = fleet_trip_totals{"duration"}.sprintf("%.1f");
+	fleet_total_trip_duration = (fleet_trip_totals{"duration"}/60).sprintf("%.1f");
 	fleet_total_trip_cost =fleet_trip_totals{"cost"}.sprintf("%.2f");
+
 	fleet_total_fuel_num = fleet_fillups_totals{"num"};
 	fleet_total_fuel_volume = fleet_fillups_totals{"volume"}.sprintf("%.1f");
 	fleet_total_fuel_cost = fleet_fillups_totals{"cost"}.sprintf("%.2f");
