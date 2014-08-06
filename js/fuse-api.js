@@ -154,7 +154,8 @@
 		    throw "Account initialization failed";
 		}
 		var check = function(i){
-		    if(typeof Fuse.fleetChannel() === "undefined" || i-- < 0){
+		    var fc = Fuse.fleetChannel();
+		    if(typeof fc.eci === "undefined" || i-- < 0){
 			console.log("Waiting for fleet channel ", i);
 			setTimeout(check, 1000); // check again in a second
 			return 0;
