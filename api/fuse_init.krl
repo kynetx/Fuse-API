@@ -42,7 +42,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
 	fuse_owner = function(account_id) {
 	  account_id.isnull() => (app:fuse_users || {})
-	                       | app:fuse_users.pick("$.#{account_id}").klog(">>> looking for >>>>") || {}
+	                       | app:fuse_users{account_id.replace(re#\s#, "+").klog(">> account ID>>> ")} || {}
 	}
 
     }
