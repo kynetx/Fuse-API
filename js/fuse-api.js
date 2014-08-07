@@ -153,16 +153,13 @@
 		if(response.length < 1) {
 		    throw "Account initialization failed";
 		}
-		var failed = 10;
-		function check(){
+		function check(failed){
 		    var fc = Fuse.carvoyantOauthUrl() || {};
 		    console.log("Got a URL: ", fc);
-		    if(typeof fc.url === "undefined" && failed-- > 0) {
+		    if(typeof fc.url === "undefined" && failed > 0) {
 			console.log("Waiting for url ", failed); // means it's done...
-			setTimeout(check, 1000); // check again in a second
-		    } else {
-			return 0;
-		    }
+			setTimeout(check, 1000, failed--); // check again in a second
+		    } 
 		};
 		check();
 		cb(response);
