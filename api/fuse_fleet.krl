@@ -80,6 +80,7 @@ Application that manages the fleet
       tripSummaries = function(year, month) {
 	summaries = ent:fleet{["trip_summaries", "Y" + year, "M" + month]}  
 		     .map(function(k,v){v.put(["picoId"], k)
+		                         .put(["label"], ent:fleet{["vehicle_info", k, "label"]})
                                        });
         summaries.values();
         
