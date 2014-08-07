@@ -154,14 +154,14 @@
 		    throw "Account initialization failed";
 		}
 		function check(failed){
-		    var fc = Fuse.carvoyantOauthUrl() || {};
+		    var fc = Fuse.carvoyantOauthUrl() || "";
 		    console.log("Got a URL: ", fc);
-		    if(typeof fc.url === "undefined" && failed > 0) {
+		    if(fc === "" && failed > 0) {
 			console.log("Waiting for url ", failed); // means it's done...
 			setTimeout(check, 1000, failed--); // check again in a second
 		    } 
 		};
-		check(10);
+		check(10); // try 10 times
 		cb(response);
             });
         },
