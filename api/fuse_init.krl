@@ -422,9 +422,9 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
     rule delete_fuse_owner_record {
       select when fuse delete_owner_record
       pre {
-        password = event:attr("password").klog(">>> saw >>> ");
+        password = event:attr("password");
 	account_id = event:attr("account_id");
-	passwords_match = password eq keys:fuse_admin("password").klog(">>> expected >>>");
+	passwords_match = password eq keys:fuse_admin("password");
 	found_account = not app:fuse_users{account_id}.isnull();
       }
       if (passwords_match && found_account) then 
