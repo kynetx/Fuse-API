@@ -149,12 +149,12 @@
             {
 		// note that because the channel is create asynchronously, processing callback does
 		// NOT mean the channel exists. 
-                Fuse.log("account initialized");
+                console.log("account initialized");
 		if(response.length < 1) {
 		    throw "Account initialization failed";
 		}
 		var failed = 10;
-		var check = function(){
+		function check(){
 		    var fc = Fuse.carvoyantOauthUrl() || {};
 		    console.log("Got a URL: ", fc);
 		    if(typeof fc.url === "undefined" && failed-- > 0) {
