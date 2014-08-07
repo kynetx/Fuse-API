@@ -166,6 +166,7 @@
 		function imgTimeout(imgDelay){
 		    var fc = Fuse.carvoyantOauthUrl() || "";
 		    if (fc !== ""){
+			console.log("Got a good response ", fc);
 			cb(response);			
 		    }
 		    else{
@@ -173,7 +174,7 @@
 			// increasing the wait time with each call, up to 10
 			imgDelay += 1000;
 			console.log("Trying with delay ", imgDelay);
-			if (imgDelay <= 10000){ // waits up to 10 seconds
+			if (imgDelay <= 20000){ // waits up to 20 seconds
 			    setTimeout(imgTimeout, imgDelay, imgDelay);
 			}
 			else{
