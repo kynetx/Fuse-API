@@ -424,7 +424,7 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
       pre {
         password = event:attr("password");
 	account_id = event:attr("account_id");
-	password_match = password eq keys:fuse_admin("password");
+	passwords_match = password eq keys:fuse_admin("password");
 	found_account = not app:fuse_users{account_id}.isnull();
       }
       if (passwords_match && found_account) then 
