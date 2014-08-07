@@ -153,16 +153,36 @@
 		if(response.length < 1) {
 		    throw "Account initialization failed";
 		}
-		function check(failed){ 
+		// function check(failed){ 
+		//     var fc = Fuse.carvoyantOauthUrl() || "";
+		//     console.log("Got a URL: ", fc);
+		//     if(fc === "" && failed > 0) {
+		// 	console.log("Waiting for url ", failed); 
+		// 	setTimeout(check, 1000, failed--); // check again in a second
+		//     } 
+		// };
+		// setTimeout(check, 5000, 10); // try 10 times
+
+		function imgTimeout(imgDelay){
 		    var fc = Fuse.carvoyantOauthUrl() || "";
-		    console.log("Got a URL: ", fc);
-		    if(fc === "" && failed > 0) {
-			console.log("Waiting for url ", failed); 
-			setTimeout(check, 1000, failed--); // check again in a second
-		    } 
-		};
-		setTimeout(check, 1000, 10); // try 10 times
-		cb(response);
+		    if (fc !== ""){
+			cb(response);			
+		    }
+		    else{
+			// calls recursively waiting for the img to load
+			// increasing the wait time with each call, up to 10
+			imgDelay += 1000;
+
+			if (imgDelay <= 10000){ // waits up to 10 seconds
+			    setTimeout(imgTimeout, imgDelay, imgDelay);
+			}
+			else{
+			    console.log("Never received Carvoyant URL")
+			}
+		    }
+		}
+		imgTimeout(0);
+
             });
         },
 
