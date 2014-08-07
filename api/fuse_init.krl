@@ -35,10 +35,16 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             {"eci": cid}
         };
 
-	fuseOwners = function(password) {
-	  password eq keys:fuse_admin("password") =>  (app:fuse_users || {})
+	fuseOwners = function(password, account_id) {
+	  password eq keys:fuse_admin("password") =>  fuse_owner(account_id)
 	                                           | {"error":"Password not accepted"}
 	};
+
+	fuse_owner = function(account_id) {
+	  app_users = (app:fuse_users || {});
+	  account_id.isnull() => app_users
+	                       | app_users{account_id}
+	}
 
     }
 
