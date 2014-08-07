@@ -418,6 +418,29 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 
     }
 
+    // doesn't delete account or cloud, just the record we have here
+    rule delete_fuse_owner_record {
+      select when fuse delete_owner_record
+      pre {
+        password = event:attr("password");
+	account_id = event:attr("account_id");
+	password_match = password eq keys:fuse_admin("password");
+	found_account = not app:fuse_users{account_id}.isnull();
+      }
+      if (passwords_match && found_account) then 
+      {
+       send_directive("deleting record for #{account_id}");
+      }     
+      fired {
+        log "deleting record for #{account_id}";
+	clear app:fuse_users{account_id};
+      } else {
+	log ">>>>> error: Password not accepted" if not passwords_match;
+	log ">>>>> error: No account with ID #{account_id}" if not found_account;
+      }
+      
+    }
+
     rule catch_complete {
       select when system send_complete
         foreach event:attr('send_results').pick("$.result") setting (result)
