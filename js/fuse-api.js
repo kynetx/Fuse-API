@@ -160,7 +160,6 @@
 		    if(typeof fc.url === "undefined" && failed-- > 0) {
 			console.log("Waiting for url ", failed); // means it's done...
 			setTimeout(check, 1000); // check again in a second
-			return 0;
 		    } else {
 			return 0;
 		    }
