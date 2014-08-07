@@ -153,7 +153,7 @@
 		if(response.length < 1) {
 		    throw "Account initialization failed";
 		}
-		function check(failed){
+		function check(failed){ 
 		    var fc = Fuse.carvoyantOauthUrl() || "";
 		    console.log("Got a URL: ", fc);
 		    if(fc === "" && failed > 0) {
