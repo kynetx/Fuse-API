@@ -157,11 +157,11 @@
 		    var fc = Fuse.carvoyantOauthUrl() || "";
 		    console.log("Got a URL: ", fc);
 		    if(fc === "" && failed > 0) {
-			console.log("Waiting for url ", failed); // means it's done...
+			console.log("Waiting for url ", failed); 
 			setTimeout(check, 1000, failed--); // check again in a second
 		    } 
 		};
-		check(10); // try 10 times
+		setTimeout(check, 1000, 10); // try 10 times
 		cb(response);
             });
         },
