@@ -161,7 +161,7 @@
 			setTimeout(check, 1000, failed--); // check again in a second
 		    } 
 		};
-		check();
+		check(10);
 		cb(response);
             });
         },
