@@ -41,9 +41,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	};
 
 	fuse_owner = function(account_id) {
-	  app_users = (app:fuse_users || {});
 	  account_id.isnull() => (app:fuse_users || {})
-	                       | app:fuse_users{account_id} || {}
+	                       | app:fuse_users.pick("$.#{account_id}").klog(">>> looking for >>>>") || {}
 	}
 
     }
