@@ -231,7 +231,7 @@ Manage trips. PDS is not well-suited to these operations
       fillup = fuel:fillups(null, 1, 0).head() || {"mpg": 1, "unit_price": 0};
       mileage = trip{"mileage"} < 0.1 =>  0.0
                                        |  trip{"mileage"}.sprintf("%.2f");
-      cost = math:round((mileage.klog(">>>> mileage <<<<<") / fillup{"mpg"} || 1) * fillup{"unit_price"} * 1000) / 1000;
+      cost = math:round((mileage.klog(">>>> mileage <<<<<") / (fillup{"mpg"} || 1)) * fillup{"unit_price"} * 1000) / 1000;
 
       interval = (time:strftime(trip{"endTime"}, "%s") - time:strftime(trip{"startTime"}, "%s"));
       

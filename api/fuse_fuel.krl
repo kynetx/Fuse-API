@@ -86,7 +86,7 @@ Operations for fuel
 	"limit" : hard_limit
       }; 
 
-      sorted_keys = this2that:transform(ent:fuel_purchases, sort_opt, global_opt.klog(">>>> transform using global options >>>> "));
+      sorted_keys = this2that:transform(ent:fuel_purchases, sort_opt, global_opt.klog(">>>> transform using global options >>>> ")) || [];
       sorted_keys.map(function(id){ ent:fuel_purchases{id} })
     };
 
