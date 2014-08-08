@@ -90,6 +90,7 @@ Application that manages the fleet
 	summaries = ent:fleet{["fuel_summaries", "Y" + year, "M" + month]}  
 		     .map(function(k,v){v.put(["picoId"], k)
 		                         .put(["label"], ent:fleet{["vehicle_info", k, "label"]})
+		                         .put(["fuellevel"], ent:fleet{["vehicle_info", k, "fuellevel"]})
                                        });
         summaries.values(); 
         
