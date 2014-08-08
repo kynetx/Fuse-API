@@ -31,25 +31,26 @@ ruleset fuse_error {
             rule_name = event:attr("rule_name");
             msg = event:attr("msg");
             eci = meta:eci();
-            gid = page:env("g_id");
             session = CloudOS:currentSession() || "none";
             ent_keys = rsm:entity_keys().encode();
 	    kre = meta:host();
 
             error_email = <<
-                A Fuse tour error occured with the following details:
-                genus: #{genus}
-                species: #{species}
-                level: #{level}
-                rid: #{rid}
-                rule: #{rule_name}
-                message: #{msg}
-                eci: #{eci}
-                g_id: #{gid}
-                PCI Session Token: #{session}
-                RSM Entity Keys: #{ent_keys}
-		Host: #{kre}
-            >>;
+A Fuse error occured with the following details:
+  RID: #{rid}
+  Rule: #{rule_name}
+  Host: #{kre}
+
+  level: #{level}
+  genus: #{genus}
+  species: #{species}
+  message: #{msg}
+
+  eci: #{eci}
+  txn_id: #{meta:txnId()}
+  PCI Session Token: #{session}
+  RSM Entity Keys: #{ent_keys}
+>>;
         }
 
         {
