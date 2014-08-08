@@ -91,7 +91,7 @@ Application that manages the fleet
 		     .map(function(k,v){v.put(["picoId"], k)
 		                         .put(["label"], ent:fleet{["vehicle_info", k, "label"]})
                                        });
-        summaries.values();
+        summaries.values(); 
         
       };
 
