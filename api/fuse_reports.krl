@@ -228,7 +228,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
                                      | fillup{"mpg"}.sprintf("%.1f");
 
           line = <<
-<tr> 
+<tr>
 <td style="#{odd_line_style}">#{time}</td>
 <td style="#{odd_line_style}">#{location}</td>
 <td style="#{odd_line_style}">#{volume}</td>
@@ -390,7 +390,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
 	fleet_total_trip_num = fleet_trip_totals{"num"};
 	fleet_total_trip_miles = fleet_trip_totals{"miles"}.sprintf("%.1f");
-	fleet_total_trip_duration = (min_or_hours(fleet_trip_totals{"duration"}));
+	fleet_total_trip_duration = (min_or_hours(fleet_trip_totals{"duration"}/60));
 	fleet_total_trip_cost =fleet_trip_totals{"cost"}.sprintf("%.2f");
 
 	fleet_total_fuel_num = fleet_fillups_totals{"num"};
