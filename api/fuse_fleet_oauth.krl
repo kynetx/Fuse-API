@@ -171,8 +171,10 @@ You are being redirected to <a href="#{url}">#{url}</a>
         {}.pset(ent:account_info)
       };
 
-      showTokens = function() {
-        ent:account_info
+      showTokens = function(password) {
+	passwords_match = password eq keys:fuse_admin("password");
+	passwords_match => getTokens()
+                         | {"error": "access denied"}
       };
 
       // only give tokens to pico who identify themselves and we confirm they came in on the channel
