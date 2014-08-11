@@ -228,7 +228,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
                                      | fillup{"mpg"}.sprintf("%.1f");
 
           line = <<
-<tr>
+<tr> 
 <td style="#{odd_line_style}">#{time}</td>
 <td style="#{odd_line_style}">#{location}</td>
 <td style="#{odd_line_style}">#{volume}</td>
