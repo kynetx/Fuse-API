@@ -200,7 +200,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
           duration_val = tripDuration(trip)/60; // minutes
           duration = duration_val < 0.1 => ""
-                                         | wrap_in_span(duration_val.sprintf("%.01f") + " min", "trip_duration");
+                                         | min_or_hours(duration_val.sprintf("%.01f"));
 
           line = <<
 <tr>
@@ -208,7 +208,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 <td style="#{odd_line_style}">#{name}</td>
 <td style="#{odd_line_style}">#{len}</td>
 <td style="#{odd_line_style}">#{cost}</td>
-<td style="#{odd_line_style}">#{min_or_hours(duration)}</td>
+<td style="#{odd_line_style}">#{duration}</td>
 </tr>
 >>;
           line
@@ -419,8 +419,8 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
 
 <tr><td bgcolor="ffffff" style="font-size:18px;#{vehicle_table_row_style}"><b>Fleet totals:</b></td></tr>
-<tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Trips: #{trips_phrase(fleet_total_trip_num)} trips, #{fleet_total_trip_miles} miles, #{fleet_total_trip_duration} min, $#{fleet_total_trip_cost}</td></tr>
-<tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Fillups: #{fillups_phrase(fleet_total_fuel_num)} fillups, #{fleet_total_fuel_volume} gal, $#{fleet_total_fuel_cost}</td></tr>
+<tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Trips: #{trips_phrase(fleet_total_trip_num)}, #{fleet_total_trip_miles} miles, #{fleet_total_trip_duration} min, $#{fleet_total_trip_cost}</td></tr>
+<tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Fillups: #{fillups_phrase(fleet_total_fuel_num)}, #{fleet_total_fuel_volume} gal, $#{fleet_total_fuel_cost}</td></tr>
 
 
 
