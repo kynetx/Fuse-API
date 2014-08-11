@@ -172,6 +172,20 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
         trip_table_header_style = "font-family:Arial, sans-serif;font-size:14px;font-weight:normal;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#fff;background-color:#f38630;";
         vehicle_table_row_style = "text-align=left;font-family:Arial,sans-serif;font-size:14px;padding-left:10px;border-style:solid;border-width:0px;overflow:hidden;word-break:normal;";
 
+	trips_phrase = function(n) {
+ 	  n == 1 => "#{n} trip"
+                  | "#{n} trips"
+	};
+
+	fillups_phrase = function(n) {
+ 	  n == 1 => "#{n} fillup"
+                  | "#{n} fillups"
+	};
+
+	min_or_hours = function(n) {
+	  n < 60 => n + " min"
+                  | (n/60).sprintf("%.1f") + " hours"
+	};
 
 
         format_trip_line = function(trip) {
@@ -194,7 +208,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 <td style="#{odd_line_style}">#{name}</td>
 <td style="#{odd_line_style}">#{len}</td>
 <td style="#{odd_line_style}">#{cost}</td>
-<td style="#{odd_line_style}">#{duration}</td>
+<td style="#{odd_line_style}">#{min_or_hours(duration)}</td>
 </tr>
 >>;
           line
@@ -241,7 +255,16 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
           trips = vehicle{"trips"};
 
-          trips_html = trips.map(format_trip_line).join(" ");	      
+	  no_trips = <<
+<tr>
+ <td colspan="5" style="text-align:center;font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:#aaa;color:#333;background-color:#fff;">
+  No trips in the last week
+ </td>
+</tr>
+>>;
+
+          trips_html = trips.length() > 0 => trips.map(format_trip_line).join(" ")
+	                                   | no_trips;	 
 
 	  num_trips = vehicle{["tripTotals","num"]};
 	  total_miles = vehicle{["tripTotals","miles"]};
@@ -268,7 +291,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
                                                | no_fillups;
 
 
-
+	  
           html = <<
 <table width="100%" style="style="width:550px;border-collapse:collapse;border-spacing:0;">
 <tr>
@@ -290,8 +313,8 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
  </td>
 </tr>
 
-<tr><td colspan="2" style="#{vehicle_table_row_style}"><b>#{name} took #{num_trips} trips: #{total_miles} miles, #{total_duration} min, $#{total_cost}</b></td></tr>
-<tr><td colspan="2" style="#{vehicle_table_row_style}">Trip averages: #{avg_miles} miles, #{avg_duration} min, $#{avg_cost}</b></td></tr>
+<tr><td colspan="2" style="#{vehicle_table_row_style}"><b>#{name} took #{trips_phrase(num_trips)}: #{total_miles} miles, #{min_or_hours(total_duration)}, $#{total_cost}</b></td></tr>
+<tr><td colspan="2" style="#{vehicle_table_row_style}">Trip averages: #{avg_miles} miles, #{min_or_hours(avg_duration)} min, $#{avg_cost}</b></td></tr>
 
 <tr><!-- trips -->
  <td colspan="2" style="#{vehicle_table_row_style}">
@@ -396,8 +419,8 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
 
 <tr><td bgcolor="ffffff" style="font-size:18px;#{vehicle_table_row_style}"><b>Fleet totals:</b></td></tr>
-<tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Trips: #{fleet_total_trip_num} trips, #{fleet_total_trip_miles} miles, #{fleet_total_trip_duration} min, $#{fleet_total_trip_cost}</td></tr>
-<tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Fillups: #{fleet_total_fuel_num} fillups, #{fleet_total_fuel_volume} gal, $#{fleet_total_fuel_cost}</td></tr>
+<tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Trips: #{trips_phrase(fleet_total_trip_num)} trips, #{fleet_total_trip_miles} miles, #{fleet_total_trip_duration} min, $#{fleet_total_trip_cost}</td></tr>
+<tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Fillups: #{fillups_phrase(fleet_total_fuel_num)} fillups, #{fleet_total_fuel_volume} gal, $#{fleet_total_fuel_cost}</td></tr>
 
 
 
