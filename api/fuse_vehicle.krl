@@ -18,7 +18,7 @@ Fuse ruleset for a vehicle pico
       use module b16x11 alias carvoyant
       // don't load trips
 	
-      provides vin, fleetChannel, vehicleSummary, lastTrip, vehicleSubscription
+      provides vin, fleetChannel, vehicleSummary, vehicleSubscription
 
     }
 
@@ -44,11 +44,11 @@ Fuse ruleset for a vehicle pico
         pds:get_item(carvoyant:namespace(), "vehicle_info");
       }
 
-      lastTrip = function(key) {
-        trip = pds:get_item(carvoyant:namespace(), "last_trip_info");
-	key => trip{key}
-             | trip
-      }
+       // lastTrip = function(key) {
+       //   trip = pds:get_item(carvoyant:namespace(), "last_trip_info");
+       // 	key => trip{key}
+       //        | trip
+       // }
 
       vehicleStatus = function(key) {
         status = pds:get_item(carvoyant:namespace(), "vehicle_status");

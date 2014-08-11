@@ -296,11 +296,11 @@ Manage trips. PDS is not well-suited to these operations
       end_time = end_time and
       trip_summary = trip_summary
       ;
-     event:send({"cid": vehicle:fleetChannel()}, "fuse", "updated_vehicle") with
-         attrs = {"keyvalue": "last_trip_info",
-	          "vehicleId": vid,
-	          "value": trip_summary.encode()
-		 }
+      // event:send({"cid": vehicle:fleetChannel()}, "fuse", "updated_vehicle") with
+      //     attrs = {"keyvalue": "last_trip_info",
+      // 	          "vehicleId": vid,
+      // 	          "value": trip_summary.encode()
+      // 		 }
     }
     fired {
       set ent:last_trip tid;
