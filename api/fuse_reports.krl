@@ -314,7 +314,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 </tr>
 
 <tr><td colspan="2" style="#{vehicle_table_row_style}"><b>#{name} took #{trips_phrase(num_trips)}: #{total_miles} miles, #{min_or_hours(total_duration)}, $#{total_cost}</b></td></tr>
-<tr><td colspan="2" style="#{vehicle_table_row_style}">Trip averages: #{avg_miles} miles, #{min_or_hours(avg_duration)} min, $#{avg_cost}</b></td></tr>
+<tr><td colspan="2" style="#{vehicle_table_row_style}">Trip averages: #{avg_miles} miles, #{min_or_hours(avg_duration)}, $#{avg_cost}</b></td></tr>
 
 <tr><!-- trips -->
  <td colspan="2" style="#{vehicle_table_row_style}">
@@ -390,7 +390,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
 	fleet_total_trip_num = fleet_trip_totals{"num"};
 	fleet_total_trip_miles = fleet_trip_totals{"miles"}.sprintf("%.1f");
-	fleet_total_trip_duration = (fleet_trip_totals{"duration"}/60).sprintf("%.1f");
+	fleet_total_trip_duration = (min_or_hours(fleet_trip_totals{"duration"}/60)).sprintf("%.1f");
 	fleet_total_trip_cost =fleet_trip_totals{"cost"}.sprintf("%.2f");
 
 	fleet_total_fuel_num = fleet_fillups_totals{"num"};
