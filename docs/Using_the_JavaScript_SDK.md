@@ -39,7 +39,13 @@ The following function returns an array of objects that associate a ```picoId```
 
 	Fuse.vehicleChannels(<callback>, <options>)
 
-You should avoid using the channel as a means of identifying the vehicle since it could change. This function always provides the current mapping from the vehicle canonical name in the system, the ```picoId```, and the pico channel. 
+You should avoid using the channel as a means of identifying the vehicle since it could change. This function always provides the current mapping from the vehicle canonical name in the system, the ```picoId```, and the pico channel.
+
+___Callback___ The callback function will see an array of objects that have the following properties:
+
+	channel: "720FD18D-215C-4F23-ABFD-06F62C2808F1"
+	picoId: "Fleet-vehicle7010864A-215C-11E4-B874-136B8A2B85D9"
+
 
 ### Vehicle Status
 
@@ -47,13 +53,28 @@ The following function returns an array of vehicle status information (i.e., las
 
 	Fuse.vehicleStatus(<callback>, <options>)
 
+___Callback___ The callback function will see an array of objects that have the following properties:
+
+GEN_DTC &mdash;  Diagnostic Trouble Codes
+GEN_VOLTAGE &mdash;  Battery Voltage
+GEN_TRIP_MILEAGE &mdash;  Trip Mileage (calculate from ignition on to ignition off via GPS)
+GEN_ODOMETER &mdash;  Vehicle Reported Odometer
+GEN_WAYPOINT &mdash;  GPS Location
+GEN_HEADING &mdash;  Heading (degrees clockwise from due north)
+GEN_RPM &mdash;  Engine Speed
+GEN_FUELLEVEL &mdash;  Percentage of Fuel Remaining
+GEN_FUELRATE &mdash;  Rate of Fuel Consumption
+GEN_ENGINE_COOLANT_TEMP &mdash;  Engine Temperature
+GEN_SPEED &mdash;  Maximum Speed Recorded (since the previous reading)
+
+
 ### Vehicle Summary
 
 The following function returns an array of vehicle summary information for all the active vehicles in the system. 
 
 	Fuse.vehicleSummary(<callback>, <options>)
 
-The following properties are part of the objects that make up the array:
+___Callback___ The callback function will see an array of objects that have the following properties:
 
 - address &mdash; the latest human readable address where the vehicle is located
 - channel &mdash; the channel that can be used to communicate with this vehicle
@@ -81,7 +102,7 @@ The following function takes a year and month and returns an array of  trip summ
 
 ```<year>``` and ```<month>``` are strings. Months must be two characters (i.e. ```"08"``` for August, not ```8```).
 
-The trip summary contains the following elements for each vehicle:
+___Callback___ The callback function will see an array of objects that have the following properties:
 
 - cost &mdash; total cost of all trips
 - interval &mdash; total length of all trips in seconds
@@ -98,7 +119,7 @@ The following function takes a year and month and returns an array of  fuel summ
 
 ```<year>``` and ```<month>``` are strings. Months must be two characters (i.e. ```"08"``` for August, not ```8```).
 
-The fuel summary contains the following elements for each vehicle:
+___Callback___ The callback function will see an array of objects that have the following properties:
 
 - cost &mdash; total cost of all fillups in the given month
 - distance &mdash; total distance driven between fillups
