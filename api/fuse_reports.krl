@@ -390,7 +390,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
 	fleet_total_trip_num = fleet_trip_totals{"num"};
 	fleet_total_trip_miles = fleet_trip_totals{"miles"}.sprintf("%.1f");
-	fleet_total_trip_duration = (min_or_hours(fleet_trip_totals{"duration"}/60)).sprintf("%.1f");
+	fleet_total_trip_duration = (min_or_hours(fleet_trip_totals{"duration"}));
 	fleet_total_trip_cost =fleet_trip_totals{"cost"}.sprintf("%.2f");
 
 	fleet_total_fuel_num = fleet_fillups_totals{"num"};
@@ -419,7 +419,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
  
 
 <tr><td bgcolor="ffffff" style="font-size:18px;#{vehicle_table_row_style}"><b>Fleet totals:</b></td></tr>
-<tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Trips: #{trips_phrase(fleet_total_trip_num)}, #{fleet_total_trip_miles} miles, #{fleet_total_trip_duration} min, $#{fleet_total_trip_cost}</td></tr>
+<tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Trips: #{trips_phrase(fleet_total_trip_num)}, #{fleet_total_trip_miles} miles, #{fleet_total_trip_duration}, $#{fleet_total_trip_cost}</td></tr>
 <tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Fillups: #{fillups_phrase(fleet_total_fuel_num)}, #{fleet_total_fuel_volume} gal, $#{fleet_total_fuel_cost}</td></tr>
 
 
