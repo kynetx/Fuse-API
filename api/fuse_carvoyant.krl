@@ -159,18 +159,6 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                   
     };
 
-     // // this needs to be removed, can't work from vehicle...
-     // fix_and_try_again = function (url, config_data, params) {
-     //   new_tokens = carvoyant_oauth:fixToken();
-     //   new_tokens{"access_token"} => carvoyant_get(url,   
-     //                                               config_data.put(["access_token"], new_tokens{"access_token"}),
-     // 						  params,
-     // 						  true
-     //                                              )
-     //                               | result.put(["refresh_token_tried"], new_tokens).klog(">>>> giving up on fix token ")
-
-     // }
-
     // actions
     carvoyant_post = defaction(url, payload, config_data) { // updated for Mashery
       configure using ar_label = false;
@@ -336,24 +324,24 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
   }
 
 
-  // ---------- for retries from posting... ----------
+   // // ---------- for retries from posting... ----------
 
-  rule retry_refresh_token {
-    select when http post status_code re#401# label "???" // check error number and header...
-    pre {
-      tokens = carvoyant_oauth:refreshTokenForAccessToken(); // mutates ent:account_info
-    }
-    if( tokens{"error"}.isnull() ) then 
-    {
-      send_directive("Used refresh token to get new account token");
-    }
-    fired {
-      raise carvoyant event new_tokens_available with tokens = getTokens() //ent:account_info
-    } else {
-      log(">>>>>>> couldn't use refresh token to get new access token <<<<<<<<");
-      log(">>>>>>> we're screwed <<<<<<<<");
-    }
-  }
+   // rule retry_refresh_token {
+   //   select when http post status_code re#401# label "???" // check error number and header...
+   //   pre {
+   //     tokens = carvoyant_oauth:refreshTokenForAccessToken(); // mutates ent:account_info
+   //   }
+   //   if( tokens{"error"}.isnull() ) then 
+   //   {
+   //     send_directive("Used refresh token to get new account token");
+   //   }
+   //   fired {
+   //     raise carvoyant event new_tokens_available with tokens = getTokens() //ent:account_info
+   //   } else {
+   //     log(">>>>>>> couldn't use refresh token to get new access token <<<<<<<<");
+   //     log(">>>>>>> we're screwed <<<<<<<<");
+   //   }
+   // }
 
 
   // ---------- rules for initializing and updating vehicle cloud ----------

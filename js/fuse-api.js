@@ -843,7 +843,7 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    if(typeof vehicle_channel === "undefined" || vehicle_channel === null ) {
-		throw "Vehicle channel is null; can't record fuel fillup for vehicle";
+		throw "Vehicle channel is null; can't update trip for vehicle";
 	    };
 	    if( typeof trip_id === "undefined" 
 	      ){

@@ -17,9 +17,8 @@ Ruleset for fleet OAuth stuff
 	
 	sharing on
 
-
-
-	provides clientAccessToken,  refreshTokenForAccessToken, showTokens, forgetTokens, forgetAllTokens, tellOwner, // don't provide after debug
+	provides clientAccessToken,  refreshTokenForAccessToken, tellOwner, // don't provide after debug
+	     showTokens, forgetTokens,
              isAuthorized, redirectUri, carvoyantOauthUrl, codeForAccessToken, getTokens, fixToken 
 
     }
@@ -163,12 +162,10 @@ You are being redirected to <a href="#{url}">#{url}</a>
                                                  account_info.put(["timestamp"], time:now()).pset(ent:account_info);
       }
 
-      forgetTokens = function(){
-        "".pset(ent:account_info{["access_token"]})
-      };
-
-      forgetAllTokens = function(){
-        {}.pset(ent:account_info)
+      forgetTokens = function(password){
+	passwords_match = password eq keys:fuse_admin("password");
+       	passwords_match => {}.pset(ent:account_info)
+	                 | {"error": "access denied"}
       };
 
       showTokens = function(password) {
@@ -257,15 +254,18 @@ We're sorry for the inconvenience.
 
   // ---------- create account ----------
 
+  // [PJW] 08/11/14 marking inactive since we don't automatically create Carvoyant accounts now
+
+
   /*
     I'm going to just get new client credentials each time. If we get to where we're adding 100's of account per week 
     we may want to rethink this, store them, use the refresh, etc. 
   */
   // running this in fleet...
-  rule init_account {
+  rule init_account is inactive {
     select when carvoyant init_account
     pre {
-      client_access_token = carvoyant_oauth:clientAccessToken();
+      client_access_token = clientAccessToken();
     }
     if(client_access_token{"access_token"})  then 
     {
@@ -280,7 +280,7 @@ We're sorry for the inconvenience.
   }
 
 
-  rule init_account_follow_on {
+  rule init_account_follow_on is inactive {
     select when explicit need_carvoyant_account
     pre {
 
@@ -335,7 +335,7 @@ We're sorry for the inconvenience.
 
   } 
 
-  rule process_carvoyant_acct_creation {
+  rule process_carvoyant_acct_creation is inactive {
     select when http post status_code  re#2\d\d#  label "account_init"
     pre {
       account = event:attr('content').decode().pick("$.account");
@@ -352,7 +352,7 @@ We're sorry for the inconvenience.
     }
   }
 
-  rule error_carvoyant_acct_creation {
+  rule error_carvoyant_acct_creation is inactive {
     select when http post status_code  re#[45]\d\d#  label "account_init"
 
     always {
