@@ -53,7 +53,7 @@ Application that manages the fleet
         vehicle_ecis_by_name = vehicle_ecis.collect(function(x){x{"channelName"}}).map(function(k,v){v.head()}).klog(">>> ecis by name  >>> ");
 
 
-	summaries = ent:fleet{["vehicle_info"]}
+	summaries = (ent:fleet{["vehicle_info"]} || {})
 		     .map(function(k,v){v.put(["picoId"], k)
                                          .put(["channel"], vehicle_ecis_by_name{[k,"eventChannel"]})
                                        });
