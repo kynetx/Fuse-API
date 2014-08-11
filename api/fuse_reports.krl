@@ -396,7 +396,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 	fleet_total_fuel_num = fleet_fillups_totals{"num"};
 	fleet_total_fuel_volume = fleet_fillups_totals{"volume"}.sprintf("%.1f");
 	fleet_total_fuel_cost = fleet_fillups_totals{"cost"}.sprintf("%.2f");
-	 
+	  
         html = <<
 <tr>
  <td width="600" bgcolor="#f1f1f1">
