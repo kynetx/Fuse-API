@@ -548,7 +548,11 @@ Application that manages the fleet
 
       subj = "Your "+period{"readable"}+" report from Fuse!";
 
-      html = reports:fleetReport(period, tz, vehicleSummary());
+      vsum = vehicleSummary();
+
+      // don't generate report unless there are vehicles
+      html = vsum.length() > 0 => reports:fleetReport(period, tz, vsum)
+                                | "";
 
 
       msg = <<
@@ -563,6 +567,7 @@ You need HTML email to see this report.
 
 
     }
+    if(vsum.length() > 0) then
     {
       send_directive("sending email to fleet owner") with
         content = email_map;
