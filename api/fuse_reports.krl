@@ -416,7 +416,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
  </td>
 </tr>
-
+ 
 
 <tr><td bgcolor="ffffff" style="font-size:18px;#{vehicle_table_row_style}"><b>Fleet totals:</b></td></tr>
 <tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Trips: #{trips_phrase(fleet_total_trip_num)}, #{fleet_total_trip_miles} miles, #{fleet_total_trip_duration} min, $#{fleet_total_trip_cost}</td></tr>
