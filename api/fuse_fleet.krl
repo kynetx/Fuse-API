@@ -469,8 +469,17 @@ Application that manages the fleet
     // [FIXME] this needs some protection on it (system key or something)
     rule clear_fleet_cache {
       select when fuse clear_fleet_cache
-      always {
-        clear ent:fleet
+      pre {
+        password = event:attr("password");
+	passwords_match = password eq keys:fuse_admin("password");
+      }
+      if (passwords_match) then 
+      {
+       send_directive("clearing fleet cache");
+      }
+      fired {
+        log ">>> Clearing fleet cache >>> ";
+        clear ent:fleet;
       }
     }
 
