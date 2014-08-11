@@ -264,6 +264,7 @@ Fuse ruleset for a vehicle pico
     // ---------- vehicle data rules ----------
     rule update_vehicle_data {
       select when fuse need_vehicle_data
+               or fuse updated_vehicle_status // since we depend on it
                or pds profile_updated // since we store pictures, etc. in profile
       pre {
 

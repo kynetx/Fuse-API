@@ -460,7 +460,6 @@ Application that manages the fleet
       }
 
       always {
-//        set ent:fleet{["trip_summary", vehicle_name]} vehicle_info
         set ent:fleet{new_key} vehicle_info
       }
 
@@ -485,7 +484,7 @@ Application that manages the fleet
 
 
     // ---------- maintenance ----------
-  rule find_due_reminders {
+  rule find_due_reminders is inactive {
     // fire whenever we get new mileage
     select when fuse updated_vehicle_info
 
@@ -517,7 +516,7 @@ Application that manages the fleet
 
   }
 
-  rule find_due_reminders_complete {
+  rule find_due_reminders_complete is inactive {
     select when fuse reminders_finish
 
     pre {
