@@ -276,7 +276,8 @@ Fuse ruleset for a vehicle pico
 
 	profile = pds:get_all_me().klog(">>>>>> seeing profile >>>>> ") || {};
 
-	status = vehicleStatus() || {};
+	status = incoming{"GEN_NEAREST_ADDRESS"}.isnull() => vehicleStatus() || {}
+                                                           | incoming;
 
 	dtc = {"code": status{["GEN_DTC","value"]},
 	       "id":  status{["GEN_DTC","id"]},
