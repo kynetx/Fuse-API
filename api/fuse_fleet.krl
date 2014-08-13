@@ -282,21 +282,6 @@ Application that manages the fleet
 	}
     }
 
-    rule show_vehicles {
-      select when fuse show_vehicles
-      pre {
-        myPicos = CloudOS:picoList();
-        fuseSubs = CloudOS:subscriptionList(common:namespace(),"Vehicle");
-      }
-      {
-        send_directive("Dependent children") with
-          children = myPicos and
-	  just_fuse = fuseSubs;   
-
-      }
-      
-    }
-
     // this is too general for this ruleset except for identifying subscriptions
     // FIXME: this doesn't (yet) delete the vehicle data from the fleet entity variable
     rule delete_vehicle {
