@@ -221,6 +221,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
     rule finalize_new_users {
         select when fuse new_fleet_initialized
+                and pds profile_updated
         pre {
 
 	  me = pds:get_all_me();
