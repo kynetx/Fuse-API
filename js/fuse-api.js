@@ -208,11 +208,12 @@
 			// increasing the wait time with each call, up to 10
 			imgDelay += 1000;
 			console.log("Trying with delay ", imgDelay);
-			if (imgDelay <= 20000){ // waits up to 20 seconds
+			if (imgDelay <= 10000){ // waits up to 20 seconds
 			    setTimeout(imgTimeout, imgDelay, imgDelay);
 			}
 			else{
 			    console.log("Never received Carvoyant URL");
+			    cb(null);
 			}
 		    }
 		}
