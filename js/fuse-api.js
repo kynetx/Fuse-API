@@ -45,7 +45,7 @@
 				    }
 	    };
 
-	    return this.defaults.production ? rids[name].prod :  rids[name].dev;
+	    return rids[name][Fuse.fuse_version];
 	},
 
 	// we'll retrieve the fleet and vehicle ECIs later and put them here...
@@ -53,18 +53,49 @@
 	vehicles: [],
 	vehicle_status: {},
 	vehicle_summary: {},
+	fuse_version: null,
+
+	check_version: function(cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    if (typeof Fuse.fuse_version == null || options.force) {
+                Fuse.log("Checking fuse version");
+		return CloudOS.skyCloud(a169x625, "rulesetListChannel", {picoChannel: CloudOS.defaultECI}, function(json) {
+		    if(json.rids !== null)  {
+			var rids = json.rids;
+			Fuse.log("Seeing ruleset list:", rids);
+			var found_dev_init = $.inArray("b16x16.prod", rids) >= 0 
+                                          || $.inArray("b16x16.dev", rids) >= 0;
+			if(found_dev_init) {
+			    Fuse.fuse_version = "dev";
+			} else {
+			    Fuse.fuse_version = "prod";
+			}
+			cb(Fuse.fuse_version);
+		    } else {
+			console.log("Seeing null ruleset list...using defaults");
+			cb(Fuse.defaults.production ? "prod" : "dev");
+		    }
+		});
+	    } else {
+		Fuse.log("Using cached value for version ", Fuse.fuse_version);
+		cb(Fuse.fuse_version);
+		return Fuse.fuse_version;
+	    }
+	    
+	},
 
         init: function(cb)
         {
 	    cb = cb || function(){};
 	    Fuse.log("Initializing...");
 	    $.when(
-		Fuse.getProfile(CloudOS.defaultECI),
+		Fuse.check_version(),
 		Fuse.fleetChannel()
-	    ).done(function(profile, eci){
+	    ).done(function(version, eci){
+		Fuse.log("We're using version ", version[0]);
 		Fuse.log("Stored fleet channel", eci[0]);
-		Fuse.log("Retrieved user profile", profile[0]);
-		cb(profile[0], eci[0]);
+		cb(version[0], eci[0]);
 		Fuse.log("Done initializing...");
 	    }).fail(function(res){
 		Fuse.log("Initialization failed...", res);
