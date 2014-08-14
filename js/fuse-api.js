@@ -87,20 +87,19 @@
 	    
 	},
 
-        init: function(cb)
+        init: function()
         {
-	    cb = cb || function(){};
 	    Fuse.log("Initializing...");
 	    $.when(
-		Fuse.check_version(),
-		Fuse.fleetChannel()
-	    ).done(function(version, eci){
-		Fuse.log("We're using version ", version[0]);
-		Fuse.log("Stored fleet channel", eci[0]);
-		cb(version[0], eci[0]);
+		Fuse.check_version()
+            ).then (
+		function(version) { 
+		    return Fuse.fleetChannel(); 
+		}
+	    ).done(function(eci){
 		Fuse.log("Done initializing...");
 	    }).fail(function(res){
-		Fuse.log("Initialization failed...", res);
+		console.log("Initialization failed...", res);
 	    });
         },
 
