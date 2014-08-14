@@ -45,7 +45,7 @@
 				    }
 	    };
 	    
-	    var version = Fuse.fuse_version === null || (Fuse.defaults.production ? "prod" : "dev");
+	    var version = Fuse.fuse_version || (Fuse.defaults.production ? "prod" : "dev");
 	    	    
 	    return rids[name][version];
 	},
