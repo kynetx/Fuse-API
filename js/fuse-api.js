@@ -1344,11 +1344,6 @@
 
     };
 
-    Fuse.init(function() {
-	console.log("Using version: ", Fuse.fuse_version);
-	console.log("Using fleet channel: ", Fuse.fleet_channel);
-    });
-
     function isEmpty(obj) {
 
 	// null and undefined are "empty"
