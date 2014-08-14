@@ -87,8 +87,9 @@
 	    
 	},
 
-        init: function()
+        init: function(cb)
         {
+	    cb = cb || function(){};
 	    Fuse.log("Initializing...");
 	    $.when(
 		Fuse.check_version()
@@ -97,6 +98,7 @@
 		    return Fuse.fleetChannel(); 
 		}
 	    ).done(function(eci){
+		cb();
 		Fuse.log("Done initializing...");
 	    }).fail(function(res){
 		console.log("Initialization failed...", res);
@@ -1341,6 +1343,11 @@
 
 
     };
+
+    Fuse.init(function() {
+	console.log("Using version: ", Fuse.fuse_version);
+	console.log("Using fleet channel: ", Fuse.fleet_channel);
+    });
 
     function isEmpty(obj) {
 
