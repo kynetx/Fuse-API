@@ -44,8 +44,10 @@
 				     "dev":  "b16x23"
 				    }
 	    };
-
-	    return rids[name][Fuse.fuse_version];
+	    
+	    var version = Fuse.fuse_version === null || (Fuse.defaults.production ? "prod" : "dev");
+	    	    
+	    return rids[name][version];
 	},
 
 	// we'll retrieve the fleet and vehicle ECIs later and put them here...
@@ -58,9 +60,9 @@
 	check_version: function(cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
-	    if (typeof Fuse.fuse_version == null || options.force) {
+	    if (Fuse.fuse_version === null || options.force) {
                 Fuse.log("Checking fuse version");
-		return CloudOS.skyCloud(a169x625, "rulesetListChannel", {picoChannel: CloudOS.defaultECI}, function(json) {
+		return CloudOS.skyCloud("a169x625", "rulesetListChannel", {picoChannel: CloudOS.defaultECI}, function(json) {
 		    if(json.rids !== null)  {
 			var rids = json.rids;
 			Fuse.log("Seeing ruleset list:", rids);
