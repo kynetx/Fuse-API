@@ -424,6 +424,14 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 
     }
 
+    rule install_check {
+      select when fuse need_init_ruleset
+      send_directive("init_ruleset_installed");
+      always{
+        raise fuse event init_ruleset_installed
+      }
+    }
+
     // doesn't delete account or cloud, just the record we have here
     rule delete_fuse_owner_record {
       select when fuse delete_owner_record

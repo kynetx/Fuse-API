@@ -132,11 +132,44 @@ ___Callback___ The callback function will see an array of objects that have the 
 
 ### Query Trips
 
+#### Trip Lists
 You can retrieve a list of trips or a specific trip using the following function:
 
-	Fuse.trips(<vehicle_channel>, <callback>, <options>)
+	Fuse.trips(<vehicle_channel>, <id>, <limit>, <offset>, <callback>, <options>)
 
-To retreive a specific trips, you pass the ID for the  as an option named ```id```.  If no ID is given, a paginated list of trips is returned. You can control the stating position of what is returned with ```offset``` and the number of items returned with ```limit```. By default these are 0 and 10 respectively.
+To retreive a specific trips, you pass the ID  of the trip as a parameter named ```id```.  If no ID is given, a paginated list of trips is returned. You can control the stating position of what is returned with ```offset``` and the number of items returned with ```limit```. By default these are 0 and 10 respectively.
+
+Multiple trips are returned as trip summaries with the following structure:
+
+- ```avgSpeed``` &mdash; Average speed for the trip
+- ```cost``` &mdash; cost of trip (based on fuel records)
+- ```endTime``` &mdash; DateTime string for end of trip (ignition off)
+- ```endWaypoint``` &mdash; Waypoint object for end of trip
+- ```id``` &mdash; trip identifier
+- ```interval``` &mdash; length of trip in seconds
+- ```mileage``` &mdash; length of trip in length units
+- ```name``` &mdash; name of trip (if any)
+- ```startTime``` &mdash;  DateTime string for start of trip (ignition on)
+- ```startWaypoint``` &mdash; Waypoint object for end of trip
+
+A single trip will show trip details:
+
+- ```data``` &mdash; Array of vehicle-generated data and waypoints at multiple places along the trip
+- ```endTime``` &mdash;  DateTime string for end of trip (ignition off)
+- ```endWaypoint``` &mdash;  Waypoint object for end of trip
+- ```id``` &mdash; trip identifier
+- ```mileage``` &mdash; length of trip in length units
+- ```startTime``` &mdash; DateTime string for start of trip (ignition on)
+- ```startWaypoint``` &mdash; Waypoint object for end of trip
+
+The data objects have the following properties:
+
+- ```datum``` &mdash; Array of vehicle data (see Vehicle Status above for field descriptions)
+- ```id``` &mdash; datum identifier
+- ```ignitionStatus``` &mdash; vehicle on or off
+- ```timestamp``` &mdash; time this data was generated. 
+
+#### Trips by Date
 
 You can get trips by date using the following function:
 
