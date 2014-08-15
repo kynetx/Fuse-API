@@ -41,8 +41,7 @@ ruleset fuse_bootstrap {
         namespace = "fuse-meta"; // this is defined in fuse_common.krl, but we haven't got it yet.
         eci = CloudOS:subscriptionList(namespace,"Fleet").head().pick("$.eventChannel") 
 	   || pds:get_item(namespace,"fleet_channel");
-	installed = CloudOS:rulesetList(meta:eci()).pick("$.rids").join(",").klog(">>>> rids >>>> ");
-	no_init = not installed.match(re#owner|16x16#).klog(">>>> seeing an init ruleset >>>>");
+	
 	
       }
       if (! eci.isnull() ) then
@@ -62,6 +61,11 @@ ruleset fuse_bootstrap {
         select when explicit bootstrap_needed
         pre {
 	  remove_rulesets = CloudOS:rulesetRemoveChild(apps{"unwanted"}, meta:eci());
+
+	  // not using yet
+	  already_installed = CloudOS:rulesetList(meta:eci()).pick("$.rids").join(",").klog(">>>> rids >>>> ");
+	  no_init = not already_installed.match(re#owner|16x16#).klog(">>>> seeing an init ruleset >>>>");
+
           installed = CloudOS:rulesetAddChild(apps{"core"}, meta:eci());
 	  account_profile = CloudOS:accountProfile();
           profile = {
