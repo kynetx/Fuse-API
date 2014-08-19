@@ -18,7 +18,7 @@ Application that manages the fleet
 	use module b16x26 alias reports
 
         sharing on
-        provides vehicleChannels, vehicleSummary, vehicleStatus, tripSummaries, fuelSummaries,
+        provides vehicleChannels, vehicleSummary, vehicleStatus, tripSummaries, tripsSummary, fuelSummaries, fuelSummary,
 	seeFleetData, // delete after testing
 	fleetDetails
     }
@@ -85,8 +85,10 @@ Application that manages the fleet
         summaries.values();
         
       };
+      tripsSummary = tripSumaries;
+      
 
-       fuelSummaries = function(year, month) {
+      fuelSummaries = function(year, month) {
 	summaries = ent:fleet{["fuel_summaries", "Y" + year, "M" + month]}  
 		     .map(function(k,v){v.put(["picoId"], k)
 		                         .put(["label"], ent:fleet{["vehicle_info", k, "label"]})
@@ -95,6 +97,7 @@ Application that manages the fleet
         summaries.values(); 
         
       };
+      fuelSummary = fuelSummaries;
 
       findVehicleByBackchannel = function (bc) {
         garbage = bc.klog(">>>> back channel <<<<<");

@@ -141,13 +141,23 @@ Fuse ruleset for a vehicle pico
           // initialize my profile
 	  raise pds event new_profile_item_available 
             attributes
-	      {"myProfileName"  : name,
-	       "myProfilePhoto" : photo,
-	       "vin": vin,
-	       "deviceId": device_id,
-	       "mileage" : mileage,
-	       "_api": "sky"
-	      };
+	      event:attrs()
+	       .put(["myProfileName"], name)
+	       .put(["myProfilePhoto"], photo)
+	       .delete(["name"])
+	       .delete(["photo"])
+	       .delete(["fleet_channel"])
+	       .delete(["schema"])
+	       .put(["_api"], sky)
+	       ;
+
+	       // {"myProfileName"  : name,
+	       //  "myProfilePhoto" : photo,
+	       //  "vin": vin,
+	       //  "deviceId": device_id,
+	       //  "mileage" : mileage,
+	       //  "_api": "sky"
+	       // };
 
 
 	  log(">>>>>>>> device_id >>>>>>> " + device_id);
