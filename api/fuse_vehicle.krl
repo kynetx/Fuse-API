@@ -149,6 +149,7 @@ Fuse ruleset for a vehicle pico
 	       .delete(["fleet_channel"])
 	       .delete(["schema"])
 	       .put(["_api"], sky)
+	       .klog(">>>> saving profile for vehicle >>>>")
 	       ;
 
 	       // {"myProfileName"  : name,
