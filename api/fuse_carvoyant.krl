@@ -117,7 +117,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
 
     isAuthorized = function() {
-      carvoyant_oauth:validTokens() && tokensWork()
+      {"authorized" : carvoyant_oauth:validTokens() && tokensWork()}
     }
     
     tokensWork = function() {
@@ -125,7 +125,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
       config_data = get_config();
       vehicle_info = expired => {} | carvoyant_get(api_url+"/vehicle/", config_data) || {};
-      {"authorized" : vehicle_info{"status_code"} eq "200"}
+      vehicle_info{"status_code"} eq "200"
     };
 
 
