@@ -19,7 +19,7 @@ Manage trips. PDS is not well-suited to these operations
     use module b16x20 alias fuel
 
 	
-    provides trips, lastTrip, tripName, mileage, tripsByDate, newTrips,
+    provides trips, lastTrip, tripName, tripNameById, mileage, tripsByDate, newTrips,
              monthlyTripSummary,
              all_trips,   // for debugging
 	       icalForVehicle, icalSubscriptionUrl
@@ -113,6 +113,13 @@ Manage trips. PDS is not well-suited to these operations
       ent:trip_names{[reducePrecision(end), reducePrecision(start)]}
     }
 
+    tripNameById = function(id) {
+      trp = trips(id);
+      start =trp{"startWaypoint"};
+      end = trp{"endWaypoint"};
+      tripName(start, end)
+    };
+
     monthlyTripSummary = function(year, month) {
       ent:monthly_trip_summary{[year, month]}
     }
@@ -181,13 +188,13 @@ Manage trips. PDS is not well-suited to these operations
 
     // find latlong within 365 feet
     reducePrecision = function(a) {
-      a_array = waypointToArray(a);
+      a_array = waypointToArray(a).klog(">>> original waypoint >>>>");
       // 1 decimal place - 7 miles 
       // 2 decimal places - 0.7 miles 
       // 3 decimal places - 365 feet 
       // 4 decimal places - 37 feet 
       nearest = 1000; // 3 decimal places
-      a_array.map(function(n){math:round(n * nearest)/nearest}).join(",");
+      a_array.map(function(n){math:round(n * nearest)/nearest}).join(",").klog(">>>> reduced to >>>>");
     };
 
 
@@ -281,9 +288,8 @@ Manage trips. PDS is not well-suited to these operations
       trip_info = raw_trip_info.put(["endTime"], end_time).klog(">>>> storing trip <<<<< ");
 
       raw_trip_summary = tripSummary(trip_info);
-      start =reducePrecision(raw_trip_summary{"startWaypoint"});
-      end = reducePrecision(raw_trip_summary{"endWaypoint"});
-      trip_name = tripName(start, end) || "";
+
+      trip_name = tripName(raw_trip_summary{"startWaypoint"}, raw_trip_summary{"endWaypoint"}) || "";
 
       trip_summary = raw_trip_summary.put(["name"], trip_name);
       
