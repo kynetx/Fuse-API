@@ -511,6 +511,8 @@
 	    p.profilePhoto = profile.myProfilePhoto;
 	    p.picoId = id;
 
+	    console.log("Updating profile with ", p);
+
 	    // save it or push it, if not foundf
 	    var elementPos = Fuse.vehicle_summary.map(function(x) {return x.picoId; }).indexOf(id);
 	    if (elementPos < 0) {
