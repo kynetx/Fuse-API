@@ -518,6 +518,8 @@
 	    if (elementPos < 0) {
 		Fuse.vehicle_summary.push(p);
 	    } else {
+		p.vehicleId = Fuse.vehicle_summary[elementPos].vehicleId;
+		p.lastRunningTimestamp = Fuse.vehicle_summary[elementPos].lastRunningTimestamp;
 		Fuse.vehicle_summary[elementPos] = p;
 	    }
 	},
