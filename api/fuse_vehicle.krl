@@ -320,7 +320,7 @@ Fuse ruleset for a vehicle pico
 			 .put(["heading"], status{["GEN_HEADING","value"]})
 			 .put(["mileage"], raw_vehicle_info{"mileage"} || profile{"mileage"})
 			 .put(["vehicleId"], raw_vehicle_info{"vehicleId"} || old_summary{"vehicleId"})
-			 .put(["lastRunning"], raw_vehicle_info{"lastRunning"} || old_summary{"lastRunning"})
+			 .put(["lastRunningTimestamp"], raw_vehicle_info{"lastRunningTimestamp"} || old_summary{"lastRunningTimestamp"})
 			 .put(["lastWaypoint"], raw_vehicle_info{"lastWaypoint"} || old_summary{"lastWaypoint"})
 			 .put(["label"], raw_vehicle_info{"label"} || old_summary{"label"})
 			 .put(["make"], raw_vehicle_info{"make"} || old_summary{"make"})
