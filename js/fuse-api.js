@@ -520,7 +520,7 @@
 	    } else {
 		p.vehicleId = Fuse.vehicle_summary[elementPos].vehicleId;
 		p.lastRunningTimestamp = Fuse.vehicle_summary[elementPos].lastRunningTimestamp;
-		p.lastWaypoint = Fuse.vehicle_summary[elementPos].lastWaypoint;
+		p.lastWaypoint = Fuse.vehicle_summary[elementPos].lastWaypoint; 
 		Fuse.vehicle_summary[elementPos] = p;
 	    }
 	},
