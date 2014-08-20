@@ -117,7 +117,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
 
     isAuthorized = function() {
-      {"authorized" : carvoyant_oauth:validTokens() && tokensWork()}
+      {"authorized" : carvoyant_oauth:validTokens() && tokensWork()} 
     }
     
     tokensWork = function() {
