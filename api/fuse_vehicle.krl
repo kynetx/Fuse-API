@@ -160,6 +160,8 @@ Fuse ruleset for a vehicle pico
 	       //  "_api": "sky"
 	       // };
 
+	  raise fuse event need_vehicle_data; // initialize vehicle_summary
+
 
 	  log(">>>>>>>> device_id >>>>>>> " + device_id);
 
