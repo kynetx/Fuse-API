@@ -522,6 +522,7 @@
 		p.lastRunningTimestamp = Fuse.vehicle_summary[elementPos].lastRunningTimestamp;
 		p.lastWaypoint = Fuse.vehicle_summary[elementPos].lastWaypoint; 
 		p.address = Fuse.vehicle_summary[elementPos].address;
+		p.fuellevel = Fuse.vehicle_summary[elementPos].fuellevel;
 		Fuse.vehicle_summary[elementPos] = p;
 	    }
 	},
