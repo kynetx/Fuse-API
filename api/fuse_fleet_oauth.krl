@@ -18,7 +18,7 @@ Ruleset for fleet OAuth stuff
 	sharing on
 
 	provides clientAccessToken,  refreshTokenForAccessToken, tellOwner, // don't provide after debug
-	     showTokens, forgetTokens,
+	     showTokens, forgetTokens, validTokens,
              isAuthorized, redirectUri, carvoyantOauthUrl, codeForAccessToken, getTokens, fixToken 
 
     }
@@ -172,6 +172,10 @@ You are being redirected to <a href="#{url}">#{url}</a>
 	passwords_match = password eq keys:fuse_admin("password");
 	passwords_match => getTokens()
                          | {"error": "access denied"}
+      };
+
+      validTokens = function() {
+        not ent:account_info{"access_token"}.isnull();
       };
 
       // only give tokens to pico who identify themselves and we confirm they came in on the channel
