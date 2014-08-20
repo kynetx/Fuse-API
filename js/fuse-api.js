@@ -520,6 +520,10 @@
 	    }
 	},
 
+	invalidateVehicleSummary: function() {
+	    Fuse.vehicle_summary = null;
+	},
+
 	// ---------- manage and use vehicle picos ----------
         createVehicle: function(name, photo_url, vin, deviceId, mileage, cb, options)
         {
