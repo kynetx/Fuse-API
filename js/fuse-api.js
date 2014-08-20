@@ -535,6 +535,9 @@
 			"mileage": mileage,
 			"deviceId": deviceId
 		       };
+	    if(typeof options.license === "string") {
+		json.license = options.license;
+	    }
 	    Fuse.fleetChannel(function(fleet_channel) {
 		if(fleet_channel === null ) {
 		    throw "Fleet channel is null; can't add vehicle";
