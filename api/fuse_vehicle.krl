@@ -97,6 +97,16 @@ Fuse ruleset for a vehicle pico
 	   vin = event:attr("vin");
 
 	   // need to take stuff from event attrs and fill our schema
+	   new_profile = event:attrs()
+	       	            .put(["myProfileName"], name)
+			    .put(["myProfilePhoto"], photo)
+			    .delete(["name"])
+			    .delete(["photo"])
+			    .delete(["fleet_channel"])
+			    .delete(["schema"])
+			    .put(["_api"], sky)
+			    .klog(">>>> saving profile for vehicle >>>>")
+			    ;
 
 	}
 
@@ -140,17 +150,7 @@ Fuse ruleset for a vehicle pico
 	     
           // initialize my profile
 	  raise pds event new_profile_item_available 
-            attributes
-	      event:attrs()
-	       .put(["myProfileName"], name)
-	       .put(["myProfilePhoto"], photo)
-	       .delete(["name"])
-	       .delete(["photo"])
-	       .delete(["fleet_channel"])
-	       .delete(["schema"])
-	       .put(["_api"], sky)
-	       .klog(">>>> saving profile for vehicle >>>>")
-	       ;
+            attributes new-profile;
 
 	       // {"myProfileName"  : name,
 	       //  "myProfilePhoto" : photo,
