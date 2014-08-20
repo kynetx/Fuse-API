@@ -150,7 +150,7 @@ Fuse ruleset for a vehicle pico
 	     
           // initialize my profile
 	  raise pds event new_profile_item_available 
-            attributes new-profile;
+            attributes new_profile;
 
 	       // {"myProfileName"  : name,
 	       //  "myProfilePhoto" : photo,
