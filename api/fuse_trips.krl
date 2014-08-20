@@ -302,17 +302,16 @@ Manage trips. PDS is not well-suited to these operations
       end_time = end_time and
       trip_summary = trip_summary
       ;
-      // event:send({"cid": vehicle:fleetChannel()}, "fuse", "updated_vehicle") with
-      //     attrs = {"keyvalue": "last_trip_info",
-      // 	          "vehicleId": vid,
-      // 	          "value": trip_summary.encode()
-      // 		 }
     }
     fired {
       set ent:last_trip tid;
-      set ent:trips_by_id{tid} trip_info;
+      set ent:trips_by_id{tid} trip_info
+ 		 .put(["cost"], trip_summary{"cost"})
+ 		 .put(["interval"], trip_summary{"interval"})
+ 		 .put(["avgSpeed"], trip_summary{"avgSpeed"})
+ 		 .put(["name"], trip_name)
+                ;
       set ent:trip_summaries{tid} trip_summary;
-      // set ent:trips_by_week{week_number} = (ent:trips_by_week{week_number} || []).append(tid);
       raise fuse event new_trip_saved with 
         tripId = tid
     } else {
@@ -330,6 +329,7 @@ Manage trips. PDS is not well-suited to these operations
       tname = event:attr("tripName");
       tcategory = event:attr("tripCategory");
       trip_summary = ent:trip_summaries{tid}.klog(">>>> trip summary for #{tid} >>>> ") || {};
+      trip_info = ent:trips_by_id{tid};      
       start =reducePrecision(trip_summary{"startWaypoint"});
       end = reducePrecision(trip_summary{"endWaypoint"});
 
@@ -345,6 +345,9 @@ Manage trips. PDS is not well-suited to these operations
     }
     fired {
       set ent:trip_summaries{tid} trip_summary
+             .put(["category"], tcategory)
+	     .put(["name"], tname);
+      set ent:trips_by_id{tid} trip_info      
              .put(["category"], tcategory)
 	     .put(["name"], tname);
       set ent:trip_names{[end, start]} {"tripName": tname}
