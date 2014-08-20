@@ -286,7 +286,8 @@ Fuse ruleset for a vehicle pico
 
         raw_vehicle_info = vid eq "none"            => {}
 	                 | incoming{"vin"}.isnull() => carvoyant:carvoyantVehicleData(vid) 
-                         |                             incoming;
+                         |                             incoming
+			 ;
 
 	profile = pds:get_all_me().klog(">>>>>> seeing profile >>>>> ") || {};
 
@@ -301,7 +302,11 @@ Fuse ruleset for a vehicle pico
 	speed = raw_vehicle_info{"running"} => status{["GEN_SPEED","value"]}
 	                                     | "0";
 
-
+	old_summary = vehicleSummary();
+	vehicleId = raw_vehicle_info{"vehicleId"} || old_summary{"vehicleId"};
+	lastRunning = raw_vehicle_info{"lastRunning"} || old_summary{"lastRunning"};
+                                             
+	// reassemble vehicle_info object; this is ugly
 	vehicle_info = raw_vehicle_info
 	                 .put(["profilePhoto"], profile{"myProfilePhoto"})
 	                 .put(["profileName"], profile{"myProfileName"})
@@ -314,7 +319,16 @@ Fuse ruleset for a vehicle pico
 			 .put(["speed"], speed)
 			 .put(["heading"], status{["GEN_HEADING","value"]})
 			 .put(["mileage"], raw_vehicle_info{"mileage"} || profile{"mileage"})
+			 .put(["vehicleId"], raw_vehicle_info{"vehicleId"} || old_summary{"vehicleId"})
+			 .put(["lastRunning"], raw_vehicle_info{"lastRunning"} || old_summary{"lastRunning"})
+			 .put(["lastWaypoint"], raw_vehicle_info{"lastWaypoint"} || old_summary{"lastWaypoint"})
+			 .put(["label"], raw_vehicle_info{"label"} || old_summary{"label"})
+			 .put(["make"], raw_vehicle_info{"make"} || old_summary{"make"})
+ 			 .put(["model"], raw_vehicle_info{"model"} || old_summary{"model"})
+			 .put(["year"], raw_vehicle_info{"year"} || old_summary{"year"})
 			 ;
+
+	
 
       }
       {send_directive("Updated vehicle data for #{vid}") with

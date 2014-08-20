@@ -431,13 +431,15 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       // not sure this is actually set with the new data. If not, make a call to get()
       vehicle_data = event:attr('content').decode().pick("$.vehicle");
 
-      storable_vehicle_data = vehicle_data.filter(function(k,v){k eq "name" || 
-      			      					k eq "vehicleId" ||
-								k eq "deviceId" ||
-								k eq "vin" ||
-								k eq "label" ||
-								k eq "mileage"
-                                                               })
+      storable_vehicle_data = vehicle_data;
+
+       // .filter(function(k,v){k eq "name" || 
+       // 			      					k eq "vehicleId" ||
+       // 								k eq "deviceId" ||
+       // 								k eq "vin" ||
+       // 								k eq "label" ||
+       // 								k eq "mileage"
+       //                                                          })
     }
     noop();
     always {
