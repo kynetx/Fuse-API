@@ -378,7 +378,7 @@
 		   cb(cache);
 		   return cache;
 	       }
-	},
+	}, 
 
 	// tells the fleet to broadcast access tokens to the vehicles. 
 	// should be done any time the access token is refreshed or a new vehicle is added
