@@ -296,8 +296,8 @@ Manage trips. PDS is not well-suited to these operations
       raw_trip_summary = tripSummary(trip_info);
 
       trip_meta = tripMeta(raw_trip_summary{"startWaypoint"}, raw_trip_summary{"endWaypoint"}) || {};
-      trip_name = trip_meta{"tripName"};
-      trip_category = trip_meta{"tripCategory"};
+      trip_name = trip_meta{"tripName"} || "";
+      trip_category = trip_meta{"tripCategory"} || "";
 
       trip_summary = raw_trip_summary
                           .put(["name"], trip_name)
