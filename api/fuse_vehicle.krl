@@ -316,8 +316,8 @@ Fuse ruleset for a vehicle pico
 			 .put(["DTC"], dtc)
 			 .put(["fuellevel"], status{["GEN_FUELLEVEL","value"]})
 			 .put(["address"], status{["GEN_NEAREST_ADDRESS","value"]})
-			 .put(["voltage"], status{["GEN_VOLTAGE","value"]}) || "unknown"
-			 .put(["coolantTemperature"], status{["GEN_ENGINE_COOLANT_TEMP","value"]}) || "unknown"
+			 .put(["voltage"], status{["GEN_VOLTAGE","value"]} || "unknown")
+			 .put(["coolantTemperature"], status{["GEN_ENGINE_COOLANT_TEMP","value"]} || "unknown")
 			 .put(["speed"], speed)
 			 .put(["heading"], status{["GEN_HEADING","value"]})
 			 .put(["mileage"], raw_vehicle_info{"mileage"} || profile{"mileage"})
