@@ -299,7 +299,10 @@ Manage trips. PDS is not well-suited to these operations
       trip_name = trip_meta{"tripName"};
       trip_category = trip_meta{"tripCategory"};
 
-      trip_summary = raw_trip_summary.put(["name"], trip_name);
+      trip_summary = raw_trip_summary
+                          .put(["name"], trip_name)
+                          .put(["category"], trip_category)
+			  ;
       
 
     }
@@ -444,3 +447,4 @@ Manage trips. PDS is not well-suited to these operations
 
 
 }
+// fuse_trips.krl
