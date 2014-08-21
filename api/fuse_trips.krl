@@ -19,7 +19,7 @@ Manage trips. PDS is not well-suited to these operations
     use module b16x20 alias fuel
 
 	
-    provides trips, lastTrip, tripName, tripNameById, mileage, tripsByDate, newTrips,
+    provides trips, lastTrip, tripMeta, tripMetaById, mileage, tripsByDate, newTrips,
              monthlyTripSummary,
              all_trips,   // for debugging
 	       icalForVehicle, icalSubscriptionUrl
@@ -109,15 +109,15 @@ Manage trips. PDS is not well-suited to these operations
                  | ent:trip_summaries{ent:last_trip}.klog(">>> working with summary <<<")
     };
 
-    tripName = function(start, end) {
+    tripMeta = function(start, end) {
       ent:trip_names{[reducePrecision(end), reducePrecision(start)]}
     }
 
-    tripNameById = function(id) {
+    tripMetaById = function(id) {
       trp = trips(id);
       start =trp{"startWaypoint"};
       end = trp{"endWaypoint"};
-      tripName(start, end)
+      tripMeta(start, end)
     };
 
     monthlyTripSummary = function(year, month) {
@@ -257,6 +257,12 @@ Manage trips. PDS is not well-suited to these operations
 
     mkTid = function(tid){"T"+tid};
     mkCarvoyantTid = function(tid){tid.extract(re/T(\d+)/).head()};
+
+    mkTripMeta = function(tname, tcategory) {
+      {"tripName": tname,
+       "tripCategory": tcategory
+      }
+    };
   
   }
 
@@ -289,7 +295,9 @@ Manage trips. PDS is not well-suited to these operations
 
       raw_trip_summary = tripSummary(trip_info);
 
-      trip_name = tripName(raw_trip_summary{"startWaypoint"}, raw_trip_summary{"endWaypoint"}) || "";
+      trip_meta = tripMeta(raw_trip_summary{"startWaypoint"}, raw_trip_summary{"endWaypoint"}) || {};
+      trip_name = trip_meta{"tripName"};
+      trip_category = trip_meta{"tripCategory"};
 
       trip_summary = raw_trip_summary.put(["name"], trip_name);
       
@@ -310,6 +318,7 @@ Manage trips. PDS is not well-suited to these operations
  		 .put(["interval"], trip_summary{"interval"})
  		 .put(["avgSpeed"], trip_summary{"avgSpeed"})
  		 .put(["name"], trip_name)
+ 		 .put(["category"], trip_categoty)
                 ;
       set ent:trip_summaries{tid} trip_summary;
       raise fuse event new_trip_saved with 
@@ -326,12 +335,15 @@ Manage trips. PDS is not well-suited to these operations
     pre {
       carvoyant_tid = event:attr("tripId");
       tid = mkTid(carvoyant_tid);
-      tname = event:attr("tripName");
-      tcategory = event:attr("tripCategory");
+      tname = event:attr("tripName") || "";
+      tcategory = event:attr("tripCategory") || "";
       trip_summary = ent:trip_summaries{tid}.klog(">>>> trip summary for #{tid} >>>> ") || {};
       trip_info = ent:trips_by_id{tid};      
       start =reducePrecision(trip_summary{"startWaypoint"});
       end = reducePrecision(trip_summary{"endWaypoint"});
+
+      meta_obj = mkTripMeta(tname, tcategory);
+      
 
     }
     if(not trip_summary{"startWaypoint"}.isnull()) then // if this isn't a real trip, don't pollute trip_summaries...
@@ -350,7 +362,7 @@ Manage trips. PDS is not well-suited to these operations
       set ent:trips_by_id{tid} trip_info      
              .put(["category"], tcategory)
 	     .put(["name"], tname);
-      set ent:trip_names{[end, start]} {"tripName": tname}
+      set ent:trip_names{[end, start]} meta_obj
     } else {
       log ">>> can't find #{tid} in trips for this vehicle >>>>> "
     }
@@ -362,7 +374,8 @@ Manage trips. PDS is not well-suited to these operations
     pre {
       carvoyant_tid = event:attr("tripId");
       tid = mkTid(carvoyant_tid);
-      tname = event:attr("tripName");	
+      tname = event:attr("tripName") || "";
+      tcategory = event:attr("tripCategory") || "";
       trip = ent:trip_summaries{tid} || {};
       start =reducePrecision(trip{"startWaypoint"});
       end = reducePrecision(trip{"endWaypoint"});
@@ -379,7 +392,7 @@ Manage trips. PDS is not well-suited to these operations
 	
     }
     fired {
-      set ent:trip_names{[end, start]} {"tripId" : carvoyant_tid, "tripName": tname}
+      set ent:trip_names{[end, start]} mkTripMeta(tname, tcategory);
     } else {
       log "===========================================================================";
       log "Bad trip: " + trip.encode();
