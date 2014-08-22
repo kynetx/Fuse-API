@@ -93,7 +93,9 @@ Application that manages the fleet
 		     .map(function(k,v){v.put(["picoId"], k)
 		                         .put(["label"], ent:fleet{["vehicle_info", k, "label"]})
 		                         .put(["fuellevel"], ent:fleet{["vehicle_info", k, "fuellevel"]})
-                                       });
+		                         .put(["mileage"], ent:fleet{["vehicle_info", k, "mileage"]}) 
+		                         .put(["lastWaypoint"], ent:fleet{["vehicle_info", k, "lastWaypoint"]})
+                                      });
         summaries.values(); 
         
       };
