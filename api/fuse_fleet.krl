@@ -89,13 +89,26 @@ Application that manages the fleet
       
 
       fuelSummaries = function(year, month) {
-	summaries = ent:fleet{["fuel_summaries", "Y" + year, "M" + month]}  
-		     .map(function(k,v){v.put(["picoId"], k)
-		                         .put(["label"], ent:fleet{["vehicle_info", k, "label"]})
-		                         .put(["fuellevel"], ent:fleet{["vehicle_info", k, "fuellevel"]})
-		                         .put(["mileage"], ent:fleet{["vehicle_info", k, "mileage"]}) 
-		                         .put(["lastWaypoint"], ent:fleet{["vehicle_info", k, "lastWaypoint"]})
-                                      });
+
+      	vehicle_summaries = ent:fleet{["vehicle_info"]} || {};
+	fuel_summaries = ent:fleet{["fuel_summaries", "Y" + year, "M" + month]} || {};
+
+	summaries = vehicle_summaries.map(function(k, v){
+		                            fuel_summaries{k}
+					      .put(["picoId"], k)
+		                              .put(["label"], vehicle_summaries{[k, "label"]})
+		                              .put(["fuellevel"], vehicle_summaries{[k, "fuellevel"]})
+		                              .put(["mileage"], vehicle_summaries{[k, "mileage"]}) 
+		                              .put(["lastWaypoint"], vehicle_summaries{[k, "lastWaypoint"]})
+	                                  })
+
+	 // summaries = ent:fleet{["fuel_summaries", "Y" + year, "M" + month]}  
+	 // 	     .map(function(k,v){v.put(["picoId"], k)
+	 // 	                         .put(["label"], ent:fleet{["vehicle_info", k, "label"]})
+	 // 	                         .put(["fuellevel"], ent:fleet{["vehicle_info", k, "fuellevel"]})
+	 // 	                         .put(["mileage"], ent:fleet{["vehicle_info", k, "mileage"]}) 
+	 // 	                         .put(["lastWaypoint"], ent:fleet{["vehicle_info", k, "lastWaypoint"]})
+         //                               });
         summaries.values(); 
         
       };
@@ -298,7 +311,8 @@ Application that manages the fleet
         this_sub = CloudOS:subscriptionList(common:namespace(),"Vehicle")
 	           .filter(function(sub){sub{"channelName"} eq name})
 		   .head()
-		   .klog(">>>>>>> this_sub >>>>>>")
+		   .klog(">>>>>>> this_sub >>>>>>
+")
                 || {};   // tolerate lookup failures
 
 	// not sure why we want the sub???

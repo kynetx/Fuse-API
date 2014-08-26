@@ -346,7 +346,7 @@ Operations for maintenance
 
       interval = common:strToNum(event:attr("interval"));
 
-      vdata = vehicle:vehicleSummary();
+      vdata = vehicle:vehicleSummary() || {} ;
 
       when_reminded = common:convertToUTC(event:attr("when") || time:now());
 
@@ -495,7 +495,7 @@ Operations for maintenance
       kind = rem{"kind"};
       interval = rem{"interval"};
 
-      vdata = vehicle:vehicleSummary();
+      vdata = vehicle:vehicleSummary() || {};
       current_time = time:now();
 
       rec = rem
@@ -560,7 +560,7 @@ Operations for maintenance
             || event:attr("status") eq "inactive" => event:attr("status")
              |                                       "unknown";
 
-      vdata = vehicle:vehicleSummary();
+      vdata = vehicle:vehicleSummary() || {};
 
       odometer = event:attr("odometer") || vdata{"mileage"};
 
@@ -685,7 +685,7 @@ Operations for maintenance
 
       alert = alerts(event:attr("alert_ref")) || {};
 
-      vdata = vehicle:vehicleSummary();
+      vdata = vehicle:vehicleSummary() || {};
 
       status = event:attr("status") eq "completed" 
             || event:attr("status") eq "deferred" => event:attr("status")

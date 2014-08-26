@@ -302,7 +302,7 @@ Fuse ruleset for a vehicle pico
 	speed = raw_vehicle_info{"running"} => status{["GEN_SPEED","value"]}
 	                                     | "0"; 
 
-	old_summary = vehicleSummary();
+	old_summary = vehicleSummary() || {};
 	vehicleId = raw_vehicle_info{"vehicleId"} || old_summary{"vehicleId"};
 	lastRunning = raw_vehicle_info{"lastRunning"} || old_summary{"lastRunning"};
                                              

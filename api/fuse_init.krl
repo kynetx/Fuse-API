@@ -157,6 +157,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
     }
 
     // this is too general for this ruleset except for identifying subscriptions
+    // FIXME: Give the name rather than the ECI to delete. 
     rule delete_fleet {
       select when fuse delete_fleet
       pre {
@@ -309,8 +310,8 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
     rule catch_periodic_report {
       select when explicit periodic_report
       pre {
-        settings = pds:get_setting_data(meta:rid()).klog(">>>> my settings >>>> ");
-	reportPreference = settings{"reportPreference"}; // on or off
+        settings = pds:get_setting_data(meta:rid()).klog(">>>> my settings >>>> ") || {};
+	reportPreference = settings{"reportPreference"} || "on"; // on or off; default on
 	fleet = fleetChannel();
 	owner_name = pds:get_me("myProfileName");
       }
