@@ -95,7 +95,6 @@
 	    if(CloudOS.host == null || options.force) {
 		return Fuse.getPreferences(CloudOS.defaultECI, function(json) {
 		    var host = Fuse.set_host(json.debugPreference);
-		    console.log("CloudOS Host: ", host);
 		    cb(host);
 		});
 	    } else {
@@ -109,6 +108,7 @@
 	    var debug = typeof debugPreference !== "undefined" 
 		         && debugPreference === "on";
 	    CloudOS.host = debug ? "kibdev.kobj.net" : "cs.kobj.net";
+	    console.log("CloudOS Host: ", CloudOS.host);
 	    return CloudOS.host;
 	},
 
