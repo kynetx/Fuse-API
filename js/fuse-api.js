@@ -74,6 +74,7 @@
 			    Fuse.fuse_version = "prod";
 			}
 			cb(Fuse.fuse_version);
+			
 		    } else {
 			console.log("Seeing null ruleset list...using defaults");
 			cb(Fuse.defaults.production ? "prod" : "dev");
@@ -87,12 +88,29 @@
 	    
 	},
 
+	set_host: function(cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    return Fuse.getProfile(CloudOS.defaultECI, function(json) {
+		var debug = typeof json.debugPreference !== "undefined" 
+		         && json.debugPreference === "on";
+		CloudOS.host = debug ? "kibdev.kobj.net" : "cs.kobj.net";
+		console.log("CloudOS Host: ", CloudOS.host);
+		cb(CloudOS.host);
+	    });
+	},
+
+
         init: function(cb)
         {
 	    cb = cb || function(){};
 	    Fuse.log("Initializing...");
 	    $.when(
 		Fuse.check_version()
+            ).then (
+		function(version) { 
+		    return Fuse.set_host(); 
+		}
             ).then (
 		function(version) { 
 		    return Fuse.fleetChannel(); 
