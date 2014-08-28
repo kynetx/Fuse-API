@@ -88,18 +88,22 @@
 	    
 	},
 
-	set_host: function(cb, options) {
+	select_host: function(cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
-	    return Fuse.getProfile(CloudOS.defaultECI, function(json) {
-		var debug = typeof json.debugPreference !== "undefined" 
-		         && json.debugPreference === "on";
-		CloudOS.host = debug ? "kibdev.kobj.net" : "cs.kobj.net";
-		console.log("CloudOS Host: ", CloudOS.host);
-		cb(CloudOS.host);
+	    return Fuse.getPreferences(CloudOS.defaultECI, function(json) {
+		var host = Fuse.set_host(json.debugPreference);
+		console.log("CloudOS Host: ", host);
+		cb(host);
 	    });
 	},
 
+	set_host: function(debugPreference) {
+	    var debug = typeof debugPreference !== "undefined" 
+		         && debugPreference === "on";
+	    CloudOS.host = debug ? "kibdev.kobj.net" : "cs.kobj.net";
+	    return CloudOS.host;
+	},
 
         init: function(cb)
         {
@@ -107,7 +111,7 @@
 	    Fuse.log("Initializing...");
 	    $.when(
 		Fuse.check_version(),
-		Fuse.set_host()
+		Fuse.select_host()
             ).then (
 		function(version) { 
 		    return Fuse.fleetChannel(); 
