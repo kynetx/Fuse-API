@@ -106,11 +106,8 @@
 	    cb = cb || function(){};
 	    Fuse.log("Initializing...");
 	    $.when(
-		Fuse.check_version()
-            ).then (
-		function(version) { 
-		    return Fuse.set_host(); 
-		}
+		Fuse.check_version(),
+		Fuse.set_host()
             ).then (
 		function(version) { 
 		    return Fuse.fleetChannel(); 
