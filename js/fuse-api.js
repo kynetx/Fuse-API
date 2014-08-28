@@ -88,14 +88,21 @@
 	    
 	},
 
+	// really ought to put this in CloudOS.js
 	select_host: function(cb, options) {
 	    cb = cb || function(){};
 	    options = options || {};
-	    return Fuse.getPreferences(CloudOS.defaultECI, function(json) {
-		var host = Fuse.set_host(json.debugPreference);
-		console.log("CloudOS Host: ", host);
-		cb(host);
-	    });
+	    if(CloudOS.host == null || options.force) {
+		return Fuse.getPreferences(CloudOS.defaultECI, function(json) {
+		    var host = Fuse.set_host(json.debugPreference);
+		    console.log("CloudOS Host: ", host);
+		    cb(host);
+		});
+	    } else {
+		Fuse.log("Using cached value for host ", CloudOS.host);
+		cb(CloudOS.host);
+		return CloudOS.host;
+	    }
 	},
 
 	set_host: function(debugPreference) {
@@ -105,13 +112,14 @@
 	    return CloudOS.host;
 	},
 
-        init: function(cb)
+        init: function(cb, options)
         {
 	    cb = cb || function(){};
+	    options = options || {};
 	    Fuse.log("Initializing...");
 	    $.when(
-		Fuse.check_version(),
-		Fuse.select_host()
+		Fuse.check_version(null, options),
+		Fuse.select_host(null, options)
             ).then (
 		function(version) { 
 		    return Fuse.fleetChannel(); 
