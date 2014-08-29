@@ -188,8 +188,11 @@ Manage trips. PDS is not well-suited to these operations
 
     exportTrips = function(start, end) {
       trips = tripsByDate(start,end)
-                 .map(function(k,v){v.put(["startWaypoint"], waypointToArray(v{startWaypoint}).join(","))
-		                   });
+                 .map(function(v){ start = v{["startWaypoint", "latitude"]} + "," + v{["startWaypoint", "longitude"]};
+	         		   dest = v{["endWaypoint", "latitude"]} + "," + v{["endWaypoint", "longitude"]};
+				   v.put(["startWaypoint"], start)
+				    .put(["endWaypoint"], dest)
+		                 });
       csv:from_array(trips);
     }
 
