@@ -430,6 +430,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 >>;
       emailBody(html)
     }
+
   }
 }
 // fuse_reports.krl

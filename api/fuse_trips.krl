@@ -22,7 +22,7 @@ Manage trips. PDS is not well-suited to these operations
     provides trips, lastTrip, tripMeta, tripMetaById, mileage, tripsByDate, newTrips,
              monthlyTripSummary,
              all_trips,   // for debugging
-	       icalForVehicle, icalSubscriptionUrl
+	       icalForVehicle, icalSubscriptionUrl, exportTrips
   }
 
   global {
@@ -185,6 +185,13 @@ Manage trips. PDS is not well-suited to these operations
                           "desc": "Calendar of trips for " + vdata{"label"}}
 	             ).replace(re#\\;#g, ";").pset(ent:last_ical);
     };
+
+    exportTrips = function(start, end) {
+      trips = tripsByDate(start,end)
+      csv:from_array(trips);
+    }
+
+
 
     // find latlong within 365 feet
     reducePrecision = function(a) {
