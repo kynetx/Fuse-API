@@ -192,8 +192,10 @@ Manage trips. PDS is not well-suited to these operations
 	         		   dest = v{["endWaypoint", "latitude"]} + "," + v{["endWaypoint", "longitude"]};
 				   v.put(["startWaypoint"], start)
 				    .put(["endWaypoint"], dest)
-				    .put(["startDate"], time:strftime(v{"startTime"},"%c", {"tz":"America/Denver"}))
-				    .put(["endDate"], time:strftime(v{"endTime"}, "%c", {"tz":"America/Denver"}))
+				    .put(["startDate"], time:strftime(v{"startTime"},"%F", {"tz":"America/Denver"}))
+				    .put(["startTime"], time:strftime(v{"startTime"},"%r", {"tz":"America/Denver"}))
+				    .put(["endDate"], time:strftime(v{"endTime"}, "%F", {"tz":"America/Denver"}))
+				    .put(["endTime"], time:strftime(v{"endTime"}, "%r", {"tz":"America/Denver"}))
 		                 });
       csv:from_array(trips);
     }
