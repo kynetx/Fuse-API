@@ -128,6 +128,7 @@
 		cb();
 		Fuse.log("Done initializing...");
 	    }).fail(function(res){
+		cb();
 		console.log("Initialization failed...", res);
 	    });
         },
