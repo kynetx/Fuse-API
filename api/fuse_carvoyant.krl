@@ -453,10 +453,10 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	  attributes {
 	    "namespace": namespace(),
 	    "keyvalue": "vehicle_info",
-	    "value": {"vehicleId": vehicle_info{"vehicleId"},
-		      "year" :  vehicle_info{"year"},
-		      "make" :  vehicle_info{"make"},
-	              "model" : vehicle_info{"model"}
+	    "value": {"vehicleId": vehicle_data{"vehicleId"},
+		      "year" :  vehicle_data{"year"},
+		      "make" :  vehicle_data{"make"},
+	              "model" : vehicle_data{"model"}
 	             },
             "_api": "sky"
  		   
