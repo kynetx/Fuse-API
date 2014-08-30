@@ -446,6 +446,18 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       set ent:vehicle_data storable_vehicle_data;
       raise fuse event "vehicle_account_updated" with 
         vehicle_data = vehicle_data;
+      raise pds event updated_data_available
+	  attributes {
+	    "namespace": namespace(),
+	    "keyvalue": "vehicle_info",
+	    "value": {"vehicleId": vehicle_info{"vehicleId"},
+		      "year" :  vehicle_info{"year"},
+		      "make" :  vehicle_info{"make"},
+	              "model" : vehicle_info{"model"}
+	             },
+            "_api": "sky"
+ 		   
+	  };
       raise carvoyant event new_device_id 
         with deviceId = "BAD DEVICE ID" if deviceId.isnull()
     }
