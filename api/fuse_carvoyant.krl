@@ -374,11 +374,12 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
         "label": event:attr("label") || profile{"myProfileName"} || "My Vehicle",
 	"vin": event:attr("vin") || profile{"vin"} || "unknown",
         "mileage": event:attr("mileage") || profile{"mileage"} || "10"
-      }.klog(">>>> vehicle with these params >>>> ")
+      }.klog(">>>> vehicle with these params >>>> ");
+      valid_tokens = carvoyant_oauth:validTokens().klog(">>>>> are tokens valid? >>>>>");
     }
     if( params{"deviceId"} neq "unknown"
      && params{"vin"} neq "unknown"
-     && carvoyant_oauth:validTokens()
+     && valid_tokens
       ) then
     {
       send_directive("Initializing or updating Carvoyant vehicle for Fuse vehicle ") with params = params;
