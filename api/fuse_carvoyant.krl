@@ -378,6 +378,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
     if( params{"deviceId"} neq "unknown"
      && params{"vin"} neq "unknown"
+     && carvoyant_oauth:validTokens()
       ) then
     {
       send_directive("Initializing or updating Carvoyant vehicle for Fuse vehicle ") with params = params;
