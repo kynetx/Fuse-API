@@ -673,7 +673,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
              or http delete status_code re#([45]\d\d)# setting (status) 
    pre {
       returned = event:attrs();
-      tokens = get_tokens();
+      tokens = getTokens();
       vehicle_info = pds:get_item(namespace(), "vehicle_info");
 
       error_msg = <<
