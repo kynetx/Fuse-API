@@ -129,12 +129,12 @@ Operations for fuel
       
       offset = new_record => 0 | 1; // new record isn't already on the list
       lastfillup = fillups(null, 1, offset).head().klog(">>>> returned from fillup >>>> ") || {};
-      distance = lastfillup.isnull() => 0 | (odometer - lastfillup{"odometer"});
+      distance = lastfillup{"odometer"}.isnull() => 0 | (odometer - lastfillup{"odometer"});
       mpg = distance/volume;
 
       when_bought = common:convertToUTC(event:attr("when") || time:now());
 
-      seconds = lastfillup.isnull() => 0 | (time:strftime(when_bought, "%s") - time:strftime(lastfillup{"timestamp"}, "%s"));
+      seconds = lastfillup{"timestamp"}.isnull() => 0 | (time:strftime(when_bought, "%s") - time:strftime(lastfillup{"timestamp"}, "%s"));
 
       cost = volume * unit_price;
 
