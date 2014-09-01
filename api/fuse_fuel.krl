@@ -128,13 +128,13 @@ Operations for fuel
       location = event:attr("location");
       
       offset = new_record => 0 | 1; // new record isn't already on the list
-      lastfillup = fillups(null, 1, offset).head().klog(">>>> returned from fillup >>>> ") || {"odometer": 0, "timestamp": current_time};
-      distance = odometer - lastfillup{"odometer"};
+      lastfillup = fillups(null, 1, offset).head().klog(">>>> returned from fillup >>>> ") || {};
+      distance = lastfillup.isnull() => 0 | (odometer - lastfillup{"odometer"});
       mpg = distance/volume;
 
       when_bought = common:convertToUTC(event:attr("when") || time:now());
 
-      seconds = (time:strftime(when_bought, "%s") - time:strftime(lastfillup{"timestamp"}, "%s"));
+      seconds = lastfillup.isnull() => 0 | (time:strftime(when_bought, "%s") - time:strftime(lastfillup{"timestamp"}, "%s"));
 
       cost = volume * unit_price;
 
