@@ -19,7 +19,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     errors to b16x13
 
     provides namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
-	     carvoyantVehicleData, isAuthorized,
+	     carvoyantVehicleData, isAuthorized, 
              vehicleStatus, keyToLabel, tripInfo,
              getSubscription, no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
 
@@ -466,7 +466,24 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
   }
 
-  
+  rule vehicle_delete {
+    select when carvoyant vehicle_not_needed
+    pre {
+      vid = event:attr("vid");
+      config_data = get_config(vid);
+    }
+    if ( not vid.isnull() ) then
+    {
+      carvoyant_delete(config_data{"base_url"}, config_data) with
+	  ar_label = "vehicle_deleted";
+      send_directive("Deleting subscription") with attributes = event:attrs();
+    }
+    fired {
+      log "Deleting Carvoyant vehicle #{vid}"
+    } else {
+      log "Cannot delete vehicle in Carvoyant; n	o vehicle ID"
+    }
+  } 
   
 
   // ---------- rules for managing subscriptions ----------
