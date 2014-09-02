@@ -331,6 +331,10 @@ Application that manages the fleet
 	huh = (something_to_do) => CloudOS:cloudDestroy(sub_eci).klog(">>>> report from cloudDestroy >>> ") ||
 	                               CloudOS:cloudDestroy(pico_eci).klog(">>>> report from cloudDestroy >>> ") 
                                  | 0;
+
+	vehicle_summary = ent:fleet{["vehicle_info", name]}.klog(">>>>> data for deleted vehicle >>>>") || {};
+        config_data = carvoyant:get_config(vehicle_summary{"vehicleId"} || vehicle_summary{"deviceId"} || "none");
+
       }
       if (something_to_do) then
       {
@@ -340,6 +344,8 @@ Application that manages the fleet
 //          allSubs = CloudOS:subscriptionList(common:namespace(),"Vehicle") and
           fuseSub = this_sub and
           channel = this_sub_channel;
+	carvoyant:carvoyant_delete(config_data{"base_url"}, config_data) with
+	  ar_label = "vehicle_delete";
       }
       fired {
 
