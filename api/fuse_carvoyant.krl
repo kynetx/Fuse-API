@@ -591,6 +591,15 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     always {
       raise fuse event "new_trip" with tripId = tid if status eq "OFF";
       raise fuse event "need_vehicle_status";
+      raise pds event "new_data_available"
+	  attributes {
+	    "namespace": namespace(),
+	    "keyvalue": "ignitionStatus_fired",
+	    "value": event:attrs()
+	              .delete(["_generatedby"]),
+            "_api": "sky"
+ 		   
+	  };      
     }
   }
 
