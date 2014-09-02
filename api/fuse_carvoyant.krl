@@ -480,7 +480,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                   .delete(["vehicle_id"])
                   .delete(["idempotent"]);
       // if idempotent attribute is set, then check to make sure no subscription of this type exist
-      subs = getSubscription(vid, sub_type);
+      subs = getSubscription(vid, sub_type).klog(">>> seeing subscriptions for #{vid} >>>>");
       subscribe = not event:attr("idempotent") ||
                   no_subscription(subs)
     }
@@ -493,8 +493,10 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	  attributes = event:attrs();
     }
     notfired {
-      error info valid_subscription_type(sub_type) => "Already subscribed; saw " + subs.encode()
-                                        	    | "Invalid Carvoyant subscription type: #{sub_type}";
+      error info "Invalid Carvoyant subscription type: #{sub_type}" if (not valid_subscription_type(sub_type));
+      
+      log  "Already subscribed; saw " + subs.encode() if valid_subscription_type(sub_type);
+
     }
   }
 
