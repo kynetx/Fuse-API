@@ -97,7 +97,7 @@ Application that manages the fleet
 		                            (fuel_summaries{k} || 
                                              {})
 					      .put(["picoId"], k)
-		                              .put(["label"], vehicle_summaries{[k, "label"]})
+		                              .put(["profileName"], vehicle_summaries{[k, "profileName"]}  || vehicle_summaries{[k, "label"]} )
 		                              .put(["fuellevel"], vehicle_summaries{[k, "fuellevel"]})
 		                              .put(["mileage"], vehicle_summaries{[k, "mileage"]}) 
 		                              .put(["lastWaypoint"], vehicle_summaries{[k, "lastWaypoint"]})
