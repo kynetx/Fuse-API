@@ -412,21 +412,6 @@ Application that manages the fleet
       }
     }
 
-    // what do we want to do with these????
-    rule sync_carvoyant_with_fuse {
-      select when fuse vehicles_not_in_fuse
-      foreach event:attr("vehicle_data") setting(vehicle)
-        pre {
-	  vid = vehicle{"vehicleId"}.klog(">>> Vehicle ID >>>>");
-	  config_data = carvoyant:get_config(vid).klog(">>>>> config data >>>>>"); 
-        }
-	if(not vid.isnull()) then
-	{
-	  send_directive("Unclaimed Carvoyant Vehicles") with
-	    vehicle_data = vehicle
-	}
-    }
-
     rule sync_fuse_with_carvoyant {
       select when fuse vehicles_not_in_carvoyant
       foreach event:attr("vehicle_data") setting(vehicle)
