@@ -251,13 +251,14 @@ Manage trips. PDS is not well-suited to these operations
        // 	"endTime": endTime(trip),
        // 	"startTime": trip{"startTime"}
        // };
-      fillup = fuel:fillups(null, 1, 0).head() || {"mpg": 1, "unit_price": 0};
+
       mileage = trip{"mileage"} < 0.1 =>  0.0
                                        |  trip{"mileage"}.sprintf("%.2f");
-      gallons_used = fillup{"mpg"}.klog(">>> MPG: >>> ").isnull() 
-                  || fillup{"mpg"} == 0 => 0
-                                         | (mileage / fillup{"mpg"});
-      cost = math:round(gallons_used * fillup{"unit_price"} * 1000) / 1000;
+
+      cost_data = fuel:currentCPM();
+
+      cost = math:round(mileage * cost_data{"cpm"} * 1000) / 1000;
+
       interval = (time:strftime(trip{"endTime"}, "%s") - time:strftime(trip{"startTime"}, "%s"));
       
       avg_speed = mileage * 3600 / interval;
@@ -265,6 +266,7 @@ Manage trips. PDS is not well-suited to these operations
       summary = trip
                  .delete(["data"])
  		 .put(["cost"], cost.sprintf("%.2f"))
+		 .put(["costDataSource"], cost_data{"vehicleData"} => "vehicle" | "estimate")
  		 .put(["interval"], interval.klog(">>>> trip length in seconds >>>>> "))
  		 .put(["avgSpeed"], avg_speed.sprintf("%.1f").klog(">>>> trip avg speed >>>>> "))
                 ;
