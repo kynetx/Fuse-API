@@ -107,6 +107,11 @@ Operations for fuel
     };
 
     standardMPG = function() {
+      ent:mpg.isnull() => callEdmunds()
+                        | ent:mpg
+    }
+
+    callEdmunds = function() {
       vin = pds:get_me("vin");
       edmunds_key = keys:edmunds_client("key").klog(">>> edmunds key >>>>");
       edmunds_url = "https://api.edmunds.com/api/vehicle/v2/vins/#{vin}";
@@ -116,7 +121,8 @@ Operations for fuel
                                                | {};
       highway = resp{["MPG","highway"]} || 15;
       city = resp{["MPG","city"]} || 15;
-      (highway + city) / 2  // assume half city, half highway
+      mpg = (highway + city) / 2  // assume half city, half highway
+      mpg.pset("ent:mpg"); 
     }
       
   }
