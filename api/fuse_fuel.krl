@@ -98,11 +98,11 @@ Operations for fuel
       vehicle_cpg = not fillup{"unit_price"}.isnull() => fillup{"unit_price"}
                                                        | 0;
 
-      mpg = vehicle_mpg || standardMPG();
-      cpg = vehicle_cpg || standardCPG();
+      mpg = vehicle_mpg || standardMPG().klog(">>> MPG >>>>");
+      cpg = vehicle_cpg || standardCPG().klog(">>> CPG >>>>");
 
       cpm = cpg / mpg;
-      cpm.klog(">>>>> returning CPG >>>>>> ")
+      cpm.klog(">>>>> returning CPM >>>>>> ")
       
     };
 
@@ -123,6 +123,22 @@ Operations for fuel
       city = resp{["MPG","city"]} || 15;
       mpg = (highway + city) / 2  // assume half city, half highway
       mpg.pset(ent:mpg); 
+    }
+      
+    standardCPG = function() {
+      callFuelEconomy()
+       // not ent:mpg => callEdmunds()
+       //              | ent:mpg.klog(">>>> returning cached MPG >>>>") 
+    }
+
+    callFuelEconomy = function() {
+      fe_url = "http://www.fueleconomy.gov/ws/rest/fuelprices";
+      raw_resp = http:get(fe_url);
+      resp = this2that:xml2json(raw_resp, {"content_key" : "val"}).klog(">>>> DOE response >>>> ");
+      cpg = {"cpg" : resp{["fuelPrices", "midgrade", "val"]},
+             "timestamp": time:strftime(time:now(), "%s")
+            };
+      cpg; 
     }
       
   }
