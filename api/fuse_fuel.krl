@@ -126,9 +126,9 @@ Operations for fuel
     }
       
     standardCPG = function() {
-      callFuelEconomy()
-       // not ent:mpg => callEdmunds()
-       //              | ent:mpg.klog(">>>> returning cached MPG >>>>") 
+       expired = ent:cpg{"timestamp"} + (3600 * 24) > time:strftime(time:now(), "%s").klog(">>> expired? >>>>");
+       not ent:cpg || expired => callFuelEconomy()
+                               | ent:cpg{"cpg"}.klog(">>>> returning cached CPG >>>>") 
     }
 
     callFuelEconomy = function() {
@@ -141,7 +141,7 @@ Operations for fuel
       cpg_obj = {"cpg" : cpg,
                  "timestamp": time:strftime(time:now(), "%s")
                 };
-      cpg_obj; 
+      cpg_obj.pset(ent:cpg); 
     }
       
   }
