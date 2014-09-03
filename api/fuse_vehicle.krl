@@ -257,6 +257,7 @@ Fuse ruleset for a vehicle pico
         vid = carvoyant:vehicle_id(); 
         my_subs = carvoyant:getSubscription(vid);
         should_have = required_subscription_list.length();
+	// also check that subscription ECI exists! 
       }
       if(my_subs.length() < should_have) then
       {

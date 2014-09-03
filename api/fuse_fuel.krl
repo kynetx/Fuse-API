@@ -17,7 +17,7 @@ Operations for fuel
     use module b16x9 alias vehicle
 
 	
-    provides fillups, fillupsByDate
+    provides fillups, fillupsByDate, currentCPM, standardMPG, standardCPG
   }
 
   global {
@@ -91,7 +91,34 @@ Operations for fuel
     };
 
 
+    currentCPM = function() {
+      fillup = fillups(null, 1, 0).head() || {"mpg": 1, "unit_price": 0};
+      vehicle_mpg = not fillup{"mpg"}.isnull() => fillup{"mpg"} 
+                                                | 0;
+      vehicle_cpg = not fillup{"unit_price"}.isnull() => fillup{"unit_price"}
+                                                       | 0;
 
+      mpg = vehicle_mpg || standardMPG();
+      cpg = vehicle_cpg || standardCPG();
+
+      cpm = cpg / mpg;
+      cpm.klog(">>>>> returning CPG >>>>>> ")
+      
+    };
+
+    standardMPG = function() {
+      vin = pds:get_me("vin");
+      edmunds_key = keys:edmunds_client("key").klog(">>> edmunds key >>>>");
+      edmunds_url = "https://api.edmunds.com/api/vehicle/v2/vins/#{vin}";
+      raw_resp = http:get(edmunds_url, {"fmt":"json",
+                                        "api_key": edmunds_key});
+      resp = raw_resp{"status"} eq "200" => raw_resp{content}.decode().klog("Edmunds response")
+                                          | {};
+      highway = resp{["MPG","highway"]} || 15;
+      city = resp{["MPG","city"]} || 15;
+      (highway + city) / 2  // assume half city, half highway
+    }
+      
   }
 
 
