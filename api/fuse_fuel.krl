@@ -92,7 +92,7 @@ Operations for fuel
 
 
     currentCPM = function() {
-      fillup = fillups(null, 1, 0).head() || {} ;
+      fillup = fillups(null, 1, 0).head() || {};
       vehicle_mpg = not fillup{"mpg"}.isnull() => fillup{"mpg"} 
                                                 | 0;
       vehicle_cpg = not fillup{"unit_price"}.isnull() => fillup{"unit_price"}
