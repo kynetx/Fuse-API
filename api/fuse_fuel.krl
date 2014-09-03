@@ -108,7 +108,7 @@ Operations for fuel
 
     standardMPG = function() {
       not ent:mpg => callEdmunds()
-                   | ent:mpg
+                   | ent:mpg.klog(">>>> returning cached MPG >>>>")
     }
 
     callEdmunds = function() {
