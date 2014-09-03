@@ -122,7 +122,7 @@ Operations for fuel
       highway = resp{["MPG","highway"]} || 15;
       city = resp{["MPG","city"]} || 15;
       mpg = (highway + city) / 2  // assume half city, half highway
-      mpg.pset("ent:mpg"); 
+      mpg.pset(ent:mpg); 
     }
       
   }
