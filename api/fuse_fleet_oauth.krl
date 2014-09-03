@@ -82,15 +82,11 @@ Ruleset for fleet OAuth stuff
       // CloudOS:handleOauthCode rule redirects to this function based on state param created in carvoyantOathUrl()
       codeForAccessToken = function(code, redirect_uri, hostsite) {
         header = 
-            {"credentials": {
-               "username": keys:carvoyant_client("client_id"),
-               "password": keys:carvoyant_client("client_secret"),
-	       "realm": apiHostname(),
-	       "netloc": apiHostname() + ":443"
-               },
-             "params" : {"grant_type": "authorization_code",
+            {"params" : {"grant_type": "authorization_code",
 	                 "code": code,
-			 "redirect_uri": redirect_uri
+			 "redirect_uri": redirect_uri,
+			 "client_id": keys:carvoyant_client("client_id"),
+               		 "client_secret": keys:carvoyant_client("client_secret")
 	                }
             }; //.klog(">>>>>> client header <<<<<<<<");
         raw_result = http:post(oauth_url, header);
