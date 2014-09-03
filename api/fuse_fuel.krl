@@ -112,8 +112,8 @@ Operations for fuel
       edmunds_url = "https://api.edmunds.com/api/vehicle/v2/vins/#{vin}";
       raw_resp = http:get(edmunds_url, {"fmt":"json",
                                         "api_key": edmunds_key}).klog(">>>> Edmunds response >>>> ");
-      resp = raw_resp{"status"} eq "200" => raw_resp{content}.decode()
-                                          | {};
+      resp = raw_resp{"status_code"} eq "200" => raw_resp{content}.decode()
+                                               | {};
       highway = resp{["MPG","highway"]} || 15;
       city = resp{["MPG","city"]} || 15;
       (highway + city) / 2  // assume half city, half highway
