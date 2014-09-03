@@ -88,7 +88,7 @@ Ruleset for fleet OAuth stuff
 			 "client_id": keys:carvoyant_client("client_id"),
                		 "client_secret": keys:carvoyant_client("client_secret")
 	                }
-            }; //.klog(">>>>>> client header <<<<<<<<");
+            }.klog(">>>>>> client header <<<<<<<<");
         raw_result = http:post(oauth_url, header);
         results = (raw_result{"status_code"} eq "200") => normalizeAccountInfo(raw_result{"content"}.decode())
                                                         | raw_result.decode();
