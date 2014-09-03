@@ -111,8 +111,8 @@ Operations for fuel
       edmunds_key = keys:edmunds_client("key").klog(">>> edmunds key >>>>");
       edmunds_url = "https://api.edmunds.com/api/vehicle/v2/vins/#{vin}";
       raw_resp = http:get(edmunds_url, {"fmt":"json",
-                                        "api_key": edmunds_key}).klog(">>>> Edmunds response >>>> ");
-      resp = raw_resp{"status_code"} eq "200" => raw_resp{"content"}.decode()
+                                        "api_key": edmunds_key});
+      resp = raw_resp{"status_code"} eq "200" => raw_resp{"content"}.decode().klog(">>>> Edmunds response >>>> ")
                                                | {};
       highway = resp{["MPG","highway"]} || 15;
       city = resp{["MPG","city"]} || 15;
