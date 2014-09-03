@@ -126,7 +126,7 @@ Operations for fuel
     }
       
     standardCPG = function() {
-       expired = (ent:cpg{"timestamp"} + (1 * 24) < time:strftime(time:now(), "%s")).klog(">>> cpg2 expired? >>>>");
+       expired = (ent:cpg{"timestamp"} + (3600 * 24) < time:strftime(time:now(), "%s")).klog(">>> cpg expired? >>>>");
        result = not ent:cpg || expired => callFuelEconomy()
                                         | ent:cpg.klog(">>>> returning cached CPG >>>>") ;
        result{"cpg"}
