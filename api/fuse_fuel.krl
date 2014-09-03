@@ -102,7 +102,11 @@ Operations for fuel
       cpg = vehicle_cpg || standardCPG().klog(">>> CPG >>>>");
 
       cpm = cpg / mpg;
-      cpm.klog(">>>>> returning CPM >>>>>> ")
+      {"costPerMile": cpm,
+       "mpg": mpg,
+       "costPerGallon": cpg,
+       "vehicleData": vehicle_mpg > 0 && vehicle_cpg > 0
+      }.klog(">>>>> returning CPM >>>>>> ")
       
     };
 
@@ -126,7 +130,7 @@ Operations for fuel
     }
       
     standardCPG = function() {
-      num_days = 3;
+      num_days = 2;
       expired = (ent:cpg{"timestamp"} + (num_days * 3600 * 24) < time:strftime(time:now(), "%s")).klog(">>> cpg expired? >>>>");
       result = not ent:cpg || expired => callFuelEconomy()
                                        | ent:cpg.klog(">>>> returning cached CPG >>>>") ;
