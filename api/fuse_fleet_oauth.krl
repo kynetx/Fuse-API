@@ -134,14 +134,10 @@ You are being redirected to <a href="#{url}">#{url}</a>
       refreshTokenForAccessToken = function() {
         account_info = ent:account_info || {};
         header = 
-            {"credentials": {
-               "username": keys:carvoyant_client("client_id"),
-               "password": keys:carvoyant_client("client_secret"),
-	       "realm": apiHostname(),
-	       "netloc": apiHostname() + ":443"
-               },
-             "params" : {"grant_type": "refresh_token",
-	                 "refresh_token": account_info{"refresh_token"}
+            {"params" : {"grant_type": "refresh_token",
+	                 "refresh_token": account_info{"refresh_token"},
+			 "client_id": keys:carvoyant_client("client_id"),
+               		 "client_secret": keys:carvoyant_client("client_secret")
 	                }
             }.klog(">>>>>> client header <<<<<<<<");
         raw_result = http:post(oauth_url, header).klog(">>> refresh request result >>> ");
