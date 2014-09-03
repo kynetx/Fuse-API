@@ -141,7 +141,7 @@ Operations for fuel
       cpg_obj = {"cpg" : cpg,
                  "timestamp": time:strftime(time:now(), "%s")
                 };
-      cpg_obj.pset(ent:cpg); 
+      cpg_obj.pset(ent:cpg);  
     }
       
   }
