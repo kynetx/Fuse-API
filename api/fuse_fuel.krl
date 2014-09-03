@@ -132,7 +132,7 @@ Operations for fuel
     }
 
     callFuelEconomy = function() {
-      fe_url = "http://www.fueleconomy.gov/ws/rest/fuelprices";
+      fe_url = "http://www.fueleconomy.gov/ws/rest/fuelprices"; 
       raw_resp = http:get(fe_url);
       resp = raw_resp{"status_code"} eq "200" => raw_resp{"content"}.klog(">>>> FE response >>>> ")
                                                | {};
