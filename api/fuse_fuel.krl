@@ -107,8 +107,8 @@ Operations for fuel
     };
 
     standardMPG = function() {
-      ent:mpg.isnull() => callEdmunds()
-                        | ent:mpg
+      not ent:mpg => callEdmunds()
+                   | ent:mpg
     }
 
     callEdmunds = function() {
