@@ -134,7 +134,7 @@ Operations for fuel
     callFuelEconomy = function() {
       fe_url = "http://www.fueleconomy.gov/ws/rest/fuelprices";
       raw_resp = http:get(fe_url);
-      resp = raw_resp{"status_code"} eq "200" => raw_resp{"content"}.decode().klog(">>>> FE response >>>> ")
+      resp = raw_resp{"status_code"} eq "200" => raw_resp{"content"}.klog(">>>> FE response >>>> ")
                                                | {};
       json = this2that:xml2json(resp, {"content_key" : "val"}).klog(">>>> response as JSON >>>> ");
       cpg = json{["fuelPrices", "midgrade", "val"]};
