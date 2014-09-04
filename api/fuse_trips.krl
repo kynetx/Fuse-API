@@ -257,7 +257,7 @@ Manage trips. PDS is not well-suited to these operations
 
       cost_data = fuel:currentCPM();
 
-      cost = math:round(mileage * cost_data{"cpm"} * 1000) / 1000;
+      cost = math:round(mileage * cost_data{"costPerMile"} * 1000) / 1000;
 
       interval = (time:strftime(trip{"endTime"}, "%s") - time:strftime(trip{"startTime"}, "%s"));
       
