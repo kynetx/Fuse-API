@@ -710,8 +710,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       returned = event:attrs();
       tokens = getTokens();
       vehicle_info = pds:get_item(namespace(), "vehicle_info")
-                      .delete("myProfilePhoto")
-                      .delete("profilePhoto");
+                      .delete(["myProfilePhoto"])
+                      .delete(["profilePhoto"]);
       url =  ent:last_carvoyant_url;
       params = ent:last_carvoyant_params;
       type = event:type();
