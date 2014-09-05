@@ -708,24 +708,28 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
              or http delete status_code re#([45]\d\d)# setting (status) 
    pre {
       returned = event:attrs();
-      tokens = getTokens();
+      tokens = getTokens().encode({"pretty": true});
       vehicle_info = pds:get_item(namespace(), "vehicle_info")
                       .delete(["myProfilePhoto"])
-                      .delete(["profilePhoto"]);
+                      .delete(["profilePhoto"])
+		      .encode({"pretty": true});
       url =  ent:last_carvoyant_url;
       params = ent:last_carvoyant_params;
       type = event:type();
+      
+      attrs = event:attrs().encode({"pretty": true});
+      
 
       error_msg = <<
 Carvoyant HTTP Error (#{status}): #{event:attr('status_line')}
 
 Autoraise label: #{event:attr('label')}
 
-Attributes #{event:attrs().encode({"pretty": true})} 
+Attributes #{attrs} 
 
-Tokens #{tokens.encode({"pretty": true})}
+Tokens #{tokens}
 
-Vehicle info: #{vehicle_info.encode({"pretty": true})}
+Vehicle info: #{vehicle_info}
 
 Carvoyant URL: #{url}
 
