@@ -375,8 +375,12 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	"vin": event:attr("vin") || profile{"vin"} || "unknown",
         "mileage": event:attr("mileage") || profile{"mileage"} || "10"
       }.klog(">>>> vehicle with these params >>>> ");
+
+      carvoyant_url = config_data{"base_url"};
+
 //      valid_tokens = carvoyant_oauth:validTokens().klog(">>>>> are tokens valid? >>>>>"); // can't do this only works in fleet
       valid_tokens =  not config_data{"access_token"}.isnull();
+     
     }
     if( params{"deviceId"} neq "unknown"
      && params{"vin"} neq "unknown"
@@ -385,7 +389,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       ) then
     {
       send_directive("Initializing or updating Carvoyant vehicle for Fuse vehicle ") with params = params;
-      carvoyant_post(config_data{"base_url"},
+      carvoyant_post(carvoyant_url,
       		     params,
                      config_data
    	    )
@@ -393,6 +397,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
     fired { 
       log(">>>>>>>>>> initializing Carvoyant account with device ID = " + params{"deviceId"});
+      set ent:last_carvoyant_url carvoyant_url;
+      set ent:last_carvoyant_params params.encode();
       raise fuse event vehicle_uninitialized if should_link || event:name() eq "init_vehicle";
       raise fuse event subscription_check;
     } else {
@@ -704,13 +710,26 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       returned = event:attrs();
       tokens = getTokens();
       vehicle_info = pds:get_item(namespace(), "vehicle_info");
+      url =  ent:last_carvoyant_url;
+      params = ent:last_carvoyant_params;
+      domain = event:domain();
 
       error_msg = <<
 Carvoyant HTTP Error (#{status}): #{event:attr('status_line')}
+
 Autoraise label: #{event:attr('label')}
+
 Attributes #{event:attrs().encode()} 
+
 Tokens #{tokens.encode()}
+
 Vehicle info: #{vehicle_info.encode()}
+
+Carvoyant URL: #{url}
+
+Carvoyant Params: #{params}
+
+HTTP Method: #{domain}
 >>
     }
     send_directive("Carvoyant subscription failed") with
