@@ -380,6 +380,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
     if( params{"deviceId"} neq "unknown"
      && params{"vin"} neq "unknown"
+     && params{"vin"}.match(re/^[0-9a-zA-Z]{17}$/)
      && valid_tokens.klog(">>>>> are tokens valid? >>>>>")
       ) then
     {
