@@ -709,27 +709,29 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
    pre {
       returned = event:attrs();
       tokens = getTokens();
-      vehicle_info = pds:get_item(namespace(), "vehicle_info");
+      vehicle_info = pds:get_item(namespace(), "vehicle_info")
+                      .delete("myProfilePhoto")
+                      .delete("profilePhoto");
       url =  ent:last_carvoyant_url;
       params = ent:last_carvoyant_params;
-      domain = event:domain();
+      type = event:type();
 
       error_msg = <<
 Carvoyant HTTP Error (#{status}): #{event:attr('status_line')}
 
 Autoraise label: #{event:attr('label')}
 
-Attributes #{event:attrs().encode()} 
+Attributes #{event:attrs().encode({"pretty": true})} 
 
-Tokens #{tokens.encode()}
+Tokens #{tokens.encode({"pretty": true})}
 
-Vehicle info: #{vehicle_info.encode()}
+Vehicle info: #{vehicle_info.encode({"pretty": true})}
 
 Carvoyant URL: #{url}
 
 Carvoyant Params: #{params}
 
-HTTP Method: #{domain}
+HTTP Method: #{type}
 >>
     }
     send_directive("Carvoyant subscription failed") with
