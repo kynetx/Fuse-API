@@ -360,13 +360,26 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                         .filter(function(v){
 			          v{"vin"} eq profile{"vin"}  
                                // && v{"deviceId"} eq profile{"deviceId"}
-                               }).head().klog(">>>> matching vehicle >>>>");
+                               })
+			 .head().klog(">>>> matching vehicle by VIN >>>>");
       // true if vehicle exists in Carvoyant with same vin and not yet linked
-      ugh = ent:vehicle_data{"vehicleId"}.klog(">>> stored vehicle ID >>>");
-      should_link = (not vehicle_match.isnull() && ent:vehicle_data{"vehicleId"}.isnull()).klog(">>> should we linl???? >>>>> ");
-      vid = should_link                            => vehicle_match{"vehicleId"} 
-          | ent:vehicle_data{"vehicleId"}.isnull() => "" // pass in empty vid to ensure we create one
-          |                                           ent:vehicle_data{"vehicleId"} || profile{"deviceId"};
+      should_link = (not vehicle_match.isnull() && ent:vehicle_data{"vehicleId"}.isnull()).klog(">>> should we link???? >>>>> ");
+
+
+      foo = ent:vehicle_data{"vehicleId"}.klog(">>> stored vehicle ID >>>");
+
+      vehicle_with_vid = cv_vehicles
+                        .filter(function(v){
+			          v{"vehicleId"} eq ent:vehicle_data{"vehicleId"}
+                               })
+			.head().klog(">>>> matching vehicle by VID >>>>");
+      // true if the vid we have is not valid or we don't have one
+      should_create = (vehicle_with_vid.isnull() || ent:vehicle_data{"vehicleId"}.isnull()).klog(">>> should we create???? >>>>> ");			       		
+
+      vid = should_link    => vehicle_match{"vehicleId"} 
+          | should_create  => "" // pass in empty vid to ensure we create one
+          |                   ent:vehicle_data{"vehicleId"} || profile{"deviceId"};
+
       config_data = get_config(vid).klog(">>>>> config data >>>>>"); 
       params = {
         "name": event:attr("name") || profile{"myProfileName"} || "Unknown Vehicle",
