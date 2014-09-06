@@ -102,8 +102,6 @@ Fuse ruleset for a vehicle pico
 			    .put(["myProfilePhoto"], photo)
 			    .delete(["name"])
 			    .delete(["photo"])
-			    .delete(["profileName"])
-			    .delete(["profilePhoto"])
 			    .delete(["deviceId"])
 			    .put(["deviceId"], device_id.uc()) // upper case deviceId
 			    .delete(["fleet_channel"])
