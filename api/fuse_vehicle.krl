@@ -102,6 +102,10 @@ Fuse ruleset for a vehicle pico
 			    .put(["myProfilePhoto"], photo)
 			    .delete(["name"])
 			    .delete(["photo"])
+			    .delete(["profileName"])
+			    .delete(["profilePhoto"])
+			    .delete(["deviceId"])
+			    .put(["deviceId"], device_id.uc()) // upper case deviceId
 			    .delete(["fleet_channel"])
 			    .delete(["schema"])
 			    .put(["_api"], sky)
@@ -151,14 +155,6 @@ Fuse ruleset for a vehicle pico
           // initialize my profile
 	  raise pds event new_profile_item_available 
             attributes new_profile;
-
-	       // {"myProfileName"  : name,
-	       //  "myProfilePhoto" : photo,
-	       //  "vin": vin,
-	       //  "deviceId": device_id,
-	       //  "mileage" : mileage,
-	       //  "_api": "sky"
-	       // };
 
 	  raise fuse event need_vehicle_data; // initialize vehicle_summary
 

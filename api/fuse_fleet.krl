@@ -312,8 +312,7 @@ Application that manages the fleet
         this_sub = CloudOS:subscriptionList(common:namespace(),"Vehicle")
 	           .filter(function(sub){sub{"channelName"} eq name})
 		   .head()
-		   .klog(">>>>>>> this_sub >>>>>>
-")
+		   .klog(">>>>>>> this_sub >>>>>>")
                 || {};   // tolerate lookup failures
 
 	// not sure why we want the sub???
