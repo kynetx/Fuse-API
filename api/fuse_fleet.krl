@@ -20,7 +20,7 @@ Application that manages the fleet
         sharing on
         provides vehicleChannels, vehicleSummary, vehicleStatus, tripSummaries, tripsSummary, fuelSummaries, fuelSummary,
 	seeFleetData, // delete after testing
-	fleetDetails
+	fleetDetails, vinAndDeviceIdCheck
     }
 
     global {
@@ -132,7 +132,63 @@ Application that manages the fleet
 	vehicle_ecis_by_name{name} || {}
       };
 
+      // ---------- config check functions ----------
+      vinAndDeviceIdCheck = function(deviceId, vin) {
+        cv_vehicles = carvoyant:carvoyantVehicleData().klog(">>>>> carvoyant vehicle data >>>>") || [];
+
+	cv_vehicles_by_deviceId = cv_vehicles
+  	   	  		   .collect(function(x){x{"deviceId"}})
+				   .klog(">>> cv_vehicles_by_deviceId >>>>")
+				   ;
+
+        deviceId_in_cv = cv_vehicles_by_deviceId{deviceId}.length() > 0;
+
+	cv_vehicles_by_vin = cv_vehicles
+  	   	  		   .collect(function(x){x{"vin"}})
+				   .klog(">>>> cv_vehicles_by_vin >>>>")
+				   ;
+
+        vin_in_cv = cv_vehicles_by_vin{vin}.length() > 0;
+
+
+	vin_and_device_id_together = vin_in_cv && 
+				     deviceId_in_cv && 
+    				     cv_vehicles_by_vin{vin}
+				       .filter(function(v){v{"deviceId"} eq deviceId})
+				       .length() > 0;
+
+
+	vehicles_by_deviceId = (ent:fleet{["vehicle_info"]} || {})
+	                           .map(function(k,v){v.put(["picoId"], k)})
+				   .values()
+  	   	  		   .collect(function(x){x{"deviceId"}})
+				   .klog(">>>> vehicles_by_deviceId >>>>>>")
+				   ;
+
+        deviceId_in_Fuse = vehicles_by_deviceId{deviceId}.length() > 0;
+
+	vehicles_by_vin = (ent:fleet{["vehicle_info"]} || {})
+	                           .map(function(k,v){v.put(["picoId"], k)})
+				   .values()
+  	   	  		   .collect(function(x){x{"vin"}})
+				   .klog(">>>> vehicles_by_vin >>>> ")
+				   ;
+
+	vin_in_Fuse = vehicles_by_vin{vin}.length() > 0;
+
+	{
+	 "deviceIdInCarvoyant": deviceId_in_cv,
+	 "deviceIdInFuse": deviceId_in_Fuse,
+	 "vinInCarvoyant": vin_in_cv,
+	 "vinInFuse" : vin_in_Fuse,
+	 "canAddCarvoyant": vin_and_device_id_together || (vin_in_cv && ! deviceId_in_cv) || (! vin_in_cv && deviceId_in_cv)
+	}
+
+      }
     }
+
+
+
 
     // ---------- respond to owner ----------
     rule create_id_to_eci_mapping {
