@@ -456,6 +456,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
       storable_vehicle_data = vehicle_data;
 
+      label = event:attr("label");
+
        // .filter(function(k,v){k eq "name" || 
        // 			      					k eq "vehicleId" ||
        // 								k eq "deviceId" ||
@@ -464,7 +466,13 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
        // 								k eq "mileage"
        //                                                          })
     }
-    noop();
+    {
+       event:send({"eci": owner}, "fuse", "vehicle_error") with
+          error_type = label and
+	  set_error = false
+          ;
+
+    }
     always {
       set ent:vehicle_data storable_vehicle_data;
       raise fuse event "vehicle_account_updated" with 
@@ -501,7 +509,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     fired {
       log "Deleting Carvoyant vehicle #{vid}"
     } else {
-      log "Cannot delete vehicle in Carvoyant; n	o vehicle ID"
+      log "Cannot delete vehicle in Carvoyant; no vehicle ID"
     }
   } 
   
@@ -776,13 +784,15 @@ HTTP Method: #{type}
         detail = detail and
         field_errors = field_errors
 	;
-       // not useful unless you can correlate error with call that produced it
-       // event:send({"eci": owner}, "fuse", "vehicle_error") with
-       //   sub_status = returned and
-       //   error_code = errorCode and
-       //   detail = detail and
-       //   field_errors = field_errors
-       // 	;
+       // not useful unless you can correlate error with call that produced 
+       event:send({"eci": owner}, "fuse", "vehicle_error") with
+          error_type = returned{"label"} and
+          sub_status = returned and
+          error_code = errorCode and
+          detail = detail and
+          field_errors = field_errors and 
+	  set_error = true
+          ;
     }	
     fired {
       error warn error_msg

@@ -662,8 +662,14 @@ You need HTML email to see this report.
       error_data = event:attrs();
       vehicle_name = vehicleNameByBackChannel();
     }
-    always {
-      set ent:fleet{["vehicle_errors", vehicle_name]} error_data
+    if(event:attr("set_error")) then 
+    {
+      noop();
+    }
+    fired {
+      set ent:fleet{["vehicle_errors", vehicle_name, error_data{"error_type"}]} error_data
+    } else { 
+      clear ent:fleet{["vehicle_errors", vehicle_name, error_data{"error_type"}]} 
     }
   }
 
