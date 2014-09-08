@@ -732,7 +732,10 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
       error_msg = returned{"content"}.decode();
 
-      reason = error_msg{"errorCode"} || "";
+      errorCode = error_msg{"errorCode"} || "";
+      detail = error_msg{"detail"} || "";
+      field_errors  = error_msg{"fieldErrors"} || [];
+      
 
       
       
@@ -759,7 +762,9 @@ HTTP Method: #{type}
     }
     send_directive("Carvoyant subscription failed") with
        sub_status = returned and
-       reason = reason;
+       error_code = errorCode and
+       detail = detail and
+       field_errors = field_errors.encode()
     fired {
       error warn error_msg
     }
