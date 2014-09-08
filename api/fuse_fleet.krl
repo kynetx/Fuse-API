@@ -174,14 +174,14 @@ Application that manages the fleet
 				   .klog(">>>> vehicles_by_vin >>>> ")
 				   ;
 
-	vin_in_Fuse = vehicles_by_vin{vin.klog(">>> VIN we're after >>>> ")}.length() > 0;
+	vin_in_Fuse = vehicles_by_vin{vin}.length() > 0;
 
 	{
 	 "deviceIdInCarvoyant": deviceId_in_cv,
 	 "deviceIdInFuse": deviceId_in_Fuse,
 	 "vinInCarvoyant": vin_in_cv,
 	 "vinInFuse" : vin_in_Fuse,
-	 "canAddCarvoyant": vin_and_device_id_together || (vin_in_cv && ! deviceId_in_cv) || (! vin_in_cv && deviceId_in_cv)
+	 "canAddCarvoyant": vin_and_device_id_together || (vin_in_cv && not deviceId_in_cv) || (not vin_in_cv && deviceId_in_cv)
 	}
 
       }
