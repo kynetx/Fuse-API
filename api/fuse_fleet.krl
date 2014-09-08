@@ -20,12 +20,11 @@ Application that manages the fleet
         sharing on
         provides vehicleChannels, vehicleSummary, vehicleStatus, tripSummaries, tripsSummary, fuelSummaries, fuelSummary,
 	seeFleetData, // delete after testing
-	fleetDetails, vinAndDeviceIdCheck
+	fleetDetails, vinAndDeviceIdCheck, errorSummary
     }
 
     global {
 
-      // this is complicated cause we want to return the subscription channel for the vehicle, not the _LOGIN channel
       vehicleChannels = function() {
 
          common:vehicleChannels();
@@ -115,6 +114,17 @@ Application that manages the fleet
       };
       fuelSummary = fuelSummaries;
 
+
+      errorSummary = function() {
+	summaries = ent:fleet{["vehicle_errors"]}  
+		     .map(function(k,v){v.put(["picoId"], k)
+		                         .put(["label"], ent:fleet{["vehicle_info", k, "label"]})
+                                       });
+        summaries.values();
+        
+      };
+
+
       findVehicleByBackchannel = function (bc) {
         garbage = bc.klog(">>>> back channel <<<<<");
         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle");
@@ -131,6 +141,12 @@ Application that manages the fleet
 				 ;
 	vehicle_ecis_by_name{name} || {}
       };
+
+      vehicleNameByBackChannel = function() {
+	vehicle_channel_data = findVehicleByBackchannel(meta:eci());
+	vehicle_channel_data{"channelName"}.klog(">>>> vehicle name >>>> ")
+      }
+
 
       // ---------- config check functions ----------
       vinAndDeviceIdCheck = function(deviceId, vin) {
@@ -497,9 +513,7 @@ Application that manages the fleet
 	keyvalue = event:attr("keyvalue").split(re/,/).klog(">>>> key value should be array >>>");
         vehicle_info = event:attr("value").decode();
 
-	// why am I gettting this?  Oh, yeah, we need to match vehicle_id and vehicle channel so we'll do that here...
-	vehicle_channel_data = findVehicleByBackchannel(meta:eci());
-	vehicle_name = vehicle_channel_data{"channelName"}.klog(">>>> vehicle name >>>> ");
+	vehicle_name = vehicleNameByBackChannel();
 
 	new_key = keyvalue.append(vehicle_name).klog(" >>> storing vehicle data here >>>> ")
 
@@ -641,6 +655,18 @@ You need HTML email to see this report.
 
     
   // ---------- housekeeping rules ----------
+
+  rule process_vehicle_error {
+    select when fuse vehicle_error
+    pre {
+      error_data = event:attrs();
+      vehicle_name = vehicleNameByBackChannel();
+    }
+    always {
+      set ent:fleet{["vehicle_errors", vehicle_name]} error_data
+    }
+  }
+
   rule catch_complete {
     select when system send_complete
       foreach event:attr('send_results').pick("$.result") setting (result)

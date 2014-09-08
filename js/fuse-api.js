@@ -582,7 +582,7 @@
 			{
 			    // note that because the channel is create asynchronously, processing callback does
 			    // NOT mean the channel exists. 
-			    Fuse.log("Vehicle added");
+			    Fuse.log("Vehicle added with directives", response);
 			    cb(response);
 			},
 			{"eci": fleet_channel

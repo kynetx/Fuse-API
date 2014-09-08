@@ -734,12 +734,14 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
       errorCode = error_msg{"errorCode"} || "";
       detail = error_msg{"detail"} || "";
-      field_errors  = error_msg{"fieldErrors"} || [];
+      field_errors  = error_msg{"fieldErrors"}.encode({"pretty": true, "canonical": true}) || [];
       
 
       
       
       attrs = event:attrs().encode({"pretty": true, "canonical": true});
+
+      owner = common:fleetChannel();
       
 
       error_msg = <<
@@ -748,6 +750,12 @@ Carvoyant HTTP Error (#{status}): #{event:attr('status_line')}
 Autoraise label: #{event:attr('label')}
 
 Attributes #{attrs} 
+
+Error Code: #{errorCode}
+
+Detail: #{detail}
+
+Field Errors: #{field_errors}
 
 Tokens #{tokens}
 
@@ -758,18 +766,28 @@ Carvoyant URL: #{url}
 Carvoyant Params: #{params}
 
 HTTP Method: #{type}
->>
+>>;
+
     }
-    send_directive("Carvoyant subscription failed") with
-       sub_status = returned and
-       error_code = errorCode and
-       detail = detail and
-       field_errors = field_errors.encode()
+    {
+      send_directive("carvoyant_fail") with
+        sub_status = returned and
+        error_code = errorCode and
+        detail = detail and
+        field_errors = field_errors
+	;
+      event:send({"eci": owner}, "fuse", "vehicle_error") with
+        sub_status = returned and
+        error_code = errorCode and
+        detail = detail and
+        field_errors = field_errors
+	;
+    }	
     fired {
       error warn error_msg
     }
   }
 
 
-// fuse_carvoyant_mashery.krl
+// fuse_carvoyant.krl
 }

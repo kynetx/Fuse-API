@@ -11,7 +11,8 @@ Common definitions
 
 
 	provides S3Bucket, namespace, find_pico_by_id, fuel_namespace, trips_namespace, maint_namespace,
-	         convertToUTC, strToNum, vehicleChannels, fleet_photo, factory,
+	         convertToUTC, strToNum, vehicleChannels, fleet_photo, factory, 
+		 fleetChannel,
 	         skycloud, allowedRids
     }
 
@@ -142,7 +143,8 @@ Common definitions
      };
 
 
-     //  Only works when executed in a fleet pico
+     //  Only works when executed in a fleet pico 
+     // this is complicated cause we want to return the subscription channel for the vehicle, not the _LOGIN channel
      vehicleChannels = function() {
 
         picos = CloudOS:picoList() || {}; // tolerate lookup failures
@@ -164,6 +166,14 @@ Common definitions
 	}).values();
 	res
       };
+
+      // only works for vehicle!!  
+      fleetChannel = function () {
+          CloudOS:subscriptionList(namespace(),"Fleet").head().pick("$.eventChannel")
+         ||
+          pds:get_item(namespace(),"fleet_channel") // if we can't find subscription use the one passed
+      };
+
 
       // rids allowed to ask for tokens from fleet
       allowedRids = function() {

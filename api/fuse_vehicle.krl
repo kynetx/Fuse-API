@@ -24,11 +24,11 @@ Fuse ruleset for a vehicle pico
 
     global {
 
-      fleetChannel = function () {
-          CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel")
-         ||
-          pds:get_item(common:namespace(),"fleet_channel") // if we can't find subscription use the one passed
+      fleetChannel = function() {
+
+         common:fleetChannel();
       };
+
 
       myIncomingChannel = function () {
           CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.backChannel");
