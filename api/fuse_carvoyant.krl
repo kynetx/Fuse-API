@@ -776,12 +776,13 @@ HTTP Method: #{type}
         detail = detail and
         field_errors = field_errors
 	;
-      event:send({"eci": owner}, "fuse", "vehicle_error") with
-        sub_status = returned and
-        error_code = errorCode and
-        detail = detail and
-        field_errors = field_errors
-	;
+       // not useful unless you can correlate error with call that produced it
+       // event:send({"eci": owner}, "fuse", "vehicle_error") with
+       //   sub_status = returned and
+       //   error_code = errorCode and
+       //   detail = detail and
+       //   field_errors = field_errors
+       // 	;
     }	
     fired {
       error warn error_msg
