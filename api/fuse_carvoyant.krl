@@ -729,6 +729,12 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       url =  ent:last_carvoyant_url;
       params = ent:last_carvoyant_params;
       type = event:type();
+
+      error_msg = returned{"content"}.decode();
+
+      reason = error_msg{"errorCode"} || "";
+
+      
       
       attrs = event:attrs().encode({"pretty": true, "canonical": true});
       
@@ -752,7 +758,8 @@ HTTP Method: #{type}
 >>
     }
     send_directive("Carvoyant subscription failed") with
-       sub_status = returned
+       sub_status = returned and
+       reason = reason;
     fired {
       error warn error_msg
     }
