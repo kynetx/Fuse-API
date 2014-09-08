@@ -174,7 +174,7 @@ Application that manages the fleet
 				   .klog(">>>> vehicles_by_vin >>>> ")
 				   ;
 
-	vin_in_Fuse = vehicles_by_vin{vin}.length() > 0;
+	vin_in_Fuse = vehicles_by_vin{vin.klog(">>> VIN we're after >>>> ")}.length() > 0;
 
 	{
 	 "deviceIdInCarvoyant": deviceId_in_cv,
