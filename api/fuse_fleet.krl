@@ -712,7 +712,7 @@ You need HTML email to see this report.
         picos = CloudOS:picoList()|| {}; // tolerate lookup failures
         picos_by_id = picos.values().collect(function(x){x{"id"}}).map(function(k,v){v.head()});
     } 
-    if( not picos_by_id{id.klog(">>>> looking for id >>> ")}.isnull() ) then {
+    if( picos_by_id{id.klog(">>>> looking for id >>> ")}.isnull() ) then {
       noop();
     }
     fired {
