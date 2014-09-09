@@ -787,12 +787,14 @@ HTTP Method: #{type}
 	;
        // not useful unless you can correlate error with call that produced 
        event:send({"eci": owner}, "fuse", "vehicle_error") with
-          error_type = returned{"label"} and
-          sub_status = returned and
-          error_code = errorCode and
-          detail = detail and
-          field_errors = field_errors and 
-	  set_error = true
+         attrs = {
+          "error_type": returned{"label"},
+          "sub_status": returned,
+          "error_code": errorCode,
+          "detail": detail,
+          "field_errors": field_errors,
+	  "set_error": true
+	 }
           ;
     }	
     fired {
