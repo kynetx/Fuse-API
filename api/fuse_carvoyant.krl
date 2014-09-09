@@ -744,10 +744,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       errorCode = error_msg{["error","errorCode"]} || "";
       detail = error_msg{["error","detail"]} || "";
       field_errors  = error_msg{["error","fieldErrors"]}.encode({"pretty": true, "canonical": true}) || [];
-      
+      reason =  error_msg{["error","errorDisplay"]} || "";
 
-      
-      
       attrs = event:attrs().encode({"pretty": true, "canonical": true});
 
       owner = common:fleetChannel();
@@ -763,6 +761,8 @@ Attributes #{attrs}
 Error Code: #{errorCode}
 
 Detail: #{detail}
+
+Reason: #{reason}
 
 Field Errors: #{field_errors}
 
@@ -783,19 +783,19 @@ HTTP Method: #{type}
         sub_status = returned and
         error_code = errorCode and
         detail = detail and
+	reason = reason and
         field_errors = field_errors
 	;
-       // not useful unless you can correlate error with call that produced 
        event:send({"eci": owner}, "fuse", "vehicle_error") with
          attrs = {
           "error_type": returned{"label"},
-          "sub_status": returned,
+          "reason": reason,
           "error_code": errorCode,
           "detail": detail,
-          "field_errors": field_errors,
+          "field_errors": error_msg{["error","fieldErrors"]},
 	  "set_error": true
 	 }
-          ;
+         ;
     }	
     fired {
       error warn error_msg
