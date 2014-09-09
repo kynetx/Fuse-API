@@ -336,8 +336,7 @@ Application that manages the fleet
 	fired {
 	  raise explicit event "vehicle_creation_ok" attributes vehicle_attrs
 	} else {
-	  raise fuse event "vehicle_error" with
-	    error_data = {
+	  raise fuse event "vehicle_error" attributes {
 	      "error_type": "vehicle_create",
 	      "set_error": true,
 	      "error_msg" : "Vehicle not created; vehicle with same VIN or Device ID already exists"
@@ -689,7 +688,7 @@ You need HTML email to see this report.
   rule process_vehicle_error {
     select when fuse vehicle_error
     pre {
-      error_data = event:attrs();
+      error_data = event:attrs().klog(">>>> error data for vehicle >>>>");
       vehicle_name = vehicleNameByBackChannel() || "unknown vehicle";
     }
     if(event:attr("set_error")) then 
