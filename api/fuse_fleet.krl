@@ -149,7 +149,7 @@ Application that manages the fleet
 
 
       // ---------- config check functions ----------
-      vinAndDeviceIdCheck = function(deviceId, vin) {
+      vinAndDeviceIdCheck = function(vin, deviceId) {
         cv_vehicles = carvoyant:carvoyantVehicleData().klog(">>>>> carvoyant vehicle data >>>>") || [];
 
 	cv_vehicles_by_deviceId = cv_vehicles
@@ -320,6 +320,36 @@ Application that manages the fleet
     // ---------- manage vehicle picos ----------
     rule create_vehicle {
         select when fuse need_new_vehicle
+
+	pre {
+	  vehicle_attrs = event:attrs();
+	  vehicle_found = vinAndDeviceIdCheck(vehicle_attrs{"vin"}, vehicle_attrs{"deviceId"});
+
+	  should_create = not(vehicle_found{"vinInFuse"} || vehicle_found{"deviceIdInFuse"})
+	  
+	}
+	
+	if(should_create) then {
+	  send_directive("vehicle_creation_ok")
+	}
+
+	fired {
+	  raise explicit event "vehicle_creation_ok" attributes vehicle_attrs
+	} else {
+	  raise fuse event "vehicle_error" with
+	    error_data = {
+	      "error_type": "vehicle_create",
+	      "set_error": true,
+	      "error_msg" : "Vehicle not created; vehicle with same VIN or Device ID already exists"
+	    };
+	  raise fuse event "fleet_updated" if vehicle_found{"canAddCarvoyant"};
+	}
+
+    }
+
+
+    rule create_vehicle_check {
+        select when explicit vehicle_creation_ok
         pre {
 	  name = event:attr("name") || "Vehicle-"+math:random(99999);
           pico = common:factory({"schema": "Vehicle", "role": "vehicle"}, meta:eci());
@@ -660,11 +690,13 @@ You need HTML email to see this report.
     select when fuse vehicle_error
     pre {
       error_data = event:attrs();
-      vehicle_name = vehicleNameByBackChannel();
+      vehicle_name = vehicleNameByBackChannel() || "unknown vehicle";
     }
     if(event:attr("set_error")) then 
     {
-      noop();
+      send_directive("vehicle_error") with
+        error = error_data and
+	name = vehicle_name
     }
     fired {
       set ent:fleet{["vehicle_errors", vehicle_name, error_data{"error_type"}]} error_data
