@@ -216,6 +216,7 @@ Fuse ruleset for a vehicle pico
       pre {
         profile = pds:get_all_me();
       }
+      // why not check to ensure we have a Carvoyant ID? 
       if (not profile{"deviceId"}.isnull() ) then {
         send_directive("initializing vehicle " + profile{"deviceId"});
       }

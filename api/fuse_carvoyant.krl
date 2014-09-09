@@ -412,8 +412,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       log(">>>>>>>>>> initializing Carvoyant account with device ID = " + params{"deviceId"});
       set ent:last_carvoyant_url carvoyant_url;
       set ent:last_carvoyant_params params.encode();
+      // don't want to do this on error do we? 
       raise fuse event vehicle_uninitialized if should_link || event:name() eq "init_vehicle";
-      raise fuse event subscription_check;
     } else {
       log(">>>>>>>>>> Carvoyant account initializaiton failed; missing device ID");
     }
@@ -474,6 +474,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     }
     always {
+      raise fuse event subscription_check;
       set ent:vehicle_data storable_vehicle_data;
       raise fuse event "vehicle_account_updated" with 
         vehicle_data = vehicle_data;
@@ -728,7 +729,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
              or http put status_code re#([45]\d\d)# setting (status)
              or http delete status_code re#([45]\d\d)# setting (status) 
    pre {
-      returned = event:attrs();
+      returned = event:attrs().decode();
       tokens = getTokens().encode({"pretty": true, "canonical": true});
       vehicle_info = pds:get_item(namespace(), "vehicle_info")
                       .delete(["myProfilePhoto"])

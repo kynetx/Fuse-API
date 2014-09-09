@@ -339,7 +339,7 @@ Application that manages the fleet
 	  raise fuse event "vehicle_error" attributes {
 	      "error_type": "vehicle_create",
 	      "set_error": true,
-	      "error_msg" : "Vehicle not created; vehicle with same VIN or Device ID already exists"
+	      "error_msg" : "Vehicle with same VIN or Device ID already exists"
 	    };
 	  raise fuse event "fleet_updated" if vehicle_found{"canAddCarvoyant"};
 	}
