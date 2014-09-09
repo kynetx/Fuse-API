@@ -729,7 +729,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
              or http put status_code re#([45]\d\d)# setting (status)
              or http delete status_code re#([45]\d\d)# setting (status) 
    pre {
-      returned = event:attrs().decode();
+      returned = event:attrs();
       tokens = getTokens().encode({"pretty": true, "canonical": true});
       vehicle_info = pds:get_item(namespace(), "vehicle_info")
                       .delete(["myProfilePhoto"])
@@ -739,7 +739,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       params = ent:last_carvoyant_params;
       type = event:type();
 
-      error_msg = returned{"content"}.decode();
+      error_msg = returned{"content"}.decode().klog(">>> decoded error content>>>> ");
 
       errorCode = error_msg{"errorCode"} || "";
       detail = error_msg{"detail"} || "";
