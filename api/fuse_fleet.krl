@@ -707,16 +707,16 @@ You need HTML email to see this report.
 
   rule clean_error_list {
     select when fuse dirty_errors
-    foreach  ent:fleet{["vehicle_errors"]} setting (k,v)
+    foreach  ent:fleet{["vehicle_errors"]}.klog(">>> vehicle errors >>> ") setting (id,err)
     pre {
         picos = CloudOS:picoList()|| {}; // tolerate lookup failures
         picos_by_id = picos.values().collect(function(x){x{"id"}}).map(function(k,v){v.head()});
     } 
-    if( not picos_by_id{k}.isnull() ) then {
+    if( not picos_by_id{id.klog(">>>> looking for id >>> ")}.isnull() ) then {
       noop();
     }
     fired {
-      clear ent:fleet{["vehicle_errors", k]};
+      clear ent:fleet{["vehicle_errors", id]};
     }
   }
 
