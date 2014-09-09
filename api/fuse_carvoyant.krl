@@ -741,9 +741,9 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
       error_msg = returned{"content"}.decode().klog(">>> decoded error content>>>> ");
 
-      errorCode = error_msg{"errorCode"} || "";
-      detail = error_msg{"detail"} || "";
-      field_errors  = error_msg{"fieldErrors"}.encode({"pretty": true, "canonical": true}) || [];
+      errorCode = error_msg{["error","errorCode"]} || "";
+      detail = error_msg{["error","detail"]} || "";
+      field_errors  = error_msg{["error","fieldErrors"]}.encode({"pretty": true, "canonical": true}) || [];
       
 
       
