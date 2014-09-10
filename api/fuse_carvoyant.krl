@@ -616,7 +616,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       status = event:attr("ignitionStatus");
       tid = event:attr("tripId");
       trip_data = event:attrs()
-       		    .delete(["_generatedby"])
+       		    .delete(["_generatedby"]);
     }
     noop();
     always {
