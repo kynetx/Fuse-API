@@ -615,6 +615,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
       status = event:attr("ignitionStatus");
       tid = event:attr("tripId");
+      trip_data = event:attrs()
+       		    .delete(["_generatedby"])
     }
     noop();
     always {
@@ -624,8 +626,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	  attributes {
 	    "namespace": namespace(),
 	    "keyvalue": "ignitionStatus_fired",
-	    "value": event:attrs()
-	              .delete(["_generatedby"]),
+	    "value": trip_data,
             "_api": "sky"
  		   
 	  };      
