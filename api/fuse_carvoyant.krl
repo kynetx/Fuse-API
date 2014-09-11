@@ -740,7 +740,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       params = ent:last_carvoyant_params;
       type = event:type();
 
-      error_msg = returned{"content"}.decode().klog(">>> decoded error content>>>> ");
+      error_msg = returned{"content"}.decode() || {};
 
       errorCode = error_msg{["error","errorCode"]} || "";
       detail = error_msg{["error","detail"]} || "";
