@@ -35,6 +35,8 @@ __Note:__ you won't see any data until the vehicle with the new device has been 
 
 ### Vehicle Channels
 
+___Note: Your should treat all channels as a shared secret and not post them publicly.___ PicoIds are *not* sensitive and can be shared, posted, etc. 
+
 The following function returns an array of objects that associate a ```picoId``` with the current channel for that vehicle.
 
 	Fuse.vehicleChannels(<callback>, <options>)

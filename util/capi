@@ -1,0 +1,6 @@
+#!/bin/bash
+
+url="https://api.carvoyant.com/v1/api$2"
+#echo "Calling " $url
+curl --header "Authorization: Bearer $1" $url
+#echo "\n"
