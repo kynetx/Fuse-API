@@ -493,5 +493,12 @@ You delete an maintenance record using the following function:
 
 where ```id``` that is the key of the maintenance record record you wish to delete.
 
+### Current Vehicle Status
+
+The following returns the current status of a vehicle as most recently reported by the device (currently every 5 minutes while running).
+
+	Fuse..currentVehicleStatus(<vehicle_channel>,  <callback>, <options>)
+
+This function differs from the the fleet function ```vehicleStatus()``` because it returns the current status of a single vehicle (identified by the channel) rather that returning the cached vehicle status for each vehicle based on its last reported ignition event. 
 
 
