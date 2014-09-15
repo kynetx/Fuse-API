@@ -315,7 +315,7 @@
 	    return Fuse.ask_fleet("isAuthorized", {}, Fuse.carvoyant, function(json) {
 		Fuse.log("Authorized with Carvoyant? ", json);
 		Fuse.carvoyant = json.authorized;
-		cb(json);
+		cb(json); 
   	    }, options);
 	},
 
