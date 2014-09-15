@@ -1,6 +1,7 @@
 js/CloudOS-config.js
 js/fuse-console-config.js
 js/fuse-api-20140702.js
+util/fuse-api-release.yml
 
 api/test_config.yml
 api/carvoyant-keys
