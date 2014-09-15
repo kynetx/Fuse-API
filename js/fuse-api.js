@@ -1393,6 +1393,11 @@
 	// null and undefined are "empty"
 	if (obj == null) return true;
 
+	if( typeof obj === "number" 
+	 || typeof obj === "string" 
+	 || typeof obj === "boolean" 	
+	  ) return false;
+
 	// Assume if it has a length property with a non-zero value
 	// that that property is correct.
 	if (obj.length > 0)    return false;
