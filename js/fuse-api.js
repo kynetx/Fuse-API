@@ -692,7 +692,18 @@
             );
         },
 
+	currentVehicleStatus: function(vehicle_channel, cb, options) {
+	    cb = cb || function(){};
+	    options = options || {};
+	    options.rid = "carvoyant";
+	    
+	    var args = {};
 
+	    return Fuse.ask_vehicle(vehicle_channel, "vehicleStatus", args, null, function(json) {
+			Fuse.log("Retrieve current vehicle status", json);
+			cb(json);
+  		       }, options);
+	},
 
 	updateVehicleDataCarvoyant: function(vehicle_channel, data_type, cb, options)
         {
