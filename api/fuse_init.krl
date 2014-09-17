@@ -61,7 +61,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	}
 
 	acctRecordExists = function(key) {
-	  (not app:fuse_users{key}.isnull())
+	  app:fuse_users{key} != 0 // persistents are never null
 	}
 
 	acctRecord = function(key) {
