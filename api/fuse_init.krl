@@ -30,7 +30,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
         fleetChannel = function() {
 	    // while we're here, make sure this account has a record
-  	    me = pds:get_all_me();
+  	    me = pds:get_all_me().klog(">>>> profile >>>>");
 	    my_email =  me{"myProfileEmail"} || random:uuid();
 
 	    acctRecord = acctRecordExists(my_email) => acctRecord(my_email) 
