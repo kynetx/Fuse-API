@@ -48,12 +48,17 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	};
 
 	fuse_owner = function(account_id) {
-	  account_id.isnull() => (app:fuse_users || {})
+	  makeAcctList = function() {
+ 	    {"recordCount": app:fuse_users.keys().length(),
+	     "accounts": app:fuse_users
+	    }
+	  }
+	  account_id.isnull() => makeAcctList()
 	                       | app:fuse_users{account_id.replace(re# #, "+")} || {}
 	}
 
 	makeAcctRecord = function(me) {
-	   me.klog(">>> in makeAcctRecord >>>>")
+	   me
             .delete(["_generatedby"])
             .delete(["myProfilePhoto"])
 	    .put(["timestamp"], common:convertToUTC(time:now()))
