@@ -3,7 +3,7 @@
 use Getopt::Std;
 use File::Copy;
 use File::Path;
-use File::Slurp;
+use Cwd;
 use YAML::XS;
 use DateTime;
 use Net::Amazon::S3;
@@ -19,7 +19,7 @@ use constant DEFAULT_RULESET_DIR => "/rulesets";
 
 # global options
 use vars qw/ %clopt /;
-my $opt_string = 'c:?hv:';
+my $opt_string = 'c:?hv:r';
 getopts( "$opt_string", \%clopt ) or usage();
 
 usage() if $clopt{'h'} || $clopt{'?'};
@@ -107,7 +107,7 @@ while (my $file = readdir(DIR)) {
   # Use a regular expression to ignore files beginning with a period
   next if ($file =~ m/^\./);
   next if ($file !~ m/\.krl$/);
-  print "$file\n";
+  print "Versioning: $file\n";
 
   my $newfile = "$target_dir/$file";
 
@@ -127,28 +127,45 @@ while (my $file = readdir(DIR)) {
 
   }
 
+  close(IN);
+  close(OUT);
+
 }
 
 closedir(DIR);
 
-foreach my $rs ( keys %{$app_map}) {
+my $cwd = getcwd();
 
-   my $name = "rulesets/" . $version . "XYZ/" . $rs;
-   print $name, "\n";
+if ($clopt{"r"}) {
 
-my $object = $bucket->object(
-     key          => $name,
-     acl_short    => 'public-read',
-     content_type => 'text/plain',
-   );
-my $file_contant = read_file("$target_dir/$rs");
-print $file_content, "\n\n";
-#   $object->put('this is the public value');
+    foreach my $rs ( keys %{$app_map}) {
 
+	my $name = "rulesets/" . $version . "/" . $rs;
+	print "Writing to S3: ", $name, "\n";
+
+	my $object = $bucket->object(
+				     key          => $name,
+				     acl_short    => 'public-read',
+				     content_type => 'text/plain',
+				    );
+
+	my $file_name = "$cwd/$target_dir/$rs";
+
+	if (-e $file_name) {
+
+	    my $file_content = read_file($file_name);
+	    print $file_content, "\n\n" if $file_name =~ m/vehicle/;
+	    $object->put($file_content);
+	}
+
+
+
+    }
+
+    print "\nFlush URL:";
+    print $flush_url . join(";", @{$flush_rids}), "\n";
 }
 
-
-print $flush_url . join(";", @{$flush_rids}), "\n";
 
 1;
 
@@ -164,8 +181,10 @@ usage: $0 [-h?] -v version
 
  -h|?       : this (help) message
  -v         : version
+ -c         : configuration file (default: DEFAULT_CONFIG_FILE)
+ -r         : release to Amazon S3
 
-example: $0 -v v1
+example: $0 -v v1 -c ../release-fuse.yml
 
 EOF
     exit;
@@ -186,3 +205,11 @@ sub read_config {
     return $config;
 }
 
+sub read_file {
+    my ($filename) = @_;
+    local $/ = undef;
+    open FILE, $filename or die "Couldn't open file: $!";
+    $string = <FILE>;
+    close FILE;
+    return $string
+}

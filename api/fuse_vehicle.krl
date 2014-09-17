@@ -25,7 +25,6 @@ Fuse ruleset for a vehicle pico
     global {
 
       fleetChannel = function() {
-
          common:fleetChannel();
       };
 
@@ -281,9 +280,8 @@ Fuse ruleset for a vehicle pico
 	incoming = event:attrs() || {};
 
         raw_vehicle_info = vid eq "none"            => {}
-	                 | incoming{"vin"}.isnull() => carvoyant:carvoyantVehicleData(vid) 
-                         |                             incoming
-			 ;
+	                 | incoming{"vin"}.isnull() => carvoyant:carvoyantVehicleData(vid)
+			 | incoming ;
 
 	profile = pds:get_all_me().klog(">>>>>> seeing profile >>>>> ") || {};
 

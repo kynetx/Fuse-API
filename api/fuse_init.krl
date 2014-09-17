@@ -29,6 +29,13 @@ Ruleset for initializing a Fuse account and managing vehicle picos
     global {
 
         fleetChannel = function() {
+	    // while we're here, make sure this account has a record
+  	    me = pds:get_all_me();
+	    my_email =  me{"myProfileEmail"} || random:uuid();
+
+	    acctRecord = acctRecordExists(my_email) => acctRecord(my_email) 
+	                                             | makeAcctRecord(me).pset(app:fuse_users{my_email});
+
             cid =  CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel") 
 	        || pds:get_item(common:namespace(),"fleet_channel");
 
@@ -43,6 +50,22 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	fuse_owner = function(account_id) {
 	  account_id.isnull() => (app:fuse_users || {})
 	                       | app:fuse_users{account_id.replace(re# #, "+").klog(">> account ID with space >>> ")} || {}
+	}
+
+	makeAcctRecord = function(me) {
+	   me
+            .delete(["_generatedby"])
+            .delete(["myProfilePhoto"])
+	    .put(["timestamp"], common:convertToUTC(time:now()))
+            .put(["eci"], meta:eci());
+	}
+
+	acctRecordExists = function(key) {
+	  not app:fuse_users{key}.isnull()
+	}
+
+	acctRecord = function(key) {
+	  app:fuse_users{key}
 	}
 
     }
@@ -237,12 +260,7 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
         }
 
 	always {
-	  set app:fuse_users{my_email} 
-	      me
-               .delete(["_generatedby"])
-               .delete(["myProfilePhoto"])
-	       .put(["timestamp"], common:convertToUTC(time:now()))
-               .put(["eci"], meta:eci());
+	  set app:fuse_users{my_email} makeAcctRecord(me)
 	}
     }
 
