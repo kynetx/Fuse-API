@@ -33,8 +33,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
   	    me = pds:get_all_me();
 	    my_email =  me{"myProfileEmail"} || random:uuid();
 
-	    acctRecord = acctRecordExists(my_email).klog(">>> record exists? >>>> ") => acctRecord(my_email) 
-	                                             | makeAcctRecord(me).pset(app:fuse_users{my_email});
+	    thisAcctRecord = acctRecordExists(my_email).klog(">>> record exists? >>>> ") => acctRecord(my_email) 
+	                                                      | makeAcctRecord(me).pset(app:fuse_users{my_email});
 
             cid =  CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel") 
 	        || pds:get_item(common:namespace(),"fleet_channel");
@@ -65,7 +65,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	}
 
 	acctRecord = function(key) {
-	  app:fuse_users{key.klog(">>>> lookup key >>>> ")}
+	  app:fuse_users{key}
 	}
 
     }
