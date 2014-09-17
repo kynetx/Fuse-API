@@ -65,7 +65,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	}
 
 	acctRecord = function(key) {
-	  app:fuse_users{key}
+	  app:fuse_users{key.klog(">>>> lookup key >>>> ")}
 	}
 
     }
