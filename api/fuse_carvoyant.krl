@@ -752,7 +752,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       owner = common:fleetChannel();
       
 
-      error_msg = <<
+      msg = <<
 Carvoyant HTTP Error (#{status}): #{event:attr('status_line')}
 
 Autoraise label: #{event:attr('label')}
@@ -799,7 +799,7 @@ HTTP Method: #{type}
          ;
     }	
     fired {
-      error warn error_msg
+      error warn msg
     }
   }
 
