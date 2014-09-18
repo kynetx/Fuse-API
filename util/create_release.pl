@@ -154,7 +154,7 @@ if ($clopt{"r"}) {
 	if (-e $file_name) {
 
 	    my $file_content = read_file($file_name);
-	    print $file_content, "\n\n" if $file_name =~ m/vehicle/;
+#	    print $file_content, "\n\n" if $file_name =~ m/vehicle/;
 	    $object->put($file_content);
 	}
 

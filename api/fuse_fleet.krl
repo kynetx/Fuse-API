@@ -118,7 +118,7 @@ Application that manages the fleet
       errorSummary = function() {
 	summaries = ent:fleet{["vehicle_errors"]}  
 		     .map(function(k,v){v.put(["picoId"], k)
-		                         .put(["label"], ent:fleet{["vehicle_info", k, "label"]})
+		                         .put(["label"], ent:fleet{["vehicle_info", k, "label"]} || vehicle_summaries{[k, "profileName"]})
                                        });
         summaries.values();
         
