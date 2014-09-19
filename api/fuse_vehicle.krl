@@ -96,11 +96,13 @@ Fuse ruleset for a vehicle pico
 	subscription_eci = carvoyant:get_eci_for_carvoyant();
 	// profile
 	me = pds:get_all_me();
+	// vehicleSummary
+	vehicle_summary = vehicleSummary();
 
 	status = {"rulesets_ok": missing.length() == 0,
 	          "eventChannel_ok": not fleet_subscription{"eventChannel"}.isnull(),
 	          "backChannel_ok": not fleet_subscription{"backChannel"}.isnull(),
-	          "vehicleId_ok": not vid.isnull(),
+	          "vehicleId_ok": not vehicle_summary{"vehicleId"}.isnull(),
 	          "subscriptions_ok": subscriptions.length() >= 4,
 	          "subscription_eci_ok": not subscription_eci.isnull(),
 	          "deviceId_ok": me{"deviceID"}.match(re/^(FS|C20).+.+$/)
