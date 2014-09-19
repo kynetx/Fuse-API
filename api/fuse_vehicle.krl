@@ -80,6 +80,45 @@ Fuse ruleset for a vehicle pico
 		"relationship": "BELOW"}
 	      ];
 
+
+      showPicoStatus = function() {
+	// rulesets
+	my_rulesets = CloudOSrulesetList(meta:eci());
+	needed_rulesets = common:requiredRulesets();
+	missing = needed_rulesets.difference(my_rulesets);
+	// subscription
+	fleet_subscription = CloudOS:subscriptionList(common:namespace(),"Fleet").head();
+	// vehicle ID
+	vid = event:attr("vehicle_id") || vehicle_id();
+	// subscriptions
+	subscriptions = carvoyant:getSubscription(vid);
+	// carvoyant channel
+	subscription_eci = carvoyant:get_eci_for_carvoyant();
+	// profile
+	me = pds:get_all_me();
+
+	status = missing.length() == 0
+	      && not fleet_subscription.isnull()
+	      && not vid.isnull()
+	      && subscriptions.length() >= 4
+	      && not subscription_eci.isnull()
+	      && me{"deviceID"}.match(re/^FS.+$/).length() > 0;
+
+
+	{"rulesets": {"installed" : my_rulesets,
+		      "required": needed_rulesets,
+		      "missing": missing
+		     },
+	 "fleet_channel": fleet_subscription,
+	 "profile": me,
+	 "carvoyant": {"vehicle_id": vid,
+		       "subscription_channel": subscription_eci,
+		       "subscriptions": subscriptions
+		      },
+	 "status": status
+	}
+      }
+
     }
 
     // ---------- initialization ----------

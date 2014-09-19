@@ -12,7 +12,7 @@ Common definitions
 
 	provides S3Bucket, namespace, find_pico_by_id, fuel_namespace, trips_namespace, maint_namespace,
 	         convertToUTC, strToNum, vehicleChannels, fleet_photo, factory, 
-		 fleetChannel,
+		 fleetChannel, requiredRulesets,
 	         skycloud, allowedRids
     }
 
@@ -53,6 +53,10 @@ Common definitions
                    "b177052x7.prod"
                ]
       };
+
+      requiredRulesets = function(type) {
+        apps{type};
+      }
 
       // only ruleset installs are specific to fuse. Generalize? 
       factory = function(pico_meta, parent_eci) {
