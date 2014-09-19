@@ -105,7 +105,7 @@ Fuse ruleset for a vehicle pico
 	          "vehicleId_ok": not vehicle_summary{"vehicleId"}.isnull(),
 		  "recieving_ok": not vehicle_summary{"lastRunningTimestamp"}.isnull(),
 	          "subscriptions_ok": subscriptions.length() >= 4 
-		                   && subscription
+		                   && subscriptions
                                         .all(function(s){s{"postUrl"}.match("re/#{subscription_eci}/".as("regexp"))}),
 	          "subscription_eci_ok": not subscription_eci.isnull(),
 	          "deviceId_ok": me{"deviceId"}.match(re/^(FS|C20).+$/)
