@@ -103,6 +103,7 @@ Fuse ruleset for a vehicle pico
 	          "eventChannel_ok": not fleet_subscription{"eventChannel"}.isnull(),
 	          "backChannel_ok": not fleet_subscription{"backChannel"}.isnull(),
 	          "vehicleId_ok": not vehicle_summary{"vehicleId"}.isnull(),
+		  "recieving_ok": not vehicle_summary{"lastTunningTimestamp"}.isnull(),
 	          "subscriptions_ok": subscriptions.length() >= 4,
 	          "subscription_eci_ok": not subscription_eci.isnull(),
 	          "deviceId_ok": me{"deviceID"}.match(re/^(FS|C20).+.+$/)
