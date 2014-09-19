@@ -105,7 +105,7 @@ Fuse ruleset for a vehicle pico
 	          "subscription_eci_ok": not subscription_eci.isnull(),
 	          "deviceId_ok": me{"deviceID"}.match(re/^FS.+|C20.+$/)
                  }
-
+ 
 
 	{"rulesets": {"installed" : my_rulesets,
 		      "required": needed_rulesets,
