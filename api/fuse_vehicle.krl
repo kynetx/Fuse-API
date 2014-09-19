@@ -94,6 +94,8 @@ Fuse ruleset for a vehicle pico
 	subscriptions = carvoyant:getSubscription(vid);
 	// carvoyant channel
 	subscription_eci = carvoyant:get_eci_for_carvoyant();
+	// what does carvoyant think?
+	cv_vehicles = carvoyant:carvoyantVehicleData();
 	// profile
 	me = pds:get_all_me();
 	// vehicleSummary
@@ -119,9 +121,11 @@ Fuse ruleset for a vehicle pico
 	 "fleet_channel": fleet_subscription,
 	 "profile": me
 	             .delete(["myProfilePhoto"]),
-	 "carvoyant": {"vehicle_id": vid,
-		       "subscription_channel": subscription_eci,
-		       "subscriptions": subscriptions
+         "fuse": {"vehicle_id": vid
+	         },
+	 "carvoyant": {"subscription_channel": subscription_eci,
+		       "subscriptions": subscriptions,
+		       "vehicle_data": cv_vehicles
 		      },
          "vehicle": {"lastRunningTimestamp": vehicle_summary{"lastRunningTimestamp"},
 	             "lastWaypoint": vehicle_summary{"lastWaypoint"}
