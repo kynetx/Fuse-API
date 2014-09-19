@@ -103,7 +103,7 @@ Fuse ruleset for a vehicle pico
 	          "vehicleId_ok": not vid.isnull(),
 	          "subscriptions_ok": subscriptions.length() >= 4,
 	          "subscription_eci_ok": not subscription_eci.isnull(),
-	          "deviceId_ok": me{"deviceID"}.match(re/^FS.+|C20.+$/)
+	          "deviceId_ok": me{"deviceID"}.match(re/^(FS|C20).+.+$/)
                  }
  
 
