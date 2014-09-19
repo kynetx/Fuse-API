@@ -83,13 +83,13 @@ Fuse ruleset for a vehicle pico
 
       showPicoStatus = function() {
 	// rulesets
-	my_rulesets = CloudOSrulesetList(meta:eci());
-	needed_rulesets = common:requiredRulesets();
+	my_rulesets = CloudOS:rulesetList(meta:eci());
+	needed_rulesets = common:requiredRulesets("vehicle");
 	missing = needed_rulesets.difference(my_rulesets);
 	// subscription
 	fleet_subscription = CloudOS:subscriptionList(common:namespace(),"Fleet").head();
 	// vehicle ID
-	vid = event:attr("vehicle_id") || vehicle_id();
+	vid = carvoyant:vehicle_id();
 	// subscriptions
 	subscriptions = carvoyant:getSubscription(vid);
 	// carvoyant channel
@@ -110,7 +110,8 @@ Fuse ruleset for a vehicle pico
 		      "missing": missing
 		     },
 	 "fleet_channel": fleet_subscription,
-	 "profile": me,
+	 "profile": me
+	             .delete(["myProfilePhoto"]),
 	 "carvoyant": {"vehicle_id": vid,
 		       "subscription_channel": subscription_eci,
 		       "subscriptions": subscriptions
