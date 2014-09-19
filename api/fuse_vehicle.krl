@@ -83,8 +83,8 @@ Fuse ruleset for a vehicle pico
 
       showPicoStatus = function() {
 	// rulesets
-	my_rulesets = CloudOS:rulesetList(meta:eci());
-	needed_rulesets = common:requiredRulesets("vehicle");
+	my_rulesets = CloudOS:rulesetList(meta:eci()).pick("$.rids");
+	needed_rulesets = common:requiredRulesets("vehicle").append(common:requiredRulesets("code"));
 	missing = needed_rulesets.difference(my_rulesets);
 	// subscription
 	fleet_subscription = CloudOS:subscriptionList(common:namespace(),"Fleet").head();
@@ -97,13 +97,14 @@ Fuse ruleset for a vehicle pico
 	// profile
 	me = pds:get_all_me();
 
-	status = missing.length() == 0
-	      && not fleet_subscription{"eventChannel"}.isnull()
-	      && not fleet_subscription{"backChannel"}.isnull()
-	      && not vid.isnull()
-	      && subscriptions.length() >= 4
-	      && not subscription_eci.isnull()
-	      && me{"deviceID"}.match(re/^FS.+$/).length() > 0;
+	status = {"rulesets_ok": missing.length() == 0,
+	          "eventChannel_ok": not fleet_subscription{"eventChannel"}.isnull(),
+	          "backChannel_ok": not fleet_subscription{"backChannel"}.isnull(),
+	          "vehicleId_ok": not vid.isnull(),
+	          "subscriptions_ok": subscriptions.length() >= 4,
+	          "subscription_eci_ok": not subscription_eci.isnull(),
+	          "deviceId_ok": me{"deviceID"}.match(re/^FS.+|C20.+$/).length() > 0
+                 }
 
 
 	{"rulesets": {"installed" : my_rulesets,
@@ -117,7 +118,7 @@ Fuse ruleset for a vehicle pico
 		       "subscription_channel": subscription_eci,
 		       "subscriptions": subscriptions
 		      },
-	 "status": status
+	 "status": status.put(["overall"], status.values().all(function(x){x}))
 	}
       }
 
