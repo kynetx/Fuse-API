@@ -84,7 +84,7 @@ Fuse ruleset for a vehicle pico
       showPicoStatus = function() {
 	// rulesets
 	my_rulesets = CloudOS:rulesetList(meta:eci()).pick("$.rids");
-	needed_rulesets = common:requiredRulesets("vehicle").append(common:requiredRulesets("code"));
+	needed_rulesets = common:requiredRulesets("vehicle").append(common:requiredRulesets("core"));
 	missing = needed_rulesets.difference(my_rulesets);
 	// subscription
 	fleet_subscription = CloudOS:subscriptionList(common:namespace(),"Fleet").head();
@@ -103,7 +103,7 @@ Fuse ruleset for a vehicle pico
 	          "vehicleId_ok": not vid.isnull(),
 	          "subscriptions_ok": subscriptions.length() >= 4,
 	          "subscription_eci_ok": not subscription_eci.isnull(),
-	          "deviceId_ok": me{"deviceID"}.match(re/^FS.+|C20.+$/).length() > 0
+	          "deviceId_ok": me{"deviceID"}.match(re/^FS.+|C20.+$/)
                  }
 
 
