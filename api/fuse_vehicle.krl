@@ -92,7 +92,7 @@ Fuse ruleset for a vehicle pico
            my_fleet = event:attr("fleet_channel");
            mileage = event:attr("mileage");
            my_schema = event:attr("schema");
-	   device_id = event:attr("deviceId").uc() || "";
+	   device_id = (event:attr("deviceId") || "").uc();
 	   vin = event:attr("vin").uc();
 
 	   // need to take stuff from event attrs and fill our schema
