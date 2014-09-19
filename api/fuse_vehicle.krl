@@ -93,7 +93,7 @@ Fuse ruleset for a vehicle pico
            mileage = event:attr("mileage");
            my_schema = event:attr("schema");
 	   device_id = (event:attr("deviceId") || "").uc();
-	   vin = event:attr("vin").uc();
+	   vin = (event:attr("vin") || "").uc();
 
 	   // need to take stuff from event attrs and fill our schema
 	   new_profile = event:attrs()
