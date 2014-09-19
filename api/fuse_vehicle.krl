@@ -127,7 +127,7 @@ Fuse ruleset for a vehicle pico
 		       "vehicle_data": cv_vehicles
 		      },
          "vehicle": {"deviceId": vid,
-	             "vehicleId": vehicle_summary{"vehicleId"},
+	             "vehicleId": vehicle_summary{"vehicleId"}, 
 	             "lastRunningTimestamp": vehicle_summary{"lastRunningTimestamp"},
 	             "lastWaypoint": vehicle_summary{"lastWaypoint"}
 		    },
