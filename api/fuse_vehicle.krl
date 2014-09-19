@@ -98,7 +98,8 @@ Fuse ruleset for a vehicle pico
 	me = pds:get_all_me();
 
 	status = missing.length() == 0
-	      && not fleet_subscription.isnull()
+	      && not fleet_subscription{"eventChannel"}.isnull()
+	      && not fleet_subscription{"backChannel"}.isnull()
 	      && not vid.isnull()
 	      && subscriptions.length() >= 4
 	      && not subscription_eci.isnull()
