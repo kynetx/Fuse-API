@@ -104,7 +104,8 @@ Fuse ruleset for a vehicle pico
 	status = {"rulesets_ok": missing.length() == 0,
 	          "eventChannel_ok": not fleet_subscription{"eventChannel"}.isnull(),
 	          "backChannel_ok": not fleet_subscription{"backChannel"}.isnull(),
-	          "vehicleId_ok": not vehicle_summary{"vehicleId"}.isnull(),
+	          "vehicleId_ok": not vehicle_summary{"vehicleId"}.isnull()
+                               && vehicle_summary{"vehicleId"} eq cv_vehicles{"vehicleId"},
 		  "recieving_ok": not vehicle_summary{"lastRunningTimestamp"}.isnull(),
 	          "subscriptions_ok": subscriptions.length() >= 4 
 		                   && subscriptions
