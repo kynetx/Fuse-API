@@ -216,7 +216,7 @@ Application that manages the fleet
 
 	status = {"overall": vehicle_statuses.values().all(function(v) {status{"overall"}}),
 	          "vehicle": vehicle_statuses
-                                .map(function(k,v){v.head().pick("$..overall")})
+                                .map(function(k,v){v.pick("$..overall")})
 	         }
 
        {"vehicles": vehicle_statuses,
