@@ -209,6 +209,7 @@ Application that manages the fleet
                                                   .put(["picoId"], p{"picoId"}) 
                                               })
 		              .collect( function(v){v{"picoId"}} )
+			      .map(function(k,v){v.head()})
                               .klog(">>>> store statuses by id >>>>>")
                               ;
 

@@ -99,7 +99,7 @@ Fuse ruleset for a vehicle pico
 	// profile
 	me = pds:get_all_me();
 	// vehicleSummary
-	vehicle_summary = vehicleSummary();
+	vehicle_summary = vehicleSummary().klog(">>>> vehicle summary >>> ");
 
 	status = {"rulesets_ok": missing.length() == 0,
 	          "eventChannel_ok": not fleet_subscription{"eventChannel"}.isnull(),
