@@ -20,7 +20,7 @@ Application that manages the fleet
         sharing on
         provides vehicleChannels, vehicleSummary, vehicleStatus, tripSummaries, tripsSummary, fuelSummaries, fuelSummary,
 	seeFleetData, // delete after testing
-	fleetDetails, vinAndDeviceIdCheck, errorSummary
+	fleetDetails, vinAndDeviceIdCheck, errorSummary, showPicoStatus
     }
 
     global {
@@ -201,9 +201,13 @@ Application that manages the fleet
 	}
 
       }
+
+
+      showPicoStatus = function() {
+        vehicleChannels()
+      }
+
     }
-
-
 
 
     // ---------- respond to owner ----------
