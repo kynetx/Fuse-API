@@ -206,7 +206,8 @@ Application that manages the fleet
       showPicoStatus = function() {
         vehicle_statuses = vehicleChannels()
   	                      .map(function(p){ common:skycloud(p{"channel"},"b16x9","showPicoStatus", {})
-                                                  .put(["picoId"], p{"picoId"}) 
+                                                  .put(["picoId"], p{"picoId"})
+                                                  .put(["channel"], p{"channel"})
                                               })
 		              .collect( function(v){v{"picoId"}} )
 			      .map(function(k,v){v.head()})
