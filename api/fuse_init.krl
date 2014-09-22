@@ -75,7 +75,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
         showPicoStatus = function() { 
 	  fleet_channel = fleetChannel();
-	  common:skycloud(fleet_channel{"eci"},"b16x9","showPicoStatus", {})
+	  common:skycloud(fleet_channel{"eci"},"b16x17","showPicoStatus", {})
 	}
 
 
