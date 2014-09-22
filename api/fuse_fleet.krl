@@ -204,10 +204,21 @@ Application that manages the fleet
 
 
       showPicoStatus = function() {
-        vehicleChannels()
-	  .map(function(p){
-	    	 common:skycloud(p{"channel"},"b16x9","showPicoStatus", {});
-	       })
+        vehicle_statuses = vehicleChannels()
+  	                      .map(function(p){ common:skycloud(p{"channel"},"b16x9","showPicoStatus", {})
+                                                  .put(["picoId"], p{"picoId"}) 
+                                              })
+                              ;
+
+	status = {"overall": vehicle_statuses.all(function(v) {status{"overall"}}),
+	          "vehicle": vehicle_statues.collect(function(v){"picoId"})
+                                            .map(function(k,v){v.head().pick("$..overall")})
+	         }
+
+       {"vehicles": vehicle_statuses,
+        "status": status
+       }
+
       }
 
     }
