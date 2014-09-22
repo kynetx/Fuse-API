@@ -209,7 +209,7 @@ Application that manages the fleet
                                                   .put(["picoId"], p{"picoId"}) 
                                               })
 		              .collect( function(v){v{"picoId"}} )
-                              .klog(">>>> statuses by id >>>>>")
+                              .klog(">>>> store statuses by id >>>>>")
                               ;
 
 	status = {"overall": vehicle_statuses.values().all(function(v) {status{"overall"}}),
