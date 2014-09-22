@@ -23,7 +23,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         errors to b16x13
 
         sharing on
-        provides fleetChannel, fuseOwners
+        provides fleetChannel, fuseOwners, showPicoStatus
     }
 
     global {
@@ -72,6 +72,12 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	acctRecord = function(key) {
 	  app:fuse_users{key}
 	}
+
+        showPicoStatus = function() { 
+	  fleet_channel = fleetChannel();
+	  common:skycloud(fleet_channel{"eci"},"b16x9","showPicoStatus", {})
+	}
+
 
     }
 
