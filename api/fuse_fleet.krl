@@ -205,6 +205,9 @@ Application that manages the fleet
 
       showPicoStatus = function() {
         vehicleChannels()
+	  .map(function(p){
+	    	 common:skycloud(p{"channel"},"b16x9","showPicoStatus", {});
+	       })
       }
 
     }
