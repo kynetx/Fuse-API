@@ -211,8 +211,8 @@ Application that manages the fleet
                               ;
 
 	status = {"overall": vehicle_statuses.all(function(v) {status{"overall"}}),
-	          "vehicle": vehicle_statues.collect(function(v){"picoId"}).klog(">>>> statuses by id>>>>>")
-                                            .map(function(k,v){v.head().pick("$..overall")})
+	          "vehicle": vehicle_statuses.collect(function(v){"picoId"}).klog(">>>> statuses by id>>>>>")
+                                             .map(function(k,v){v.head().pick("$..overall")})
 	         }
 
        {"vehicles": vehicle_statuses,
