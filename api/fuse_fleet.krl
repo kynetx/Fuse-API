@@ -208,12 +208,13 @@ Application that manages the fleet
   	                      .map(function(p){ common:skycloud(p{"channel"},"b16x9","showPicoStatus", {})
                                                   .put(["picoId"], p{"picoId"}) 
                                               })
+		              .collect( function(v){v{"picoId"}} )
+                              .klog(">>>> statuses by id >>>>>")
                               ;
 
-	status = {"overall": vehicle_statuses.all(function(v) {status{"overall"}}),
-	          "vehicle": vehicle_statuses.collect( function(v){v{"picoId"}} )
-                                             .klog(">>>> statuses by id >>>>>")
-                                             .map(function(k,v){v.head().pick("$..overall")})
+	status = {"overall": vehicle_statuses.values().all(function(v) {status{"overall"}}),
+	          "vehicle": vehicle_statuses
+                                .map(function(k,v){v.head().pick("$..overall")})
 	         }
 
        {"vehicles": vehicle_statuses,
