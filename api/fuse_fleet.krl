@@ -214,7 +214,7 @@ Application that manages the fleet
                               .klog(">>>> store statuses by id >>>>>")
                               ;
 
-	status = {"overall": vehicle_statuses.values().all(function(v) {status{"overall"}}),
+	status = {"overall": vehicle_statuses.values().all(function(v) { v{["status","overall"]} }),
 	          "vehicle": vehicle_statuses
                                 .map(function(k,v){v.pick("$..overall")})
 	         }
