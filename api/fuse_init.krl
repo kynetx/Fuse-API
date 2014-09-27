@@ -97,15 +97,19 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	  report_events = report_info{"report_events"};
 	  first_event_report = report_events.head();
 	  
+	  fleet = {"channel" : fleet_channel};
+
 	  status = {
 	    "reports": report_events.length() == 1 
 	            && first_event_report[1] eq "explicit/periodic_report"
 		    && first_event_report[2] eq "repeat"
-		    && not report_info{["report_history", "next"]}.isnull()
+		    && not report_info{["report_history", "next"]}.isnull(),
+	    "fleet": not fleet_channel.isnull()
 	  };
 
-	  {"reports" : report_info,
-	   "status": status
+	  {"reports" : report_info,	
+           "fleet" : fleet,
+           "status": status.put(["overall"], status.values().all(function(x){x}))
 	  }
 	  
 
