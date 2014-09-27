@@ -23,7 +23,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         errors to b16x13
 
         sharing on
-        provides fleetChannel, fuseOwners, showPicoStatus
+        provides fleetChannel, fuseOwners, showPicoStatus, showReportHistory
     }
 
     global {
@@ -73,9 +73,42 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	  app:fuse_users{key}
 	}
 
+	showReportHistory = function() {
+	  use_domain = "explicit";
+   	  use_type = "periodic_report";
+	  scheduled = event:get_list();
+	  evid = 0;
+	  evtype = 1;
+	  evrid = 3; 
+	  report_events = scheduled.filter(function(e){e[evtype] eq "#{use_domain}/#{use_type}" && e[evrid] eq meta:rid()}).klog(">>>> report schedules >>>>");
+	  first_event_report = report_events.head();
+	  report_history = event:get_history(first_event_report[evid]);
+	  {"report_events": report_events,
+	   "report_history": report_history
+	  }
+	}
+
         showPicoStatus = function() { 
 	  fleet_channel = fleetChannel();
-	  common:skycloud(fleet_channel{"eci"},"b16x17","showPicoStatus", {}) 
+	  // takes too long right now...
+//	  common:skycloud(fleet_channel{"eci"},"b16x17","showPicoStatus", {}) 
+	  
+	  report_info = showReportHistory();
+	  report_events = report_info{"report_events"};
+	  first_event_report = report_events.head();
+	  
+	  status = {
+	    "reports": report_events.length() == 1 
+	            && first_event_report[1] eq "explicit/periodic_report"
+		    && first_event_report[2] eq "repeat"
+		    && not report_info{["report_history", "next"]}.isnull()
+	  };
+
+	  {"reports" : report_info,
+	   "status": status
+	  }
+	  
+
 	}
 
 
@@ -322,6 +355,7 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
       }
       if (report_events.length() < 1) then // idempotent 
       {
+
         send_directive("schedule event for report") with
 	  domain = use_domain and
  	  type = use_type
