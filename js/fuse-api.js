@@ -264,6 +264,27 @@
   	    }, {"eci": CloudOS.defaultECI});
 	},
 
+	sendReport: function(cb, options) 
+	{
+	    cb = cb || function(){};
+	    options = options || {};
+	    var rid = "owner";
+	    var eci = CloudOS.defaultECI;
+            Fuse.log("check Pico Status");
+	    var attrs = {};
+ 	    Fuse.picoStatus(function(json) {
+		if(json.status.overall) {
+		    return CloudOS.raiseEvent("explicit", "periodic_report", attrs, {}, function(response) {
+			Fuse.log("Seeing response status ", response);
+			cb(response); 
+		    });
+		} else {
+		    console.log("Skipping ", eci, " for status ", json);
+		    return {};
+		}
+	    });
+	},
+
 
 	createCarvoyantAccount: function(attrs, cb, options)
         {
