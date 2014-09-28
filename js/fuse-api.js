@@ -250,6 +250,21 @@
             });
         },
 
+	// manage account
+	picoStatus: function(cb, options) 
+	{
+	    cb = cb || function(){};
+	    options = options || {};
+	    var rid = "owner";
+            Fuse.log("check Pico Status");
+	    var args = {};
+ 	    return CloudOS.skyCloud(Fuse.get_rid(rid), "showPicoStatus", args, function(json) {
+		Fuse.log("Seeing pico status ", json);
+		cb(json); 
+  	    }, {"eci": CloudOS.defaultECI});
+	},
+
+
 	createCarvoyantAccount: function(attrs, cb, options)
         {
 	    cb = cb || function(){};
