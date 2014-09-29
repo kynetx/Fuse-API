@@ -670,7 +670,10 @@ Application that manages the fleet
       period = {"format": {"days" : -7}, // one week; must be negative
                 "readable" : "weekly"
                };
-      tz = "-0600"; 
+
+      settings = pds:get_setting_data(meta:rid()).klog(">>>> my settings >>>> ") || {};
+      tz = settings{"timezonePreference"} || "America/Denver"; 
+      // tz = "-0600"; 
 
       subj = "Your "+period{"readable"}+" report from Fuse!";
 

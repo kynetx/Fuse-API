@@ -256,12 +256,13 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    var rid = "owner";
+	    var eci = options.eci ||  CloudOS.defaultECI;
             Fuse.log("check Pico Status");
 	    var args = {};
  	    return CloudOS.skyCloud(Fuse.get_rid(rid), "showPicoStatus", args, function(json) {
 		Fuse.log("Seeing pico status ", json);
 		cb(json); 
-  	    }, {"eci": CloudOS.defaultECI});
+  	    }, {"eci": eci});
 	},
 
 	sendReport: function(cb, options) 
@@ -269,7 +270,7 @@
 	    cb = cb || function(){};
 	    options = options || {};
 	    var rid = "owner";
-	    var eci = CloudOS.defaultECI;
+	    var eci =  options.eci ||  CloudOS.defaultECI;
             Fuse.log("check Pico Status");
 	    var attrs = {};
  	    Fuse.picoStatus(function(json) {
@@ -277,11 +278,15 @@
 		    return CloudOS.raiseEvent("explicit", "periodic_report", attrs, {}, function(response) {
 			Fuse.log("Seeing response status ", response);
 			cb(response); 
+		    },
+                    {"eci": eci
 		    });
 		} else {
 		    console.log("Skipping ", eci, " for status ", json);
 		    return {};
 		}
+	    },
+	    {"eci": eci
 	    });
 	},
 

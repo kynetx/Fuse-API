@@ -187,15 +187,18 @@ Manage trips. PDS is not well-suited to these operations
     };
 
     exportTrips = function(start, end) {
+      settings = pds:get_setting_data(meta:rid()).klog(">>>> my settings >>>> ") || {};
+      timezone = settings{"timezonePreference"} || "America/Denver"; 
+
       trips = tripsByDate(start,end)
                  .map(function(v){ start = v{["startWaypoint", "latitude"]} + "," + v{["startWaypoint", "longitude"]};
 	         		   dest = v{["endWaypoint", "latitude"]} + "," + v{["endWaypoint", "longitude"]};
 				   v.put(["startWaypoint"], start)
 				    .put(["endWaypoint"], dest)
-				    .put(["startDate"], time:strftime(v{"startTime"},"%F", {"tz":"America/Denver"}))
-				    .put(["startTime"], time:strftime(v{"startTime"},"%r", {"tz":"America/Denver"}))
-				    .put(["endDate"], time:strftime(v{"endTime"}, "%F", {"tz":"America/Denver"}))
-				    .put(["endTime"], time:strftime(v{"endTime"}, "%r", {"tz":"America/Denver"}))
+				    .put(["startDate"], time:strftime(v{"startTime"},"%F", {"tz":timezone}))
+				    .put(["startTime"], time:strftime(v{"startTime"},"%r", {"tz":timezone}))
+				    .put(["endDate"], time:strftime(v{"endTime"}, "%F", {"tz":timezone}))
+				    .put(["endTime"], time:strftime(v{"endTime"}, "%r", {"tz":timezone}))
 		                 });
       csv:from_array(trips);
     }
