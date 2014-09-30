@@ -276,6 +276,15 @@ Manage trips. PDS is not well-suited to these operations
       summary
     };
 
+    missedTrips = function(start, end) {
+      vid = carvoyant:vehicle_id();
+      today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz":"UTC"});
+      yesterday = time:add(today, {"days": -1});
+      cv_trips = carvoyant:trips(yesterday, today, vid);
+      missed_trips = cv_trips.filter(function(t){  ent:trip_summaries{mkTid(t{"id"})}.isnull() });
+      missed_trips
+    };
+
     mkTid = function(tid){"T"+tid};
     mkCarvoyantTid = function(tid){tid.extract(re/T(\d+)/).head()};
 
@@ -463,6 +472,18 @@ Manage trips. PDS is not well-suited to these operations
     always {
       set ent:monthly_trip_summary{[year, month]} month_totals;
     }
+  }
+
+  rule repair_trips {
+    select when fuse trips_check_sync
+    pre {
+      vid = carvoyant:vehicle_id();
+      today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz":"UTC"});
+      yesterday = time:add(today, {"days": -1});
+      cv_trips = carvoyant:trips(yesterday, today, vid);
+      missed_trips = cv_trips.filter(function(t){  ent:trip_summaries{mkTid(t{"id"})}.isnull() });
+    }
+    noop();
   }
 
 
