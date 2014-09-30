@@ -243,7 +243,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       params = {"startTime": start,
                 "endTime": end
                };
-      result = carvoyant_get(trip_url, config_data);
+      result = carvoyant_get(trip_url, config_data, params);
       result{"status_code"} eq "200" => result{["content","trip"]}
                                       | mk_error(result)
     }
