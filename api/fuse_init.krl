@@ -115,6 +115,11 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
 	}
 
+	// ---------- internal ----------
+	mk_fleet_sub_name = function() {
+	  "Owner-fleet-"+ random:uuid()
+	}
+
 
     }
 
@@ -151,7 +156,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             fleet = {
                 "cid": fleet_channel
             };
-	    pico_id = "Owner-fleet-"+ random:uuid();
+	    pico_id = "Owner-fleet-"+ random:uuid(); //mk_fleet_sub_name();
 	    
         }
 	if (pico{"authChannel"} neq "none") then
@@ -210,6 +215,27 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         } else {
           log "Pico NOT CREATED for fleet";
 	}
+    }
+
+    rule process_fleet_introduction {
+      select when fuse fleet_introduction
+      pre {
+        password = event:attr("password");
+	fleet_channel = event:attr("fleet_channel");
+        channel_id = mk_fleet_sub_name();
+	passwords_match = password eq keys:fuse_admin("password");
+      }
+      if (passwords_match) then // require password for now
+      {
+        send_directive("connecting_to_existing_fleet")
+	  with fleet_channel = fleet_channel
+	   and channel_id = channel_id
+      }
+      fired {
+        log ">>> linking to existing fleet >>>> " + fleet_channel;
+      } else {
+        log ">>> password mismatch >>>>";
+      }
     }
 
     rule show_children {
