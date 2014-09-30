@@ -20,7 +20,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     provides namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
 	     carvoyantVehicleData, isAuthorized, 
-             vehicleStatus, keyToLabel, tripInfo,
+             vehicleStatus, keyToLabel, tripInfo, trips,
              getSubscription, no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
 
   }
@@ -236,6 +236,20 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       result{"status_code"} eq "200" => result{["content","trip"]}
                                       | mk_error(result)
     }
+
+    trips = function(start, end, vid) {
+      config_data = get_config(vid).klog(">>> Config data in tripInfo >>>>>");
+      trip_url = config_data{"base_url"} + "/trip/";
+      params = {"startTime": start,
+                "endTime": end
+               };
+      result = carvoyant_get(trip_url, config_data);
+      result{"status_code"} eq "200" => result{["content","trip"]}
+                                      | mk_error(result)
+    }
+
+
+    
 
     mk_error = function(res) { // let's try the simple approach first
       res
