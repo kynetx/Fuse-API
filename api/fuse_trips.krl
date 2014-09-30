@@ -20,7 +20,7 @@ Manage trips. PDS is not well-suited to these operations
 
 	
     provides trips, lastTrip, tripMeta, tripMetaById, mileage, tripsByDate, newTrips,
-             monthlyTripSummary,
+             monthlyTripSummary, missedTrips,
              all_trips,   // for debugging
 	       icalForVehicle, icalSubscriptionUrl, exportTrips
   }
