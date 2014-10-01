@@ -217,7 +217,7 @@ Application that manages the fleet
 	status = {"overall": vehicle_statuses.values().all(function(v) { v{["status","overall"]} }),
 	          "vehicle": vehicle_statuses
                                 .map(function(k,v){v.pick("$..overall")}),
-		  "carvoyant": carvoyant:isAuthorized()
+		  "carvoyant": carvoyant:isAuthorized() 
 	         }
 
        {"vehicles": vehicle_statuses,
