@@ -222,7 +222,7 @@ Application that manages the fleet
 
        {"vehicles": vehicle_statuses,
         "status": status,
-	"tokens": carvoyant:getTokens()
+	"tokens": carvoyant_oauth:getTokens()
        }
 
       }
