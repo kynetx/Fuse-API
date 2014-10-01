@@ -221,7 +221,8 @@ Application that manages the fleet
 	         }
 
        {"vehicles": vehicle_statuses,
-        "status": status
+        "status": status,
+	"tokens": carvoyant_auth:getTokens()
        }
 
       }
