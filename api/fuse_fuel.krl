@@ -142,7 +142,7 @@ Operations for fuel
       raw_resp = http:get(fe_url);
       resp = raw_resp{"status_code"} eq "200" => raw_resp{"content"}
                                                | {};
-      json = this2that:xml2json(resp, {"content_key" : "val"}).decode().klog(">>>> response as JSON >>>> ");
+      json = (this2that:xml2json(resp, {"content_key" : "val"}).decode() || {}).klog(">>>> response as JSON >>>> ");
       cpg = json{["fuelPrices", "midgrade", "val"]} || "3.50";
       cpg_obj = {"cpg" : cpg,
                  "timestamp": time:strftime(time:now(), "%s")
