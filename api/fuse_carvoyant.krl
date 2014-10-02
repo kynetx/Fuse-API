@@ -640,7 +640,9 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                       .delete(["_timestamp"])
                       .delete(["postUrl"])
                       .delete(["id"])
+                      .delete(["_type"])
 		      .put(["event_host"], event:attr("event_host"))
+		      .put(["subscription_type"], sub_type)
                       ;
     }
     if(postUrl.match("re#/#{my_current_eci}/#".as("regexp"))) then
