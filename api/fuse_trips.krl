@@ -279,7 +279,7 @@ Manage trips. PDS is not well-suited to these operations
     missedTrips = function(start, end) {
       vid = carvoyant:vehicle_id();
       today = common:convertToUTC(time:now()).klog(">>> until this time >>>");
-      yesterday = common:convertToUTC(time:add(today, {"days": -1})).klog(">>>> from this time >>>> ");
+      yesterday = common:convertToUTC(time:add(today, {"days": -3})).klog(">>>> from this time >>>> ");
       cv_trips = carvoyant:trips(yesterday, today, vid);
       missed_trips = cv_trips.filter(function(t){  ent:trip_summaries{mkTid(t{"id"})}.isnull() });
       missed_trips
