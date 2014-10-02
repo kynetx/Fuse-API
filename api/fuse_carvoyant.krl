@@ -296,10 +296,10 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
 
     // subscription actions
-    add_subscription = defaction(vid, subscription_type, params) {
+    add_subscription = defaction(vid, subscription_type, params, target) {
       configure using ar_label = false;
       config_data = get_config(vid);
-      esl = mk_subscription_esl(subscription_type);
+      esl = mk_subscription_esl(subscription_type, target);
       // see http://confluence.carvoyant.com/display/PUBDEV/NotificationPeriod
       np = params{"notification_period"} || "STATECHANGE";
       carvoyant_post(carvoyant_subscription_url(subscription_type, config_data),
@@ -320,10 +320,10 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     // ---------- internal functions ----------
     // this should be in a library somewhere
     // eci is optional
-    mk_subscription_esl = function(event_name, eci) {
-      use_eci = eci || get_eci_for_carvoyant() || "NO_ECI_AVAILABLE"; 
+    mk_subscription_esl = function(event_name, target) {
+      use_eci = get_eci_for_carvoyant() || "NO_ECI_AVAILABLE"; 
       eid = math:random(99999);
-      host = meta:host();
+      host = target || meta:host();
       "https://#{host}/sky/event/#{use_eci}/#{eid}/carvoyant/#{event_name}";
     };
 
@@ -539,10 +539,13 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     pre {
       vid = event:attr("vehicle_id") || vehicle_id();
       sub_type = event:attr("subscription_type");
+      sub_target = event:attr("event_host");
 
       params = event:attrs()
                   .delete(["vehicle_id"])
-                  .delete(["idempotent"]);
+                  .delete(["idempotent"])
+                  .delete(["event_host"])
+                  ;
       // if idempotent attribute is set, then check to make sure no subscription of this type exist
       subs = getSubscription(vid, sub_type).klog(">>> seeing subscriptions for #{vid} >>>>");
       subscribe = not event:attr("idempotent") ||
@@ -551,7 +554,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     if( valid_subscription_type(sub_type) 
      && subscribe
       ) then {
-        add_subscription(vid, sub_type, params) with
+        add_subscription(vid, sub_type, params, sub_target) with
     	  ar_label = "add_subscription";
         send_directive("Adding subscription") with
 	  attributes = event:attrs();
@@ -621,6 +624,35 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
         sub_value = sub;
       del_subscription(sub_type, id, vehicle_id())
         with ar_label = "subscription_deleted";
+    }
+  }
+
+  rule switch_subscription_host {
+    select when carvoyant new_subscription_host
+    foreach getSubscription(vehicle_id()).filter(function(s){ s{"deletionTimestamp"}.isnull() }) setting(sub)
+    pre {
+      id = sub{"id"};	
+      sub_type = sub{"_type"};
+      postUrl = sub{"postUrl"};
+      my_current_eci = get_eci_for_carvoyant();
+      // get rid of everything but the event stuff so we duplicate it, but with a new event host
+      subscription = sub
+                      .delete(["_timestamp"])
+                      .delete(["postUrl"])
+                      .delete(["id"])
+		      .put(["event_host"], event:attr("event_host"))
+                      ;
+    }
+    if(not postUrl.match("re#/#{my_current_eci}/#".as("regexp"))) then
+    {
+      send_directive("Will delete subscription #{id} with type #{sub_type}") with
+        sub_value = sub;
+      del_subscription(sub_type, id, vehicle_id())
+        with ar_label = "subscription_deleted";
+    }
+    fired {
+      raise carvoyant event "new_subscription_needed" 
+        attributes subscription
     }
   }
 
