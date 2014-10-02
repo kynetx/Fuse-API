@@ -643,7 +643,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 		      .put(["event_host"], event:attr("event_host"))
                       ;
     }
-    if(not postUrl.match("re#/#{my_current_eci}/#".as("regexp"))) then
+    if(postUrl.match("re#/#{my_current_eci}/#".as("regexp"))) then
     {
       send_directive("Will delete subscription #{id} with type #{sub_type}") with
         sub_value = sub;
