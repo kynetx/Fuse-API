@@ -263,14 +263,14 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     };
 
     valid_subscription_type = function(sub_type) {
-      valid_types = {"geoFence": true,
-                     "lowBattery": true,
-		     "numericDataKey": true,
-		     "timeOfDay": true,
-		     "troubleCode": true,
-		     "ignitionStatus": true
+      valid_types = {"geofence": true,
+                     "lowbattery": true,
+		     "numericdatakey": true,
+		     "timeofday": true,
+		     "troublecode": true,
+		     "ignitionstatus": true
       };
-      not valid_types{sub_type}.isnull()
+      not valid_types{sub_type.lc()}.isnull()
     }
 
     // check that the subscription list is empty or all in it have been deleted
