@@ -627,6 +627,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
   }
 
+  // warning: this currently deletes ALL subscriptions and only puts back standard ones
   rule switch_subscription_host {
     select when carvoyant new_subscription_host
     foreach getSubscription(vehicle_id()).filter(function(s){ s{"deletionTimestamp"}.isnull() }) setting(sub)
@@ -645,24 +646,25 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 		      .put(["subscription_type"], sub_type)
                       ;
       vid = vehicle_id();
-      sub_target = event:attr("event_host");
-      params = {"id": id};
+       // sub_target = event:attr("event_host");
+       // params = {"id": id};
     }
     if(postUrl.match("re#/#{my_current_eci}/#".as("regexp"))) then
     {
-       // send_directive("Will delete subscription #{id} with type #{sub_type}") with
-       //   sub_value = sub;
-       // del_subscription(sub_type, id, vehicle_id())
-       //   with ar_label = "subscription_deleted";
-        send_directive("Updating subscription") with
-	  attributes = event:attrs();
-        add_subscription(vid, sub_type, params, sub_target) with
-    	  ar_label = "update_subscription";
+       send_directive("Will delete subscription #{id} with type #{sub_type}") with
+         sub_value = sub;
+       del_subscription(sub_type, id, vid)
+         with ar_label = "subscription_deleted";
+         // send_directive("Updating subscription") with
+	 //   attributes = event:attrs();
+         // add_subscription(vid, sub_type, params, sub_target) with
+    	 //   ar_label = "update_subscription";
     }
-     // fired {
-     //   raise carvoyant event "new_subscription_needed" 
-     //     attributes subscription
-     // }
+     fired {
+       raise fuse event need_initial_carvoyant_subscriptions;
+        // raise carvoyantfuse event "new_subscription_needed" 
+        //   attributes subscription
+     }
   }
 
 
