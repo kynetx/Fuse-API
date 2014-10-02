@@ -71,7 +71,7 @@ Fuse ruleset for a vehicle pico
 	       {"subscription_type": "lowBattery",
 	        "minimumTime": 60},
 	       {"subscription_type": "troubleCode",
-	        "notification_period": "INITIALSTATE",
+	        "notificationPeriod": "INITIALSTATE",
 	        "minimumTime": 60},
 	       {"subscription_type": "numericDataKey",
 	        "minimumTime": 60,

@@ -301,7 +301,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       config_data = get_config(vid);
       esl = mk_subscription_esl(subscription_type, target);
       // see http://confluence.carvoyant.com/display/PUBDEV/NotificationPeriod
-      np = params{"notification_period"} || "STATECHANGE";
+      np = params{"notificationPeriod"} || "STATECHANGE";
       carvoyant_post(carvoyant_subscription_url(subscription_type, config_data),
       		     params.put({"postUrl": esl, "notificationPeriod": np}),
                      config_data
@@ -644,13 +644,20 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 		      .put(["event_host"], event:attr("event_host"))
 		      .put(["subscription_type"], sub_type)
                       ;
+      vid = vehicle_id();
+      sub_target = event:attr("event_host");
+      params = {"id": id};
     }
     if(postUrl.match("re#/#{my_current_eci}/#".as("regexp"))) then
     {
-      send_directive("Will delete subscription #{id} with type #{sub_type}") with
-        sub_value = sub;
-      del_subscription(sub_type, id, vehicle_id())
-        with ar_label = "subscription_deleted";
+       // send_directive("Will delete subscription #{id} with type #{sub_type}") with
+       //   sub_value = sub;
+       // del_subscription(sub_type, id, vehicle_id())
+       //   with ar_label = "subscription_deleted";
+        send_directive("Updating subscription") with
+	  attributes = event:attrs();
+        add_subscription(vid, sub_type, params, sub_target) with
+    	  ar_label = "update_subscription";
     }
     fired {
       raise carvoyant event "new_subscription_needed" 
