@@ -659,10 +659,10 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
         add_subscription(vid, sub_type, params, sub_target) with
     	  ar_label = "update_subscription";
     }
-    fired {
-      raise carvoyant event "new_subscription_needed" 
-        attributes subscription
-    }
+     // fired {
+     //   raise carvoyant event "new_subscription_needed" 
+     //     attributes subscription
+     // }
   }
 
 
