@@ -646,7 +646,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 		      .put(["subscription_type"], sub_type)
                       ;
       vid = vehicle_id();
-       // sub_target = event:attr("event_host");
+      sub_target = event:attr("event_host");
        // params = {"id": id};
     }
     if(postUrl.match("re#/#{my_current_eci}/#".as("regexp"))) then
@@ -661,7 +661,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     	 //   ar_label = "update_subscription";
     }
      fired {
-       raise fuse event need_initial_carvoyant_subscriptions;
+       raise fuse event need_initial_carvoyant_subscriptions with
+         event_host = sub_target;
         // raise carvoyantfuse event "new_subscription_needed" 
         //   attributes subscription
      }
