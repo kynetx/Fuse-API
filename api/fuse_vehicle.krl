@@ -84,7 +84,8 @@ Fuse ruleset for a vehicle pico
         {"vehicle_moving" :
 	       {"subscription_type": "numericDataKey",
 	        "minimumTime": 0,
-		"dataKey": "GEN_SPEED",
+		"notificationPeriod": "CONTINUOUS",
+	        "dataKey": "GEN_SPEED",
 		"thresholdValue": 10,
 		"relationship": "ABOVE"
 	       }

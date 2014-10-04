@@ -792,22 +792,21 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       threshold = event:attr("thresholdValue");
       recorded = event:attr("recordedValue");
       relationship = event:attr("relationship");
+      record = event:attrs()
+	              .delete(["_generatedby"]);
       id = event:attr("id");
     }
     noop();
     always {
-     log "Fuel level of #{recorded}% is #{relationship.lc()} threshold value of #{threshold}%";
-     raise fuse event "need_vehicle_status";
-     raise pds event "new_data_available"
-	  attributes {
+      log "Vehicle speed of #{recorded}% is #{relationship.lc()} threshold value of #{threshold}";
+      raise fuse event "need_vehicle_status";
+      raise pds event "new_data_available"
+        attributes {
 	    "namespace": namespace(),
 	    "keyvalue": "vehicle_moving_fired",
-	    "value": event:attrs()
-	              .delete(["_generatedby"]),
+	    "value": record,
             "_api": "sky"
- 		   
 	  };
-      
     }
   }
 
