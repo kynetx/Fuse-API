@@ -57,17 +57,17 @@ The following function returns an array of vehicle status information (i.e., las
 
 ___Callback___ The callback function will see an array of objects that have the following properties:
 
-GEN_DTC &mdash;  Diagnostic Trouble Codes
-GEN_VOLTAGE &mdash;  Battery Voltage
-GEN_TRIP_MILEAGE &mdash;  Trip Mileage (calculate from ignition on to ignition off via GPS)
-GEN_ODOMETER &mdash;  Vehicle Reported Odometer
-GEN_WAYPOINT &mdash;  GPS Location
-GEN_HEADING &mdash;  Heading (degrees clockwise from due north)
-GEN_RPM &mdash;  Engine Speed
-GEN_FUELLEVEL &mdash;  Percentage of Fuel Remaining
-GEN_FUELRATE &mdash;  Rate of Fuel Consumption
-GEN_ENGINE_COOLANT_TEMP &mdash;  Engine Temperature
-GEN_SPEED &mdash;  Maximum Speed Recorded (since the previous reading)
+- GEN_DTC &mdash;  Diagnostic Trouble Codes
+- GEN_VOLTAGE &mdash;  Battery Voltage
+- GEN_TRIP_MILEAGE &mdash;  Trip Mileage (calculate from ignition on to ignition off via GPS)
+- GEN_ODOMETER &mdash;  Vehicle Reported Odometer
+- GEN_WAYPOINT &mdash;  GPS Location
+- GEN_HEADING &mdash;  Heading (degrees clockwise from due north)
+- GEN_RPM &mdash;  Engine Speed
+- GEN_FUELLEVEL &mdash;  Percentage of Fuel Remaining
+- GEN_FUELRATE &mdash;  Rate of Fuel Consumption
+- GEN_ENGINE_COOLANT_TEMP &mdash;  Engine Temperature
+- GEN_SPEED &mdash;  Maximum Speed Recorded (since the previous reading)
 
 
 ### Vehicle Summary
