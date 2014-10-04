@@ -328,7 +328,7 @@ Fuse ruleset for a vehicle pico
       select when fuse setup_new_subscription
       pre {
         subtype = event:attr("subtype");
-        subscription = subscription_map{subtype}
+        subscription = (subscription_map{subtype} || {})
 	  	         .put(["idempotent"], true)
 	        	 .put(["event_host"], host)
 			 .klog(">>> adding this subscription >>>>")
