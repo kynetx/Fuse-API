@@ -274,10 +274,12 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
 
     // check that the subscription list is empty or all in it have been deleted
-    no_subscription = function(subs) {
+    no_subscription = function(subs, key) {
         // a subscription doesn't exist if...
 	 subs.length() == 0 
         ||
+	 subs{"_type"} eq "NUMERICDATAKEY" && subs{"dataKey"} neq key
+	||
 	 subs.all(function(s){ not s{"deletionTimestamp"}.isnull() })
     }
 
@@ -549,7 +551,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       // if idempotent attribute is set, then check to make sure no subscription of this type exist
       subs = getSubscription(vid, sub_type).klog(">>> seeing subscriptions for #{vid} >>>>");
       subscribe = not event:attr("idempotent") ||
-                  no_subscription(subs)
+                  no_subscription(subs, params{"dataKey"})
     }
     if( valid_subscription_type(sub_type) 
      && subscribe
