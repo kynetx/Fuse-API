@@ -741,8 +741,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	    "value": event:attrs()
 	              .delete(["_generatedby"]),
             "_api": "sky"
- 		   
-	  };
+          };
      raise fuse event "updated_dtc"
 	  with dtc = codes
 	   and timestamp = event:attr("_timestamp") 
@@ -782,6 +781,31 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	and reason = "Fuel report from vehicle."
 	and id = id
       ;
+    }
+  }
+
+  rule catch_vehicle_moving { 
+    select when carvoyant numericDataKey dataKey "GEN_SPEED"
+    pre {
+      threshold = event:attr("thresholdValue");
+      recorded = event:attr("recordedValue");
+      relationship = event:attr("relationship");
+      id = event:attr("id");
+    }
+    noop();
+    always {
+     log "Fuel level of #{recorded}% is #{relationship.lc()} threshold value of #{threshold}%";
+     raise fuse event "need_vehicle_status";
+     raise pds event "new_data_available"
+	  attributes {
+	    "namespace": namespace(),
+	    "keyvalue": "vehicle_moving_fired",
+	    "value": event:attrs()
+	              .delete(["_generatedby"]),
+            "_api": "sky"
+ 		   
+	  };
+      
     }
   }
 

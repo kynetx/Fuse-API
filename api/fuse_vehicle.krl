@@ -80,6 +80,16 @@ Fuse ruleset for a vehicle pico
 		"relationship": "BELOW"}
 	      ];
 
+      subscription_map = 
+        {"vehicle_moving" :
+	       {"subscription_type": "numericDataKey",
+	        "minimumTime": 0,
+		"dataKey": "GEN_SPEED",
+		"thresholdValue": 10,
+		"relationship": "ABOVE"
+	       }
+	};
+
 
       showPicoStatus = function() {
 	// rulesets
@@ -303,6 +313,22 @@ Fuse ruleset for a vehicle pico
 	        .put(["event_host"], host)
 		;
         }
+    }
+
+    rule add_vehicle_moving_subscription {
+      select when fuse setup_vehicle_moving
+      pre {
+        subscription = subscription_map{"vehicle_moving"}
+	  	         .put(["idempotent"], true)
+	        	 .put(["event_host"], host)
+			 .klog(">>> adding this subscription >>>>")
+			 ;
+      }
+      send_directive("Adding vehicle_moving subscription") with subscription = subscription;
+      fired {	
+          raise carvoyant event new_subscription_needed 
+	    attributes subscription;
+      }
     }
 
     rule check_subscriptions {

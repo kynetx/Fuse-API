@@ -322,7 +322,9 @@ Manage trips. PDS is not well-suited to these operations
        // time_split = time:strftime(end_time, "%Y_:%m_:%d_:%H_:%M%S_").split(re/:/);
        // week_number = time:strftime(end_time, "%U_")
 
-      trip_info = raw_trip_info.put(["endTime"], end_time).klog(">>>> storing trip <<<<< ");
+      trip_info = raw_trip_info
+                   .put(["endTime"], end_time)
+		   ;
 
       raw_trip_summary = tripSummary(trip_info);
 
@@ -334,6 +336,16 @@ Manage trips. PDS is not well-suited to these operations
                           .put(["name"], trip_name)
                           .put(["category"], trip_category)
 			  ;
+
+
+      final_trip_info = trip_info
+                   .put(["cost"], trip_summary{"cost"})
+  		   .put(["interval"], trip_summary{"interval"})
+ 		   .put(["avgSpeed"], trip_summary{"avgSpeed"})
+ 		   .put(["name"], trip_name)
+ 		   .put(["category"], trip_categoty)
+                   .klog(">>>> storing trip <<<<< ")
+		   ;
       
 
     }
@@ -347,14 +359,8 @@ Manage trips. PDS is not well-suited to these operations
     }
     fired {
       set ent:last_trip tid;
-      set ent:trips_by_id{tid} trip_info
- 		 .put(["cost"], trip_summary{"cost"})
- 		 .put(["interval"], trip_summary{"interval"})
- 		 .put(["avgSpeed"], trip_summary{"avgSpeed"})
- 		 .put(["name"], trip_name)
- 		 .put(["category"], trip_categoty)
-                ;
-      set ent:trip_summaries{tid} trip_summary;
+      set ent:trips_by_id{tid} trip_info; 		 
+      set ent:trip_summaries{tid} final_trip_summary;
       raise fuse event new_trip_saved with 
         tripId = tid
     } else {
