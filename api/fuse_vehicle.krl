@@ -88,6 +88,14 @@ Fuse ruleset for a vehicle pico
 	        "dataKey": "GEN_SPEED",
 		"thresholdValue": 10,
 		"relationship": "ABOVE"
+	       },
+	 "fuel_purchases" :
+	       {"subscription_type": "numericDataKey",
+	        "minimumTime": 0,
+		"notificationPeriod": "STATECHANGE",
+	        "dataKey": "GEN_FUELLEVEL",
+		"thresholdValue": 90,
+		"relationship": "ABOVE"
 	       }
 	};
 
@@ -316,16 +324,17 @@ Fuse ruleset for a vehicle pico
         }
     }
 
-    rule add_vehicle_moving_subscription {
-      select when fuse setup_vehicle_moving
+    rule add_subscription {
+      select when fuse setup_new_subscription
       pre {
-        subscription = subscription_map{"vehicle_moving"}
+        subtype = event:attr("subtype");
+        subscription = subscription_map{subtype}
 	  	         .put(["idempotent"], true)
 	        	 .put(["event_host"], host)
 			 .klog(">>> adding this subscription >>>>")
 			 ;
       }
-      send_directive("Adding vehicle_moving subscription") with subscription = subscription;
+      send_directive("Adding #{subtype} subscription") with subscription = subscription;
       fired {	
           raise carvoyant event new_subscription_needed 
 	    attributes subscription;
