@@ -553,7 +553,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       subscribe = not event:attr("idempotent") ||
                   no_subscription(subs, params{"dataKey"})
     }
-    if( valid_subscription_type(sub_type) 
+    if( valid_subscription_type(sub_type)  
      && subscribe
       ) then {
         add_subscription(vid, sub_type, params, sub_target) with
