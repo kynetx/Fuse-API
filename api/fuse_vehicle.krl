@@ -87,7 +87,8 @@ Fuse ruleset for a vehicle pico
 		"notificationPeriod": "CONTINUOUS",
 	        "dataKey": "GEN_SPEED",
 		"thresholdValue": 10,
-		"relationship": "ABOVE"
+		"relationship": "ABOVE",
+         	"idempotent": true
 	       },
 	 "fuel_purchases" :
 	       {"subscription_type": "numericDataKey",
@@ -95,7 +96,8 @@ Fuse ruleset for a vehicle pico
 		"notificationPeriod": "STATECHANGE",
 	        "dataKey": "GEN_FUELLEVEL",
 		"thresholdValue": 90,
-		"relationship": "ABOVE"
+		"relationship": "ABOVE",
+         	"idempotent": false
 	       }
 	};
 
@@ -329,7 +331,6 @@ Fuse ruleset for a vehicle pico
       pre {
         subtype = event:attr("subtype");
         subscription = (subscription_map{subtype} || {})
-	  	         .put(["idempotent"], true)
 	        	 .put(["event_host"], host)
 			 .klog(">>> adding this subscription >>>>")
 			 ;
