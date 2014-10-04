@@ -278,7 +278,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
         // a subscription doesn't exist if...
 	 subs.length() == 0 
         ||
-	 subs{"_type"} eq "NUMERICDATAKEY" && subs.none(function(s){ s{"dataKey"} neq key } )
+	 subs.none(function(s){ subs{"_type"} eq "NUMERICDATAKEY" && s{"dataKey"} neq key } )
 	||
 	 subs.all(function(s){ not s{"deletionTimestamp"}.isnull() })
     }
