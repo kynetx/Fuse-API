@@ -334,7 +334,10 @@ Fuse ruleset for a vehicle pico
 			 .klog(">>> adding this subscription >>>>")
 			 ;
       }
-      send_directive("Adding #{subtype} subscription") with subscription = subscription;
+      if(not subscription_map{subtype}.isnull()) then 
+      {
+        send_directive("Adding #{subtype} subscription") with subscription = subscription;
+      }
       fired {	
           raise carvoyant event new_subscription_needed 
 	    attributes subscription;
