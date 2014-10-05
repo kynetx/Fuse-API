@@ -810,6 +810,42 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
   }
 
+  rule catch_fuel_purchase { 
+    select when carvoyant numericDataKey dataKey "GEN_FUELLEVEL"
+    pre {
+      threshold = event:attr("thresholdValue");
+      recorded = event:attr("recordedValue");
+      relationship = event:attr("relationship");
+      id = event:attr("id");
+    }
+    if (recorded > threshold) then  // only fire on the way up! 
+    {
+      noop();
+    }
+    fired {
+      log "Fuel level of #{recorded}% is #{relationship.lc()} threshold value of #{threshold}%";
+      raise pds event "new_data_available"
+	  attributes {
+	    "namespace": namespace(),
+	    "keyvalue": "fuelLevel_fired",
+	    "value": event:attrs()
+	              .delete(["_generatedby"]),
+            "_api": "sky"
+ 		   
+     };
+     raise fuse event "updated_fuel_level"
+       with threshold = threshold
+	and recorded = recorded
+	and timestamp = event:attr("_timestamp")
+	and activity = "Fuel level of #{recorded}% is #{relationship.lc()} threshold value of #{threshold}%"
+	and reason = "Fuel report from vehicle."
+	and id = id
+      ;
+    } else {
+      log "Fuel level dropped below #{threshold}%"
+    }
+  }
+
 
   // ---------- error handling ----------
   rule carvoyant_http_fail {
