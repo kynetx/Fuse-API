@@ -369,6 +369,21 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
         }
     }
 
+    // ---------- preferences ----------
+    rule set_debug_pref {
+      select when fuse new_debug_value
+      pre {
+        new_val = event:attr("debug_value");
+      }
+      always {
+        // set defaults for Fuse app
+        raise pds event new_settings_attribute for a169x676
+           with setRID   = meta:rid() // this rid
+	    and setAttr  = "debugPreference"
+	    and setValue = new_val
+      }
+    }
+
     // ---------- scheduled items ----------
     rule schedule_report {
       select when fuse sched_report 
