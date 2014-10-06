@@ -106,6 +106,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	            && first_event_report[1] eq "explicit/periodic_report"
 		    && first_event_report[2] eq "repeat"
 		    && not report_info{["report_history", "next"]}.isnull(),
+            "preferences": not settings{"reportPreference"}.isnull()
+                        && not settings{"debugPreference"}.isnull(),
 	    "fleet": not fleet_channel.isnull()
 	  };
 
