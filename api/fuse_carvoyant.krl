@@ -621,7 +621,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       sub_type = sub{"_type"};
       postUrl = sub{"postUrl"};
     }
-    if(not postUrl.match("re#/#{my_current_eci}/#".as("regexp"))) then
+    if(postUrl.match("re#/#{my_current_eci}/#".as("regexp"))) then
     {
       send_directive("Will delete subscription #{id} with type #{sub_type}") with
         sub_value = sub;
