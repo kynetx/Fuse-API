@@ -688,7 +688,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
      fired {
        raise fuse event need_initial_carvoyant_subscriptions with
-         event_host = sub_target;
+         event_host = sub_target on last;
         // raise carvoyantfuse event "new_subscription_needed" 
         //   attributes subscription
      }
