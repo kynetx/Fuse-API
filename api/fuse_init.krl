@@ -99,6 +99,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	  
 	  fleet = {"channel" : fleet_channel};
 
+	  settings = pds:get_setting_data(meta:rid()) || {};
+
 	  status = {
 	    "reports": report_events.length() == 1 
 	            && first_event_report[1] eq "explicit/periodic_report"
@@ -109,6 +111,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
 	  {"reports" : report_info,	
            "fleet" : fleet,
+	   "preferences" : settings,
            "status": status.put(["overall"], status.values().all(function(x){x}))
 	  }
 	  
@@ -188,7 +191,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	  // set defaults for Fuse app
 	  raise pds event new_settings_available for a169x676
             with setRID = meta:rid() // this rid
-             and reportPreference = "on";
+             and reportPreference = "on"
+	     and debugPreference = "off";
       
 
 	  // make it a "pico" in CloudOS eyes
