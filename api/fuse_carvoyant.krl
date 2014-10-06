@@ -688,7 +688,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
      fired {
        raise fuse event need_initial_carvoyant_subscriptions with
-         event_host = sub_target on last;
+         event_host = sub_target 
+         on last;
         // raise carvoyantfuse event "new_subscription_needed" 
         //   attributes subscription
      }
@@ -697,7 +698,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
   // ---------- rules for handling notifications ----------
 
-  rule ignition_status_changed  { 
+  rule ignition_status_changed  {  
     select when carvoyant ignitionStatus
     pre {
 
