@@ -611,6 +611,28 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     send_directive("Subscriptions for #{vid} (404 means no subscriptions)") with subscriptions = subs;
   }
 
+  rule remove_all_subscriptions {
+    select when carvoyant no_subscriptions_needed
+    foreach getSubscription(vehicle_id()).filter(function(s){ s{"deletionTimestamp"}.isnull() }) setting(sub)
+    pre {
+      vid = vehicle_id();
+      my_current_eci = get_eci_for_carvoyant();
+      id = sub{"id"};	
+      sub_type = sub{"_type"};
+      postUrl = sub{"postUrl"};
+    }
+    if(not postUrl.match("re#/#{my_current_eci}/#".as("regexp"))) then
+    {
+      send_directive("Will delete subscription #{id} with type #{sub_type}") with
+        sub_value = sub;
+      del_subscription(sub_type, id, vid)
+        with ar_label = "subscription_deleted";
+    }
+  }
+
+
+
+
   rule clean_up_subscriptions {
     select when carvoyant dirty_subscriptions
     foreach getSubscription(vehicle_id()).filter(function(s){ s{"deletionTimestamp"}.isnull() }) setting(sub)
