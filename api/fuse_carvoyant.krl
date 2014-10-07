@@ -276,13 +276,15 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     // check that the subscription list is empty or all in it have been deleted
     no_subscription = function(subs, key) {
         // a subscription doesn't exist if...
-	 subs.length() == 0 
+	   subs.length() == 0 
         ||
+	   subs.none(function(s){ s{"postUrl"}.klog(">>>> key >>> ").match(re#/sky/event#) } )
+	||
 	  (  subs.all(function(s){ s{"_type"}.klog(">>> type >>>") eq "NUMERICDATAKEY" })
           && subs.none(function(s){ s{"dataKey"}.klog(">>>> key >>> ") eq key } )
           ) 
 	||
-	 subs.all(function(s){ not s{"deletionTimestamp"}.isnull() })
+	   subs.all(function(s){ not s{"deletionTimestamp"}.isnull() })
     }
 
 
@@ -675,6 +677,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       sub_target = event:attr("event_host");
        // params = {"id": id};
     }
+    // only update Fuse subscriptions
     if(postUrl.match("re#/#{my_current_eci}/#".as("regexp"))) then
     {
        send_directive("Will delete subscription #{id} with type #{sub_type}") with
@@ -686,13 +689,13 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
          // add_subscription(vid, sub_type, params, sub_target) with
     	 //   ar_label = "update_subscription";
     }
-     fired {
+    fired {
        raise fuse event need_initial_carvoyant_subscriptions with
          event_host = sub_target 
          on final; 
         // raise carvoyantfuse event "new_subscription_needed" 
         //   attributes subscription
-     }
+    }
   }
 
 
