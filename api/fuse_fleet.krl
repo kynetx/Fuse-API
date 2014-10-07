@@ -326,18 +326,26 @@ Application that manages the fleet
            namespace re/fuse-meta/gi
 
 	pre {
-	  fleet_channel = event:attr("eventChannel");
+	  owner_relationship = "FleetOwner";
+	  owner = CloudOS:subscriptionList(common:namespace(), owner_relationship).klog(">>> current owners >>>>");
+	  relationship = event:attr("relationship").klog(">>> subscription relationship >>>>");
+	  backchannel = event:attr("eventChannel");
 	}
-
+	
+	if ( not relationship like owner_relationship 
+          || owner.length() == 0
+           ) then // only auto approve the first Owner relationship
         {
             noop();
         }
 
         fired {
-            raise cloudos event subscriptionRequestApproved
-                with eventChannel = fleet_channel
-                and  _api = "sky";
-        }
+          raise cloudos event subscriptionRequestApproved
+            with eventChannel = backchannel
+             and  _api = "sky";
+        } else {
+	  log ">>> new pending subscription >>>";
+	}
     }
 
 
