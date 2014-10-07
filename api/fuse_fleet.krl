@@ -340,11 +340,12 @@ Application that manages the fleet
         }
 
         fired {
+	  log ">>> auto approving subscription: #{relationship}, Back Channel: #{backchannel}";
           raise cloudos event subscriptionRequestApproved
             with eventChannel = backchannel
              and  _api = "sky";
         } else {
-	  log ">>> new pending subscription >>>";
+	  log ">>> new pending subscription: #{relationship}, Back Channel: #{backchannel} >>>";
 	}
     }
 
