@@ -359,7 +359,7 @@ Manage trips. PDS is not well-suited to these operations
     }
     fired {
       set ent:last_trip tid;
-      set ent:trips_by_id{tid} trip_info; 		 
+      set ent:trips_by_id{tid} final_trip_info; 		 
       set ent:trip_summaries{tid} final_trip_summary;
       raise fuse event new_trip_saved with 
         tripId = tid
