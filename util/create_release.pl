@@ -96,7 +96,8 @@ if ($@) {
   print "Couldn't create directory $target_dir: $@";
 }
 
-my $flush_url = "http://$prod_server/ruleset/flush/";
+my $prod_flush_url = "http://$prod_server/ruleset/flush/";
+my $dev_flush_url = "http://$dev_server/ruleset/flush/";
 my $flush_rids = [];
 
 my $directory = '.';
@@ -163,7 +164,10 @@ if ($clopt{"r"}) {
     }
 
     print "\nFlush URL:";
-    print $flush_url . join(";", @{$flush_rids}), "\n";
+    $prod_flush_url .= join(";", @{$flush_rids});
+    $dev_flush_url .= join(";", @{$flush_rids});
+    print $prod_flush_url, "\n";
+    print $dev_flush_url, "\n";
 }
 
 

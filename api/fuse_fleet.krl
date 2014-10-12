@@ -683,7 +683,7 @@ Application that manages the fleet
                };
 
       settings = pds:get_setting_data(meta:rid()).klog(">>>> my settings >>>> ") || {};
-      tz = settings{"timezonePreference"} || "America/Denver"; 
+      tz = settings{"timezonePreference"} || settings{"timezeonePreference"} || "America/Denver";  // remove misspelling later
       // tz = "-0600"; 
 
       subj = "Your "+period{"readable"}+" report from Fuse!";
