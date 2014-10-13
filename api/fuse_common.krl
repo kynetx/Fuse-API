@@ -11,7 +11,7 @@ Common definitions
 
 
 	provides S3Bucket, namespace, find_pico_by_id, fuel_namespace, trips_namespace, maint_namespace,
-	         convertToUTC, strToNum, vehicleChannels, fleet_photo, factory, 
+	         convertToUTC, strToNum, vehicleChannels, fleet_photo, vehicle_photo, factory, 
 		 fleetChannel, requiredRulesets,
 	         skycloud, allowedRids
     }
@@ -79,7 +79,8 @@ Common definitions
 
       S3Bucket = function(){"k-fuse-01"};
 
-      fleet_photo = "https://dl.dropboxusercontent.com/u/329530/fuse_fleet_pico_picture.png";
+      fleet_photo = "https://s3.amazonaws.com/Fuse_assets/img/fuse_fleet_pico_picture.png";
+      vehicle_photo = "https://s3.amazonaws.com/Fuse_assets/img/orange+logo.png";
 
       namespace = function() {
         meta_id = "fuse-meta";

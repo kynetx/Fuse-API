@@ -120,11 +120,18 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
 	}
 
+	
+
 	// ---------- internal ----------
 	mk_fleet_sub_name = function() {
 	  "Owner-fleet-"+ random:uuid()
 	}
 
+	createSharingChannel = function(password) {
+	  password eq keys:fuse_admin("password") => fleet:createSharingChannel()
+	                                           | {"error":"Password not accepted"}
+	  
+	}
 
     }
 
@@ -429,7 +436,6 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 	fleet = fleetChannel();
 	owner_name = pds:get_me("myProfileName");
 
-        settings = pds:get_setting_data(meta:rid()).klog(">>>> my settings >>>> ") || {};
         tz = (settings{"timezonePreference"} || settings{"timezeonePreference"} || "America/Denver").klog(">>>> using timezone for report >>> ");  // remove misspelling later
 
       }

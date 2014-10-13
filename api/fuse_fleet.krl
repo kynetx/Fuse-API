@@ -20,7 +20,7 @@ Application that manages the fleet
         sharing on
         provides vehicleChannels, vehicleSummary, vehicleStatus, tripSummaries, tripsSummary, fuelSummaries, fuelSummary,
 	seeFleetData, // delete after testing
-	fleetDetails, vinAndDeviceIdCheck, errorSummary, showPicoStatus
+	fleetDetails, vinAndDeviceIdCheck, errorSummary, showPicoStatus, createSharingChannel 
     }
 
     global {
@@ -227,6 +227,15 @@ Application that manages the fleet
 
       }
 
+      createSharingChannel = function(channel_name) {
+        chan = CloudOS:channelCreate(channel_name)
+	          .put(["_created"], time:now())
+	          .pset(ent:shared_channels{channel_name})
+		  .klog(">>>> created channel for sharing >>> ")
+		  ;
+	chan	
+      }
+
     }
 
 
@@ -321,6 +330,7 @@ Application that manages the fleet
       }
     }
 
+    // ---------- subscriptions ----------
     rule auto_approve_pending_subscriptions {
         select when cloudos subscriptionRequestPending
            namespace re/fuse-meta/gi
@@ -348,7 +358,6 @@ Application that manages the fleet
 	  log ">>> new pending subscription: #{relationship}, Back Channel: #{backchannel} >>>";
 	}
     }
-
 
     // ---------- manage vehicle picos ----------
     rule create_vehicle {
@@ -414,7 +423,7 @@ Application that manages the fleet
 	  raise cloudos event picoAttrsSet
             with picoChannel = channel
              and picoName = name
-             and picoPhoto = event:attr("photo")
+             and picoPhoto = event:attr("photo") || common:vehicle_photo 
              and picoId = pico_id
              and _api = "sky";
 
@@ -594,7 +603,6 @@ Application that manages the fleet
 
     }
 
-    // [FIXME] this needs some protection on it (system key or something)
     rule clear_fleet_cache {
       select when fuse clear_fleet_cache
       pre {
