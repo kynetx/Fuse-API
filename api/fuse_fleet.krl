@@ -347,7 +347,7 @@ Application that manages the fleet
 	  backchannel = event:attr("eventChannel").klog(">>> incoming channel >>>");
 
 	  valid_intro =  not ent:shared_channels{channel_name}.isnull()
-                      && ent:shared_channels{[channel_name, token]} eq backchannel;
+                      && ent:shared_channels{[channel_name, token]} eq meta:eci();
 
 	}
 	
