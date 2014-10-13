@@ -19,7 +19,6 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             from = "noreply@joinfuse.com" and
 	    fromname = "Fuse-NoReply"
 	use module b16x19 alias common
-	use module b16x17 alias fleet
 
         errors to b16x13
 
@@ -129,7 +128,11 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	}
 
 	createSharingChannel = function(password) {
-	  password eq keys:fuse_admin("password") => fleet:createSharingChannel(mk_fleet_sub_name())
+	  fleet_channel = fleetChannel();
+	  password eq keys:fuse_admin("password") => common:skycloud(fleet_channel{"eci"},
+	                                                             "b16x17",
+								     "createSharingChannel", 
+								     {"channel_name": mk_fleet_sub_name()})
 	                                           | {"error":"Password not accepted"}
 	  
 	}
