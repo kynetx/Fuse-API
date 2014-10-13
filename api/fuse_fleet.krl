@@ -230,6 +230,8 @@ Application that manages the fleet
       createSharingChannel = function(channel_name) {
         chan = CloudOS:channelCreate(channel_name)
 	          .put(["_created"], time:now())
+		  .put(["channelName"], channel_name)
+		  .delete(["msg"])
 	          .pset(ent:shared_channels{channel_name})
 		  .klog(">>>> created channel for sharing >>> ")
 		  ;

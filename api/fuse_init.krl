@@ -234,6 +234,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	}
     }
 
+    // currently inop
     rule process_fleet_introduction {
       select when fuse fleet_introduction
       pre {
