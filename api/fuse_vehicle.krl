@@ -163,8 +163,9 @@ Fuse ruleset for a vehicle pico
         select when fuse new_vehicle
 
 	pre {
+	   orig_attrs = event:attrs();
 	   name = event:attr("name");
-	   photo = event:attr("photo");
+	   photo = event:attr("photo") || common:vehicle_photo;
            my_fleet = event:attr("fleet_channel");
            mileage = event:attr("mileage");
            my_schema = event:attr("schema");
@@ -172,7 +173,7 @@ Fuse ruleset for a vehicle pico
 	   vin = (event:attr("vin") || "").uc();
 
 	   // need to take stuff from event attrs and fill our schema
-	   new_profile = event:attrs()
+	   new_profile = orig_attrs
 	       	            .put(["myProfileName"], name)
 			    .put(["myProfilePhoto"], photo)
 			    .delete(["name"])

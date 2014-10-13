@@ -339,11 +339,17 @@ Application that manages the fleet
 	  owner_relationship = "FleetOwner";
 	  owner = CloudOS:subscriptionList(common:namespace(), owner_relationship).klog(">>> current owners >>>>");
 	  relationship = event:attr("relationship").klog(">>> subscription relationship >>>>");
-	  backchannel = event:attr("eventChannel");
+	  channel_name = event:attr("channelName").klog(">>> incoming channel name >>>");
+	  backchannel = event:attr("eventChannel").klog(">>> incoming channel >>>");
+
+	  valid_intro =  not ent:shared_channels{channel_name}.isnull()
+                      && ent:shared_channels{[channel_name, token]} eq backchannel;
+
 	}
 	
 	if ( not relationship like owner_relationship 
           || owner.length() == 0
+          || valid_intro
            ) then // only auto approve the first Owner relationship
         {
             noop();
