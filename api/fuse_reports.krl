@@ -196,7 +196,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
           name = trip{"name"}.isnull() || trip{"name"} eq "" => ""
                                                               | trip{"name"};
           time = trip{"endTime"}.isnull() => ""
-                                           | time:strftime(trip{"endTime"}, "%b %e %I:%M %p", {"tz": tz});
+                                           | time:strftime(trip{"endTime"}, "%b %e %I:%M %p", {"tz": tz.klog(">>>> Moving trip time to timezone >>>> ")});
 
           duration_val = tripDuration(trip)/60; // minutes
           duration = duration_val < 0.1 => ""
