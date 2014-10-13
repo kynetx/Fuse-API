@@ -129,7 +129,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	}
 
 	createSharingChannel = function(password) {
-	  password eq keys:fuse_admin("password") => fleet:createSharingChannel()
+	  password eq keys:fuse_admin("password") => fleet:createSharingChannel(mk_fleet_sub_name())
 	                                           | {"error":"Password not accepted"}
 	  
 	}
