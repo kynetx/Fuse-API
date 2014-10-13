@@ -19,6 +19,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             from = "noreply@joinfuse.com" and
 	    fromname = "Fuse-NoReply"
 	use module b16x19 alias common
+	use module b16x17 alias fleet
 
         errors to b16x13
 
