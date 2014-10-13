@@ -428,11 +428,16 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 	reportPreference = settings{"reportPreference"} || "on"; // on or off; default on
 	fleet = fleetChannel();
 	owner_name = pds:get_me("myProfileName");
+
+        settings = pds:get_setting_data(meta:rid()).klog(">>>> my settings >>>> ") || {};
+        tz = (settings{"timezonePreference"} || settings{"timezeonePreference"} || "America/Denver").klog(">>>> using timezone for report >>> ");  // remove misspelling later
+
       }
       if(reportPreference eq "on") then {
         send_directive("Sending event for report") with settings = settings;
         event:send(fleet, "fuse", "periodic_report") with 
-            attrs = {"owner_name": owner_name
+            attrs = {"owner_name": owner_name,
+	    	     "timezone": tz
 		    };
       }
     }

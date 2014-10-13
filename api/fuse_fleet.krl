@@ -682,10 +682,7 @@ Application that manages the fleet
                 "readable" : "weekly"
                };
 
-      settings = pds:get_setting_data(meta:rid()).klog(">>>> my settings >>>> ") || {};
-      tz = (settings{"timezonePreference"} || settings{"timezeonePreference"} || "America/Denver").klog(">>>> using timezone for report >>> ");  // remove misspelling later
-      // tz = "-0600"; 
-
+      tz = event:attr("timezone").klog(">>> owner told me their timezone >>>> ");
       subj = "Your "+period{"readable"}+" report from Fuse!";
 
       vsum = vehicleSummary();
