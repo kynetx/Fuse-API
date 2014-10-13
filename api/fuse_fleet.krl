@@ -344,10 +344,10 @@ Application that manages the fleet
 	  owner = CloudOS:subscriptionList(common:namespace(), owner_relationship).klog(">>> current owners >>>>");
 	  relationship = event:attr("relationship").klog(">>> subscription relationship >>>>");
 	  channel_name = event:attr("channelName").klog(">>> incoming channel name >>>");
-	  backchannel = event:attr("eventChannel").klog(">>> incoming channel >>>");
+	  backchannel = event:attr("eventChannel");
 
 	  valid_intro =  not ent:shared_channels{channel_name}.isnull()
-                      && ent:shared_channels{[channel_name, token]} eq meta:eci();
+                      && ent:shared_channels{[channel_name, "eci"]} eq meta:eci();
 
 	}
 	
