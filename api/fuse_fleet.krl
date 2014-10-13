@@ -235,7 +235,8 @@ Application that manages the fleet
 	          .pset(ent:shared_channels{channel_name})
 		  .klog(">>>> created channel for sharing >>> ")
 		  ;
-	chan	
+        shared_channel = chan.put(["eci"], chan{"token"}).delete(["token"]); // rename
+	shared_channel
       }
 
     }
