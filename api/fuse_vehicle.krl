@@ -161,7 +161,7 @@ Fuse ruleset for a vehicle pico
     // ---------- initialization ----------
     rule setup_vehicle_pico {
         select when fuse new_vehicle
-
+ 
 	pre {
 	   orig_attrs = event:attrs();
 	   name = event:attr("name");
