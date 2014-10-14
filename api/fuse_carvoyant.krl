@@ -407,7 +407,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       config_data = get_config(vid).klog(">>>>> config data >>>>>"); 
       params = {
         "name": event:attr("name") || profile{"myProfileName"} || "Unknown Vehicle",
-        "deviceId": event:attr("deviceId") || profile{"deviceId"} || "unknown",
+        "deviceId": event:attr("deviceId") || profile{"deviceId"} || "",
         "label": event:attr("label") || profile{"myProfileName"} || "My Vehicle",
 	"vin": event:attr("vin") || profile{"vin"} || "unknown",
         "mileage": event:attr("mileage") || profile{"mileage"} || "10"
@@ -417,12 +417,15 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
 //      valid_tokens = carvoyant_oauth:validTokens().klog(">>>>> are tokens valid? >>>>>"); // can't do this only works in fleet
       valid_tokens =  not config_data{"access_token"}.isnull();
+
+      valid_vin = vin.length() == 0 // empty is OK
+	       || vin.match(re/^[A-HJ-NPR-Za-hj-npr-z0-9]{12}\d{5}$/) // 17 char long, alphanumeric w/o IOQ, last 5 digits
+                ;
      
     }
     if( params{"deviceId"} neq "unknown"
-     && params{"vin"} neq "unknown"
-     && params{"vin"}.match(re/^[0-9a-zA-Z]{17}$/)
-     && valid_tokens.klog(">>>>> are tokens valid? >>>>>")
+     && valid_vin.klog(">>>> is vin valid? >>>> ")
+     && valid_tokens.klog(">>>>> are tokens valid? >>>>> ")
       ) then
     {
       send_directive("Initializing or updating Carvoyant vehicle for Fuse vehicle ") with params = params;
