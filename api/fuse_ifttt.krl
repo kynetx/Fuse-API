@@ -29,9 +29,16 @@ Playing with Fuse IFTTT channel
   rule router {
     select when fuse ifttt_incoming
     pre {
-      ops = process_path();
+      ops_array = process_path();
+      op1 = ops_array[2];
+      op2 = ops_array[3];
+
+      body = op1 eq "status" => {}
+                              | {}
     }
-    
+    { send_raw("application/json") with
+       content = body
+    }
 
 
   }
