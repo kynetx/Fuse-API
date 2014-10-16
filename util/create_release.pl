@@ -6,6 +6,7 @@ use File::Path;
 use Cwd;
 use YAML::XS;
 use DateTime;
+use LWP::Simple;
 use Net::Amazon::S3;
 use Net::Amazon::S3::Client;
 use Net::Amazon::S3::Client::Object;
@@ -19,7 +20,7 @@ use constant DEFAULT_RULESET_DIR => "/rulesets";
 
 # global options
 use vars qw/ %clopt /;
-my $opt_string = 'c:?hv:r';
+my $opt_string = 'c:?hv:ruf';
 getopts( "$opt_string", \%clopt ) or usage();
 
 usage() if $clopt{'h'} || $clopt{'?'};
@@ -163,11 +164,25 @@ if ($clopt{"r"}) {
 
     }
 
-    print "\nFlush URL:";
     $prod_flush_url .= join(";", @{$flush_rids});
     $dev_flush_url .= join(";", @{$flush_rids});
-    print $prod_flush_url, "\n";
-    print $dev_flush_url, "\n";
+
+    
+    print "\nAuto-flushing dev rulesets ";
+    print "(", $dev_flush_url, ")" if $clopt{"u"};
+    print "\n";
+    my $content = get($dev_flush_url);
+
+    if ($clopt{"f"}) {
+	print "\nAuto-flushing production rulesets ";
+	my $content = get($prod_flush_url);
+    } else {
+	print "\nNot flushing production rulesets (use -f switch to flush)\n";
+    }
+    print "\nFlush URL:\n", $prod_flush_url,  if $clopt{"u"};
+    print "\n";
+    
+
 }
 
 
@@ -187,6 +202,8 @@ usage: $0 [-h?] -v version
  -v         : version
  -c         : configuration file (default: DEFAULT_CONFIG_FILE)
  -r         : release to Amazon S3
+ -f         : flush production too (only valid with -r switch)
+ -u         : show flush URLs
 
 example: $0 -v v1 -c ../release-fuse.yml
 
