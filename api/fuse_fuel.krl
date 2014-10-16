@@ -93,9 +93,9 @@ Operations for fuel
 
     currentCPM = function() {
       fillup = fillups(null, 1, 0).head() || {};
-      vehicle_mpg = not fillup{"mpg"}.isnull() => fillup{"mpg"} 
-                                                | 0;
-      vehicle_cpg = not fillup{"unit_price"}.isnull() => fillup{"unit_price"}
+      vehicle_mpg = not fillup{"mpg"}.isnull() => fillup{"mpg"} + 0 // ensure it's a number
+                                                | 1;
+      vehicle_cpg = not fillup{"unit_price"}.isnull() => fillup{"unit_price"}  + 0
                                                        | 0;
 
       mpg = vehicle_mpg || standardMPG().klog(">>> MPG >>>>") || 1;
