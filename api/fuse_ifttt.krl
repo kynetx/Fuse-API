@@ -14,14 +14,15 @@ Playing with Fuse IFTTT channel
     use module a169x676 alias pds
     use module b16x19 alias common
 	
-    provides fart
+    provides router
   }
 
   global {
 
-      fart = function() {5};
-
-
+      router = function() {
+        path = page:url("path").klog(">>> seeing this path >>> ");
+	path        
+      };
 
   }
 
