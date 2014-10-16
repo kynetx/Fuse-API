@@ -21,7 +21,7 @@ Playing with Fuse IFTTT channel
 
       process_path = function() {
         path = meta:uri().klog(">>> seeing this path >>> ");
-	path.extract(re#/event/[^/]+/[^/]+/[^/]+/[^/]+/(.*)$#).head().split("/").klog(">>> returning these ops")
+	path.extract(re#/event/[^/]+/[^/]+/[^/]+/[^/]+/(.*)$#).head().split(re#/#).klog(">>> returning these ops")
       };
 
   }
