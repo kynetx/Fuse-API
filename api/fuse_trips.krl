@@ -344,7 +344,7 @@ Manage trips. PDS is not well-suited to these operations
  		   .put(["avgSpeed"], trip_summary{"avgSpeed"})
  		   .put(["name"], trip_name)
  		   .put(["category"], trip_categoty)
-                   .klog(">>>> storing trip <<<<< ")
+                   //.klog(">>>> storing trip <<<<< ")
 		   ;
       
 

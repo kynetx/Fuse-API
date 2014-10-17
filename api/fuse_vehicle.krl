@@ -465,14 +465,15 @@ Fuse ruleset for a vehicle pico
         vid = carvoyant:vehicle_id();
         vehicle_status = carvoyant:vehicleStatus() || {}; 
       }
-      {send_directive("Updated vehicle status") with
-         id = vid and
-         values = vehicle_status and
-	 namespace = carvoyant:namespace();
-       event:send({"cid": fleetChannel()}, "fuse", "updated_vehicle") with
-         attrs = {"keyvalue": "vehicle_status",
-	          "value": vehicle_status.encode()
-		 };
+      if(vehicle_status{"status_code"}.isnull()) then
+      { send_directive("Updated vehicle status") with
+          id = vid and
+          values = vehicle_status and
+	  namespace = carvoyant:namespace();
+        event:send({"cid": fleetChannel()}, "fuse", "updated_vehicle") with
+          attrs = {"keyvalue": "vehicle_status",
+	           "value": vehicle_status.encode()
+	 	  };
       }
 
       always {
