@@ -36,8 +36,8 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	    thisAcctRecord = acctRecordExists(my_email) => acctRecord(my_email) 
 	                                                 | makeAcctRecord(me).pset(app:fuse_users{my_email});
 
-            cid =  pds:get_item(common:namespace(),"fleet_channel")
-	        || CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel") ;
+            cid =  CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.eventChannel")
+                || pds:get_item(common:namespace(),"fleet_channel");
 
             {"eci": cid}
         };
