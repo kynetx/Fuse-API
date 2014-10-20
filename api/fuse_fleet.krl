@@ -227,6 +227,7 @@ Application that manages the fleet
 
       }
 
+      // used to link fleet to more than one owner
       createSharingChannel = function(channel_name) {
         chan = CloudOS:channelCreate(channel_name);
 	shared_channel = chan.put(["eci"], chan{"token"})
@@ -323,7 +324,13 @@ Application that manages the fleet
                or fuse reminders_ready
 	       or fuse email_for_owner
       pre {
-        owner = CloudOS:subscriptionList(common:namespace(),"FleetOwner").head().pick("$.eventChannel");
+        owner_subs = CloudOS:subscriptionList(common:namespace(),"FleetOwner");
+	// find the owner who contacted us (clould be more than one)
+	matching_owner = owner_subs.filter(function(sub){ sub{"backChannel"} eq meta:eci() }).klog(">>> maching owner >>> ");
+	// use any owner if no match
+	owner_list = matching_owner.length() > 0 => matching_owner
+                                                  | owner_subs;
+        owner = owner_list.head().pick("$.eventChannel");
       }
       {
         send_directive("Routing to owner")
