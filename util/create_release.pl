@@ -11,6 +11,9 @@ use Net::Amazon::S3;
 use Net::Amazon::S3::Client;
 use Net::Amazon::S3::Client::Object;
 
+###### HEY!  PAY ATTENTION!!!! ############
+# has to have Mozilla::CA installed to work
+
 use Data::Dumper;
 
 use constant DEFAULT_CONFIG_FILE => './release.yml';

@@ -94,11 +94,11 @@ Operations for fuel
     currentCPM = function() {
       fillup = fillups(null, 1, 0).head() || {};
       vehicle_mpg = not fillup{"mpg"}.isnull() => fillup{"mpg"} + 0 // ensure it's a number
-                                                | 1;
+                                                | standardMPG();
       vehicle_cpg = not fillup{"unit_price"}.isnull() => fillup{"unit_price"}  + 0
                                                        | 0;
 
-      mpg = vehicle_mpg || standardMPG() || 1;
+      mpg = (vehicle_mpg || 1.0).klog(">>>> MPG value >>>>");
       cpg = vehicle_cpg || standardCPG();
 
       cpm = cpg / mpg;
