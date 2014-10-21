@@ -20,7 +20,7 @@ Manage trips. PDS is not well-suited to these operations
 
 	
     provides trips, lastTrip, tripMeta, tripMetaById, mileage, tripsByDate, newTrips,
-             monthlyTripSummary, missedTrips,
+             monthlyTripSummary, missedTrips, missedTwice,
              all_trips,   // for debugging
 	       icalForVehicle, icalSubscriptionUrl, exportTrips
   }
@@ -285,6 +285,12 @@ Manage trips. PDS is not well-suited to these operations
       missed_trips = cv_trips.filter(function(t){ t{"mileage"} > 0 && ent:trips_by_id{mkTid(t{"id"})}.isnull() });
       missed_trips
     };
+
+    missedTwice = function() {
+      x = missedTrips(7);
+      y = missedTrips(7);
+      x
+    }
 
     mkTid = function(tid){"T"+tid};
     mkCarvoyantTid = function(tid){tid.extract(re/T(\d+)/).head()};
