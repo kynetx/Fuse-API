@@ -28,7 +28,7 @@ Manage trips. PDS is not well-suited to these operations
   global {
 
     testPset = function() {
-      x = math:random(10).pset(ent:testpset).klog(">>>> setting ent:testpset with >>>>");
+      x = math:random(999).pset(ent:testpset).klog(">>>> setting ent:testpset with >>>>");
       {"orig": x,
        "retrieved": ent:testpset
       }
