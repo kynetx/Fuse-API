@@ -20,12 +20,19 @@ Manage trips. PDS is not well-suited to these operations
 
 	
     provides trips, lastTrip, tripMeta, tripMetaById, mileage, tripsByDate, newTrips,
-             monthlyTripSummary, missedTrips, missedTwice,
+             monthlyTripSummary, missedTrips, testPset,
              all_trips,   // for debugging
 	       icalForVehicle, icalSubscriptionUrl, exportTrips
   }
 
   global {
+
+    testPset = function() {
+      x = math:random().pset(ent:testpset).klog(">>>> setting ent:testpset with >>>>");
+      {"orig": x,
+       "retrieved": ent:testpset
+      }
+    }
 
     // external decls
     tripsByDate = function(start, end){
@@ -288,12 +295,6 @@ Manage trips. PDS is not well-suited to these operations
       missed_trips
     };
 
-    missedTwice = function() {
-      x = missedTrips(7);
-      y = missedTrips(7);
-      x
-    }
-
     mkTid = function(tid){"T"+tid};
     mkCarvoyantTid = function(tid){tid.extract(re/T(\d+)/).head()};
 
@@ -324,6 +325,9 @@ Manage trips. PDS is not well-suited to these operations
       incoming = event:attrs() || {};
       raw_trip_info = incoming{"mileage"}.isnull() => carvoyant:tripInfo(incoming{"tripId"}, vid)
                                                 | incoming;
+
+      // too large trips can cause a time out that results in div by zero and sprintf errors in tripSummary()
+
       tid = mkTid(raw_trip_info{"id"});
       end_time = endTime(raw_trip_info);
 
