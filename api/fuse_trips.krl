@@ -30,7 +30,7 @@ Manage trips. PDS is not well-suited to these operations
     testPset = function() {
       x = common:genAndStore();
       {"orig": x,
-       "retrieved": retreiveVal()
+       "retrieved": common:retreiveVal()
       }
     }
 
