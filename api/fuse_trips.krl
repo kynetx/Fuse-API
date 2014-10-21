@@ -482,8 +482,8 @@ Manage trips. PDS is not well-suited to these operations
   }
 
   rule repair_trips {
-    select when fuse trips_check_sync491
-    foreach missedTrips(7) setting(trip)
+    select when fuse trips_check_sync
+    foreach missedTrips(7) setting(trip) // check for last seven days
     pre {
       tripId = trip{id}
     }
