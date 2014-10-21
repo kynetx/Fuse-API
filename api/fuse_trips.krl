@@ -316,7 +316,7 @@ Manage trips. PDS is not well-suited to these operations
 
   // workhorse rule, saves and indexes trips and trip summaries
   rule save_trip {
-    select when fuse new_trip
+    select when fuse new_trip 
     pre {
       vid = carvoyant:vehicle_id();
 
@@ -491,7 +491,7 @@ Manage trips. PDS is not well-suited to these operations
 
   rule repair_trips {
     select when fuse trip_check
-    foreach missedTrips(7) setting(trip) // check for last seven days
+    foreach missedTrips(event:attr("duration") || 2) setting(trip) // check for last two days by default
     pre {
       trip_attrs = { "tripId" : trip{"id"} }.klog(">>>> trip attrs ");
     }
