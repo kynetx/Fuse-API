@@ -281,7 +281,9 @@ Manage trips. PDS is not well-suited to these operations
       dur = ( duration.isnull() => 1 | duration.klog(">>> input duration >>>>") ).klog(">>> missed trips for this many days >>>>");
       today = common:convertToUTC(time:now()).klog(">>> until this time >>>");
       yesterday = common:convertToUTC(time:add(today, { "days": 0 - dur })).klog(">>>> from this time >>>> ");
-      cv_trips = carvoyant:trips(yesterday, today, vid);
+      raw_cv_trips = carvoyant:trips(yesterday, today, vid);
+      cv_trips = raw_cv_trips{"error"}.isnull() => raw_cv_trips
+                                                 | [];
       missed_trips = cv_trips.filter(function(t){ t{"mileage"} > 0 && ent:trips_by_id{mkTid(t{"id"})}.isnull() });
       missed_trips
     };
