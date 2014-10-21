@@ -482,15 +482,16 @@ Manage trips. PDS is not well-suited to these operations
   }
 
   rule repair_trips {
-    select when fuse trips_check_sync
+    select when fuse trips_check_sync491
+    foreach missedTrips(7) setting(trip)
     pre {
-      vid = carvoyant:vehicle_id();
-      today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz":"UTC"});
-      yesterday = time:add(today, {"days": -1});
-      cv_trips = carvoyant:trips(yesterday, today, vid);
-      missed_trips = cv_trips.filter(function(t){  ent:trip_summaries{mkTid(t{"id"})}.isnull() });
+      tripId = trip{id}
     }
-    noop();
+    always {
+      raise fuse event new_trip 
+        attributes {"tripId" : tripId}
+    }
+
   }
 
 
