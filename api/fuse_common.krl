@@ -13,10 +13,15 @@ Common definitions
 	provides S3Bucket, namespace, find_pico_by_id, fuel_namespace, trips_namespace, maint_namespace,
 	         convertToUTC, strToNum, vehicleChannels, fleet_photo, vehicle_photo, factory, returnChannel,
 		 fleetChannel, requiredRulesets,
-	         skycloud, allowedRids
+	         skycloud, allowedRids, genAndStore
     }
 
     global {
+
+      genAndStore = function() {
+        stored_value = ent:testpset.klog(">>>> saved value >>>>> ");
+        math:random(999).pset(ent:testpset).klog(">>>> setting ent:testpset with >>>>");
+      }
 
        // rulesets we need installed by type
        apps = {
