@@ -253,7 +253,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       config_data = get_config(vid).klog(">>> Config data in dataSet >>>>>");
       dataset_url = config_data{"base_url"} + "/dataSet/#{sid}";
       params = {};
-      result = carvoyant_get(trip_url, config_data, params);
+      result = carvoyant_get(dataset_url, config_data, params);
       result{"status_code"} eq "200" => result{["content","dataSet", "datum"]}
                                       | mk_error(result)
     }
