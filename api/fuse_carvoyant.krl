@@ -20,7 +20,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
     provides namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
 	     carvoyantVehicleData, isAuthorized, 
-             vehicleStatus, keyToLabel, tripInfo, trips,
+             vehicleStatus, keyToLabel, tripInfo, trips, dataSet,
              getSubscription, no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
 
   }
@@ -248,7 +248,15 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                                       | mk_error(result)
     }
 
-
+    // ---------- data sets ----------
+    dataSet = function(vid, sid) {
+      config_data = get_config(vid).klog(">>> Config data in dataSet >>>>>");
+      dataset_url = config_data{"base_url"} + "/dataSet/#{sid}";
+      params = {};
+      result = carvoyant_get(trip_url, config_data, params);
+      result{"status_code"} eq "200" => result{["content","dataSet", "datum"]}
+                                      | mk_error(result)
+    }
     
 
     mk_error = function(res) { // let's try the simple approach first
@@ -765,8 +773,23 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     pre {
       codes = event:attr("troubleCodes");
       id = event:attr("id");
+
+      details = dataSet(event:attr("vehicleId"),event:attr("dataSetId"));
+      
+      detail = details
+                  .filter(function(rec) {rec{"key"} eq "GEN_DTC"} )
+		  ; 
+
+      reason_string = detail
+                         .map( function(rec) { rec{"translatedValue"} } )
+			 .join("; ")
+			 ;
+
       status = event:attrs()
+                      .put(["translatedValues"], reason_string)
 	              .delete(["_generatedby"]);
+
+
     }
     noop();
     always {
@@ -782,7 +805,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	  with dtc = codes
 	   and timestamp = status{"_timestamp"} 
 	   and activity = "Vehicle reported the following diagnostic codes: " + codes.encode()
-	   and reason = "Diagnostic code report from vehicle."
+	   and reason = "Diagnostic code report from vehicle: " + reason_string
 	   and id = id
           ;
 
