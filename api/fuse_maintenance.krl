@@ -462,7 +462,7 @@ Operations for maintenance
     select when explicit reminder_due
              or fuse updated_battery
 	     or fuse updated_dtc
-             or fuse updated_fuel_level
+             or fuse updated_fuel_level relationship "BELOW"
 
     pre {
       id = event:attr("id");

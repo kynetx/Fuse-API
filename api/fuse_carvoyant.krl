@@ -735,6 +735,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       threshold = event:attr("thresholdVoltage");
       recorded = event:attr("recordedVoltage");
       id = event:attr("id");
+      status = event:attrs()
+	              .delete(["_generatedby"]);
     }
     noop();
     always {
@@ -743,8 +745,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	  attributes {
 	    "namespace": namespace(),
 	    "keyvalue": "lowBattery_fired",
-	    "value": event:attrs()
-	              .delete(["_generatedby"]),
+	    "value": status,
             "_api": "sky"
  		   
 	  };
@@ -764,6 +765,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     pre {
       codes = event:attr("troubleCodes");
       id = event:attr("id");
+      status = event:attrs()
+	              .delete(["_generatedby"]);
     }
     noop();
     always {
@@ -772,13 +775,12 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	  attributes {
 	    "namespace": namespace(),
 	    "keyvalue": "troubleCode_fired",
-	    "value": event:attrs()
-	              .delete(["_generatedby"]),
+	    "value": status,
             "_api": "sky"
           };
      raise fuse event "updated_dtc"
 	  with dtc = codes
-	   and timestamp = event:attr("_timestamp") 
+	   and timestamp = status{"_timestamp"} 
 	   and activity = "Vehicle reported the following diagnostic codes: " + codes.encode()
 	   and reason = "Diagnostic code report from vehicle."
 	   and id = id
@@ -794,6 +796,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       recorded = event:attr("recordedValue");
       relationship = event:attr("relationship");
       id = event:attr("id");
+      status = event:attrs()
+	              .delete(["_generatedby"]);
     }
     noop();
     always {
@@ -802,15 +806,14 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	  attributes {
 	    "namespace": namespace(),
 	    "keyvalue": "fuelLevel_fired",
-	    "value": event:attrs()
-	              .delete(["_generatedby"]),
+	    "value": status,
             "_api": "sky"
  		   
      };
      raise fuse event "updated_fuel_level"
        with threshold = threshold
 	and recorded = recorded
-	and timestamp = event:attr("_timestamp")
+	and timestamp = status{"_timestamp"}
 	and activity = "Fuel level of #{recorded}% is #{relationship.lc()} threshold value of #{threshold}%"
 	and reason = "Fuel report from vehicle."
 	and id = id
@@ -824,7 +827,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       threshold = event:attr("thresholdValue");
       recorded = event:attr("recordedValue");
       relationship = event:attr("relationship");
-      record = event:attrs()
+      status = event:attrs()
 	              .delete(["_generatedby"]);
       id = event:attr("id");
     }
@@ -836,7 +839,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
         attributes {
 	    "namespace": namespace(),
 	    "keyvalue": "vehicle_moving_fired",
-	    "value": record,
+	    "value": status,
             "_api": "sky"
 	  };
     }

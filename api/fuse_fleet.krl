@@ -77,7 +77,8 @@ Application that manages the fleet
       };
 
       tripSummaries = function(year, month) {
-	summaries = ent:fleet{["trip_summaries", "Y" + year, "M" + month]}  
+        trip_summaries = ent:fleet{["trip_summaries", "Y" + year, "M" + month]} || {};
+	summaries = trip_summaries
 		     .map(function(k,v){v.put(["picoId"], k)
 		                         .put(["label"], ent:fleet{["vehicle_info", k, "label"]})
                                        });
