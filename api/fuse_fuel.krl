@@ -98,7 +98,7 @@ Operations for fuel
       vehicle_cpg = not fillup{"unit_price"}.isnull() => fillup{"unit_price"}  + 0
                                                        | 0;
 
-      mpg = (vehicle_mpg || 1.0).klog(">>>> MPG value >>>>");
+      mpg = vehicle_mpg.defaultsTo(1.0).klog(">>>> MPG value >>>>"); 
       cpg = vehicle_cpg || standardCPG();
 
       cpm = cpg / mpg;
