@@ -38,11 +38,15 @@ Common definitions
                    "a16x129.dev",    // SendGrid module
 		   "b16x13.prod"     // Fuse errors
                ],
+	       "owner_optional" :[
+	       ],
                "fleet": [
                    "b16x11.prod",   // fuse_carvoyant.krl
                    "b16x17.prod",   // fuse_fleet.krl
                    "b16x23.prod"    // fuse_fleet_oauth.krl
                ],
+	       "fleet_optional" :[
+	       ],
                "vehicle": [
                    "b16x9.prod",   // fuse_vehicle.krl
 		   "b16x11.prod",  // fuse_carvoyant.krl
@@ -50,6 +54,8 @@ Common definitions
 		   "b16x20.prod",  // fuse_fuel.krl
  		   "b16x21.prod"   // fuse_maintenance.krl
                ],
+	       "vehicle_optional" :[
+	       ],
                "unwanted": [ 
                    "a169x625.prod",
                    "a169x664.prod",
