@@ -94,18 +94,18 @@ Operations for fuel
     currentCPM = function() {
       fillup = fillups(null, 1, 0).head() || {};
       vehicle_mpg = not fillup{"mpg"}.isnull() => fillup{"mpg"} + 0 // ensure it's a number
-                                                | standardMPG();
+                                                | standardMPG().defaultsTo(1.0);
       vehicle_cpg = not fillup{"unit_price"}.isnull() => fillup{"unit_price"}  + 0
-                                                       | 0;
+                                                       | standardCPG();
 
-      mpg = vehicle_mpg.defaultsTo(1.0).klog(">>>> MPG value >>>>"); 
-      cpg = vehicle_cpg || standardCPG();
+      mpg = vehicle_mpg => vehicle_mpg | 1.0; 
+      cpg = vehicle_cpg.defaultsTo(0);
 
-      cpm = cpg / mpg;
-      {"costPerMile": cpm,
+      cpm = cpg / mpg.klog(">>>> MPG value >>>>");
+      {"costPerMile": cpm.defaultsTo(0),
        "mpg": mpg.klog(">>> MPG >>>>"),
        "costPerGallon": cpg.klog(">>> CPG >>>>"),
-       "vehicleData": vehicle_mpg > 0 && vehicle_cpg > 0
+       "vehicleData": not fillup{"mpg"}.isnull() && not fillup{"unit_price"}.isnull()
       }.klog(">>>>> returning CPM >>>>>> ")
       
     };
