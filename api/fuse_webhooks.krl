@@ -1,6 +1,6 @@
- ruleset fuse_vehicle_webhooks {
+ ruleset fuse_webhooks {
   meta {
-    name "Fuse Vehicle Webhooks App"
+    name "Fuse Webhooks Rulesets"
     description <<
 Let user specify webhooks for their vehicle
     >>
