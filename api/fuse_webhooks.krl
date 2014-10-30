@@ -27,7 +27,7 @@ Let user specify webhooks for their vehicle
       url = event:attr("url").klog(">>>> Setting webhook for #{trigger} as >>>>>");
     }
     always {
-      set ent:webooks{trigger} url;
+      set ent:webhooks{trigger} url;
     }
   }
 
@@ -35,7 +35,7 @@ Let user specify webhooks for their vehicle
     select when fuse new_trip_saved
     pre {
       tripSummary = event:attr("tripSummary");
-      url = ent:webkooks{event:type()}.klog(">>> using this URL >>>>>");
+      url = ent:webhooks{event:type()}.klog(">>> using this URL >>>>>");
     }
     { send_directive("Routing trip ")
         with trip_summary = tripSummary;
@@ -47,4 +47,4 @@ Let user specify webhooks for their vehicle
 
 
 }
-// fuse_vehicle_webhooks.krl
+// fuse_webhooks.krl

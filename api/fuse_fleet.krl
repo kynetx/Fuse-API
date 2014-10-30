@@ -175,7 +175,8 @@ Application that manages the fleet
 				       .length() > 0;
 
 
-	vehicles_by_deviceId = (ent:fleet{["vehicle_info"]} || {})
+	vehicles_by_deviceId = ent:fleet{["vehicle_info"]}
+	                           .defaultsTo({})
 	                           .map(function(k,v){v.put(["picoId"], k)})
 				   .values()
   	   	  		   .collect(function(x){x{"deviceId"}})
@@ -184,7 +185,8 @@ Application that manages the fleet
 
         deviceId_in_Fuse = vehicles_by_deviceId{deviceId}.length() > 0;
 
-	vehicles_by_vin = (ent:fleet{["vehicle_info"]} || {})
+	vehicles_by_vin = ent:fleet{["vehicle_info"]}
+	                           .defaultsTo({})
 	                           .map(function(k,v){v.put(["picoId"], k)})
 				   .values()
   	   	  		   .collect(function(x){x{"vin"}})
