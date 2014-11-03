@@ -338,7 +338,9 @@ Manage trips. PDS is not well-suited to these operations
                    .put(["endTime"], end_time)
 		   ;
 
-      raw_trip_summary = tripSummary(trip_info);
+      raw_trip_summary = not trip_info{"mileage"}.isnull() => tripSummary(trip_info)
+                       |                                      {}
+                       ;
 
       trip_meta = tripMeta(raw_trip_summary{"startWaypoint"}, raw_trip_summary{"endWaypoint"}) || {};
       trip_name = trip_meta{"tripName"} || "";
