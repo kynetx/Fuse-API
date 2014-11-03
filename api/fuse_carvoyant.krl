@@ -384,17 +384,32 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       foo = event:attrs().klog(">>>> did we see attributes? >>>>> ");
       cv_vehicles = carvoyantVehicleData().klog(">>>>> carvoyant vehicle data >>>>") ;
       profile = pds:get_all_me().klog(">>>>> profile >>>>>");
-      vehicle_match = cv_vehicles
+      vehicle_match_did = cv_vehicles
+                        .filter(function(v){
+			          v{"deviceId"} eq profile{"deviceId"}  
+                               })
+			.head() // should only be one
+			;
+      vehicle_match_vid = cv_vehicles
+                        .filter(function(v){
+			          v{"vehicleId"} eq ent:vehicle_data{"vehicleId"}
+                               })
+			.head() // should only be one
+			;
+      vehicle_match_vin = cv_vehicles
                         .filter(function(v){
 			          v{"vin"} eq profile{"vin"}  
-                               // && v{"deviceId"} eq profile{"deviceId"}
                                })
-			 .head().klog(">>>> matching vehicle by VIN >>>>");
+			.head() // might be more than one
+			;
+
+      vehicle_match = not vehicle_match_did.isnull() => vehicle_match_did.klog(">>>> matching vehicle by device Id >>>>") 
+                    | not vehicle_match_vid.isnull() => vehicle_match_vid.klog(">>>> matching vehicle by vehicle Id >>>>")
+                    |                                   vehicle_match_vin.klog(">>>> matching vehicle by VIN >>>>")
+                    ;
+
       // true if vehicle exists in Carvoyant with same vin and not yet linked
       should_link = ( not vehicle_match.isnull()  // have a matching vehicle
-                   &&  ( ent:vehicle_data{"vehicleId"}.isnull() 
-                      || ent:vehicle_data{"vehicleId"} neq vehicle_match{"vehicleId"}
-                       )
                     ).klog(">>> should we link???? >>>>> ");
 
 
