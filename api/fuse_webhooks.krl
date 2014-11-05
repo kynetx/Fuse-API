@@ -24,7 +24,7 @@ Let user specify webhooks for their vehicle
     select when fuse webhook_url
     pre {
       trigger = event:attr("trigger");
-      url = event:attr("url").klog(">>>> Setting webhook for #{trigger} as >>>>>");
+      url = event:attr("callbackUrl").klog(">>>> Setting webhook for #{trigger} as >>>>>");
     }
     always {
       set ent:webhooks{trigger} url;
@@ -35,13 +35,27 @@ Let user specify webhooks for their vehicle
     select when fuse new_trip_saved
     pre {
       tripSummary = event:attr("tripSummary");
-      url = ent:webhooks{event:type()}.klog(">>> using this URL >>>>>");
+      url = ent:webhooks{event:type()}.klog(">>> calling this URL for #{event:type()} >>>>>");
     }
     { send_directive("Routing trip ")
         with trip_summary = tripSummary;
       http:post(url) with
         headers = {"content-type": "application/json"} and
         body = tripSummary
+    }
+  }
+
+  rule route_alert {
+    select when fuse new_alert
+    pre {
+      record = event:attrs();
+      url = ent:webhooks{event:type()}.klog(">>> calling this URL for #{event:type()} >>>>>");
+    }
+    { send_directive("Routing trip ")
+        with alert_data = record;
+      http:post(url) with
+        headers = {"content-type": "application/json"} and
+        body = record
     }
   }
 

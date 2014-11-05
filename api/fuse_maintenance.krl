@@ -588,6 +588,7 @@ Operations for maintenance
     fired {
       log(">>>>>> Storing alert >>>>>> " + rec.encode());
       set ent:alerts{id} rec;
+      raise fuse event alert_saved attributes rec;
     } else {
       log(">>>>>> Could not store alert " + rec.encode());
     }
