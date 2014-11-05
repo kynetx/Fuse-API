@@ -12,15 +12,43 @@ Let user specify webhooks for their vehicle
     // use module b16x10 alias fuse_keys
 
     use module b16x19 alias common
+
+    provides webhooks
 	
   }
 
   global {
 
+    webhooks = function(trigger) {
+      trigger.isnull() => ent:webhooks
+                        | ent:webhooks{trigger};
+    }
 
   }
 
-  rule store_url {
+  // put routing rules here. Routing rules prepare data from event (possible enriching it) for the general router below. 
+  rule route_trip {
+    select when fuse trip_saved
+    always {
+      raise explicit event route_ready attributes
+        {"record": event:attr("tripSummary"),
+	 "eventType": event:type()
+	};
+    }
+  }
+
+  rule route_alert {
+    select when fuse alert_saved
+    always {
+      raise explicit event route_ready attributes
+        {"record": event:attrs(),
+	 "eventType": event:type()
+	};
+    }
+  }
+
+  // general rules for webhooks
+  rule store_webhook {
     select when fuse webhook_url
     pre {
       trigger = event:attr("trigger");
@@ -31,28 +59,15 @@ Let user specify webhooks for their vehicle
     }
   }
 
-  rule route_trip {
-    select when fuse new_trip_saved
+  rule route_event_to_webhook {
+    select when explicit route_ready
     pre {
-      tripSummary = event:attr("tripSummary");
-      url = ent:webhooks{event:type()}.klog(">>> calling this URL for #{event:type()} >>>>>");
+      record = event:attr("record");
+      event_type = event:attr("eventType");
+      url = ent:webhooks{event_type}.klog(">>> calling this URL for #{event_type} >>>>>");
     }
-    { send_directive("Routing trip ")
-        with trip_summary = tripSummary;
-      http:post(url) with
-        headers = {"content-type": "application/json"} and
-        body = tripSummary
-    }
-  }
-
-  rule route_alert {
-    select when fuse new_alert
-    pre {
-      record = event:attrs();
-      url = ent:webhooks{event:type()}.klog(">>> calling this URL for #{event:type()} >>>>>");
-    }
-    { send_directive("Routing trip ")
-        with alert_data = record;
+    { send_directive("Routing event to webhook")
+        with record = record;
       http:post(url) with
         headers = {"content-type": "application/json"} and
         body = record

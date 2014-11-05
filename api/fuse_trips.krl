@@ -375,7 +375,7 @@ Manage trips. PDS is not well-suited to these operations
       set ent:last_trip tid;
       set ent:trips_by_id{tid} final_trip_info; 		 
       set ent:trip_summaries{tid} trip_summary;
-      raise fuse event new_trip_saved with 
+      raise fuse event trip_saved with 
         tripId = tid and
         tripSummary = trip_summary
     } else {
@@ -455,7 +455,7 @@ Manage trips. PDS is not well-suited to these operations
   }
 
   rule update_vehicle_totals {
-    select when fuse new_trip_saved
+    select when fuse trip_saved
     pre {
 
       // do current month if no month given
