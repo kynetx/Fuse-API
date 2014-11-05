@@ -32,7 +32,7 @@ Let user specify webhooks for their vehicle
     always {
       raise explicit event route_ready attributes
         {"record": event:attr("tripSummary"),
-	 "eventType": event:type()
+	 "eventType": "trip_saved" // event:type() doesn't work!! 
 	};
     }
   }
@@ -42,7 +42,7 @@ Let user specify webhooks for their vehicle
     always {
       raise explicit event route_ready attributes
         {"record": event:attrs(),
-	 "eventType": event:type()
+	 "eventType": "alert_saved" // event:type() doesn't work!! 
 	};
     }
   }
@@ -66,6 +66,7 @@ Let user specify webhooks for their vehicle
       event_type = event:attr("eventType");
       url = ent:webhooks{event_type}.klog(">>> calling this URL for #{event_type} >>>>>");
     }
+    if(not url.isnull()) then
     { send_directive("Routing event to webhook")
         with record = record;
       http:post(url) with
