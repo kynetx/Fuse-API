@@ -180,7 +180,7 @@ Operations for fuel
 
       vdata = vehicle:vehicleSummary();
 
-      volume = event:attr("volume") || 1;
+      volume = event:attr("volume").defaultsTo(1.0);
       unit_price = event:attr("unitPrice");
       odometer = event:attr("odometer") || vdata{"mileage"};
       location = event:attr("location");
