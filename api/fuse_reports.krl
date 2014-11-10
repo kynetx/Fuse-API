@@ -198,9 +198,12 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
           time = trip{"endTime"}.isnull() => ""
                                            | time:strftime(trip{"endTime"}, "%b %e %I:%M %p", {"tz": tz.klog(">>>> Moving trip time to timezone >>>> ")});
 
-          duration_val = tripDuration(trip)/60; // minutes
+          duration_val = (time:strftime(trip{"endTime"}, "%s") - time:strftime(trip{"startTime"}, "%s"))/60; // minutes
+	                      // tripDuration(trip)/60; // minutes
           duration = duration_val < 0.1 => ""
-                                         | min_or_hours(duration_val.sprintf("%.01f"));
+	           | duration_val < 60  => duration_val.sprintf("%.01f") + " min"        // min_or_hour() expanded
+                   |                       (duration_val/60).sprintf("%.1f") + " hours"
+		   ;
 
           line = <<
 <tr>
