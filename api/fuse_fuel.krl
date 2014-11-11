@@ -90,15 +90,16 @@ Operations for fuel
       sorted_keys.map(function(id){ ent:fuel_purchases{id} })
     };
 
+    defaultMPG = 15;
 
     currentCPM = function() {
       fillup = fillups(null, 1, 0).head() || {};
       vehicle_mpg = not fillup{"mpg"}.isnull() => fillup{"mpg"} + 0 // ensure it's a number
-                                                | standardMPG().defaultsTo(1.0);
+                                                | standardMPG().defaultsTo(defaultMPG);
       vehicle_cpg = not fillup{"unit_price"}.isnull() => fillup{"unit_price"}  + 0
                                                        | standardCPG();
 
-      mpg = vehicle_mpg => vehicle_mpg | 1.0; 
+      mpg = vehicle_mpg => vehicle_mpg | defaultMPG; 
       cpg = vehicle_cpg.defaultsTo(0);
 
       cpm = cpg / mpg.klog(">>>> MPG value >>>>");
@@ -123,8 +124,8 @@ Operations for fuel
                                         "api_key": edmunds_key});
       resp = raw_resp{"status_code"} eq "200" => raw_resp{"content"}.decode().klog(">>>> Edmunds response >>>> ")
                                                | {};
-      highway = resp{["MPG","highway"]} || 15;
-      city = resp{["MPG","city"]} || 15;
+      highway = resp{["MPG","highway"]}.defaultsTo(defaultMPG);
+      city = resp{["MPG","city"]}.defaultsTo(defaultMPG);
       mpg = (highway + city) / 2  // assume half city, half highway
       mpg.pset(ent:mpg); 
     }
