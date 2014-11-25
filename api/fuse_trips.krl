@@ -21,7 +21,7 @@ Manage trips. PDS is not well-suited to these operations
 	
     provides trips, lastTrip, tripMeta, tripMetaById, mileage, tripsByDate, newTrips,
              monthlyTripSummary, missedTrips, testPset,
-             all_trips,   // for debugging
+             all_trips,  pruneTripData, // for debugging
 	       icalForVehicle, icalSubscriptionUrl, exportTrips
   }
 
@@ -304,7 +304,27 @@ Manage trips. PDS is not well-suited to these operations
       }
     };
   
+
+    pruneTripData = function(id) {
+      trip = trips(id);
+      trip_data = trip{"data"};
+      new_data = trip_data.map(function(d){
+		    datum = d{"datum"};
+		    new_data = datum.map(function(r) {
+		      r.delete(["timestamp"])
+		       .delete(["id"])
+		       .delete(["translatedValue"])
+		    });
+
+		    d.delete(["datum"]).put(["datum"], new_datum)
+		 });
+
+      trip.delete(["data"])
+	  .put(["data"], new_data)
+    }
+
   }
+
 
   rule clear_trip {
     select when fuse clear_trip
