@@ -310,7 +310,7 @@ Manage trips. PDS is not well-suited to these operations
       trip_data = trip{"data"};
       new_data = trip_data.map(function(d){
 		    datum = d{"datum"};
-		    new_data = datum.map(function(r) {
+		    new_datum = datum.map(function(r) {
 		      r.delete(["timestamp"])
 		       .delete(["id"])
 		       .delete(["translatedValue"])
