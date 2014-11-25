@@ -21,7 +21,7 @@ Manage trips. PDS is not well-suited to these operations
 	
     provides trips, lastTrip, tripMeta, tripMetaById, mileage, tripsByDate, newTrips,
              monthlyTripSummary, missedTrips, testPset,
-             all_trips,  pruneTripData, // for debugging
+             all_trips,  pruneTripDataTest, // for debugging
 	       icalForVehicle, icalSubscriptionUrl, exportTrips
   }
 
@@ -305,8 +305,11 @@ Manage trips. PDS is not well-suited to these operations
     };
   
 
-    pruneTripData = function(id) {
-      trip = trips(id);
+    pruneTripDataTest = function(id) {
+      pruneTripData(trips(id))
+    }
+
+    pruneTripData = function(trip) {
       trip_data = trip{"data"};
       new_data = trip_data.map(function(d){
 		    datum = d{"datum"};
@@ -372,7 +375,7 @@ Manage trips. PDS is not well-suited to these operations
 			  ;
 
 
-      final_trip_info = trip_info
+      final_trip_info = pruneTripData(trip_info)
                    .put(["cost"], trip_summary{"cost"})
   		   .put(["interval"], trip_summary{"interval"})
  		   .put(["avgSpeed"], trip_summary{"avgSpeed"})
