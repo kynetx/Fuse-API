@@ -703,11 +703,10 @@ Operations for maintenance
       // receipt photo 
       img_source = event:attr("receipt");
       img_is_new = img_source.match(re/^data:image/).klog(">>>> image is new >>>>"); // might get an http:// URL for updates
+      
       vehicle_id = CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.channelName").klog(">>>> vehicle ID >>>>> ");
       img_name   = "fuse_vehicle_files/#{meta:eci()}/#{vehicle_id}/#{id}.img";
-      img_url    = img_is_new => S3:makeAwsUrl(S3Bucket,img_name)
-                               | img_source;
-     
+      img_url    = S3:makeAwsUrl(S3Bucket,img_name);
 
       rec = {
         "id": id,
