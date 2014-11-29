@@ -319,11 +319,13 @@ You create an reminder  using the following function:
 
 The reminder object has the following
 
-- kind &mdash; one of ```date``` or ```mileage```
-- recurring &mdash; one of ```once``` or ```repeat```
+- kind &mdash; one of ```date``` or ```mileage```.
+- recurring &mdash; one of ```once``` or ```repeat```.
 - interval &mdash; an integer specifying either a time in months or a mileage; ignored if ```recurring``` is ```once```.
-- activity &mdash; a string stating the activity being reminded (e.g. "oil change")
+- activity &mdash; a string stating the activity being reminded (e.g. "oil change").
 - due &mdash; either a DateTime  for a date or an integer for an absolute odometer reading; ignored if ```recurring``` is ```repeat```.
+- when &mdash; the DataTime to set the reminder from; defaults to now; ignored if ```kind``` is ```mileage```.
+- odometer &mdash; the odometer reading to set the reminder from; defaults to current odometer; ignored if ```kind``` is ```date```.
 
 If the value of ```recurring``` is ```repeat```, the due date or due mileage are calculated by adding the interval to the current date or odometer reading (depending on the value of ```kind```).
 

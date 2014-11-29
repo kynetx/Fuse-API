@@ -350,11 +350,13 @@ Operations for maintenance
 
       when_reminded = common:convertToUTC(event:attr("when") || time:now());
 
+      odometer_reminded = event:attr("odometer").defaultsTo(vdata{"mileage"});
+
       duedate = kind eq "date" && recurring eq "repeat"    => newDuedate(when_reminded, interval, "months")
               | kind eq "date" && recurring eq "once"      => event:attr("due") 
               |                                               newDuedate(time:now(), 25, "years"); // never
 
-      duemileage = kind eq "mileage" && recurring eq "repeat" => newDuemileage(vdata{"mileage"}, interval)
+      duemileage = kind eq "mileage" && recurring eq "repeat" => newDuemileage(odometer_reminded, interval)
                  | kind eq "mileage" && recurring eq "once"   => common:strToNum(event:attr("due"))
                  |                                               999999; // everything's before this
 
