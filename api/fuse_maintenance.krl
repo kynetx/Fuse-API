@@ -470,7 +470,8 @@ Operations for maintenance
 	   "reminder_ref": id,
 	   "status": "active",
 	   "activity": event:attr("activity"),
-	   "reason": event:attr("reason")
+	   "reason": event:attr("reason"),
+	   "trouble_codes": event:attr("dtc")
       };
     }
     {
@@ -684,7 +685,8 @@ Operations for maintenance
 
       id = event:attr("id") || random:uuid();
 
-      alert = alerts(event:attr("alert_ref")) || {};
+      alert = event:attr("alert_ref").isnull() => {}
+                                                | alerts(event:attr("alert_ref"));
 
       vdata = vehicle:vehicleSummary() || {};
 
