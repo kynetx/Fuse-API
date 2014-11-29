@@ -376,7 +376,7 @@ Operations for maintenance
 	"activity": event:attr("activity"),
 	"duedate": common:convertToUTC(duedate),
 	"duemileage": duemileage,
-	"mileagestamp" : common:strToNum(vdata{"mileage"}),
+	"mileagestamp" : common:strToNum(odometer_reminded),
 	"timestamp": when_reminded
       };
     }
