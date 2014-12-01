@@ -310,7 +310,7 @@ Manage trips. PDS is not well-suited to these operations
     }
 
     pruneTripData = function(trip) {
-      new_data = trip{"data"}.map(function(d){
+      new_data = trip{"data"}.defaultsTo([]).map(function(d){
 		    new_datum = d{"datum"}.map(function(r) {
 		      r.delete(["timestamp"])
 		       .delete(["id"])
