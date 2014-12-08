@@ -396,7 +396,7 @@ Manage trips. PDS is not well-suited to these operations
     fired {
       set ent:last_trip tid;
       set ent:trips_by_id{tid} final_trip_info;
-      set ent:trips_by_id{[tid, data]} pruned_trip_data; // this can fail separately
+      set ent:trips_by_id{[tid, "data"]} pruned_trip_data; // this can fail separately
       set ent:trip_summaries{tid} trip_summary;
       raise fuse event trip_saved with 
         tripId = tid and
