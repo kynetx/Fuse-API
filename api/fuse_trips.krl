@@ -341,13 +341,15 @@ Manage trips. PDS is not well-suited to these operations
       vid = carvoyant:vehicle_id();
 
       // accept either the trip as a set of attributes or just an ID that requires us to ping Carvoyant API
-      incoming = event:attrs() || {};
+      incoming = event:attrs().defaultsTo({});
       raw_trip_info = incoming{"mileage"}.isnull() => carvoyant:tripInfo(incoming{"tripId"}, vid)
                                                 | incoming;
 
       // too large trips can cause a time out that results in div by zero and sprintf errors in tripSummary()
 
-      tid = mkTid(raw_trip_info{"id"});
+      record_count = raw_trip_info{"data"}.length().klog(">>>>> number of records in trip >>>>>");
+
+      tid = mkTid(raw_trip_info{"id"}).klog(">>>>> trip ID >>>>>");
       end_time = endTime(raw_trip_info);
 
        // time_split = time:strftime(end_time, "%Y_:%m_:%d_:%H_:%M%S_").split(re/:/);
