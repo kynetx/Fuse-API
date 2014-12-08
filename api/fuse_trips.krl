@@ -309,8 +309,8 @@ Manage trips. PDS is not well-suited to these operations
       pruneTripData(trips(id))
     }
 
-    pruneTripData = function(trip) {
-      new_data = trip{"data"}.defaultsTo([]).map(function(d){
+    pruneTripData = function(data) {
+      new_data = data.defaultsTo([]).map(function(d){
 		    new_datum = d{"datum"}.map(function(r) {
 		      r.delete(["timestamp"])
 		       .delete(["id"])
@@ -319,8 +319,7 @@ Manage trips. PDS is not well-suited to these operations
 
 		    d.put(["datum"], new_datum)
 		 });
-
-      trip.put(["data"], new_data)
+      new_data
     }
 
   }
@@ -372,7 +371,10 @@ Manage trips. PDS is not well-suited to these operations
 			  ;
 
 
-      final_trip_info = pruneTripData(trip_info)
+      pruned_trip_data = pruneTripData(trip_info{"data"});
+
+      final_trip_info = trip_info
+                   .delete(["data"])
                    .put(["cost"], trip_summary{"cost"})
   		   .put(["interval"], trip_summary{"interval"})
  		   .put(["avgSpeed"], trip_summary{"avgSpeed"})
@@ -393,7 +395,8 @@ Manage trips. PDS is not well-suited to these operations
     }
     fired {
       set ent:last_trip tid;
-      set ent:trips_by_id{tid} final_trip_info; 		 
+      set ent:trips_by_id{tid} final_trip_info;
+      set ent:trips_by_id{[tid, data]} pruned_trip_data; // this can fail separately
       set ent:trip_summaries{tid} trip_summary;
       raise fuse event trip_saved with 
         tripId = tid and
