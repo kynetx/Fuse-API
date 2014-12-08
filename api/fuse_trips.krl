@@ -346,7 +346,7 @@ Manage trips. PDS is not well-suited to these operations
       // accept either the trip as a set of attributes or just an ID that requires us to ping Carvoyant API
       incoming = event:attrs().defaultsTo({});
       raw_trip_info = incoming{"mileage"}.isnull() => carvoyant:tripInfo(incoming{"tripId"}, vid)
-                                                | incoming;
+                                                    | incoming;
 
       // too large trips can cause a time out that results in div by zero and sprintf errors in tripSummary()
       record_count = raw_trip_info{"data"}.length().klog(">>>>> number of records in trip >>>>>");
@@ -528,6 +528,8 @@ Manage trips. PDS is not well-suited to these operations
     pre {
       trip_attrs = { "tripId" : trip{"id"} }.klog(">>>> trip attrs ");
     }
+    send_directive("Checking for missed trips") with
+      found = trip_attrs
     always {
       log (">>>> new (unseen trip) " + trip{"id"});
       raise fuse event new_trip 
