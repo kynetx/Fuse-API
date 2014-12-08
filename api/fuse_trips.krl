@@ -346,17 +346,19 @@ Manage trips. PDS is not well-suited to these operations
                                                 | incoming;
 
       // too large trips can cause a time out that results in div by zero and sprintf errors in tripSummary()
-
       record_count = raw_trip_info{"data"}.length().klog(">>>>> number of records in trip >>>>>");
-
+      pruned_trip_data = pruneTripData(raw_trip_info{"data"});
+  
       tid = mkTid(raw_trip_info{"id"}).klog(">>>>> trip ID >>>>>");
-      end_time = endTime(raw_trip_info);
 
        // time_split = time:strftime(end_time, "%Y_:%m_:%d_:%H_:%M%S_").split(re/:/);
        // week_number = time:strftime(end_time, "%U_")
 
+//    end_time = endTime(raw_trip_info); 
+
       trip_info = raw_trip_info
-                   .put(["endTime"], end_time)
+                   .delete(["data"])
+//                   .put(["endTime"], end_time)
 		   ;
 
       raw_trip_summary = not trip_info{"mileage"}.isnull() => tripSummary(trip_info)
@@ -372,11 +374,7 @@ Manage trips. PDS is not well-suited to these operations
                           .put(["category"], trip_category)
 			  ;
 
-
-      pruned_trip_data = pruneTripData(trip_info{"data"});
-
       final_trip_info = trip_info
-                   .delete(["data"])
                    .put(["cost"], trip_summary{"cost"})
   		   .put(["interval"], trip_summary{"interval"})
  		   .put(["avgSpeed"], trip_summary{"avgSpeed"})
