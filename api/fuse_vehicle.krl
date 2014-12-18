@@ -137,7 +137,7 @@ Fuse ruleset for a vehicle pico
 	          "vehicleId_match": not vehicle_summary{"vehicleId"}.isnull()
                                   && vehicle_summary{"vehicleId"} eq cv_vehicles{"vehicleId"},
 		  "recieving_ok": not vehicle_summary{"lastRunningTimestamp"}.isnull(),
-	          "subscriptions_ok": subscriptionsOs(subscriptions),
+	          "subscriptions_ok": subscriptionsOk(subscriptions),
 	          "subscription_eci_ok": not subscription_eci.isnull(),
 	          "deviceId_ok": me{"deviceId"}.match(re/^(FS|C20).+$/)
                  }
