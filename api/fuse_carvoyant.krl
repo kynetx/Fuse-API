@@ -734,6 +734,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       status = event:attr("ignitionStatus");
       tid = event:attr("tripId");
       trip_data = event:attrs()
+                    .put(["timestamp"], common:convertToUTC(time:now()))
        		    .delete(["_generatedby"]);
     }
     noop();
@@ -759,8 +760,9 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       recorded = event:attr("recordedVoltage");
       id = event:attr("id");
       status = event:attrs()
-	              .delete(["_generatedby"]);
-    }
+                    .put(["timestamp"], common:convertToUTC(time:now()))
+		    .delete(["_generatedby"]);
+   }
     noop();
     always {
       log "Recorded battery level: " + recorded;
@@ -801,6 +803,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 			 ;
 
       status = event:attrs()
+                      .put(["timestamp"], common:convertToUTC(time:now()))
                       .put(["translatedValues"], reason_string)
 	              .delete(["_generatedby"]);
 
@@ -834,8 +837,9 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       recorded = event:attr("recordedValue");
       relationship = event:attr("relationship");
       id = event:attr("id");
-      status = event:attrs()
-	              .delete(["_generatedby"]);
+      status = event:attrs()	
+                    .put(["timestamp"], common:convertToUTC(time:now()))
+		    .delete(["_generatedby"]);
     }
     noop();
     always {
@@ -866,7 +870,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       recorded = event:attr("recordedValue");
       relationship = event:attr("relationship");
       status = event:attrs()
-	              .delete(["_generatedby"]);
+                 .put(["timestamp"], common:convertToUTC(time:now()))
+                 .delete(["_generatedby"]);
       id = event:attr("id");
     }
     noop();
