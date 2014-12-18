@@ -369,6 +369,7 @@ Fuse ruleset for a vehicle pico
       }
       fired {
         log ">>>> vehicle #{vid} needs subscription check";
+	raise carvoyant event dirty_subscriptions;
         raise fuse event need_initial_carvoyant_subscriptions;
       } else {
         log ">>>> vehicle #{vid} has plenty of subscriptions";
