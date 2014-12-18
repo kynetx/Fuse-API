@@ -277,7 +277,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 		     "timeofday": true,
 		     "troublecode": true,
 		     "ignitionstatus": true,
-		     "vehiclediconnected": true,
+		     "vehicledisconnected": true,
 		     "vehicleconnected": true
       };
       not valid_types{sub_type.lc()}.isnull()
