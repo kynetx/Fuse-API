@@ -579,6 +579,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                   .delete(["vehicle_id"])
                   .delete(["idempotent"])
                   .delete(["event_host"])
+		  .klog(">>> using these parameters >>>>")
                   ;
       // if idempotent attribute is set, then check to make sure no subscription of this type exist
       subs = getSubscription(vid, sub_type).klog(">>> seeing subscriptions for #{vid} >>>>");
