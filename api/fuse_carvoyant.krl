@@ -280,7 +280,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 		     "vehicledisconnected": true,
 		     "vehicleconnected": true
       };
-      not valid_types{sub_type.lc()}.isnull()
+      not valid_types{sub_type.lc().klog(">>> looking for >>> ")}.isnull()
     }
 
     // check that the subscription list is empty or all in it have been deleted
