@@ -102,6 +102,15 @@ Fuse ruleset for a vehicle pico
 	};
 
 
+      subscriptionsOk = function(my_subs) {
+        should_have = required_subscription_list.length();
+	subscription_eci = carvoyant:get_eci_for_carvoyant();
+	my_subs.length() >= should_have	&& 
+          my_subs
+           .all(function(s){s{"postUrl"}.match("re/#{subscription_eci}/".as("regexp"))})
+      }
+
+
       showPicoStatus = function() {
 	// rulesets
 	my_rulesets = CloudOS:rulesetList(meta:eci()).pick("$.rids");
@@ -128,9 +137,7 @@ Fuse ruleset for a vehicle pico
 	          "vehicleId_match": not vehicle_summary{"vehicleId"}.isnull()
                                   && vehicle_summary{"vehicleId"} eq cv_vehicles{"vehicleId"},
 		  "recieving_ok": not vehicle_summary{"lastRunningTimestamp"}.isnull(),
-	          "subscriptions_ok": subscriptions.length() >= 4 
-		                   && subscriptions
-                                        .all(function(s){s{"postUrl"}.match("re/#{subscription_eci}/".as("regexp"))}),
+	          "subscriptions_ok": subscriptionsOs(subscriptions),
 	          "subscription_eci_ok": not subscription_eci.isnull(),
 	          "deviceId_ok": me{"deviceId"}.match(re/^(FS|C20).+$/)
                  }
@@ -346,17 +353,17 @@ Fuse ruleset for a vehicle pico
       }
     }
 
+
     rule check_subscriptions {
       select when fuse subscription_check
       pre {
         vid = carvoyant:vehicle_id(); 
         my_subs = carvoyant:getSubscription(vid);
-        should_have = required_subscription_list.length();
 	// also check that subscription ECI exists! 
       }
-      if(my_subs.length() < should_have) then
+      if( not subscriptionsOk(my_subs) ) then
       {
-        send_directive("not enough subscriptions") with
+        send_directive("subscriptions not OK") with
 	  my_subscriptions = my_subs and
 	  should_have = should_have
       }
