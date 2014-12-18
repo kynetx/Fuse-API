@@ -98,6 +98,18 @@ Fuse ruleset for a vehicle pico
 		"thresholdValue": 90,
 		"relationship": "ABOVE",
          	"idempotent": false
+	       },
+	 "device_disconnected" :
+	       {"subscription_type": "vehicleDisconnected",
+	        "minimumTime": 0,
+		"notificationPeriod": "INITALSTATE",
+         	"idempotent": false
+	       },
+	 "device_connected" :
+	       {"subscription_type": "vehicleConnected",
+	        "minimumTime": 0,
+		"notificationPeriod": "INITALSTATE",
+         	"idempotent": false
 	       }
 	};
 
