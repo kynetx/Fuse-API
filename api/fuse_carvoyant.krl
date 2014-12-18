@@ -319,7 +319,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       // see http://confluence.carvoyant.com/display/PUBDEV/NotificationPeriod
       np = params{"notificationPeriod"} || "STATECHANGE";
       carvoyant_post(carvoyant_subscription_url(subscription_type, config_data),
-      		     params.put({"postUrl": esl, "notificationPeriod": np}),
+      		     params.put({"postUrl": esl, "notificationPeriod": np}).klog(">>> subscription payload >>>"),
                      config_data
 		    )
         with ar_label = ar_label;
