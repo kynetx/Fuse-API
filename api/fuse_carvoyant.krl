@@ -574,11 +574,14 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       vid = event:attr("vehicle_id") || vehicle_id();
       sub_type = event:attr("subscription_type");
       sub_target = event:attr("event_host");
+      
+      minimumTime = event:attr("minimumTime").defaultsTo("0", ">>> using default min time>>>");
 
       params = event:attrs()
                   .delete(["vehicle_id"])
                   .delete(["idempotent"])
                   .delete(["event_host"])
+		  .put(["minimumTime"], minimumTime)
 		  .klog(">>> using these parameters >>>>")
                   ;
       // if idempotent attribute is set, then check to make sure no subscription of this type exist
