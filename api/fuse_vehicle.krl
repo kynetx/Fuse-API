@@ -100,13 +100,13 @@ Fuse ruleset for a vehicle pico
          	"idempotent": false
 	       },
 	 "device_disconnected" :
-	       {"subscription_type": "VEHICLEDISCONNECTED",
+	       {"subscription_type": "vehicleDisconnected",
 	        "minimumTime": "0",
 		"notificationPeriod": "INITIALSTATE",
          	"idempotent": false
 	       },
 	 "device_connected" :
-	       {"subscription_type": "VEHICLECONNECTED",
+	       {"subscription_type": "vehicleConnected",
 	        "minimumTime": 0,
 		"notificationPeriod": "INITIALSTATE",
          	"idempotent": false
