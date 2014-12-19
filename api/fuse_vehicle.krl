@@ -347,7 +347,7 @@ Fuse ruleset for a vehicle pico
     }
 
     rule add_subscription {
-      select when fuse setup_new_subscription
+      select when fuse new_subscription
       pre {
         subtype = event:attr("subtype");
         subscription = (subscription_map{subtype} || {})
