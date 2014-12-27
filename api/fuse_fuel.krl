@@ -257,6 +257,7 @@ Operations for fuel
        //       "_api": "sky"
  		   
        // 	  };
+      raise fuse event fuel_purchase_deleted;
       clear ent:fuel_purchases{id};
     }
   }
@@ -264,6 +265,7 @@ Operations for fuel
 
   rule update_vehicle_totals {
     select when fuse fuel_purchase_saved
+             or fuse fuel_purchase_deleted
     pre {
 
       // do current month if no month given
