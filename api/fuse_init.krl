@@ -356,6 +356,26 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 	}
     }
 
+    rule update_account_record {
+      select when fuse account_record
+      pre {
+        acct_id = event:attr("acct_id");
+	old_record = app:fuse_users{acct_id};
+	new_record = old_record
+	              .put(["timestamp"], common:convertToUTC(time:now()))
+                      .put(["eci"], event:attr("new_eci").defaultsTo( old_record{"eci"} ) )
+                      .put(["myProfileName"], event:attr("new_name").defaultsTo( old_record{"myProfileName"} ) )
+                      .put(["myProfileEmail"], event:attr("new_email").defaultsTo( old_record{"myProfileEmail"} ) )
+                      ;
+      }
+      send_directive("updated_account_record for #{acct_id}") with
+        old_record = old_record and
+        new_record = new_record;
+      always {
+        set app:fuse_users{acct_id} new_record;
+      }
+    }
+
 
     rule send_email_to_owner {
         select when fuse email_for_owner
