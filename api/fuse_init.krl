@@ -360,7 +360,7 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
       select when fuse account_record
       pre {
         acct_id = event:attr("acct_id");
-	old_record = app:fuse_users{acct_id};
+	old_record = app:fuse_users{acct_id}.defaultsTo({});
 	new_record = old_record
 	              .put(["timestamp"], common:convertToUTC(time:now()))
                       .put(["eci"], event:attr("new_eci").defaultsTo( old_record{"eci"} ) )
@@ -372,7 +372,7 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
         old_record = old_record and
         new_record = new_record;
       always {
-        set app:fuse_users{acct_id} new_record;
+        set app:fuse_users{acct_id} new_record if not acct_id.isnull();
       }
     }
 
