@@ -364,7 +364,8 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 	new_record = old_record
 	              .put(["timestamp"], common:convertToUTC(time:now()))
                       .put(["eci"], event:attr("new_eci").defaultsTo( old_record{"eci"} ) )
-                      .put(["myProfileName"], event:attr("new_name").defaultsTo( old_record{"myProfileName"} ) )
+                      .put(["myProfileName"], event:attr("new_name")
+                                                .defaultsTo( old_record{"myProfileName"} ) )
                       .put(["myProfileEmail"], event:attr("new_email").defaultsTo( old_record{"myProfileEmail"} ) )
                       ;
       }
