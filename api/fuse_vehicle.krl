@@ -398,6 +398,7 @@ Fuse ruleset for a vehicle pico
       select when fuse need_vehicle_data
                or fuse updated_vehicle_status // since we depend on it
                or pds profile_updated // since we store pictures, etc. in profile
+      foreach fleetChannels() setting(chan)
       pre {
 
         vid = carvoyant:vehicle_id() || "none";
@@ -455,7 +456,7 @@ Fuse ruleset for a vehicle pico
          id = vid and
          values = vehicle_info and
 	 namespace = carvoyant:namespace();
-       event:send({"cid": fleetChannel().klog(">>>> fleet channel >>>>> ")}, "fuse", "updated_vehicle") with
+       event:send({"cid": chan.klog(">>>> fleet channel >>>>> ")}, "fuse", "updated_vehicle") with
          attrs = {"keyvalue": "vehicle_info",
 	          "value": vehicle_info.encode()
 		 };
