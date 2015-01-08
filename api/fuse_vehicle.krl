@@ -18,16 +18,19 @@ Fuse ruleset for a vehicle pico
       use module b16x11 alias carvoyant
       // don't load trips
 	
-      provides vin, fleetChannel, vehicleSummary, vehicleSubscription, showPicoStatus
+      provides vin, fleetChannel, fleetChannels, vehicleSummary, vehicleSubscription, showPicoStatus
 
     }
 
     global {
 
       fleetChannel = function() {
-         common:fleetChannel();
+        common:fleetChannel();
       };
 
+      fleetChannels = function() {
+        common:fleetChannels();
+      };
 
       myIncomingChannel = function () {
           CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.backChannel");
