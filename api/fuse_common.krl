@@ -190,7 +190,7 @@ Common definitions
       // only works for vehicle!!  
       fleetChannels = function () {
 
-        chans = CloudOS:subscriptionList(namespace(),"Fleet").pick("$.eventChannel").klog(">>> Fleet Channels >>> ");
+        chans = CloudOS:subscriptionList(namespace(),"Fleet").pick("$..eventChannel").klog(">>> Fleet Channels >>> ");
 	chans.length() > 0 => chans
 	                    | [ pds:get_item(namespace(),"fleet_channel") ] // if we can't find subscription use the one passed
 
