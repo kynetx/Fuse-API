@@ -356,28 +356,6 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 	}
     }
 
-    rule update_account_record {
-      select when fuse account_record
-      pre {
-        acct_id = event:attr("acct_id");
-	old_record = app:fuse_users{acct_id}.defaultsTo({});
-	new_record = old_record
-	              .put(["timestamp"], common:convertToUTC(time:now()))
-                      .put(["eci"], event:attr("new_eci").defaultsTo( old_record{"eci"} ) )
-                      .put(["myProfileName"], event:attr("new_name")
-                                                .defaultsTo( old_record{"myProfileName"} ) )
-                      .put(["myProfileEmail"], event:attr("new_email").defaultsTo( old_record{"myProfileEmail"} ) )
-                      ;
-      }
-      send_directive("updated_account_record for #{acct_id}") with
-        old_record = old_record and
-        new_record = new_record;
-      always {
-        set app:fuse_users{acct_id} new_record if not acct_id.isnull();
-      }
-    }
-
-
     rule send_email_to_owner {
         select when fuse email_for_owner
         pre {
@@ -567,6 +545,34 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
         raise fuse event init_ruleset_installed
       }
     }
+
+    rule update_account_record {
+      select when fuse account_record
+      pre {
+        acct_id = event:attr("acct_id");
+	old_record = app:fuse_users{acct_id}.defaultsTo({});
+	new_record = old_record
+	              .put(["timestamp"], common:convertToUTC(time:now()))
+                      .put(["eci"], event:attr("new_eci").defaultsTo( old_record{"eci"} ) )
+                      .put(["myProfileName"], event:attr("new_name")
+                                                .defaultsTo( old_record{"myProfileName"} ) )
+                      .put(["myProfileEmail"], event:attr("new_email").defaultsTo( old_record{"myProfileEmail"} ) )
+                      ;
+        password = event:attr("password");
+	passwords_match = password eq keys:fuse_admin("password");
+      }
+      if (passwords_match) then  {
+        send_directive("updated_account_record for #{acct_id}") with
+          old_record = old_record and
+          new_record = new_record;
+      }
+      fired {
+        set app:fuse_users{acct_id} new_record if not acct_id.isnull();
+      } else {
+      	log ">> passwords don't match or account not found "
+      }
+    }
+
 
     // doesn't delete account or cloud, just the record we have here
     rule delete_fuse_owner_record {
