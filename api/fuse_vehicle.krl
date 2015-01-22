@@ -524,7 +524,7 @@ Fuse ruleset for a vehicle pico
       // configurables
       year = event:attr("year");
       month = event:attr("month");
-      tz = event:attr("timezone").klog(">>> owner told me their timezone >>>> ").defaultsTo("American/Denver");
+      tz = event:attr("timezone").klog(">>> owner told me their timezone >>>> ").defaultsTo("America/Denver");
       subj = "Fuse Trip Report for #{month} #{year} for #{vehicle_name}";
 
       start = time:strftime(time:new(year+month+"01T000000"), "%Y%m%dT000000%z", {"tz":tz});
