@@ -16,6 +16,7 @@ Fuse ruleset for a vehicle pico
       use module a169x676 alias pds
       use module b16x19 alias common
       use module b16x11 alias carvoyant
+      use module b16x18 alias trips
       // don't load trips
 	
       provides vin, fleetChannel, fleetChannels, vehicleSummary, vehicleSubscription, showPicoStatus
@@ -548,6 +549,7 @@ Here is your trip export for #{vehicle_name} for #{month} #{year}
 
 
     }
+    if(not csv.isnull() ) then
     {
       send_directive("sending email to fleet owner") with
         content = email_map;
