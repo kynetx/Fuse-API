@@ -264,6 +264,7 @@ Fuse ruleset for a vehicle pico
     // meant to generally route events to owner. Extend eventex to choose what gets routed
     rule route_to_owner {
       select when fuse vehicle_initialzed
+               or fuse email_for_owner
       pre {
         owner = fleetChannel();
       }
@@ -515,6 +516,44 @@ Fuse ruleset for a vehicle pico
 
     }
 
+  // ---------- vehicle emails ----------
+  rule send_vehicle_export {
+    select when fuse trip_export
+    pre {
+
+      // configurables
+      period = {"format": {"days" : -7}, // one week; must be negative
+                "readable" : "weekly"
+               };
+
+      tz = event:attr("timezone").klog(">>> owner told me their timezone >>>> ");
+      subj = "Fuse Trip Report for #{month} #{year} for #{vehicle_name}";
+
+      // don't generate report unless there are vehicles
+      csv = trips:exportTrips(start, end);
+
+      msg = <<
+Here is your trip export for #{vehicle_name} for #{month} #{year}
+      >>; 
+
+
+      email_map = { "subj" :  subj,
+		    "msg" : msg,
+		    "html" : html
+                  };
+
+
+    }
+    if(vsum.length() > 0) then
+    {
+      send_directive("sending email to fleet owner") with
+        content = email_map;
+    }
+    fired {
+      raise fuse event email_for_owner attributes email_map;
+    }
+    
+  }
 
     // ---------- maintainance rules ----------
     // doesn't do anything since the system forces event:send() to async mode

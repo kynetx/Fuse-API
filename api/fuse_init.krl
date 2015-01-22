@@ -364,10 +364,16 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 	  fleet_backchannel = CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.backChannel")
                            || "";   
 
-          subj = event:attr("subj") || "Message from Fuse";
-	  msg = event:attr("msg") || "This email contains no message";
- 	  html = event:attr("html") || msg;
+          subj = event:attr("subj").defaultsTo("Message from Fuse");
+	  msg = event:attr("msg").defaultsTo("This email contains no message");
+ 	  html = event:attr("html").defaultsTo(msg);
 	  recipient =  me{"myProfileEmail"}.klog(">>>> email address >>>>") ;
+	  attachment = event:attr("attachment");
+	  filename = event:attr("filename").defaultsTo("attached_file");
+	  filetype = event:attr("type");
+
+	  mailtype = attachment.isnull() => "attachment"
+	                                  | "html";
 
 //	  huh = event:attrs().klog(">>>> event attrs >>>>");
 
@@ -375,9 +381,10 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 	if( meta:eci().klog(">>>> came thru channel >>>>") eq fleet_backchannel.klog(">>>> fleet channel >>>>")
          && not msg.isnull()
 	  ) then
-        {
-            sendgrid:sendhtml(me{"myProfileName"}, recipient, subj, msg, html); 
-        }
+          choose mailtype {
+            html       => sendgrid:sendhtml(me{"myProfileName"}, recipient, subj, msg, html);
+	    attachment => sendgrid:sendattachment(me{"myProfileName"}, recipient, subj, msg, filename, attachment, filetype);
+          }
     }
 
     // ---------- preferences ----------
