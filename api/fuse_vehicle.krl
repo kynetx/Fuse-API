@@ -522,12 +522,14 @@ Fuse ruleset for a vehicle pico
     pre {
 
       // configurables
-      period = {"format": {"days" : -7}, // one week; must be negative
-                "readable" : "weekly"
-               };
-
-      tz = event:attr("timezone").klog(">>> owner told me their timezone >>>> ");
+      year = event:attr("year");
+      month = event:attr("month");
+      tz = event:attr("timezone").klog(">>> owner told me their timezone >>>> ").defaultsTo("American/Denver");
       subj = "Fuse Trip Report for #{month} #{year} for #{vehicle_name}";
+
+      start = time:strftime(time:new(year+month+"01T000000"), "%Y%m%dT000000%z", {"tz":tz});
+      end = time:add(start, {"months": 1});
+
 
       // don't generate report unless there are vehicles
       csv = trips:exportTrips(start, end);
@@ -539,12 +541,13 @@ Here is your trip export for #{vehicle_name} for #{month} #{year}
 
       email_map = { "subj" :  subj,
 		    "msg" : msg,
-		    "html" : html
+		    "attachment": csv,
+		    "filename" : "Trips_#{vehicle_name}_#{year}_#{month}.csv",
+		    "type": "text/csv"
                   };
 
 
     }
-    if(vsum.length() > 0) then
     {
       send_directive("sending email to fleet owner") with
         content = email_map;
