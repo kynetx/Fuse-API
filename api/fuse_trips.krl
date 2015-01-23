@@ -536,7 +536,7 @@ Manage trips. PDS is not well-suited to these operations
 
 
       // don't generate report unless there are vehicles
-      csv = trips:exportTrips(start, end);
+      csv = exportTrips(start, end);
 
       msg = <<
 Here is your trip export for #{vehicle_name} for #{month} #{year}
