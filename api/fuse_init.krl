@@ -370,7 +370,6 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 	  recipient =  me{"myProfileEmail"}.klog(">>>> email address >>>>") ;
 	  attachment = event:attr("attachment");
 	  filename = event:attr("filename").defaultsTo("attached_file");
-	  filetype = event:attr("filetype");
 
 	  mailtype = attachment.isnull() => "html"
 	                                  | "attachment";
@@ -383,7 +382,7 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 	  ) then
           choose mailtype {
             html       => sendgrid:sendhtml(me{"myProfileName"}, recipient, subj, msg, html);
-	    attachment => sendgrid:sendattachment(me{"myProfileName"}, recipient, subj, msg, filename, attachment, filetype);
+	    attachment => sendgrid:sendattachment(me{"myProfileName"}, recipient, subj, msg, filename, attachment);
           }
     }
 

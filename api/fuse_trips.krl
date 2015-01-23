@@ -528,6 +528,11 @@ Manage trips. PDS is not well-suited to these operations
       year = event:attr("year");
       month = event:attr("month");
       tz = event:attr("timezone").klog(">>> owner told me their timezone >>>> ").defaultsTo("America/Denver");
+
+
+      profile = pds:get_all_me().defaultsTo({});
+      vehicle_name = profile{"myProfileName"};
+
       subj = "Fuse Trip Report for #{month} #{year} for #{vehicle_name}";
 
       start = time:strftime(time:new(year+month+"01T000000"), "%Y%m%dT000000%z", {"tz":tz});
@@ -545,8 +550,7 @@ Here is your trip export for #{vehicle_name} for #{month} #{year}
       email_map = { "subj" :  subj,
 		    "msg" : msg,
 		    "attachment": csv,
-		    "filename" : "Trips_#{vehicle_name}_#{year}_#{month}.csv",
-		    "filetype": "text/csv"
+		    "filename" : "Trips_#{vehicle_name}_#{year}_#{month}.csv"
                   };
 
 
