@@ -555,7 +555,7 @@ Manage trips. PDS is not well-suited to these operations
       csv = exportTrips(start, end, tz);
 
       msg = <<
-Here is your trip export for #{vehicle_name} for #{month} #{year}
+Here is your trip export for #{vehicle_name} for #{month}/#{year}
       >>; 
 
 
