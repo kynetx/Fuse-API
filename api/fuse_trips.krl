@@ -207,6 +207,7 @@ Manage trips. PDS is not well-suited to these operations
 				    .put(["endTime"], time:strftime(v{"endTime"}, "%r", {"tz":timezone}))
 		                 });
 
+      // order fields
       field_array = ["id", "startDate", "startTime", "endDate", "endTime", "startWaypoint", "endWaypoint", 
                      "mileage", "avgSpeed", "interval", "cost", "costDataSource", "category", "name"
                     ];
