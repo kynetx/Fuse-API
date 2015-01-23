@@ -530,10 +530,10 @@ Manage trips. PDS is not well-suited to these operations
       tz = event:attr("timezone").klog(">>> owner told me their timezone >>>> ").defaultsTo("America/Denver");
 
 
-      profile = pds:get_all_me().defaultsTo({});
+      profile = pds:get_all_me().klog(">>>>> profile >>>>> ").defaultsTo({});
       vehicle_name = profile{"myProfileName"};
 
-      subj = "Fuse Trip Report for #{month} #{year} for #{vehicle_name}";
+      subj = "Fuse Trip Report for #{vehicle_name} (#{month}/#{year})";
 
       start = time:strftime(time:new(year+month+"01T000000"), "%Y%m%dT000000%z", {"tz":tz});
       end = time:add(start, {"months": 1});
