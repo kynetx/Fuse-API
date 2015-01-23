@@ -553,7 +553,7 @@ Here is your trip export for #{vehicle_name} for #{month} #{year}
       >>; 
 
 
-      email_map = { "subj" :  subj,
+      email_map = { "subj" :  subj, 
 		    "msg" : msg,
 		    "attachment": csv,
 		    "filename" : "Trips_#{vehicle_name}_#{year}_#{month}.csv"
