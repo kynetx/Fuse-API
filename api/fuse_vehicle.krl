@@ -16,7 +16,6 @@ Fuse ruleset for a vehicle pico
       use module a169x676 alias pds
       use module b16x19 alias common
       use module b16x11 alias carvoyant
-      use module b16x18 alias trips
       // don't load trips
 	
       provides vin, fleetChannel, fleetChannels, vehicleSummary, vehicleSubscription, showPicoStatus
