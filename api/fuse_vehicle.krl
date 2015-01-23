@@ -179,6 +179,7 @@ Fuse ruleset for a vehicle pico
 	}
       }
 
+
     }
 
     // ---------- initialization ----------
@@ -517,48 +518,6 @@ Fuse ruleset for a vehicle pico
 
     }
 
-  // ---------- vehicle emails ----------
-  rule send_vehicle_export {
-    select when fuse trip_export
-    pre {
-
-      // configurables
-      year = event:attr("year");
-      month = event:attr("month");
-      tz = event:attr("timezone").klog(">>> owner told me their timezone >>>> ").defaultsTo("America/Denver");
-      subj = "Fuse Trip Report for #{month} #{year} for #{vehicle_name}";
-
-      start = time:strftime(time:new(year+month+"01T000000"), "%Y%m%dT000000%z", {"tz":tz});
-      end = time:add(start, {"months": 1});
-
-
-      // don't generate report unless there are vehicles
-      csv = trips:exportTrips(start, end);
-
-      msg = <<
-Here is your trip export for #{vehicle_name} for #{month} #{year}
-      >>; 
-
-
-      email_map = { "subj" :  subj,
-		    "msg" : msg,
-		    "attachment": csv,
-		    "filename" : "Trips_#{vehicle_name}_#{year}_#{month}.csv",
-		    "type": "text/csv"
-                  };
-
-
-    }
-    if(not csv.isnull() ) then
-    {
-      send_directive("sending email to fleet owner") with
-        content = email_map;
-    }
-    fired {
-      raise fuse event email_for_owner attributes email_map;
-    }
-    
-  }
 
     // ---------- maintainance rules ----------
     // doesn't do anything since the system forces event:send() to async mode

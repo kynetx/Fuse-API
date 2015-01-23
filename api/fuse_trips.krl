@@ -210,8 +210,6 @@ Manage trips. PDS is not well-suited to these operations
       csv:from_array(trips);
     }
 
-
-
     // find latlong within 365 feet
     reducePrecision = function(a) {
       a_array = waypointToArray(a).klog(">>> original waypoint >>>>");
@@ -522,6 +520,50 @@ Manage trips. PDS is not well-suited to these operations
     }
   }
 
+  // ---------- vehicle emails ----------
+  rule send_vehicle_export {
+    select when fuse trip_export
+    pre {
+
+      // configurables
+      year = event:attr("year");
+      month = event:attr("month");
+      tz = event:attr("timezone").klog(">>> owner told me their timezone >>>> ").defaultsTo("America/Denver");
+      subj = "Fuse Trip Report for #{month} #{year} for #{vehicle_name}";
+
+      start = time:strftime(time:new(year+month+"01T000000"), "%Y%m%dT000000%z", {"tz":tz});
+      end = time:add(start, {"months": 1});
+
+
+      // don't generate report unless there are vehicles
+      csv = trips:exportTrips(start, end);
+
+      msg = <<
+Here is your trip export for #{vehicle_name} for #{month} #{year}
+      >>; 
+
+
+      email_map = { "subj" :  subj,
+		    "msg" : msg,
+		    "attachment": csv,
+		    "filename" : "Trips_#{vehicle_name}_#{year}_#{month}.csv",
+		    "type": "text/csv"
+                  };
+
+
+    }
+    if(not csv.isnull() ) then
+    {
+      send_directive("sending email to fleet owner") with
+        content = email_map;
+    }
+    fired {
+      raise fuse event email_for_owner attributes email_map;
+    }
+    
+  }
+
+  // ---------- maintenance ----------
   rule repair_trips {
     select when fuse trip_check
     foreach missedTrips(event:attr("duration").isnull() => 2 | event:attr("duration")) setting(trip) // check for last two days by default
@@ -537,6 +579,7 @@ Manage trips. PDS is not well-suited to these operations
     }
 
   }
+
 
 
 
