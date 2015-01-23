@@ -372,8 +372,8 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 	  filename = event:attr("filename").defaultsTo("attached_file");
 	  filetype = event:attr("filetype");
 
-	  mailtype = attachment.isnull() => "attachment"
-	                                  | "html";
+	  mailtype = attachment.isnull() => "html"
+	                                  | "attachment";
 
 //	  huh = event:attrs().klog(">>>> event attrs >>>>");
 
