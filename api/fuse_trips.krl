@@ -193,9 +193,8 @@ Manage trips. PDS is not well-suited to these operations
 	             ).replace(re#\\;#g, ";").pset(ent:last_ical);
     };
 
-    exportTrips = function(start, end) {
-      settings = pds:get_setting_data(meta:rid()).klog(">>>> my settings >>>> ") || {};
-      timezone = settings{"timezonePreference"} || "America/Denver"; 
+    exportTrips = function(start, end, tz) {
+      timezone = tz.defaultsTo("America/Denver"); 
 
       trips = tripsByDate(start,end)
                  .map(function(v){ start = v{["startWaypoint", "latitude"]} + "," + v{["startWaypoint", "longitude"]};
@@ -536,7 +535,7 @@ Manage trips. PDS is not well-suited to these operations
 
 
       // don't generate report unless there are vehicles
-      csv = exportTrips(start, end);
+      csv = exportTrips(start, end, tz);
 
       msg = <<
 Here is your trip export for #{vehicle_name} for #{month} #{year}
@@ -547,7 +546,7 @@ Here is your trip export for #{vehicle_name} for #{month} #{year}
 		    "msg" : msg,
 		    "attachment": csv,
 		    "filename" : "Trips_#{vehicle_name}_#{year}_#{month}.csv",
-		    "type": "text/csv"
+		    "filetype": "text/csv"
                   };
 
 

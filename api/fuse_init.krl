@@ -370,7 +370,7 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 	  recipient =  me{"myProfileEmail"}.klog(">>>> email address >>>>") ;
 	  attachment = event:attr("attachment");
 	  filename = event:attr("filename").defaultsTo("attached_file");
-	  filetype = event:attr("type");
+	  filetype = event:attr("filetype");
 
 	  mailtype = attachment.isnull() => "attachment"
 	                                  | "html";
