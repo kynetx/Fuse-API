@@ -12,7 +12,7 @@ Manage trips. PDS is not well-suited to these operations
     use module b16x10 alias fuse_keys
 
     use module a169x625 alias CloudOS
-//    use module a169x676 alias pds
+    use module a169x676 alias pds
     use module b16x19 alias common
     use module b16x11 alias carvoyant
     use module b16x9 alias vehicle
@@ -535,7 +535,7 @@ Manage trips. PDS is not well-suited to these operations
 
       subj = "Fuse Trip Report for #{vehicle_name} (#{month}/#{year})";
 
-      start = time:strftime(time:new(year+month+"01T000000"), "%Y%m%dT000000%z", {"tz":tz});
+      start = time:new(year+month+"01T000000");
       end = time:add(start, {"months": 1});
 
 
