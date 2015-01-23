@@ -206,7 +206,12 @@ Manage trips. PDS is not well-suited to these operations
 				    .put(["endDate"], time:strftime(v{"endTime"}, "%F", {"tz":timezone}))
 				    .put(["endTime"], time:strftime(v{"endTime"}, "%r", {"tz":timezone}))
 		                 });
-      csv:from_array(trips);
+
+      field_array = ["id", "startDate", "startTime", "endDate", "endTime", "startWaypoint", "endWaypoint", 
+                     "mileage", "avgSpeed", "interval", "cost", "costDataSource", "category", "name"
+                    ];
+
+      csv:from_array(trips, field_array);
     }
 
     // find latlong within 365 feet
@@ -533,7 +538,7 @@ Manage trips. PDS is not well-suited to these operations
       profile = pds:get_all_me().defaultsTo({});
       vehicle_name = profile{"myProfileName"};
 
-      subj = "Fuse Trip Report for #{vehicle_name} (#{month}/#{year})";
+      subj = "Fuse Trip Export for #{vehicle_name} (#{month}/#{year})";
 
       tz_str = time:strftime(time:now({"tz": tz}), "%Y%m%dT%H%M%S%z")
                   .split(re/[+-]/)
