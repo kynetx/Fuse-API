@@ -52,7 +52,7 @@ my $s3 = Net::Amazon::S3->new(
       {   aws_access_key_id     => $aws_access_key_id,
           aws_secret_access_key => $aws_secret_access_key,
 	  secure                => 1, # has to have Mozilla::CA installed to work
-          retry                 => 1,
+          retry                 => 1
       }
   );
 
