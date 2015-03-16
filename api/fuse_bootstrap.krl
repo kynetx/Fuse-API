@@ -51,7 +51,7 @@ ruleset fuse_bootstrap {
       }
       fired {
         log ">>>> pico needs a bootstrap >>>> ";
-	raise explicit event bootstrap_needed for b16x22;
+	raise explicit event bootstrap_needed for meta:rid(); // just for me...
       } else {
         log ">>>> pico already bootstraped, saw fleet channel: " + eci;
       }
