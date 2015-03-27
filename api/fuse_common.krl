@@ -32,11 +32,11 @@ Common definitions
                "core": [
                    "a169x625.prod",  // CloudOS Service
                    "a169x676.prod",  // PDS
-                   "a16x161.prod",   // Notification service
                    "a169x672.prod",  // MyProfile
                    "a41x174.prod",   // Amazon S3 module
                    "a16x129.dev",    // SendGrid module
-		   "b16x13.prod"     // Fuse errors
+		   "b16x13.prod",    // Fuse errors
+		   "b16x31.prod"     // pico notification service
                ],
 	       "owner_optional" :[
 	       ],
@@ -57,11 +57,10 @@ Common definitions
 	       "vehicle_optional" :[
 	       ],
                "unwanted": [ 
-                   "a169x625.prod",
+                   "a16x161.prod",   // Notification service
                    "a169x664.prod",
                    "a169x667.prod",
                    "a41x178.prod",
-                   "a169x672.prod",
                    "a169x669.prod",
                    "a169x727.prod",
                    "a169x695.prod",

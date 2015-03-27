@@ -16,15 +16,17 @@ ruleset fuse_bootstrap {
             "core": [
                    "a169x625.prod",  // CloudOS Service
                    "a169x676.prod",  // PDS
-                   "a16x161.prod",   // Notification service
                    "a169x672.prod",  // MyProfile
                    "a169x695.prod",  // Settings
                    "a41x174.prod",   // Amazon S3 module
                    "a16x129.dev",    // SendGrid module
+                   "b16x31.prod",    // Pico Notifications
+                   "a169x699", 	     // Twilio
 		   "b16x16.prod",    // Fuse Init (owner)
 		   "b16x13.prod"    // Fuse errors
             ],
 	    "unwanted": [ 
+                   "a16x161.prod",   // CloudOS Notification service
                    "a169x664.prod",	// CloudUIService 
                    "a169x667.prod",	// myThings
                    "a41x178.prod",	// SquareTag

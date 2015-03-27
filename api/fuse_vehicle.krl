@@ -68,7 +68,7 @@ Fuse ruleset for a vehicle pico
 
       // these are the required subscriptions for each vehicle. 
       // they are set idempotently (only one)
-      required_subscription_list = 
+      old_required_subscription_list = 
               [{"subscription_type": "ignitionStatus",
                 "minimumTime": 0},
 	       {"subscription_type": "lowBattery",
@@ -83,6 +83,10 @@ Fuse ruleset for a vehicle pico
 		"relationship": "BELOW"}
 	      ];
 
+      required_subscription_list = ["ignition_status","low_battery", "trouble_code", "fuel_level", 
+                                    "vehicle_moving", "device_disconnected", "device_connected"
+                                   ]
+	      
       subscription_map = 
         {"vehicle_moving" :
 	       {"subscription_type": "numericDataKey",
@@ -113,6 +117,30 @@ Fuse ruleset for a vehicle pico
 	        "minimumTime": 0,
 		"notificationPeriod": "INITIALSTATE",
          	"idempotent": false
+	       },
+          "ignition_status" :
+	       {"subscription_type": "ignitionStatus",
+                "minimumTime": 0,
+         	"idempotent": true
+	       },
+          "low_battery": 
+	       {"subscription_type": "lowBattery",
+	        "minimumTime": 60,
+         	"idempotent": true
+	       },
+          "trouble_code":
+	       {"subscription_type": "troubleCode",
+	        "notificationPeriod": "INITIALSTATE",
+	        "minimumTime": 60,
+         	"idempotent": true
+	       },
+          "fuel_level":
+	       {"subscription_type": "numericDataKey",
+	        "minimumTime": 60,
+		"dataKey": "GEN_FUELLEVEL",
+		"thresholdValue": 20,
+		"relationship": "BELOW",
+         	"idempotent": true
 	       }
 	};
 
@@ -336,18 +364,23 @@ Fuse ruleset for a vehicle pico
 
     rule initialize_subscriptions {
       select when fuse need_initial_carvoyant_subscriptions
-      foreach required_subscription_list setting (subscription)
+      foreach required_subscription_list setting (subtype)
         pre {
 	  host = event:attr("event_host") || meta:host();
+	   // subscription = subscription_map{subtype}
+           //                    .defaultsTo({}, "No subscription defined for #{subtype}")
+	   // 		     .put(["event_host"], host)
+ 	   // 		     ;
 	}
-     	// send_directive("Adding initial subscription") with subscription = subscription;
+         // if (not subscription_map{subtype}.isnull()) then 
+    	 //   send_directive("Adding initial subscription") with subscription = subscription;
         fired {	
-          raise carvoyant event new_subscription_needed 
-	    attributes
-	      subscription
-	        .put(["idempotent"], true)
-	        .put(["event_host"], host)
-		;
+	   raise fuse event new_subscription for meta:rid() with
+             subtype = subtype and
+             event_host = host;
+
+           // raise carvoyant event new_subscription_needed 
+	   //   attributes subscription;
         }
     }
 
@@ -355,7 +388,9 @@ Fuse ruleset for a vehicle pico
       select when fuse new_subscription
       pre {
         subtype = event:attr("subtype");
-        subscription = (subscription_map{subtype} || {})
+        host = event:attr("event_host") || meta:host();
+        subscription = subscription_map{subtype}
+                         .defaultsTo({}, "No subscription defined for #{subtype}")
 	        	 .put(["event_host"], host)
 			 .klog(">>> adding this subscription >>>>")
 			 ;
