@@ -21,7 +21,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     provides namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
 	     carvoyantVehicleData, isAuthorized, 
              vehicleStatus, keyToLabel, tripInfo, trips, dataSet,
-             getSubscription, no_subscription, add_subscription, del_subscription, missing_subscriptions,
+             getSubscription, no_subscription, add_subscription, del_subscription, missingSubscriptions,
              get_eci_for_carvoyant
 
   }
@@ -298,7 +298,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	   subs.all(function(s){ not s{"deletionTimestamp"}.isnull() })
     }
 
-    missing_subscriptions = function(req_subs, sub_map) {
+    missingSubscriptions = function(req_subs, sub_map) {
       current_subs = getSubscription(vehicle_id(), sub_type)
                  .defaultsTo([], ">> no response on subscription call to Carvoyant >>")
                  .klog(">>> seeing subscriptions >>>>")
