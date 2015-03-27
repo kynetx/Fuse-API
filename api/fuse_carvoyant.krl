@@ -305,8 +305,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 		 ;
 
       
-
-      req_sub_map = sub_map.filter(function(k,v) { req_subs.has([k]) })
+      req_sub_map = sub_map.filter(function(k,v) { req_subs.filter(function(x){x eq k}).length() > 0} )
                            .klog(">> required sub map >>")
 			   ;
       
