@@ -317,7 +317,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                                       (cs{"_type"} eq "NUMERICDATAKEY" => cs{"dataKey"} eq sub{"dataKey"}
                                                                         | true
                                       )
-                                  })
+                                  }).length() > 0
                                })
                        .klog(">> found subs >> ")
                        ;
