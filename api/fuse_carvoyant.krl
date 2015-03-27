@@ -319,9 +319,9 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                                       )
                                   })
                                })
-                       .klog(">> missing subs >> ")
+                       .klog(">> found subs >> ")
                        ;
-      req_subs.difference(missing_subs.keys())
+      req_subs.difference(found_subs.keys())
     }
 
     // subscription functions
