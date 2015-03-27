@@ -309,7 +309,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                            .klog(">> required sub map >>")
 			   ;
       
-      missing_subs = req_sub_map
+      found_subs = req_sub_map
                        .filter(function(k, sub) {
                                   current_subs.filter(
                                     function(cs) { 
@@ -321,7 +321,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                                })
                        .klog(">> missing subs >> ")
                        ;
-      missing_subs.keys()
+      req_subs.difference(missing_subs.keys())
     }
 
     // subscription functions
