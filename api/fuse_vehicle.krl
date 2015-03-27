@@ -370,7 +370,7 @@ Fuse ruleset for a vehicle pico
 
     rule initialize_subscriptions {
       select when fuse need_initial_carvoyant_subscriptions
-      foreach required_subscription_list setting (subtype)
+      foreach missingSubscriptions() setting (subtype)
         pre {
       	  host = event:attr("event_host") || meta:host();
 	}
