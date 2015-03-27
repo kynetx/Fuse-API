@@ -83,9 +83,10 @@ Fuse ruleset for a vehicle pico
 		"relationship": "BELOW"}
 	      ];
 
+      // these should all be idempotent or you'll get a mess
       required_subscription_list = ["ignition_status","low_battery", "trouble_code", "fuel_level", 
                                     "vehicle_moving", "device_disconnected", "device_connected"
-                                   ]
+                                   ];
 	      
       subscription_map = 
         {"vehicle_moving" :
@@ -110,13 +111,13 @@ Fuse ruleset for a vehicle pico
 	       {"subscription_type": "vehicleDisconnected",
 	        "minimumTime": "0",
 		"notificationPeriod": "INITIALSTATE",
-         	"idempotent": false
+         	"idempotent": true
 	       },
 	 "device_connected" :
 	       {"subscription_type": "vehicleConnected",
 	        "minimumTime": 0,
 		"notificationPeriod": "INITIALSTATE",
-         	"idempotent": false
+         	"idempotent": true
 	       },
           "ignition_status" :
 	       {"subscription_type": "ignitionStatus",
@@ -366,11 +367,7 @@ Fuse ruleset for a vehicle pico
       select when fuse need_initial_carvoyant_subscriptions
       foreach required_subscription_list setting (subtype)
         pre {
-	  host = event:attr("event_host") || meta:host();
-	   // subscription = subscription_map{subtype}
-           //                    .defaultsTo({}, "No subscription defined for #{subtype}")
-	   // 		     .put(["event_host"], host)
- 	   // 		     ;
+      	  host = event:attr("event_host") || meta:host();
 	}
          // if (not subscription_map{subtype}.isnull()) then 
     	 //   send_directive("Adding initial subscription") with subscription = subscription;

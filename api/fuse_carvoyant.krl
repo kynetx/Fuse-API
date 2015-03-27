@@ -21,7 +21,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     provides namespace, vehicle_id, get_config, carvoyant_headers, carvoyant_vehicle_data, get_vehicle_data, 
 	     carvoyantVehicleData, isAuthorized, 
              vehicleStatus, keyToLabel, tripInfo, trips, dataSet,
-             getSubscription, no_subscription, add_subscription, del_subscription, get_eci_for_carvoyant
+             getSubscription, no_subscription, add_subscription, del_subscription, missing_subscriptions,
+             get_eci_for_carvoyant
 
   }
 
@@ -297,6 +298,32 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	   subs.all(function(s){ not s{"deletionTimestamp"}.isnull() })
     }
 
+    missing_subscriptions = function(req_subs, sub_map) {
+      current_subs = getSubscription(vehicle_id(), sub_type)
+                 .defaultsTo([], ">> no response on subscription call to Carvoyant >>")
+                 .klog(">>> seeing subscriptions >>>>")
+		 ;
+
+      
+
+      req_sub_map = sub_map.filter(function(k,v) { req_subs.has([k]) })
+                           .klog(">> required sub map >>")
+			   ;
+      
+      missing_subs = req_sub_map
+                       .filter(function(k, sub) {
+                                  current_subs.filter(
+                                    function(cs) { 
+                                      sub{"subscription_type"}.uc() eq cs{"_type"} &&
+                                      (cs{"_type"} eq "NUMERICDATAKEY" => cs{"dataKey"} eq sub{"dataKey"}
+                                                                        | true
+                                      )
+                                  })
+                               })
+                       .klog(">> missing subs >> ")
+                       ;
+      missing_subs.keys()
+    }
 
     // subscription functions
     // subscription_type is optional, if left off, retrieves all subscriptions for vehicle
@@ -472,35 +499,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
   }
 
  
-  // this needs work
-   // rule carvoyant_update_vehicle_account {
-   //   select when carvoyant update_account
-   //   pre {
-   //     // if this vehicleId attr is unset, this creates a new vehicle...
-   //     config_data = get_config(event:attr("vehicleId")); 
-   //     deviceId = event:attr("deviceId");
-   //     // will update any of the updatable data that appears in attrs() and leave the rest alone
-   //     params = event:attrs().delete(["vehicleId"]);
-   //   }
-   //   {
-   //     send_directive("Updating Carvoyant account for vehicle ");
-   //     carvoyant_post(config_data{"base_url"},
-   //     		     params,
-   //                    config_data
-   // 		    )
-   //       with ar_label = "vehicle_account_update";
-   //   }
-   //   fired {
-   //     raise carvoyant event new_device_id 
-   //       with deviceId = deviceId if not deviceId.isnull()
-   //   }
-   // }
-
-
-
   rule initialization_ok { 
     select when http post status_code  re#2\d\d#  label "vehicle_init" 
-             or http post status_code  re#2\d\d#  label "vehicle_account_update"
     pre {
 
       // not sure this is actually set with the new data. If not, make a call to get()
