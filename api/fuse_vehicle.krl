@@ -18,7 +18,8 @@ Fuse ruleset for a vehicle pico
       use module b16x11 alias carvoyant
       // don't load trips
 	
-      provides vin, fleetChannel, fleetChannels, vehicleSummary, vehicleSubscription, showPicoStatus
+      provides vin, fleetChannel, fleetChannels, vehicleSummary, vehicleSubscription, showPicoStatus,
+               missingSubscriptions
 
     }
 
@@ -145,6 +146,10 @@ Fuse ruleset for a vehicle pico
 	       }
 	};
 
+
+      missingSubscriptions = function() {
+        carvoyant:missingSubscriptions(required_subscription_list, subscription_map)
+      };
 
       subscriptionsOk = function(my_subs) {
         should_have = required_subscription_list.length();
