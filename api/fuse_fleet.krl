@@ -806,9 +806,11 @@ You need HTML email to see this report.
       pico_auth_channel = meta:eci();
 
       // rulesets
-      remove_rulesets = CloudOS:rulesetRemoveChild(common:apps{"unwanted"}, pico_auth_channel);
-      core_rulesets = CloudOS:rulesetAddChild(common:apps{"core"}, pico_auth_channel);
-      installed_rulesets = CloudOS:rulesetAddChild(common:apps{my_role}, pico_auth_channel);
+      rulesets = common:apps;
+
+      remove_rulesets = CloudOS:rulesetRemoveChild(rulesets{"unwanted"}, pico_auth_channel);
+      core_rulesets = CloudOS:rulesetAddChild(rulesets{"core"}, pico_auth_channel);
+      installed_rulesets = CloudOS:rulesetAddChild(rulesets{my_role}, pico_auth_channel);
 
       // picos
       picos = CloudOS:picoList()

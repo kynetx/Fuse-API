@@ -579,9 +579,10 @@ Fuse ruleset for a vehicle pico
 
       pico_auth_channel = meta:eci();
 
-      rulesets = common:apps;
 
       // rulesets
+      rulesets = common:apps;
+
       remove_rulesets = CloudOS:rulesetRemoveChild(rulesets{"unwanted"}, pico_auth_channel);
       core_rulesets = CloudOS:rulesetAddChild(rulesets{"core"}, pico_auth_channel);
       installed_rulesets = CloudOS:rulesetAddChild(rulesets{my_role}, pico_auth_channel);

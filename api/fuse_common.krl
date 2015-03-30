@@ -65,7 +65,8 @@ Common definitions
                    "a169x669.prod",
                    "a169x727.prod",
                    "a169x695.prod",
-                   "b177052x7.prod"
+                   "b177052x7.prod",
+                   "0"
                ]
       };
 

@@ -625,9 +625,11 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
       pico_auth_channel = meta:eci();
 
       // rulesets
-      remove_rulesets = CloudOS:rulesetRemoveChild(common:apps{"unwanted"}, pico_auth_channel);
-      core_rulesets = CloudOS:rulesetAddChild(common:apps{"core"}, pico_auth_channel);
-      installed_rulesets = CloudOS:rulesetAddChild(common:apps{my_role}, pico_auth_channel);
+      rulesets = common:apps;
+
+      remove_rulesets = CloudOS:rulesetRemoveChild(rulesets{"unwanted"}, pico_auth_channel);
+      core_rulesets = CloudOS:rulesetAddChild(rulesets{"core"}, pico_auth_channel);
+      installed_rulesets = CloudOS:rulesetAddChild(rulesets{my_role}, pico_auth_channel);
 
       // picos
       picos = CloudOS:picoList()
@@ -636,8 +638,6 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 		 .klog(">> this pico's picos >>>")
 		 .map(function(x){ {"cid": x{"channel"}} })
 		 ; 
-//  >> this pico's picos >>>{"49F8FCF0-02D8-11E4-B8B2-C59BE71C24E1":{"photo":"https://dl.dropboxusercontent.com/u/329530/fuse_fleet_pico_picture.png","name":"My Fleet","channel":"49F8FCF0-02D8-11E4-B8B2-C59BE71C24E1","id":"Owner-fleet-4B28DA82-02D8-11E4-B57E-C59BE71C24E1"}}
-
     }
 
     always {
