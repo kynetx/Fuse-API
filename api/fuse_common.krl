@@ -36,6 +36,7 @@ Common definitions
                    "a41x174.prod",   // Amazon S3 module
                    "a16x129.dev",    // SendGrid module
 		   "b16x13.prod",    // Fuse errors
+		   "b16x19.prod",    // Fuse common
 		   "b16x31.prod"     // pico notification service
                ],
 	       "owner_optional" :[
