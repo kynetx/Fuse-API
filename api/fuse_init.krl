@@ -619,7 +619,7 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 
     pre { 
 
-      about_me = pds:get_items(common:namespace()).klog(">>> about me >>>");
+      about_me = pds:get_items(common:namespace()).defaultsTo({}).klog(">>> about me >>>");
       my_role = about_me{"schema"}.defaultsTo("person").lc();
 
       pico_auth_channel = meta:eci();
@@ -634,16 +634,22 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
                  .defaultsTo({})
                  .values()
 		 .klog(">> this pico's picos >>>")
+		 .map(function(x){ {"cid": x{"channel"}} })
 		 ; 
-
-      
 //  >> this pico's picos >>>{"49F8FCF0-02D8-11E4-B8B2-C59BE71C24E1":{"photo":"https://dl.dropboxusercontent.com/u/329530/fuse_fleet_pico_picture.png","name":"My Fleet","channel":"49F8FCF0-02D8-11E4-B8B2-C59BE71C24E1","id":"Owner-fleet-4B28DA82-02D8-11E4-B57E-C59BE71C24E1"}}
 
     }
 
+    always {
+      raise fuse event pico_config_children for meta:rid() with children = picos	   
+    }
 
   }
 
-
+  rule propagate_pico_config {
+    select when fuse pico_config_children
+    foreach(event:attr("children")) setting(child)
+    event:send(child, "fuse", "pico_config")
+  }
 
 }
