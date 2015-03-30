@@ -617,7 +617,7 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
   rule check_pico_config {
     select when fuse pico_config
 
-    pre {
+    pre { 
 
       about_me = pds:get_items(common:namespace()).klog(">>> about me >>>");
       my_role = about_me{"schema"}.lc();
