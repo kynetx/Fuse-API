@@ -794,5 +794,44 @@ You need HTML email to see this report.
 	 ;
  }
 
+  // move to fuse_common.krl after we bootstrap
+  rule check_pico_config {
+    select when fuse pico_config
+
+    pre { 
+
+      about_me = pds:get_items(common:namespace()).defaultsTo({}).klog(">>> about me >>>");
+      my_role = about_me{"schema"}.defaultsTo("person").lc();
+
+      pico_auth_channel = meta:eci();
+
+      // rulesets
+      remove_rulesets = CloudOS:rulesetRemoveChild(common:apps{"unwanted"}, pico_auth_channel);
+      core_rulesets = CloudOS:rulesetAddChild(common:apps{"core"}, pico_auth_channel);
+      installed_rulesets = CloudOS:rulesetAddChild(common:apps{my_role}, pico_auth_channel);
+
+      // picos
+      picos = CloudOS:picoList()
+                 .defaultsTo({})
+                 .values()
+		 .klog(">> this pico's picos >>>")
+		 .map(function(x){ {"cid": x{"channel"}} })
+		 ; 
+
+    }
+
+    always {
+      raise fuse event pico_config_children for meta:rid() with children = picos	   
+    }
+
+  }
+
+  rule propagate_pico_config {
+    select when fuse pico_config_children
+    foreach(event:attr("children")) setting(child)
+    event:send(child, "fuse", "pico_config")
+  }
+
+
 }
 // fuse_fleet.krl
