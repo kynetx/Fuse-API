@@ -213,7 +213,7 @@ Common definitions
 
   }
 
-  rule check_pico_config {
+  rule check_pico_config is inactive {
     select when fuse pico_config
 
     pre {
