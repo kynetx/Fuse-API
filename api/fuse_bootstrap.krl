@@ -12,6 +12,7 @@ ruleset fuse_bootstrap {
 
     global {
 
+        // why are we getting these from commong???
         apps = {
             "core": [
                    "a169x625.prod",  // CloudOS Service
@@ -23,7 +24,9 @@ ruleset fuse_bootstrap {
                    "b16x31.prod",    // Pico Notifications
                    "a169x699", 	     // Twilio
 		   "b16x16.prod",    // Fuse Init (owner)
-		   "b16x13.prod"    // Fuse errors
+		   "b16x13.prod",    // Fuse errors
+		   "b16x19.prod",    // Fuse common
+		   "b16x31.prod"     // pico notification service
             ],
 	    "unwanted": [ 
                    "a16x161.prod",   // CloudOS Notification service

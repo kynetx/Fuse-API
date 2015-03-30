@@ -620,7 +620,7 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
     pre { 
 
       about_me = pds:get_items(common:namespace()).klog(">>> about me >>>");
-      my_role = about_me{"schema"}.lc();
+      my_role = about_me{"schema"}.defaultsTo("person").lc();
 
       pico_auth_channel = meta:eci();
 
@@ -631,9 +631,13 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 
       // picos
       picos = CloudOS:picoList()
-                 .defaultsTo([])
+                 .defaultsTo({})
+                 .values()
 		 .klog(">> this pico's picos >>>")
 		 ; 
+
+      
+//  >> this pico's picos >>>{"49F8FCF0-02D8-11E4-B8B2-C59BE71C24E1":{"photo":"https://dl.dropboxusercontent.com/u/329530/fuse_fleet_pico_picture.png","name":"My Fleet","channel":"49F8FCF0-02D8-11E4-B8B2-C59BE71C24E1","id":"Owner-fleet-4B28DA82-02D8-11E4-B57E-C59BE71C24E1"}}
 
     }
 
