@@ -118,6 +118,7 @@ A Fuse error occured with the following details:
     select when fuse pico_setup_events
     foreach(event:attr("setup_events")) setting(setup_event)
     always {
+      // KRL doesn't yet support vars in the domain here
       raise fuse event setup_event{"event_type"} attributes setup_event{"attributes"}.defaultsTo({});
     }
   }

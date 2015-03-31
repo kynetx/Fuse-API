@@ -147,14 +147,14 @@ Fuse ruleset for a vehicle pico
 	};
 
 
-      missingSubscriptions = function() {
-        carvoyant:missingSubscriptions(required_subscription_list, subscription_map)
+      missingSubscriptions = function(my_subs) {
+        carvoyant:missingSubscriptions(required_subscription_list, subscription_map, my_subs)
       };
 
       subscriptionsOk = function(my_subs) {
-        should_have = required_subscription_list.length();
+        missing = missingSubscriptions(my_subs);
 	subscription_eci = carvoyant:get_eci_for_carvoyant();
-	my_subs.length() >= should_have	&& 
+	missing.length() == 0 && 
           my_subs
            .all(function(s){s{"postUrl"}.match("re/#{subscription_eci}/".as("regexp"))})
       }
