@@ -465,6 +465,7 @@ Operations for maintenance
              or fuse updated_battery
 	     or fuse updated_dtc
              or fuse updated_fuel_level relationship "BELOW"
+	     or fuse updated_device_status
 
     pre {
       id = event:attr("id");
@@ -473,7 +474,7 @@ Operations for maintenance
 	   "status": "active",
 	   "activity": event:attr("activity"),
 	   "reason": event:attr("reason"),
-	   "trouble_codes": event:attr("dtc")
+	   "trouble_codes": event:attr("dtc").defaultsTo("none")
       };
     }
     {
@@ -483,7 +484,13 @@ Operations for maintenance
     always {
       log ">>>> processing reminder for alert  >>>> " + rec.encode();
       raise fuse event new_alert attributes rec;
-      // send to fleet...
+      raise notification event status with 
+        priority = 2 and
+        application = "Fuse" and
+        subject = reason and
+        description = activity and
+        id = id
+        ;
     } 
 
   }

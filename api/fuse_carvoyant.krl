@@ -766,6 +766,9 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       threshold = event:attr("thresholdVoltage");
       recorded = event:attr("recordedVoltage");
       id = event:attr("id");
+      about_me = pds:get_all_me();
+      vehicle_name = about_me{"myProfileName"};
+      device_id = about_me{"deviceId"};
       status = event:attrs()
                     .put(["timestamp"], common:convertToUTC(time:now()))
 		    .delete(["_generatedby"]);
@@ -776,7 +779,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       raise pds event "new_data_available"
 	  attributes {
 	    "namespace": namespace(),
-	    "keyvalue": "lowBattery_fired",
+	    "keyvalue": "lowBattery_fired for #{}",
 	    "value": status,
             "_api": "sky"
  		   
@@ -784,8 +787,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       raise fuse event "updated_battery"
 	  with threshold = threshold
 	   and recorded = recorded
-	   and activity = "Battery dropped below #{threshold}V to #{recorded}V"
-	   and reason = "Low battery report from vehicle."
+	   and activity = "Battery dropped below #{threshold}V to #{recorded}V for #{vehicle_name} (#{device_id})"
+	   and reason = "Low battery report from #{vehicle_name}"
 	   and id = id
           ;
 
@@ -797,6 +800,10 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     pre {
       codes = event:attr("troubleCodes");
       id = event:attr("id");
+
+      about_me = pds:get_all_me();
+      vehicle_name = about_me{"myProfileName"};
+      device_id = about_me{"deviceId"};
 
       details = dataSet(event:attr("vehicleId"),event:attr("dataSetId"));
       
@@ -828,9 +835,9 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
           };
      raise fuse event "updated_dtc"
 	  with dtc = codes
-	   and timestamp = status{"_timestamp"} 
-	   and activity = "Vehicle reported the following diagnostic codes: " + codes.encode()
-	   and reason = "Diagnostic code report from vehicle: " + reason_string
+	   and timestamp = status{"timestamp"} 
+	   and activity = "#{vehicle_name} (#{device_id}) reported the following diagnostic codes: " + codes.encode()
+	   and reason = "Diagnostic code report from #{vehicle_id}: " + reason_string
 	   and id = id
           ;
 
@@ -844,13 +851,18 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       recorded = event:attr("recordedValue");
       relationship = event:attr("relationship");
       id = event:attr("id");
+
+      about_me = pds:get_all_me();
+      vehicle_name = about_me{"myProfileName"};
+      device_id = about_me{"deviceId"};
+
+
       status = event:attrs()	
                     .put(["timestamp"], common:convertToUTC(time:now()))
 		    .delete(["_generatedby"]);
     }
     noop();
     always {
-      log "Fuel level of #{recorded}% is #{relationship.lc()} threshold value of #{threshold}%";
       raise pds event "new_data_available"
 	  attributes {
 	    "namespace": namespace(),
@@ -862,11 +874,33 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
      raise fuse event "updated_fuel_level"
        with threshold = threshold
 	and recorded = recorded
-	and timestamp = status{"_timestamp"}
-	and activity = "Fuel level of #{recorded}% is #{relationship.lc()} threshold value of #{threshold}%"
-	and reason = "Fuel report from vehicle."
+	and timestamp = status{"timestamp"}
+	and activity = "Fuel level for #{vehicle_name} (#{device_id}) of #{recorded}% is #{relationship.lc()} threshold value of #{threshold}%"
+	and reason = "Fuel report from #{vehicle_name}."
 	and id = id
       ;
+    }
+  }
+
+  rule catch_device_status_changed { 
+    select when carvoyant vehicleConnected
+             or carvoyant vehicleDisconnected
+    pre {
+
+      about_me = pds:get_all_me();
+      vehicle_name = about_me{"myProfileName"};
+      device_id = about_me{"deviceId"};
+
+      device_status = event:type() eq vehicleConnected => "connected"  | "disconnected";
+      status = event:attrs()	
+                    .put(["timestamp"], common:convertToUTC(time:now()))
+		    .put(["activity"], "Fuse device #{device_id} in #{vehicle_name} is #{device_status}")
+		    .put(["reason"], "Device report from #{vehicle_name}")
+		    .delete(["_generatedby"]);
+    }
+    noop();
+    always {
+     raise fuse event "updated_device_status" attributes status ;
     }
   }
 
@@ -891,7 +925,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	    "keyvalue": "vehicle_moving_fired",
 	    "value": status,
             "_api": "sky"
-	  };
+	  } if false; // don't put in PDS now
     }
   }
 
