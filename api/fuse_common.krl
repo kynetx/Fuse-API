@@ -213,30 +213,6 @@ Common definitions
 
   }
 
-  rule check_pico_config is inactive {
-    select when fuse pico_config
-
-    pre {
-
-      about_me = pds:get_items(namespace()).klog(">>> about me >>>");
-      my_role = about_me{"schema"}.lc();
-
-      pico_auth_channel = meta:eci();
-
-      // rulesets
-      remove_rulesets = CloudOS:rulesetRemoveChild(apps{"unwanted"}, pico_auth_channel);
-      core_rulesets = CloudOS:rulesetAddChild(apps{"core"}, pico_auth_channel);
-      installed_rulesets = CloudOS:rulesetAddChild(apps{my_role}, pico_auth_channel);
-
-      // picos
-      picos = CloudOS:picoList()
-                 .defaultsTo([])
-		 .klog(">> this pico's picos >>>")
-		 ; 
-
-    }
-
-
-  }
 
 }
+//fuse_common.krl

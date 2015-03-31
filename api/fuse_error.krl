@@ -13,6 +13,10 @@ ruleset fuse_error {
         use module a16x129 alias sendgrid with
             api_user = keys:sendgrid("api_user") and 
             api_key = keys:sendgrid("api_key") 
+
+        use module b16x19 alias common
+
+
     }
 
     global {
@@ -65,4 +69,51 @@ A Fuse error occured with the following details:
             if event:attr("_test")
 	}
     }
+
+
+  // move to fuse_common.krl after we bootstrap
+  rule check_pico_config {
+    select when fuse pico_config
+
+    pre { 
+
+      about_me = pds:get_items(common:namespace()).defaultsTo({}).klog(">>> about me >>>");
+      my_role = about_me{"schema"}.defaultsTo("person").lc();
+
+      pico_auth_channel = meta:eci();
+
+      // rulesets
+      rulesets = common:apps;
+
+      removed_rulesets = CloudOS:rulesetRemoveChild(rulesets{"unwanted"}.defaultsTo([]), pico_auth_channel);
+
+      installed_rulesets = CloudOS:rulesetAddChild(rulesets{"core"}.defaultsTo([])
+                                                                   .append(rulesets{my_role}.defaultsTo([]))
+                                                                   .klog(">> installing these rulesets >>"), 
+                                                   pico_auth_channel);
+
+
+      // picos
+      picos = CloudOS:picoList()
+                 .defaultsTo({})
+                 .values()
+		 .klog(">> this pico's picos >>>")
+		 .map(function(x){ {"cid": x{"channel"}} })
+		 ; 
+    }
+
+    always {
+      raise fuse event pico_config_children for meta:rid() with children = picos	   
+    }
+
+  }
+
+  rule propagate_pico_config {
+    select when fuse pico_config_children
+    foreach(event:attr("children")) setting(child)
+    event:send(child, "fuse", "pico_config")
+  }
+
+
 }
+//fuse_error.krl
