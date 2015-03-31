@@ -13,7 +13,7 @@ Common definitions
 	provides S3Bucket, namespace, find_pico_by_id, fuel_namespace, trips_namespace, maint_namespace,
 	         convertToUTC, strToNum, vehicleChannels, fleet_photo, vehicle_photo, factory, returnChannel,
 		 fleetChannel, fleetChannels, requiredRulesets,
-	         skycloud, allowedRids, genAndStore, retrieveVal, apps
+	         skycloud, allowedRids, genAndStore, retrieveVal, apps, setup_events
     }
 
     global {
@@ -27,7 +27,7 @@ Common definitions
         ent:testpset
       }
 
-       // rulesets we need installed by type
+       // rulesets we need installed by type (change name from apps eventually)
        apps = {
                "core": [
                    "a169x625.prod",  // CloudOS Service
@@ -65,9 +65,21 @@ Common definitions
                    "a169x669.prod",
                    "a169x727.prod",
                    "a169x695.prod",
-                   "b177052x7.prod",
-                   "0"
+                   "b177052x7.prod"
                ]
+      };
+
+      // this really isn't used for setup...yet. It's used for checking and redoing a pico's config
+      // but we're on the road to a generalized pico schema definition here
+      setup_events = {
+           "core" : [],
+	   "owner": [],
+	   "fleet": [],
+	   "vehicle": [{"event_domain" : "fuse",
+	                "event_type": "subscription_check",
+			"attributes": {}
+                       }
+	              ]
       };
 
       requiredRulesets = function(type) {

@@ -72,8 +72,8 @@ A Fuse error occured with the following details:
 
 
   // move to fuse_common.krl after we bootstrap
-  rule check_pico_config {
-    select when fuse pico_config
+  rule check_pico_setup {
+    select when fuse pico_setup
 
     pre { 
 
@@ -92,6 +92,11 @@ A Fuse error occured with the following details:
                                                                    .klog(">> installing these rulesets >>"), 
                                                    pico_auth_channel);
 
+     // events
+     raw_setup_events = common:setup_events;
+     setup_events = raw_setup_events{"core"}.defaultsTo([])
+                                              .append(raw_setup_events{my_role}.defaultsTo([]));
+
 
       // picos
       picos = CloudOS:picoList()
@@ -103,15 +108,26 @@ A Fuse error occured with the following details:
     }
 
     always {
-      raise fuse event pico_config_children for meta:rid() with children = picos	   
+      raise fuse event pico_setup_events for meta:rid() with setup_events = setup_events;
+      raise fuse event pico_setup_children for meta:rid() with children = picos;
     }
 
   }
 
-  rule propagate_pico_config {
-    select when fuse pico_config_children
+  rule raise_pico_setup_events {
+    select when fuse pico_setup_events
+    foreach(event:attr("setup_events")) setting(setup_event)
+    always {
+      raise fuse event setup_event{"event_type"} attributes setup_event{"attributes"}.defaultsTo({});
+    }
+  }
+
+
+
+  rule propagate_pico_setup {
+    select when fuse pico_setup_children
     foreach(event:attr("children")) setting(child)
-    event:send(child, "fuse", "pico_config")
+    event:send(child, "fuse", "pico_setup")
   }
 
 
