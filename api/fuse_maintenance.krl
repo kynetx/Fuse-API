@@ -468,7 +468,7 @@ Operations for maintenance
 	     or fuse updated_device_status
 
     pre {
-      foo = event:attrs().klog(">> seeing these attributes >>"); 
+      //foo = event:attrs().klog(">> seeing these attributes >>"); 
       id = event:attr("id");
       rec = {
 	   "reminder_ref": id,
@@ -488,8 +488,8 @@ Operations for maintenance
       raise notification event status with 
         priority = 2 and
         application = "Fuse" and
-        subject = reason and
-        description = activity and
+        subject = rec{"reason"} and
+        description = rec{"activity"} and
         id = id
         ;
     } 
