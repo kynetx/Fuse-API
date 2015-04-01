@@ -855,10 +855,14 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       vehicle_name = about_me{"myProfileName"};
       device_id = about_me{"deviceId"};
 
+      threshold = event:attr("thresholdValue");
+      recorded = event:attr("recordedValue");
+      relationship = event:attr("relationship").defaultsTo("ABOVE");
+
       status = {"timestamp": common:convertToUTC(time:now()),
-                "threshold": event:attr("thresholdValue"),
-      		"recorded": event:attr("recordedValue"),
-      		"relationship": event:attr("relationship"),
+                "threshold": threshold,
+      		"recorded": recorded,
+      		"relationship": relationship,
 		"id": event:attr("id"),
 		"activity": "Fuel level for #{vehicle_name} (#{device_id}) of #{recorded}% is #{relationship.lc()} threshold value of #{threshold}%",
 		"reason": "Fuel report from #{vehicle_name}"
