@@ -901,7 +901,9 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                     .put(["timestamp"], common:convertToUTC(time:now()))
 		    .put(["activity"], "Fuse device #{device_id} in #{vehicle_name} is #{device_status}")
 		    .put(["reason"], "Device report from #{vehicle_name}")
-		    .delete(["_generatedby"]);
+		    .delete(["_generatedby"])
+		    .klog(">> device status >>")
+		    ;
     }
     noop();
     always {
