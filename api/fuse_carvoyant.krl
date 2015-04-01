@@ -741,6 +741,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       status = event:attr("ignitionStatus");
       tid = event:attr("tripId");
       trip_data = event:attrs()
+                    .defaultsTo({})	
                     .put(["timestamp"], common:convertToUTC(time:now()))
        		    .delete(["_generatedby"]);
     }
@@ -770,6 +771,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       vehicle_name = about_me{"myProfileName"};
       device_id = about_me{"deviceId"};
       status = event:attrs()
+                    .defaultsTo({})	
                     .put(["timestamp"], common:convertToUTC(time:now()))
 		    .delete(["_generatedby"]);
    }
@@ -817,6 +819,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 			 ;
 
       status = event:attrs()
+                      .defaultsTo({})	
                       .put(["timestamp"], common:convertToUTC(time:now()))
                       .put(["translatedValues"], reason_string)
 	              .delete(["_generatedby"]);
@@ -858,6 +861,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
 
       status = event:attrs()	
+                    .defaultsTo({})	
                     .put(["timestamp"], common:convertToUTC(time:now()))
 		    .delete(["_generatedby"]);
     }
@@ -892,7 +896,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       device_id = about_me{"deviceId"};
 
       device_status = event:type() eq vehicleConnected => "connected"  | "disconnected";
-      status = event:attrs()	
+      status = event:attrs()
+                    .defaultsTo({})	
                     .put(["timestamp"], common:convertToUTC(time:now()))
 		    .put(["activity"], "Fuse device #{device_id} in #{vehicle_name} is #{device_status}")
 		    .put(["reason"], "Device report from #{vehicle_name}")
