@@ -850,20 +850,20 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
   rule catch_fuel_level { 
     select when carvoyant numericDataKey dataKey "GEN_FUELLEVEL"
     pre {
-      threshold = event:attr("thresholdValue");
-      recorded = event:attr("recordedValue");
-      relationship = event:attr("relationship");
-      id = event:attr("id");
 
       about_me = pds:get_all_me();
       vehicle_name = about_me{"myProfileName"};
       device_id = about_me{"deviceId"};
 
-
-      status = event:attrs()	
-                    .defaultsTo({})	
-                    .put(["timestamp"], common:convertToUTC(time:now()))
-		    .delete(["_generatedby"]);
+      status = {"timestamp": common:convertToUTC(time:now()),
+                "threshold": event:attr("thresholdValue"),
+      		"recorded": event:attr("recordedValue"),
+      		"relationship": event:attr("relationship"),
+		"id": event:attr("id"),
+		"activity": "Fuel level for #{vehicle_name} (#{device_id}) of #{recorded}% is #{relationship.lc()} threshold value of #{threshold}%",
+		"reason": "Fuel report from #{vehicle_name}"
+               };
+	
     }
     noop();
     always {
@@ -875,14 +875,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
             "_api": "sky"
  		   
      };
-     raise fuse event "updated_fuel_level"
-       with threshold = threshold
-	and recorded = recorded
-	and timestamp = status{"timestamp"}
-	and activity = "Fuel level for #{vehicle_name} (#{device_id}) of #{recorded}% is #{relationship.lc()} threshold value of #{threshold}%"
-	and reason = "Fuel report from #{vehicle_name}."
-	and id = id
-      ;
+     raise fuse event "updated_fuel_level" attributes status ;
     }
   }
 
