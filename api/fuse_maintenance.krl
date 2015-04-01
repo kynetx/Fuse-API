@@ -468,7 +468,7 @@ Operations for maintenance
 	     or fuse updated_device_status
 
     pre {
-      foo = event:attrs().klog(">> seeing these attributes >>");
+      foo = event:attrs().klog(">> seeing these attributes >>"); 
       id = event:attr("id");
       rec = {
 	   "reminder_ref": id,
