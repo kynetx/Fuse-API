@@ -850,7 +850,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
   rule catch_fuel_level { 
     select when carvoyant numericDataKey dataKey "GEN_FUELLEVEL"
     pre {
-
+      foo = event:attrs().klog(">> seeing these attributes >>"); 
       about_me = pds:get_all_me();
       vehicle_name = about_me{"myProfileName"};
       device_id = about_me{"deviceId"};
