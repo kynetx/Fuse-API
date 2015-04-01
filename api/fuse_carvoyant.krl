@@ -854,7 +854,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       about_me = pds:get_all_me();
       vehicle_name = about_me{"myProfileName"};
       device_id = about_me{"deviceId"};
-
+ 
       threshold = event:attr("thresholdValue");
       recorded = event:attr("recordedValue");
       relationship = event:attr("relationship").defaultsTo("ABOVE");
