@@ -295,18 +295,13 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
           && subs.none(function(s){ s{"dataKey"}.klog(">>>> key >>> ") eq key } )
           ) 
 	||
-	   subs.all(function(s){ not s{"deletionTimestamp"}.isnull() })
+	   subs.all(function(s){ not s{"deletionTimestamp"}.isnull() })	
     }
 
     // my_subs is optional, we'll get it if not supplied
     missingSubscriptions = function(req_subs, sub_map, my_subs) {
       current_subs = my_subs.isnull() =>  getSubscription(vehicle_id(), sub_type)
                                              .defaultsTo([], ">> no response on subscription call to Carvoyant >>")
-					     .filter(function(cs){ // removes old subscription
-					                not (cs{"_type"} eq "NUMERICDATAKEY" &&
-							     cs{"dataKey"} eq "GEN_FUELLEVEL" &&
-							     cs{"notiificationPeriod"} eq "STATECHANGE")
-                                                     })
                                              .klog(">>> seeing subscriptions >>>>")
                                         | my_subs
            		                ;
@@ -683,8 +678,16 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       sub_type = sub{"_type"};
       postUrl = sub{"postUrl"};
       my_current_eci = get_eci_for_carvoyant();
+      bad_subscription = (sub{"_type"} eq "LOWBATTERY" &&
+      		          sub{"notiificationPeriod"} eq "STATECHANGE")
+		       || 
+                         (sub{"_type"} eq "NUMERICDATAKEY" &&
+                          sub{"dataKey"} eq "GEN_FUELLEVEL" &&
+  	  	          sub{"notiificationPeriod"} eq "STATECHANGE")
     }
-    if(not postUrl.match("re#/#{my_current_eci}/#".as("regexp"))) then
+    if( not postUrl.match("re#/#{my_current_eci}/#".as("regexp"))
+     || bad_subscription.klog(">>> found an old fuel or battery subscription >> ")
+      ) then
     {
       send_directive("Will delete subscription #{id} with type #{sub_type}") with
         sub_value = sub;
