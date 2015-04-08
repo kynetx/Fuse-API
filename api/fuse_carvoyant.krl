@@ -674,6 +674,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     select when carvoyant dirty_subscriptions
     foreach getSubscription(vehicle_id()).filter(function(s){ s{"deletionTimestamp"}.isnull() }) setting(sub)
     pre {
+      foo = sub.klog(">> the subscription >>");
       id = sub{"id"};	
       sub_type = sub{"_type"};
       postUrl = sub{"postUrl"};
