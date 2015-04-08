@@ -128,6 +128,7 @@ Fuse ruleset for a vehicle pico
           "low_battery": 
 	       {"subscription_type": "lowBattery",
 	        "minimumTime": 60,
+		"notificationPeriod": "INITIALSTATE",
          	"idempotent": true
 	       },
           "trouble_code":
