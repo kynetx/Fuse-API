@@ -102,7 +102,7 @@ Fuse ruleset for a vehicle pico
 	 "fuel_purchases" :
 	       {"subscription_type": "numericDataKey",
 	        "minimumTime": 0,
-		"notificationPeriod": "STATECHANGE",
+		"notificationPeriod": "INITIALSTATE",
 	        "dataKey": "GEN_FUELLEVEL",
 		"thresholdValue": 90,
 		"relationship": "ABOVE",
@@ -139,6 +139,7 @@ Fuse ruleset for a vehicle pico
           "fuel_level":
 	       {"subscription_type": "numericDataKey",
 	        "minimumTime": 60,
+		"notificationPeriod": "INITIALSTATE",
 		"dataKey": "GEN_FUELLEVEL",
 		"thresholdValue": 20,
 		"relationship": "BELOW",
