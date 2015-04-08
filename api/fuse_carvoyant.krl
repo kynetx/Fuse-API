@@ -680,11 +680,11 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       sub_type = sub{"_type"};
       postUrl = sub{"postUrl"};
       bad_subscription = (sub{"_type"} eq "LOWBATTERY" &&
-      		          sub{"notiificationPeriod"} eq "STATECHANGE")
+      		          sub{"notificationPeriod"} eq "STATECHANGE")
 		       || 
                          (sub{"_type"} eq "NUMERICDATAKEY" &&
                           sub{"dataKey"} eq "GEN_FUELLEVEL" &&
-  	  	          sub{"notiificationPeriod"} eq "STATECHANGE")
+  	  	          sub{"notificationPeriod"} eq "STATECHANGE")
     }
     if( not postUrl.match("re#/#{my_current_eci}/#".as("regexp"))
      || bad_subscription.klog(">>> found an old fuel or battery subscription >> ")
