@@ -302,6 +302,11 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     missingSubscriptions = function(req_subs, sub_map, my_subs) {
       current_subs = my_subs.isnull() =>  getSubscription(vehicle_id(), sub_type)
                                              .defaultsTo([], ">> no response on subscription call to Carvoyant >>")
+					     .filter(function(cs){ // removes old subscription
+					                not (cs{"_type"} eq "NUMERICDATAKEY" &&
+							     cs{"dataKey"} eq "GEN_FUELLEVEL" &&
+							     cs{"notiificationPeriod"} eq "STATECHANGE")
+                                                     })
                                              .klog(">>> seeing subscriptions >>>>")
                                         | my_subs
            		                ;
