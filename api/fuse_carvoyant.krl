@@ -674,11 +674,11 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     select when carvoyant dirty_subscriptions
     foreach getSubscription(vehicle_id()).filter(function(s){ s{"deletionTimestamp"}.isnull() }) setting(sub)
     pre {
+      my_current_eci = get_eci_for_carvoyant();
       foo = sub.klog(">> the subscription >>");
       id = sub{"id"};	
       sub_type = sub{"_type"};
       postUrl = sub{"postUrl"};
-      my_current_eci = get_eci_for_carvoyant();
       bad_subscription = (sub{"_type"} eq "LOWBATTERY" &&
       		          sub{"notiificationPeriod"} eq "STATECHANGE")
 		       || 
