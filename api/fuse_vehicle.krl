@@ -357,6 +357,8 @@ Fuse ruleset for a vehicle pico
         send_directive("initializing vehicle " + profile{"deviceId"});
       }
       fired {
+        raise carvoyant event dirty_subscriptions;
+	
         raise fuse event need_initial_carvoyant_subscriptions;
 
 	raise fuse event need_vehicle_data;
@@ -366,7 +368,7 @@ Fuse ruleset for a vehicle pico
 	raise fuse event vehicle_initialized;
       } else {
         log ">>>>>>>>>>>>>>>>>>>>>>>>> vehicle not configured <<<<<<<<<<<<<<<<<<<<<<<<<";
-        raise fuse event vehicle_not_configured ;
+        raise fuse event vehicle_not_configured attributes profile;
       }
     }
 
