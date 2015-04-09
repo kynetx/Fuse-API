@@ -62,7 +62,9 @@ Ruleset for initializing a Fuse account and managing vehicle picos
             .delete(["_generatedby"])
             .delete(["myProfilePhoto"])
 	    .put(["timestamp"], common:convertToUTC(time:now()))
-            .put(["eci"], meta:eci());
+            .put(["eci"], meta:eci())
+	    .put(["fleet_eci"], fleetChannel())
+	    ;
 	}
 
 	acctRecordExists = function(key) {
@@ -354,6 +356,13 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 	always {
 	  set app:fuse_users{my_email} makeAcctRecord(me)
 	}
+    }
+
+    rule link_pico_setup {
+      select when pds profile_updated
+      always {
+        raise fuse event pico_setup
+      }
     }
 
     rule send_email_to_owner {

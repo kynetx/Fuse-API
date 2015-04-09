@@ -106,7 +106,8 @@ A Fuse error occured with the following details:
 		 .map(function(x){ {"cid": x{"channel"}} })
 		 ; 
     }
-
+    send_directive("pico setup") with
+      installed = installed_rulesets
     always {
       raise fuse event pico_setup_events for meta:rid() with setup_events = setup_events;
       raise fuse event pico_setup_children for meta:rid() with children = picos;
@@ -117,6 +118,7 @@ A Fuse error occured with the following details:
   rule raise_pico_setup_events {
     select when fuse pico_setup_events
     foreach(event:attr("setup_events")) setting(setup_event)
+    send_directive("raising pico setup event " + setup_event{"event_type"})
     always {
       // KRL doesn't yet support vars in the domain here
       raise fuse event setup_event{"event_type"} attributes setup_event{"attributes"}.defaultsTo({});
@@ -128,7 +130,10 @@ A Fuse error occured with the following details:
   rule propagate_pico_setup {
     select when fuse pico_setup_children
     foreach(event:attr("children")) setting(child)
-    event:send(child, "fuse", "pico_setup")
+    {
+      send_directive("propagating pico event") with pico = child;
+      event:send(child, "fuse", "pico_setup")
+    }
   }
 
 
