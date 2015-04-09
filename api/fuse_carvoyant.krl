@@ -677,8 +677,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       id = sub{"id"};	
       sub_type = sub{"_type"};
       postUrl = sub{"postUrl"};
-      bad_subscription = (sub{"_type"} eq "LOWBATTERY" &&
-      		          sub{"notificationPeriod"} eq "STATECHANGE")
+      bad_subscription = (sub{"_type"}.klog(">> type >> ") eq "LOWBATTERY" &&
+      		          sub{"notificationPeriod"}.klog(">> period >> ") eq "STATECHANGE")
 		       || 
                          (sub{"_type"} eq "NUMERICDATAKEY" &&
                           sub{"dataKey"} eq "GEN_FUELLEVEL" &&
