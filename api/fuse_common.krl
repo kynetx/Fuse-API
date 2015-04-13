@@ -13,7 +13,8 @@ Common definitions
 	provides S3Bucket, namespace, find_pico_by_id, fuel_namespace, trips_namespace, maint_namespace,
 	         convertToUTC, strToNum, vehicleChannels, fleet_photo, vehicle_photo, factory, returnChannel,
 		 fleetChannel, fleetChannels, requiredRulesets,
-	         skycloud, allowedRids, genAndStore, retrieveVal, apps, setup_events
+	         skycloud, allowedRids, genAndStore, retrieveVal, apps, setup_events,
+		 vehicleSummary
     }
 
     global {
@@ -220,6 +221,10 @@ Common definitions
       // rids allowed to ask for tokens from fleet
       allowedRids = function() {
         ["b16x11", "b16x23", "b16x17"];
+      }
+
+      vehicleSummary = function(){
+        pds:get_item("fuse:carvoyant", "vehicle_info");
       }
 
 

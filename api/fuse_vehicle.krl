@@ -16,10 +16,11 @@ Fuse ruleset for a vehicle pico
       use module a169x676 alias pds
       use module b16x19 alias common
       use module b16x11 alias carvoyant
-      // don't load trips
+      use module b16x18 alias trips
 	
       provides vin, fleetChannel, fleetChannels, vehicleSummary, vehicleSubscription, showPicoStatus,
-               missingSubscriptions
+               missingSubscriptions,
+	       trips
 
     }
 
@@ -214,6 +215,10 @@ Fuse ruleset for a vehicle pico
 	}
       }
 
+      // ---------- experimental ----------
+      trips = function(id, limit, offset) {
+          trips:trips(id, limit, offset)
+      }
 
     }
 

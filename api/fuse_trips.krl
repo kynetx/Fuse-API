@@ -15,7 +15,6 @@ Manage trips. PDS is not well-suited to these operations
     use module a169x676 alias pds
     use module b16x19 alias common
     use module b16x11 alias carvoyant
-    use module b16x9 alias vehicle
     use module b16x20 alias fuel
 
 	
@@ -186,7 +185,7 @@ Manage trips. PDS is not well-suited to these operations
 		 "uid": "http://fuse.to/ical/v1/trip/" + $e{"id"}  // should be the same each time generated
 		}
 	      });
-      vdata = vehicle:vehicleSummary();
+      vdata = common:vehicleSummary();
       gen_time =  time:strftime(time:now(), "%s").pset(ent:last_ical_time); // save time generated
       ical:from_array(t, {"name": vdata{"label"}, 
                           "desc": "Calendar of trips for " + vdata{"label"}}

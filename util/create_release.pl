@@ -210,6 +210,8 @@ usage: $0 [-h?] -v version
 
 example: $0 -v v1 -c ../release-fuse.yml
 
+typical usage: ../util/create_release.pl -v v1 -c ../util/fuse-api-release.yml -ru
+
 EOF
     exit;
 }
