@@ -14,7 +14,6 @@ Operations for fuel
     use module a169x676 alias pds
     use module b16x19 alias common
     use module b16x11 alias carvoyant
-    use module b16x9 alias vehicle
 
 	
     provides fillups, fillupsByDate, currentCPM, standardMPG, standardCPG
@@ -179,7 +178,7 @@ Operations for fuel
 
       id = event:attr("id") || random:uuid();  // UTC; using time as id
 
-      vdata = vehicle:vehicleSummary();
+      vdata = common:vehicleSummary();
 
       volume = event:attr("volume").defaultsTo(1.0);
       unit_price = event:attr("unitPrice");
@@ -293,7 +292,7 @@ Operations for fuel
     }
     {send_directive("Updated fuel summary for #{month}/#{year}") with
        values =  month_totals;
-     event:send({"cid": vehicle:fleetChannel()}, "fuse", "updated_vehicle") with
+     event:send({"cid": common:fleetChannel()}, "fuse", "updated_vehicle") with
         attrs = {"keyvalue": "fuel_summaries,Y#{year},M#{month}",
 	         "value": month_totals.encode()
 	        };
