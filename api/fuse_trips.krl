@@ -305,14 +305,51 @@ Manage trips. PDS is not well-suited to these operations
        "tripCategory": tcategory
       }
     };
-  
+
+    minimum = function(x,y) {
+      x < y => x | y	
+    };
 
     pruneTripDataTest = function(id) {
-      pruneTripData(trips(id))
-    }
+      pruneTripData(carvoyant:tripInfo(id))
+    };
 
-    pruneTripData = function(data) {
-      new_data = data.defaultsTo([]).map(function(d){
+    pruneTripData = function(raw_data) {
+      // constants
+      max_points = 200;
+
+      data = raw_data.defaultsTo([]);
+      olen = data.length();
+
+      skip_points = function(data) {
+  
+        first_rec = data[0].defaultsTo({});
+        last_rec = data[olen-1].defaultsTo({});
+
+        start = time:strftime(first_rec{"timestamp"}, "%s");
+        end = time:strftime(last_rec{"timestamp"}, "%s");
+
+        trip_length_in_minutes = (end - start)/60;
+
+        points_per_minute = (olen/trip_length_in_minutes).klog(">>>> points per minute >>> ");
+
+        div_num = points_per_minute > 2 => 30   // two data points per minute
+                                         | 10;  // arbitrary
+
+        nlen = minimum(math:floor(olen / div_num), max_points)
+	          .klog(">>> new datum array length >>>");
+	
+        (0).range(nlen).map(function(x){ data[x * div_num] })
+      };
+
+      // new data array with every div_num^th value
+      ndata = olen < max_points => data
+                                 | skip_points(data);
+
+      nlen = ndata.length().klog(">>> length of skipped array >>> ");
+      
+      new_data = ndata
+                  .map(function(d){
 		    new_datum = d{"datum"}.map(function(r) {
 		       // r.delete(["timestamp"])
 		       //  .delete(["id"])
@@ -330,7 +367,7 @@ Manage trips. PDS is not well-suited to these operations
   }
 
 
-  rule clear_trip {
+  rule clear_trip is inactive {
     select when fuse clear_trip
     always {
       clear ent:trips_by_id;
