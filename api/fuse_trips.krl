@@ -341,7 +341,12 @@ Manage trips. PDS is not well-suited to these operations
         nlen = minimum(math:floor(olen / div_num), max_points)
 	          .klog(">>> new datum array length >>>");
 	
-        (0).range(nlen).map(function(x){ data[x * div_num] })
+        res = (0).range(nlen).map(function(x){ data[x * div_num] })
+
+
+	nlen * div_num == olen - 1 => res
+	                            | res.append(data[olen - 1]);
+
       };
 
       // new data array with every div_num^th value
