@@ -319,7 +319,8 @@ Manage trips. PDS is not well-suited to these operations
       max_points = 200;
 
       data = raw_data.defaultsTo([]);
-      olen = data.length();
+      olen = data.length()
+               .klog(">>> length of original array >> ");
 
       skip_points = function(data) {
   
