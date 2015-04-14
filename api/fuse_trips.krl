@@ -311,7 +311,7 @@ Manage trips. PDS is not well-suited to these operations
     };
 
     pruneTripDataTest = function(id) {
-      pruneTripData(carvoyant:tripInfo(id))
+      pruneTripData(carvoyant:tripInfo(id).pick("$.data"))
     };
 
     pruneTripData = function(raw_data) {
