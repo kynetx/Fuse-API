@@ -311,7 +311,8 @@ Manage trips. PDS is not well-suited to these operations
     };
 
     pruneTripDataTest = function(id) {
-      pruneTripData(carvoyant:tripInfo(id).pick("$.data"))
+      tripData = carvoyant:tripInfo(id);
+      pruneTripData(tripData{"data"})
     };
 
     pruneTripData = function(raw_data) {
@@ -327,8 +328,8 @@ Manage trips. PDS is not well-suited to these operations
         first_rec = data[0].defaultsTo({});
         last_rec = data[olen-1].defaultsTo({});
 
-        start = time:strftime(first_rec{"timestamp"}, "%s");
-        end = time:strftime(last_rec{"timestamp"}, "%s");
+        end = time:strftime(first_rec{"timestamp"}, "%s");
+        start = time:strftime(last_rec{"timestamp"}, "%s");
 
         trip_length_in_minutes = (end - start)/60;
 
