@@ -335,17 +335,16 @@ Manage trips. PDS is not well-suited to these operations
 
         points_per_minute = (olen/trip_length_in_minutes).klog(">>>> points per minute >>> ");
 
-        div_num = points_per_minute > 2 => 30   // two data points per minute
-                                         | 10;  // arbitrary
+        div_num = points_per_minute > 2 => 30   // two data points per minute for a 60dppm device (Velio)
+                                         | 10;  // 10 hours at 1dppm (CalAmp) ==> 60 data points
 
-        nlen = minimum(math:floor(olen / div_num), max_points)
-	          .klog(">>> new datum array length >>>");
+        nlen = minimum(math:floor(olen / div_num), max_points);
 	
         res = (0).range(nlen).map(function(x){ data[x * div_num] })
 
 
-	nlen * div_num == olen - 1 => res
-	                            | res.append(data[olen - 1]);
+	(nlen * div_num) == (olen - 1) => res
+	                                | res.append(data[olen - 1]);
 
       };
 
@@ -358,9 +357,6 @@ Manage trips. PDS is not well-suited to these operations
       new_data = ndata
                   .map(function(d){
 		    new_datum = d{"datum"}.map(function(r) {
-		       // r.delete(["timestamp"])
-		       //  .delete(["id"])
-		       //  .delete(["translatedValue"])
 		       {"key": r{"key"},
 		        "value": r{"value"}
 		       }
