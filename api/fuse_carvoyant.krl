@@ -233,7 +233,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     tripInfo = function(tid, vid) {
       config_data = get_config(vid).klog(">>> Config data in tripInfo >>>>>");
       trip_url = config_data{"base_url"} + config_data{"deviceId"} + "/trip/#{tid}";
-      result = carvoyant_get(trip_url, config_data);
+      result = carvoyant_get(trip_url, config_data); 
       result{"status_code"} eq "200" => result{["content","trip"]}
                                       | mk_error(result)
     }
