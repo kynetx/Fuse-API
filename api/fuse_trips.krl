@@ -620,7 +620,7 @@ Here is your trip export for #{vehicle_name} for #{month}/#{year}
   // ---------- maintenance ----------
   rule repair_trips {
     select when fuse trip_check
-    foreach missedTrips(event:attr("duration").isnull() => 2 | event:attr("duration")) setting(trip) // check for last two days by default
+    foreach missedTrips(event:attr("duration").isnull() => 3 | event:attr("duration")) setting(trip) // check for last two days by default
     pre {
       trip_attrs = { "tripId" : trip{"id"} }.klog(">>>> trip attrs ");
     }
