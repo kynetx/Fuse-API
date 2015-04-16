@@ -69,6 +69,9 @@ my $app_map = $config->{"app_map"};
 my %new_name_map =  map { $_->{"dev"} => $_->{"prod"} }  values(%{ $app_map });
 my $name_map = \%new_name_map;
 
+my $replacable = join("|", keys %new_name_map);
+warn $replacable;
+
 # my $name_map = {
 # 		"b16x9" => "fuse_vehicle",
 # 		"b16x10" => "fuse_keys",
@@ -126,7 +129,7 @@ while (my $file = readdir(DIR)) {
   open(OUT, "> $newfile")                  or die "can't open $newfile: $!";
 
   while (my $line = <IN>) {
-      $line =~ s/(b16x\d+)/$version_w_sep$name_map->{$1}/g;
+      $line =~ s/($replacable)/$version_w_sep$name_map->{$1}/g;
 
       print OUT $line
 

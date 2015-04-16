@@ -231,8 +231,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     // ---------- trips ----------
     // vid is optional
     tripInfo = function(tid, vid) {
-      config_data = get_config(vid).klog(">>> Config data in tripInfo >>>>>");
-      trip_url = config_data{"base_url"} + config_data{"deviceId"} + "/trip/#{tid}";
+      config_data = get_config( vid.defaultsTo( vehicle_id() ) ).klog(">>> Config data in tripInfo >>>>>");
+      trip_url = config_data{"base_url"} + "/trip/#{tid}";
       result = carvoyant_get(trip_url, config_data); 
       result{"status_code"} eq "200" => result{["content","trip"]}
                                       | mk_error(result)
@@ -574,7 +574,13 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     pre {
       vid = event:attr("vehicle_id") || vehicle_id();
       sub_type = event:attr("subscription_type");
-      sub_target = event:attr("event_host");
+
+      default_sub_target = meta:rid().klog(">>>> this rid >>>>")
+                                     .match(re/b16x11/) => "kibdev.kobj.net"
+                                                         | "cs.kobj.net";
+
+
+      sub_target = event:attr("event_host").defaultsTo(default_sub_target);
       
       minimumTime = event:attr("minimumTime").defaultsTo("0", ">>> using default min time>>>");
 
@@ -673,6 +679,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     foreach getSubscription(vehicle_id()).filter(function(s){ s{"deletionTimestamp"}.isnull() }) setting(sub)
     pre {
       my_current_eci = get_eci_for_carvoyant();
+
+
       foo = sub.klog(">> the subscription >>");
       id = sub{"id"};	
       sub_type = sub{"_type"};
@@ -692,6 +700,10 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
         sub_value = sub;
       del_subscription(sub_type, id, vehicle_id())
         with ar_label = "subscription_deleted";
+    }
+    fired {
+      raise fuse event need_initial_subscriptions
+         on final; 
     }
   }
 
@@ -730,7 +742,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     	 //   ar_label = "update_subscription";
     }
     fired {
-       raise fuse event need_initial_carvoyant_subscriptions with
+       raise fuse event need_initial_subscriptions with
          event_host = sub_target 
          on final; 
         // raise carvoyantfuse event "new_subscription_needed" 

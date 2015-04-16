@@ -376,7 +376,7 @@ Fuse ruleset for a vehicle pico
     }
 
     rule initialize_subscriptions {
-      select when fuse need_initial_carvoyant_subscriptions
+      select when fuse need_initial_subscriptions
       foreach missingSubscriptions() setting (subtype)
         pre {
       	  host = event:attr("event_host") || meta:host();
@@ -397,7 +397,13 @@ Fuse ruleset for a vehicle pico
       select when fuse new_subscription
       pre {
         subtype = event:attr("subtype");
-        host = event:attr("event_host") || meta:host();
+
+
+        default_host = meta:rid().klog(">>>> this rid >>>>")
+                                 .match(re/b16x11/) => "kibdev.kobj.net"
+                                                     | "cs.kobj.net";
+
+        host = event:attr("event_host").defaultsTo(default_host);
         subscription = subscription_map{subtype}
                          .defaultsTo({}, "No subscription defined for #{subtype}")
 	        	 .put(["event_host"], host)
@@ -431,7 +437,6 @@ Fuse ruleset for a vehicle pico
       fired {
         log ">>>> vehicle #{vid} needs subscription fix";
 	raise carvoyant event dirty_subscriptions;
-        raise fuse event need_initial_carvoyant_subscriptions;
       } else {
         log ">>>> vehicle #{vid} subscriptions OK";
       }
