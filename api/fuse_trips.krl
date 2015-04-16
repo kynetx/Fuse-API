@@ -356,13 +356,14 @@ Manage trips. PDS is not well-suited to these operations
       
       new_data = ndata
                   .map(function(d){
-		    new_datum = d{"datum"}.map(function(r) {
+                    nd = d.defaultsTo({});
+		    new_datum = nd{"datum"}.map(function(r) {
 		       {"key": r{"key"},
 		        "value": r{"value"}
 		       }
 		    });
 
-		    d.put(["datum"], new_datum)
+		    nd.put(["datum"], new_datum)
 		 });
       new_data
     }
