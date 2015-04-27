@@ -701,7 +701,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       del_subscription(sub_type, id, vehicle_id())
         with ar_label = "subscription_deleted";
     }
-    fired {
+    always {
       raise fuse event need_initial_subscriptions
          on final; 
     }
