@@ -400,8 +400,8 @@ Fuse ruleset for a vehicle pico
 
 
         default_host = meta:rid().klog(">>>> this rid >>>>")
-                                 .match(re/b16x11/) => "kibdev.kobj.net"
-                                                     | "cs.kobj.net";
+                                 .match(re/vehicle/) => "cs.kobj.net"
+                                                     | "kibdev.kobj.net";
 
         host = event:attr("event_host").defaultsTo(default_host);
         subscription = subscription_map{subtype}
