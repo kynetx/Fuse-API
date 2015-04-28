@@ -673,10 +673,24 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
   }
 
-
   rule clean_up_subscriptions {
     select when carvoyant dirty_subscriptions
-    foreach getSubscription(vehicle_id()).filter(function(s){ s{"deletionTimestamp"}.isnull() }) setting(sub)
+    pre {
+      my_subs =  getSubscription(vehicle_id()).filter(function(s){ s{"deletionTimestamp"}.isnull() });
+    }
+    if ( my_subs.length() > 0 ) then
+      send_directive("checking subscriptions")
+    fired {
+      raise explicit event have_subscriptions_to_check
+       with subscriptions = my_subs
+    } else {
+      raise fuse event need_initial_subscriptions
+    }
+  }
+
+  rule clean_up_subscriptions_aux {
+    select when explicit have_subscriptions_to_check
+    foreach event:attr("subscriptions") setting(sub)
     pre {
       my_current_eci = get_eci_for_carvoyant();
 

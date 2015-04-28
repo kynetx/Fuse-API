@@ -379,7 +379,7 @@ Fuse ruleset for a vehicle pico
       select when fuse need_initial_subscriptions
       foreach missingSubscriptions() setting (subtype)
         pre {
-      	  host = event:attr("event_host") || meta:host();
+      	  host = event:attr("event_host");
 	}
          // if (not subscription_map{subtype}.isnull()) then 
     	 //   send_directive("Adding initial subscription") with subscription = subscription;
@@ -403,7 +403,7 @@ Fuse ruleset for a vehicle pico
                                  .match(re/vehicle/) => "cs.kobj.net"
                                                      | "kibdev.kobj.net";
 
-        host = event:attr("event_host").defaultsTo(default_host);
+        host = event:attr("event_host").defaultsTo(default_host, ">>>> using default host >>>");
         subscription = subscription_map{subtype}
                          .defaultsTo({}, "No subscription defined for #{subtype}")
 	        	 .put(["event_host"], host)
