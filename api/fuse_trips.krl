@@ -449,6 +449,7 @@ Manage trips. PDS is not well-suited to these operations
         tripSummary = trip_summary
     } else {
       log ">>>>>>>>>>>>>>>>>>>>>>>>> save_trip failed <<<<<<<<<<<<<<<<<<<<<<<<<";
+      error warn "Bad trip pull (tripId: #{tid}): " + raw_trip_info.encode() if raw_trip_info.typeof() neq "hash";
       log "End time: #{end_time}; mileage: " + trip_info{"mileage"};
     }
   }
