@@ -13,7 +13,7 @@ To release production versions of the code:
 
 	You should expect a clean run with no errors or warnings. 
 
-2. Do the same thing for fuse_keys.krl.
+2. Do the same thing for fuse_keys.krl if you're releasing keys.
 
 3. Copy all of the version files created above to AWS. Note that everything but the keys file should be on a publicly readable URL.
 
