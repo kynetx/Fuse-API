@@ -790,7 +790,8 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	    "value": trip_data,
             "_api": "sky"
  		   
-	  };      
+	  };   
+      error warn "No trip ID " + trip_data.encode()  if status eq "OFF" && not tid;
     }
   }
 
