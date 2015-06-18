@@ -446,7 +446,8 @@ Manage trips. PDS is not well-suited to these operations
       set ent:trip_summaries{tid} trip_summary;
       raise fuse event trip_saved with 
         tripId = tid and
-        tripSummary = trip_summary
+        tripSummary = trip_summary;
+      error warn "Trip data for trip #{tid}: " + raw_trip_info.encode() if meta:errorCount > 0;
     } else {
       log ">>>>>>>>>>>>>>>>>>>>>>>>> save_trip failed <<<<<<<<<<<<<<<<<<<<<<<<<";
       error warn "Bad trip pull (tripId: #{tid}): " + raw_trip_info.encode() if raw_trip_info.typeof() neq "hash";
