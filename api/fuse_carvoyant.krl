@@ -780,7 +780,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
     noop();
     always {
-      raise fuse event "new_trip" with tripId = tid if status eq "OFF" && not tid;
+      raise fuse event "new_trip" with tripId = tid if status eq "OFF" && tid;
       raise fuse event "trip_check" with duration = 2 if status eq "ON"; // recover lost trips
       raise fuse event "need_vehicle_status";
       raise pds event "new_data_available"
