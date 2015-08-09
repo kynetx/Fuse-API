@@ -673,6 +673,7 @@ Operations for maintenance
     select when fuse new_maintenance_record
     pre {
       rec = event:attrs()
+              .klog(">>> attributes in record...>>> ")
               .delete(["id"]) // new records can't have id
 	      ; 
     }      
