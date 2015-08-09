@@ -673,7 +673,6 @@ Operations for maintenance
     select when fuse new_maintenance_record
     pre {
       rec = event:attrs()
-              .klog(">>> attributes in record...>>> ")
               .delete(["id"]) // new records can't have id
 	      ; 
     }      
@@ -690,7 +689,7 @@ Operations for maintenance
     select when fuse updated_maintenance_record
     pre {
 
-      f00 = event:alerts().klog(">>>> attributes >>>> ");
+      f00 = event:attrs().klog(">>>> attributes >>>> ");
       // if no id, assume new record and create one
       new_record = event:attr("id").isnull();
       current_time = common:convertToUTC(time:now());
