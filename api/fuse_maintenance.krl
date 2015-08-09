@@ -697,7 +697,7 @@ Operations for maintenance
       id = event:attr("id") || random:uuid();
 
       alert = event:attr("alert_ref").isnull() => {}
-                                                | alerts(event:attr("alert_ref"));
+                                                | alerts(event:attr("alert_ref")).defaultsTo({}, ">> no alert with that ID >>> ");
 
       vdata = vehicle:vehicleSummary() || {};
 
