@@ -724,7 +724,7 @@ Operations for maintenance
 	"activity": activity,
 	"reason": reason,
 	"alert_ref": event:attr("alert_ref") || "none",
-	"reminder_ref": alert{"reminder_ref"},
+	"reminder_ref": alert{"reminder_ref"} || event:attr("reminder_ref"),
 	"trouble_codes": alert{"trouble_codes"},
 	"agent": event:attr("agent"),
 	"cost": event:attr("cost"),
@@ -749,6 +749,7 @@ Operations for maintenance
       raise fuse event new_receipt with
         image_name = image_name and
 	image_source = image_source      if img_is_new;
+      raise fuse event new_reminder_status with id = rec{"reminder_ref"} if not rec{"reminder_ref"}.isnull();
     } else {
       log(">>>>>> Could not store maintenance_record " + rec.encode());
     }
