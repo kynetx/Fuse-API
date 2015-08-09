@@ -423,6 +423,7 @@ The status object has the following properties:
 - id &mdash; the identifier for the alert to process
 - status &mdash; the disposition of the alert. One of ```completed``` or ```deferred```
 - agent &mdash; the person or organization who performed the maintenance
+- cost&mdash;the cost of processing the alert
 - receipt &mdash; the URL of the receipt or a ```data:image``` encoded picture of the receipt 
 
 #### Alert Status
@@ -476,7 +477,7 @@ The maintenance record object has the following properties:
 Note:
 
 - Agent, activity, and reason are free-form strings
-- If maintenance record is created from an alert, the activity and reason for the alert are transferred to the maintenance record by default. 
+- If maintenance record is created from an alert or a valid alert reference is supplied, the activity and reason for the alert are transferred to the maintenance record by default. 
 
 #### Updating a Maintenance Record Record
 

@@ -689,6 +689,7 @@ Operations for maintenance
     select when fuse updated_maintenance_record
     pre {
 
+      f00 = event:alerts().klog(">>>> attributes >>>> ");
       // if no id, assume new record and create one
       new_record = event:attr("id").isnull();
       current_time = common:convertToUTC(time:now());
@@ -721,7 +722,7 @@ Operations for maintenance
       rec = {
         "id": id,
 	"activity": activity,
-	"activity": reason,
+	"reason": reason,
 	"alert_ref": event:attr("alert_ref") || "none",
 	"reminder_ref": alert{"reminder_ref"},
 	"trouble_codes": alert{"trouble_codes"},
