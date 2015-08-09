@@ -718,7 +718,8 @@ Operations for maintenance
       
       vehicle_id = CloudOS:subscriptionList(common:namespace(),"Fleet").head().pick("$.channelName").klog(">>>> vehicle ID >>>>> ");
       img_name   = "fuse_vehicle_files/#{meta:eci()}/#{vehicle_id}/#{id}.img";
-      img_url    = S3:makeAwsUrl(S3Bucket,img_name);
+      img_url    = img_source.isnull() => null // store nothing if nothing
+                                        | S3:makeAwsUrl(S3Bucket,img_name);
 
       rec = {
         "id": id,
