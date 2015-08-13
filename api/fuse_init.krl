@@ -99,7 +99,9 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	  report_events = report_info{"report_events"};
 	  first_event_report = report_events.head();
 	  
-	  fleet = {"channel" : fleet_channel};
+	  fleet = {"channel" : fleet_channel,
+                   "status_url": "https://#{meta:host()}/sky/cloud/b16x17/showPicoStatus?_eci=#{fleet_channel}"
+                  };
 
 	  settings = pds:get_setting_data(meta:rid()) || {};
 
