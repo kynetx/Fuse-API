@@ -92,6 +92,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
         showPicoStatus = function() { 
 	  fleet_channel = fleetChannel();
+	  fleet_eci = fleet_channel{"eci"};
 	  // takes too long right now...
 //	  common:skycloud(fleet_channel{"eci"},"b16x17","showPicoStatus", {}) 
 	  
@@ -100,7 +101,7 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 	  first_event_report = report_events.head();
 	  
 	  fleet = {"channel" : fleet_channel,
-                   "status_url": "https://#{meta:host()}/sky/cloud/b16x17/showPicoStatus?_eci=#{fleet_channel}"
+                   "status_url": "https://#{meta:host()}/sky/cloud/b16x17/showPicoStatus?_eci=#{fleet_eci}"
                   };
 
 	  settings = pds:get_setting_data(meta:rid()) || {};
