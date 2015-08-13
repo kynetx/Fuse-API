@@ -122,7 +122,7 @@ You are being redirected to <a href="#{url}">#{url}</a>
       account_info = ent:account_info || {};
       try_refresh = not account_info{"refresh_token"}.isnull();
       new_tokens = try_refresh => refreshTokenForAccessToken().klog(">>>>> refreshing for carvoyant_get() >>> ")
-                                | account_info; // don't change
+                                | {}
       new_tokens
     };
 
@@ -140,7 +140,7 @@ You are being redirected to <a href="#{url}">#{url}</a>
         invalid_grant = raw_result{"status_code"} eq "400" && 
 	                raw_result{"content"}.decode().pick("$.error") eq "invalid_grant";
         (raw_result{"status_code"} eq "200") => normalizeAccountInfo(raw_result{"content"}.decode()) |
-        invalid_grant                        => tellOwner()
+        invalid_grant                        => tellOwner(ent:account_info)
                                               | raw_result.decode()
       };
 
@@ -201,7 +201,8 @@ You are being redirected to <a href="#{url}">#{url}</a>
 	                               	       | getTokensForVehicle(id, return_tokens)
       };	
 
-      tellOwner = function() {
+
+      tellOwner = function(tokens) {
         owner = CloudOS:subscriptionList(common:namespace(),"FleetOwner").head().pick("$.eventChannel");
 	html = <<
 <!-- header -->
@@ -242,11 +243,22 @@ We're sorry for the inconvenience.
 	  "subj": "Fuse Needs Attention",
 	  "html": reports:emailBody(html)
 	};
-        email_response = CloudOS:sendEvent(owner, "fuse", "email_for_owner", attrs);
-	{}
+
+	email_response = resend() => CloudOS:sendEvent(owner, "fuse", "email_for_owner", attrs) | 0;
+	tokens
       }
 
+      resend = function() {
+      	now = time:strftime(time:now(), "%s");
+        one_day = 30;
+        check = not ent:before.isnull() && (now - ent:before > one_day);
+        new_time = check => now.pset(ent:before) | ent:before;
+        check
+      }
+
+
     }
+
 
   // ---------- create account ----------
 
