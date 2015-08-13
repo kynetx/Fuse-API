@@ -122,7 +122,7 @@ You are being redirected to <a href="#{url}">#{url}</a>
       account_info = ent:account_info || {};
       try_refresh = not account_info{"refresh_token"}.isnull();
       new_tokens = try_refresh => refreshTokenForAccessToken().klog(">>>>> refreshing for carvoyant_get() >>> ")
-                                | {};
+                                | account_info; // don't change
       new_tokens
     };
 
