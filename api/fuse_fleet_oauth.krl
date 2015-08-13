@@ -252,7 +252,8 @@ We're sorry for the inconvenience.
       	now = time:strftime(time:now(), "%s");
         one_day = 30;
         check = not ent:before.isnull() && (now - ent:before > one_day);
-        new_time = check => now.pset(ent:before) | ent:before;
+        new_time = check => now.pset(ent:before).klog(">>> time to send again >>>") 
+                          | ent:before.klog(">>> not resending, #{one_day} seconds haven't elapsed");
         check
       }
 
