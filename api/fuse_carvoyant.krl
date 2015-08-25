@@ -598,6 +598,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
     if( valid_subscription_type(sub_type)  
      && subscribe
+     && vid
       ) then {
         add_subscription(vid, sub_type, params, sub_target) with
     	  ar_label = "add_subscription";
@@ -606,9 +607,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
     }
     notfired {
       error info "Invalid Carvoyant subscription type: #{sub_type}" if (not valid_subscription_type(sub_type));
-      
       log  "Already subscribed; saw " + subs.encode() if valid_subscription_type(sub_type);
-
     }
   }
 
