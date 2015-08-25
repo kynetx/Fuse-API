@@ -874,7 +874,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	  with dtc = codes
 	   and timestamp = status{"timestamp"} 
 	   and activity = "#{vehicle_name} (#{device_id}) reported the following diagnostic codes: " + codes.encode()
-	   and reason = "Diagnostic code report from #{vehicle_id}: " + reason_string
+	   and reason = "Diagnostic code report from #{vehicle_name}: " + reason_string
 	   and id = id
           ;
 
