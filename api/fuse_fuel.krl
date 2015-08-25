@@ -16,7 +16,7 @@ Operations for fuel
     use module b16x11 alias carvoyant
 
 	
-    provides fillups, fillupsByDate, currentCPM, standardMPG, standardCPG
+    provides fillups, fillupsByDate, currentCPM, standardMPG, standardCPG, callEdmunds, callFuelEconomy
   }
 
   global {
