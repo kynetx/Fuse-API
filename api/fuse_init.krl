@@ -106,7 +106,10 @@ Ruleset for initializing a Fuse account and managing vehicle picos
 
 	  settings = pds:get_setting_data(meta:rid()) || {};
 
+          me = pds:get_all_me();
+
 	  status = {
+            "owner_profile": me,
 	    "reports": report_events.length() == 1 
 	            && first_event_report[1] eq "explicit/periodic_report"
 		    && first_event_report[2] eq "repeat"
