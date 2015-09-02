@@ -210,6 +210,9 @@ Application that manages the fleet
 
 
       showPicoStatus = function() { 
+
+        owner_subs = CloudOS:subscriptionList(common:namespace(),"FleetOwner");
+
         vehicle_statuses = vehicleChannels()
   	                      .map(function(p){ common:skycloud(p{"channel"},"b16x9","showPicoStatus", {})
                                                   .put(["picoId"], p{"picoId"})
@@ -221,6 +224,7 @@ Application that manages the fleet
                               ;
 
 	status = {"overall": vehicle_statuses.values().all(function(v) { v{["status","overall"]} }),
+                  "owners": owner_subs,
 	          "vehicle": vehicle_statuses
                                 .map(function(k,v){v.pick("$..overall")}),
 		  "carvoyant": carvoyant:isAuthorized() 
