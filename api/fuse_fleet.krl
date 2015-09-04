@@ -20,7 +20,7 @@ Application that manages the fleet
         sharing on
         provides vehicleChannels, vehicleSummary, vehicleStatus, tripSummaries, tripsSummary, fuelSummaries, fuelSummary,
 	seeFleetData, // delete after testing
-	fleetDetails, vinAndDeviceIdCheck, errorSummary, showPicoStatus, createSharingChannel 
+	fleetDetails, vinAndDeviceIdCheck, errorSummary, showPicoStatus, createSharingChannel, role
     }
 
     global {
@@ -28,6 +28,10 @@ Application that manages the fleet
       vehicleChannels = function() {
 
          common:vehicleChannels();
+      };
+
+      role = function() {
+        common:role()
       };
 
       seeFleetData = function(){

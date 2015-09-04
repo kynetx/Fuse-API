@@ -84,7 +84,7 @@ Common definitions
       };
 
       role = function() {
-        pds:get_items(namespace(), "schema");
+        pds:get_item(namespace(), "schema");
       };
 
       requiredRulesets = function(type) {
