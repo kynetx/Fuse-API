@@ -17,10 +17,12 @@ Fuse ruleset for a vehicle pico
       use module b16x19 alias common
       use module b16x11 alias carvoyant
       use module b16x18 alias trips
+      use module b16x20 alias fuel
+      use module b16x26 alias reports
 	
       provides vin, fleetChannel, fleetChannels, vehicleSummary, vehicleSubscription, showPicoStatus,
                missingSubscriptions,
-	       trips
+	       trips, role
 
     }
 
@@ -218,6 +220,10 @@ Fuse ruleset for a vehicle pico
       // ---------- experimental ----------
       trips = function(id, limit, offset) {
           trips:trips(id, limit, offset)
+      }
+
+      role = function() { 
+         common:role();
       }
 
     }
@@ -562,6 +568,31 @@ Fuse ruleset for a vehicle pico
 	              	 .delete(["deviceId"]),
 	       "_api": "sky"
               };
+      }
+
+    }
+
+    rule generate_vehicle_report {
+      select when fuse vehicle_report_needed
+
+      pre {
+        start = event:attr("start");
+        end = event:attr("end");
+	rcn = event:attr("report_correlation_number");
+	vehicle_summary = vehicleSummary();
+
+
+
+      }
+
+      {
+        event:send({"cid": fleetChannel()}, "fuse", "vehicle_report_generated") with
+	  id = carvoyant:vehicle_id() and
+          report_correlation_number = rcn
+      }
+
+      fired {
+        log "Vehicle report generated and sent to fleet"
       }
 
     }
