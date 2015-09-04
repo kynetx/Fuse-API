@@ -84,7 +84,7 @@ Common definitions
       };
 
       role = function() {
-        schema = pds:get_item(common:namespace(), "schema");
+        schema = pds:get_item(namespace(), "schema");
 	schema{"role"}
       };
 
