@@ -84,8 +84,7 @@ Common definitions
       };
 
       role = function() {
-        schema = pds:get_items(namespace()).klog("Items stored for #{namespace()}");
-	schema{"role"}
+        pds:get_items(namespace(), "schema");
       };
 
       requiredRulesets = function(type) {
