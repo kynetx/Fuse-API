@@ -84,7 +84,7 @@ Common definitions
       };
 
       role = function() {
-        pds:get_item(namespace(), "schema");
+        pds:get_item(namespace(), "schema").defaultsTo("Owner", "no schema available");
       };
 
       requiredRulesets = function(type) {
