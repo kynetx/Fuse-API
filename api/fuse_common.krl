@@ -14,7 +14,7 @@ Common definitions
 	         convertToUTC, strToNum, vehicleChannels, fleet_photo, vehicle_photo, factory, returnChannel,
 		 fleetChannel, fleetChannels, requiredRulesets,
 	         skycloud, allowedRids, genAndStore, retrieveVal, apps, setup_events,
-		 vehicleSummary
+		 vehicleSummary, role
     }
 
     global {
@@ -83,9 +83,14 @@ Common definitions
 	              ]
       };
 
+      role = function() {
+        schema = pds:get_item(common:namespace(), "schema");
+	schema{"role"}
+      };
+
       requiredRulesets = function(type) {
         apps{type};
-      }
+      };
 
       // only ruleset installs are specific to fuse. Generalize? 
       factory = function(pico_meta, parent_eci) {
