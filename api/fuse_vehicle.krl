@@ -22,7 +22,7 @@ Fuse ruleset for a vehicle pico
 	
       provides vin, fleetChannel, fleetChannels, vehicleSummary, vehicleSubscription, showPicoStatus,
                missingSubscriptions,
-	       trips, role
+	       trips
 
     }
 
@@ -220,10 +220,6 @@ Fuse ruleset for a vehicle pico
       // ---------- experimental ----------
       trips = function(id, limit, offset) {
           trips:trips(id, limit, offset)
-      }
-
-      role = function() { 
-         common:role();
       }
 
     }

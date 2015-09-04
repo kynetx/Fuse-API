@@ -23,14 +23,10 @@ Ruleset for initializing a Fuse account and managing vehicle picos
         errors to b16x13
 
         sharing on
-        provides fleetChannel, fuseOwners, showPicoStatus, showReportHistory, createSharingChannel, role
+        provides fleetChannel, fuseOwners, showPicoStatus, showReportHistory, createSharingChannel
     }
 
     global {
-
-      role = function() { 
-         common:role();
-      };
 
 
         fleetChannel = function() {
