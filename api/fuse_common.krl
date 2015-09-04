@@ -88,7 +88,7 @@ Common definitions
       };
 
       requiredRulesets = function(type) {
-        apps{type};
+        apps{type}; 
       };
 
       // only ruleset installs are specific to fuse. Generalize? 
