@@ -224,8 +224,7 @@ Fuse ruleset for a vehicle pico
 
       vehicleDetails = function(start, end) {
           vd = reports:vehicleDetails(start, end);
-          //vd(vehicleSummary());
-          vd
+          vd(vehicleSummary());
       }
 
     }
