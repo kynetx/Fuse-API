@@ -14,7 +14,7 @@ Functions for creating the Fuse reports
         use module b16x20 alias fuel
 
         sharing on
-        provides fleetReport, emailBody, fleetDetails
+        provides fleetReport, emailBody, fleetDetails, vehicleDetails
     }
 
     global {
