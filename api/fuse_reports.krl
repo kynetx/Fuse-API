@@ -327,7 +327,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 </tr>
 
 <tr><td colspan="2" style="#{vehicle_table_row_style}"><b>#{name} took #{readable_num_trips}: #{total_miles} miles, #{readable_total_duration}, $#{total_cost}</b></td></tr>
-<tr><td colspan="2" style="#{vehicle_table_row_style}">Trip averages: #{avg_miles} miles, #{readable_avg_duration}, $#{avg_cost}</b></td></tr>
+<tr><td colspan="2" style="#{vehicle_table_row_style}">Trip averages: #{avg_miles} miles, #{min_or_hours(avg_duration)}, $#{avg_cost}</b></td></tr>
 
 <tr><!-- trips -->
  <td colspan="2" style="#{vehicle_table_row_style}">
