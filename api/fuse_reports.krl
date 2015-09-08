@@ -10,6 +10,8 @@ Functions for creating the Fuse reports
         errors to b16x13
 
 	use module b16x19 alias common
+        use module b16x18 alias trips
+        use module b16x20 alias fuel
 
         sharing on
         provides fleetReport, emailBody, fleetDetails
@@ -51,8 +53,10 @@ Functions for creating the Fuse reports
 
       vehicleDetails = function(start, end) {
         function(vehicle) {
-          trips_raw = vehicle{"channel"}.isnull() => []
+          trips_raw = common:role() eq "Vehicle" => trips:tripsByDate(start, end)
+                    | vehicle{"channel"}.isnull() => []
                     | common:skycloud(vehicle{"channel"},"b16x18","tripsByDate", {"start": start, "end": end});
+          
           trips = trips_raw.typeof() eq "hash" && trips_raw{"error"} => [].klog(">>> error for trips query to " + vehicle{"channel"})
                                                                       | trips_raw;  
 
@@ -80,8 +84,11 @@ Functions for creating the Fuse reports
                                 ).klog(">>>> longest >>>>");
 
 
-	  fillups_raw = vehicle{"channel"}.isnull() => []
+	  fillups_raw = common:role() eq "Vehicle" => fuel:fillupsByDate(start, end)
+                      | vehicle{"channel"}.isnull() => []
                       | common:skycloud(vehicle{"channel"},"b16x20","fillupsByDate", {"start": start, "end": end}).klog(">>>>> seeing fillups >>>>>>");
+
+
           fillups = fillups_raw.typeof() eq "hash" && fillups_raw{"error"} => [].klog(">>> error for fillups query to " + vehicle{"channel"})
                                                                             | fillups_raw;  
 
