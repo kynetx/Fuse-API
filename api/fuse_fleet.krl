@@ -40,13 +40,12 @@ Application that manages the fleet
 
       vehicleSummary = function() {
 
-        picos = CloudOS:picoList()|| {}; // tolerate lookup failures
+        picos = CloudOS:picoList().defaultsTo({}); // tolerate lookup failures
         picos_by_id = picos.values().collect(function(x){x{"id"}}).map(function(k,v){v.head()});
 	pico_ids = picos_by_id.keys();
  
 	// get the subscription IDs (we don't want to use the Pico channels here...)
-        vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle")
-                    || [];   
+        vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle").defaultsTo([]);
 
         // collect returns arrays as values, and we only have one, so map head()
         vehicle_ecis_by_name = vehicle_ecis.collect(function(x){x{"channelName"}}).map(function(k,v){v.head()}).klog(">>> ecis by name  >>> ");
@@ -774,7 +773,7 @@ You need HTML email to see this report.
 
     pre {
       rcn = event:attr("report_correlation_number");
-      vehicles_in_fleet = vehicleSummary().length();
+      vehicles_in_fleet = vehicleSummary().length().klog(">>>> vehicles in fleet >>> ");
       number_of_reports_received = ent:vehicle_reports{rcn}.length().klog(">>>> reports received >>>>");
       timer_expired = event:type() eq "periodic_report_timer_expired";
     }
@@ -785,12 +784,12 @@ You need HTML email to see this report.
       noop();
     }
     fired {
-      log "process vehicle reports " + ent:vehicles_in_fleet{rcn}.encode();
+      log "process vehicle reports " + ent:vehicles_reports{rcn}.encode();
       log "timer expired" if(timer_expired);
       clear ent:vehicle_reports{rcn};
     } else {
       log "we're still waiting for " + vehicles_in_fleet - number_of_reports_received + " reports";
-      log "reports so far " + ent:vehicles_in_fleet{rcn}.encode();
+      log "reports so far " + ent:vehicles_reports{rcn}.encode();
     }
   }
 
