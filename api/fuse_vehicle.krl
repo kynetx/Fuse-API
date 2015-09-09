@@ -577,7 +577,7 @@ Fuse ruleset for a vehicle pico
       select when fuse periodic_vehicle_report
 
       pre {
-        report_attrs = 	{"id": carvoyant:vehicle_id(),
+        report_attrs = 	{"vehicle_id": event:attr("vehicle_id").defaultsTo(carvoyant:vehicle_id()),
 	                 "report_correlation_number": event:attr("report_correlation_number"),
 			 "vehicle_details": vehicleDetails(event:attr("start"), event:attr("end"))
                         };

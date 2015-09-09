@@ -750,6 +750,50 @@ You need HTML email to see this report.
     
   }
 
+  rule catch_periodic_vehicle_reports {
+    select when fuse periodic_vehicle_report_created
+
+    pre {
+      vehicle_id = event:attr("vehicle_id");
+      rcn = event:attr("report_correlation_number");
+      updated_vehicle_reports = (ent:vehicle_reports{rcn}).append(event:attr("vehicle_details"));
+      
+    }
+    noop();
+    always {
+      set ent:vehicle_reports{rcn} updated_vehicle_reports;
+      raise explicit event periodic_vehicle_report_added with
+        report_correlation_number = rcn
+    }
+
+  }    
+
+  rule check_periodic_report_status {
+    select when explicit periodic_vehicle_report_added
+             or explicit periodic_report_timer_expired
+
+    pre {
+      rcn = event:attr("report_correlation_number");
+      vehicles_in_fleet = vehicleSummary().length();
+      number_of_reports_received = ent:vehicle_reports{rcn}.length();
+      timer_expired = event:type() eq "periodic_report_timer_expired";
+    }
+
+    if ( vehicles_in_fleet <= number_of_reports_received
+      || timer_expired
+       ) then {
+      noop();
+    }
+    fired {
+      log "process vehicle reports";
+      log "timer expired" if(timer_expired);
+      clear ent:vehicle_reports{rcn};
+    } else {
+      log "we're still waiting for " + vehicles_in_fleet - number_of_reports_received + " reports";
+      log "reports so far " + ent:vehicles_in_fleet{rcn}.encode();
+    }
+  }
+
     
   // ---------- housekeeping rules ----------
 
