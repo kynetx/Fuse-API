@@ -787,7 +787,7 @@ You need HTML email to see this report.
       noop();
     }
     fired {
-      log "process vehicle reports " + ent:vehicle_reports{rcn}.encode();
+      log "process vehicle reports ";
       log "timer expired" if(timer_expired);
       raise explicit event periodic_report_ready with
         report_correlation_number = rcn;
