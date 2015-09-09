@@ -789,13 +789,26 @@ You need HTML email to see this report.
     fired {
       log "process vehicle reports " + ent:vehicle_reports{rcn}.encode();
       log "timer expired" if(timer_expired);
-      clear ent:vehicle_reports{rcn};
+      raise explicit event periodic_report_ready with
+        report_correlation_number = rcn;
     } else {
       log "we're still waiting for " + vehicles_in_fleet - number_of_reports_received + " reports";
       log "reports so far " + ent:vehicle_reports{rcn}.encode();
     }
   }
 
+  rule process_periodic_report {
+    select when explicit periodic_report_ready
+    pre {
+      rcn = event:attr("report_correlation_number");
+    }
+
+    noop();
+    always {
+     clear ent:vehicle_reports{rcn};
+    }
+
+  }
     
   // ---------- housekeeping rules ----------
 
