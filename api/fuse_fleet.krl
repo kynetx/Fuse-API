@@ -793,7 +793,6 @@ You need HTML email to see this report.
         report_correlation_number = rcn;
     } else {
       log "we're still waiting for " + vehicles_in_fleet - number_of_reports_received + " reports";
-      log "reports so far " + ent:vehicle_reports{rcn}.encode();
     }
   }
 
