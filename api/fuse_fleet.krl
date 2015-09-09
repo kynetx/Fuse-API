@@ -778,7 +778,7 @@ You need HTML email to see this report.
       rcn = event:attr("report_correlation_number");
       vehicles_in_fleet = vehicleSummary().length().klog(">>>> vehicles in fleet >>> ");
       number_of_reports_received = (ent:vehicle_reports{rcn}).length().klog(">>>> reports received >>>>");
-      timer_expired = event:type() eq "periodic_report_timer_expired";
+      timer_expired = event:type() eq "periodic_report_timer_expired"; 
     }
 
     if ( vehicles_in_fleet <= number_of_reports_received
