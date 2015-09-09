@@ -51,7 +51,8 @@ Application that manages the fleet
         vehicle_ecis_by_name = vehicle_ecis.collect(function(x){x{"channelName"}}).map(function(k,v){v.head()}).klog(">>> ecis by name  >>> ");
 
 
-	summaries = (ent:fleet{["vehicle_info"]} || {})
+	summaries = (ent:fleet{["vehicle_info"]})
+	             .defaultsTo({})
 		     .map(function(k,v){v.put(["picoId"], k)
                                          .put(["channel"], vehicle_ecis_by_name{[k,"eventChannel"]})
                                        });
@@ -784,12 +785,12 @@ You need HTML email to see this report.
       noop();
     }
     fired {
-      log "process vehicle reports " + ent:vehicles_reports{rcn}.encode();
+      log "process vehicle reports " + ent:vehicle_reports{rcn}.encode();
       log "timer expired" if(timer_expired);
       clear ent:vehicle_reports{rcn};
     } else {
       log "we're still waiting for " + vehicles_in_fleet - number_of_reports_received + " reports";
-      log "reports so far " + ent:vehicles_reports{rcn}.encode();
+      log "reports so far " + ent:vehicle_reports{rcn}.encode();
     }
   }
 
