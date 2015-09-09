@@ -573,27 +573,29 @@ Fuse ruleset for a vehicle pico
 
     }
 
-    rule generate_vehicle_report {
-      select when fuse vehicle_report_needed
+    rule create_periodic_vehicle_report {
+      select when fuse periodic_vehicle_report
 
       pre {
         start = event:attr("start");
         end = event:attr("end");
 	rcn = event:attr("report_correlation_number");
-	vehicle_summary = vehicleSummary();
-
-
-
+	vehicle_details = vehicleDetails(start, end);
       }
 
       {
-        event:send({"cid": fleetChannel()}, "fuse", "vehicle_report_generated") with
+        event:send({"cid": fleetChannel()}, "fuse", "periodic_vehicle_report_created") with
 	  id = carvoyant:vehicle_id() and
-          report_correlation_number = rcn
+          report_correlation_number = rcn and
+	  vehicle_details = vehicle_details
       }
 
       fired {
-        log "Vehicle report generated and sent to fleet"
+        log "Vehicle report generated and sent to fleet";
+	raise fuse event "periodic_vehicle_report_created" with
+	  id = carvoyant:vehicle_id() and
+          report_correlation_number = rcn and
+	  vehicle_details = vehicle_details
       }
 
     }
