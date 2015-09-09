@@ -756,7 +756,9 @@ You need HTML email to see this report.
     pre {
       vehicle_id = event:attr("vehicle_id");
       rcn = event:attr("report_correlation_number");
-      updated_vehicle_reports = (ent:vehicle_reports{rcn}).append(event:attr("vehicle_details"));
+      updated_vehicle_reports = (ent:vehicle_reports{rcn})
+                                    .defaultsTo([])
+                                    .append(event:attr("vehicle_details").decode());
       
     }
     noop();
