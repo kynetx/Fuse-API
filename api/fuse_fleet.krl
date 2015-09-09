@@ -64,7 +64,7 @@ Application that manages the fleet
 	missing = pico_ids.difference(summary_keys).klog(">>>> missing vehicle data here >>>>");
 	responses = missing.map(function(k){CloudOS:sendEvent(picos_by_id{[k,"channel"]}, "fuse", "need_vehicle_data", account_info)}); 
 	
-	summaries.values().klog(">>>> vehicle_info >>>>")
+	summaries.values()
 
       };
 
@@ -775,7 +775,7 @@ You need HTML email to see this report.
     pre {
       rcn = event:attr("report_correlation_number");
       vehicles_in_fleet = vehicleSummary().length();
-      number_of_reports_received = ent:vehicle_reports{rcn}.length();
+      number_of_reports_received = ent:vehicle_reports{rcn}.length().klog(">>>> reports received >>>>");
       timer_expired = event:type() eq "periodic_report_timer_expired";
     }
 
@@ -785,7 +785,7 @@ You need HTML email to see this report.
       noop();
     }
     fired {
-      log "process vehicle reports";
+      log "process vehicle reports " + ent:vehicles_in_fleet{rcn}.encode();
       log "timer expired" if(timer_expired);
       clear ent:vehicle_reports{rcn};
     } else {
