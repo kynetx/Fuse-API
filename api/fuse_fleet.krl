@@ -750,6 +750,42 @@ You need HTML email to see this report.
     
   }
 
+  rule start_periodic_report {
+    select when fuse periodic_report_start
+    foreach vehicleSummary() setting(vsum)
+
+    pre {
+
+      rcn = time:strftime("%s", time:now({ "tz" : "UTC" }));
+      period = {"format": {"days" : -7}, // one week; must be negative
+                "readable" : "weekly"
+               };
+
+      tz = event:attr("timezone").klog(">>> owner told me their timezone >>>> ");
+
+      today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz": tz.defaultsTo("UTC")});
+      start = time:add(today, {"days": -1});
+      end = time:add(today, period{"format"});
+
+
+      channel = {"cid": vsum{"channel"}}
+
+    }
+    {
+      event:send(channel, "fuse", "periodic_vehicle_report")
+          with attrs = {
+	    "report_correlation_number": rcn,
+	    "vehicle_id": vsum{"picoId"},
+	    "start": start,
+	    "end": end
+	  };
+    }
+
+    fired {
+      raise fuse event "periodic_report_started" attributes {"report_correlation_number": rcn}
+    }
+  }
+
   rule catch_periodic_vehicle_reports {
     select when fuse periodic_vehicle_report_created
 
@@ -792,7 +828,7 @@ You need HTML email to see this report.
       raise explicit event periodic_report_ready with
         report_correlation_number = rcn;
     } else {
-      log "we're still waiting for " + vehicles_in_fleet - number_of_reports_received + " reports";
+      log "we're still waiting for " + (vehicles_in_fleet - number_of_reports_received) + " reports";
     }
   }
 
