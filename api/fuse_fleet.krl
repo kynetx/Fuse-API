@@ -784,8 +784,9 @@ You need HTML email to see this report.
     }
 
     fired {
-      raise fuse event "periodic_report_started" attributes {"report_correlation_number": rcn}
-      // schedule time tick
+      raise fuse event "periodic_report_started" attributes {"report_correlation_number": rcn};
+      schedule fuse event " periodic_report_timer_expired" at time:add(time:now(),{"minutes" : 2}) 
+        attributes {"report_correlation_number": rcn};
     }
   }
 
@@ -821,7 +822,7 @@ You need HTML email to see this report.
     }
 
     if ( vehicles_in_fleet <= number_of_reports_received
-      || timer_expired
+      || (timer_expired && not ent:vehicle_reports{rcn}.isnull())
        ) then {
       noop();
     }
