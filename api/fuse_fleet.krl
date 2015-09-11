@@ -756,7 +756,7 @@ You need HTML email to see this report.
 
     pre {
 
-      rcn = time:strftime("%s", time:now({ "tz" : "UTC" }));
+      rcn = time:strftime(time:now({ "tz" : "UTC" }), "%s");
       period = {"format": {"days" : -7}, // one week; must be negative
                 "readable" : "weekly"
                };
@@ -764,8 +764,8 @@ You need HTML email to see this report.
       tz = event:attr("timezone").klog(">>> owner told me their timezone >>>> ");
 
       today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz": tz.defaultsTo("UTC")});
-      start = time:add(today, {"days": -1});
-      end = time:add(today, period{"format"});
+      end = time:add(today, {"days": -1});
+      start = time:add(today, period{"format"});
 
 
       channel = {"cid": vsum{"channel"}}
@@ -783,6 +783,7 @@ You need HTML email to see this report.
 
     fired {
       raise fuse event "periodic_report_started" attributes {"report_correlation_number": rcn}
+      // schedule time tick
     }
   }
 
