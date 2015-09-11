@@ -786,7 +786,7 @@ You need HTML email to see this report.
     fired {
       raise fuse event "periodic_report_started" attributes {"report_correlation_number": rcn};
       schedule fuse event " periodic_report_timer_expired" at time:add(time:now(),{"minutes" : 2}) 
-        attributes {"report_correlation_number": rcn};
+        attributes {"report_correlation_number": rcn} on last; 
     }
   }
 
