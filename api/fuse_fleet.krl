@@ -765,10 +765,9 @@ You need HTML email to see this report.
 
       tz = event:attr("timezone").klog(">>> owner told me their timezone >>>> ");
 
-      today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz": tz.defaultsTo("UTC")});
-      end = time:add(today, {"days": -1});
-      start = time:add(today, period{"format"});
-
+      today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz": tz.defaultsTo("UTC")}).klog(">>> today >>>");
+      end = time:add(today, {"days": -1}).klog(">>> end of period >>>>");
+      start = time:add(today, period{"format"}).klog(">>> start of period >>>");
 
       channel = {"cid": vsum{"channel"}}
 
@@ -787,6 +786,7 @@ You need HTML email to see this report.
       raise fuse event "periodic_report_started" attributes {"report_correlation_number": rcn};
       schedule explicit event "periodic_report_timer_expired" at time:add(time:now(),{"minutes" : 2}) 
         attributes {"report_correlation_number": rcn} on final; 
+      set ent:vehicle_reports{[rcn,"time_info"]} {"period": period, "start": start, "end": end} on final;
     }
   }
 
@@ -796,21 +796,21 @@ You need HTML email to see this report.
     pre {
       vehicle_id = event:attr("vehicle_id");
       rcn = event:attr("report_correlation_number");
-      updated_vehicle_reports = (ent:vehicle_reports{rcn})
+      updated_vehicle_reports = (ent:vehicle_reports{[rcn,"reports"]})
                                     .defaultsTo([])
                                     .append(event:attr("vehicle_details").decode());
       
     }
     noop();
     always {
-      set ent:vehicle_reports{rcn} updated_vehicle_reports;
+      set ent:vehicle_reports{[rcn,"reports"]} updated_vehicle_reports;
       raise explicit event periodic_vehicle_report_added with
         report_correlation_number = rcn
     }
 
   }    
 
-  rule test_timer_expiry is active {
+  rule test_timer_expiry is inactive {
     select when explicit periodic_report_timer_expired 
     pre {
       email_map = { "subj" :  "Timer expired",
@@ -832,7 +832,7 @@ You need HTML email to see this report.
     pre {
       rcn = event:attr("report_correlation_number");
       vehicles_in_fleet = vehicleSummary().length().klog(">>>> vehicles in fleet >>> ");
-      number_of_reports_received = (ent:vehicle_reports{rcn}).length().klog(">>>> reports received >>>>");
+      number_of_reports_received = (ent:vehicle_reports{[rcn,"reports"]}).length().klog(">>>> reports received >>>>");
       timer_expired = event:type() eq "periodic_report_timer_expired"; 
     }
 
@@ -855,11 +855,13 @@ You need HTML email to see this report.
     select when explicit periodic_report_ready
     pre {
       rcn = event:attr("report_correlation_number");
-      fleet_details = ent:vehicle_reports{rcn};
-      report_html = reports:formatFleetReport(fleet_details);
 
-//      subj = "Your "+period{"readable"}+" report from Fuse!";
-      subj = "Your report from Fuse!";
+      time_info = ent:vehicle_reports{[rcn,"time_info"]}.klog(">> report time info >>");
+
+      fleet_details = ent:vehicle_reports{rcn};
+      report_html = reports:formatFleetReport(time_info{"start"}, time_info{"end"}, fleet_details);
+
+      subj = "Your "+time_info{["time_info","readable"]}+" report from Fuse!";
 
 
       msg = <<
