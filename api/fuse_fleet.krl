@@ -856,16 +856,27 @@ You need HTML email to see this report.
     pre {
       rcn = event:attr("report_correlation_number");
       fleet_details = ent:vehicle_reports{rcn};
-      report_html = reports:formatFleetReport(fleet_details).klog(">>> fleet report >>>");
-      email_map = { "subj" :  "Timer expired",
-		    "msg" : "The timer expired. ",
-		    "html" : ""
+      report_html = reports:formatFleetReport(fleet_details);
+
+//      subj = "Your "+period{"readable"}+" report from Fuse!";
+      subj = "Your report from Fuse!";
+
+
+      msg = <<
+You need HTML email to see this report. 
+      >>; 
+
+      email_map = { "subj" :  subj,
+		    "msg" : msg,
+		    "html" : report_html
                   };
+
+
     }
 
     noop();
     always {
-//     raise fuse event email_for_owner attributes email_map;
+     raise fuse event email_for_owner attributes email_map;
      clear ent:vehicle_reports{rcn};
     }
 
