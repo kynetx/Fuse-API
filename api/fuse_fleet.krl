@@ -855,6 +855,7 @@ You need HTML email to see this report.
     select when explicit periodic_report_ready
     pre {
       rcn = event:attr("report_correlation_number");
+      fleet_details = ent:vehicle_reports{rcn}.klog(">>> fleet details >>>");
       email_map = { "subj" :  "Timer expired",
 		    "msg" : "The timer expired. " + event:attrs().encode(),
 		    "html" : ""
@@ -863,7 +864,7 @@ You need HTML email to see this report.
 
     noop();
     always {
-     raise fuse event email_for_owner attributes email_map;
+//     raise fuse event email_for_owner attributes email_map;
      clear ent:vehicle_reports{rcn};
     }
 
