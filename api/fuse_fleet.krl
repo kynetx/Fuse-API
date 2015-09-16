@@ -786,7 +786,7 @@ You need HTML email to see this report.
 
     fired {
       raise fuse event "periodic_report_started" attributes {"report_correlation_number": rcn};
-      set ent:time_info{rcn} time_info;
+      set ent:time_info{rcn.klog(">>>> rcn >>>")} time_info;
       schedule explicit event "periodic_report_timer_expired" at time:add(time:now(),{"minutes" : 2}) 
         attributes {"report_correlation_number": rcn} on final; 
     }
@@ -858,6 +858,7 @@ You need HTML email to see this report.
     pre {
       rcn = event:attr("report_correlation_number");
 
+      c = ent:time_info.klog(">>> time info >>>");
       time_info = ent:time_info{rcn}.defaultsTo({}).klog(">> report time info >>");
 
       fleet_details = ent:vehicle_reports{[rcn, "reports"]};
