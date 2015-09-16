@@ -778,8 +778,8 @@ You need HTML email to see this report.
           with attrs = {
 	    "report_correlation_number": rcn,
 	    "vehicle_id": vsum{"picoId"},
-	    "start": start,
-	    "end": end
+	    "start": common:convertToUTC(start),
+	    "end": common:convertToUTC(end)
 	  };
       send_directive("periodic_report_started") with 
         rcn = rcn and 
