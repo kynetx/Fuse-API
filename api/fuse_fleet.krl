@@ -883,7 +883,7 @@ You need HTML email to see this report.
     always {
      raise fuse event email_for_owner attributes email_map;
      clear ent:vehicle_reports{rcn};
-     clear ent:time_info;
+     clear ent:time_info{rcn};
     }
 
   }
