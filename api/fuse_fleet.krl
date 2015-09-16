@@ -785,7 +785,8 @@ You need HTML email to see this report.
         rcn = rcn and 
 	vehicle_id = vsum{"picoId"} and 
 	start = start and
-	end = end;
+	end = end and
+        timezone = tz;
     }
 
     fired {
