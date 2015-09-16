@@ -810,7 +810,7 @@ You need HTML email to see this report.
 
   }    
 
-  rule test_timer_expiry {
+  rule test_timer_expiry is active {
     select when explicit periodic_report_timer_expired 
     pre {
       email_map = { "subj" :  "Timer expired",
@@ -855,10 +855,15 @@ You need HTML email to see this report.
     select when explicit periodic_report_ready
     pre {
       rcn = event:attr("report_correlation_number");
+      email_map = { "subj" :  "Timer expired",
+		    "msg" : "The timer expired. " + event:attrs().encode(),
+		    "html" : ""
+                  };
     }
 
     noop();
     always {
+     raise fuse event email_for_owner attributes email_map;
      clear ent:vehicle_reports{rcn};
     }
 

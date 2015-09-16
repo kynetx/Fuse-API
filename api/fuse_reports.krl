@@ -14,7 +14,7 @@ Functions for creating the Fuse reports
         use module b16x20 alias fuel
 
         sharing on
-        provides fleetReport, emailBody, fleetDetails, vehicleDetails
+        provides fleetReport, emailBody, fleetDetails, vehicleDetails, formatFleetReport
     }
 
     global {
@@ -155,6 +155,10 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
         before = time:add(today, period{"format"});
 
 	fleet_details = fleetDetails(before, today, summaries);
+	formatFleetReport(fleet_details)
+      }
+
+      formatFleetReport = function(fleet_details) {
 
         friendly_format = "%b %e";
 	title = "Fuse Fleet Report for #{time:strftime(before, friendly_format)} to #{time:strftime(yesterday, friendly_format)}"; 
