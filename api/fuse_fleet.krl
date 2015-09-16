@@ -770,7 +770,7 @@ You need HTML email to see this report.
       start = time:add(today, period{"format"}).klog(">>> start of period >>>");
 
       channel = {"cid": vsum{"channel"}};
-      time_info = {"period": period, "start": start, "end": end};
+      time_info = {"period": period, "start": start, "end": end, "timezone": tz};
 
     }
     {
@@ -867,7 +867,7 @@ You need HTML email to see this report.
       time_info = ent:time_info{rcn}.defaultsTo({}).klog(">> report time info >>");
 
       fleet_details = ent:vehicle_reports{[rcn, "reports"]};
-      report_html = reports:formatFleetReport(time_info{"start"}, time_info{"end"}, fleet_details);
+      report_html = reports:formatFleetReport(time_info{"start"}, time_info{"end"}, time_info{"timezone"}, fleet_details);
 
       subj = "Your "+time_info{["period","readable"]}+" report from Fuse!";
 

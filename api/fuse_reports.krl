@@ -158,7 +158,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 	formatFleetReport(fleet_details)
       }
 
-      formatFleetReport = function(before, yesterday, fleet_details) {
+      formatFleetReport = function(before, yesterday, tz, fleet_details) {
 
         friendly_format = "%b %e";
 	title = "Fuse Fleet Report for #{time:strftime(before, friendly_format)} to #{time:strftime(yesterday, friendly_format)}"; 
