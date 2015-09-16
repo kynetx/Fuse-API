@@ -862,7 +862,7 @@ You need HTML email to see this report.
       fleet_details = ent:vehicle_reports{[rcn, "reports"]};
       report_html = reports:formatFleetReport(time_info{"start"}, time_info{"end"}, fleet_details);
 
-      subj = "Your "+time_info{["time_info","readable"]}+" report from Fuse!";
+      subj = "Your "+time_info{["period","readable"]}+" report from Fuse!";
 
 
       msg = <<
