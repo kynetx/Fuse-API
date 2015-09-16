@@ -766,7 +766,7 @@ You need HTML email to see this report.
       tz = event:attr("timezone").klog(">>> owner told me their timezone >>>> ");
 
       today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz": tz.defaultsTo("UTC")}).klog(">>> today >>>");
-      end = time:add(today, {"days": -1}).klog(">>> end of period >>>>");
+      end = time:add(today, {"seconds": -1}).klog(">>> end of period >>>>");
       start = time:add(today, period{"format"}).klog(">>> start of period >>>");
 
       channel = {"cid": vsum{"channel"}};
