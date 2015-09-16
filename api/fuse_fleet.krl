@@ -770,7 +770,7 @@ You need HTML email to see this report.
       start = time:add(today, period{"format"}).klog(">>> start of period >>>");
 
       channel = {"cid": vsum{"channel"}};
-      time_info = {"period": period, "start": start, "end": end, "timezone": tz};
+      report_data = {"period": period, "start": start, "end": end, "timezone": tz};
 
     }
     {
@@ -791,7 +791,7 @@ You need HTML email to see this report.
 
     fired {
       raise fuse event "periodic_report_started" attributes {"report_correlation_number": rcn};
-      set ent:time_info{rcn.klog(">>>> rcn >>>")} time_info;
+      set ent:report_data{rcn.klog(">>>> rcn >>>")} report_data;
       schedule explicit event "periodic_report_timer_expired" at time:add(time:now(),{"minutes" : 2}) 
         attributes {"report_correlation_number": rcn} on final; 
     }
@@ -863,8 +863,8 @@ You need HTML email to see this report.
     pre {
       rcn = event:attr("report_correlation_number");
 
-      c = ent:time_info.keys().klog(">>> vehicle info >>>");
-      time_info = ent:time_info{rcn}.defaultsTo({}).klog(">> report time info >>");
+      c = ent:report_data.keys().klog(">>> vehicle info >>>");
+      time_info = ent:report_data{rcn}.defaultsTo({}).klog(">> report time info >>");
 
       fleet_details = ent:vehicle_reports{[rcn, "reports"]};
       report_html = reports:formatFleetReport(time_info{"start"}, time_info{"end"}, time_info{"timezone"}, fleet_details);
@@ -888,7 +888,7 @@ You need HTML email to see this report.
     always {
      raise fuse event email_for_owner attributes email_map;
      clear ent:vehicle_reports{rcn};
-     clear ent:time_info{rcn};
+     clear ent:report_data{rcn};
     }
 
   }
@@ -897,7 +897,7 @@ You need HTML email to see this report.
     select when fuse dirty_report_vars
     noop();
     always {
-      clear ent:time_info
+      clear ent:report_data
     }
   }
     
