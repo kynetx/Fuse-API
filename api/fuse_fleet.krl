@@ -810,6 +810,21 @@ You need HTML email to see this report.
 
   }    
 
+  rule test_timer_expiry {
+    select when explicit periodic_report_timer_expired 
+    pre {
+      email_map = { "subj" :  "Timer expired",
+		    "msg" : "The timer expired. " + event:attrs().encode(),
+		    "html" : ""
+                  };
+    }
+    noop();
+    fired {
+      raise fuse event email_for_owner attributes email_map;
+    }
+  }    
+
+
   rule check_periodic_report_status {
     select when explicit periodic_vehicle_report_added
              or explicit periodic_report_timer_expired
