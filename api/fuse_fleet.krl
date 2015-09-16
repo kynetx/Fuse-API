@@ -757,7 +757,7 @@ You need HTML email to see this report.
     pre {
 
       // drop last digit to avoid "off by a second" errors
-      rcn = math:floor(time:strftime(time:now({ "tz" : "UTC" }), "%s")/10);
+      rcn = "CID-"+math:floor(time:strftime(time:now({ "tz" : "UTC" }), "%s")/10);
 
       period = {"format": {"days" : -7}, // one week; must be negative
                 "readable" : "weekly"
