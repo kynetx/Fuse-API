@@ -858,7 +858,7 @@ You need HTML email to see this report.
     pre {
       rcn = event:attr("report_correlation_number");
 
-      c = ent:vehicle_info.keys().klog(">>> vehicle info >>>");
+      c = ent:time_info.keys().klog(">>> vehicle info >>>");
       time_info = ent:time_info{rcn}.defaultsTo({}).klog(">> report time info >>");
 
       fleet_details = ent:vehicle_reports{[rcn, "reports"]};
