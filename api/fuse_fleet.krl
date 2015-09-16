@@ -858,7 +858,7 @@ You need HTML email to see this report.
       fleet_details = ent:vehicle_reports{rcn};
       report_html = reports:formatFleetReport(fleet_details).klog(">>> fleet report >>>");
       email_map = { "subj" :  "Timer expired",
-		    "msg" : "The timer expired. " + event:attrs().encode(),
+		    "msg" : "The timer expired. ",
 		    "html" : ""
                   };
     }
