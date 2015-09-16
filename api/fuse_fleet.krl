@@ -781,7 +781,11 @@ You need HTML email to see this report.
 	    "start": start,
 	    "end": end
 	  };
-      send_directive("periodic_report_started") with rcn = rcn and vehicle_id = vsum{"picoId"};
+      send_directive("periodic_report_started") with 
+        rcn = rcn and 
+	vehicle_id = vsum{"picoId"} and 
+	start = start and
+	end = end;
     }
 
     fired {
