@@ -892,6 +892,14 @@ You need HTML email to see this report.
     }
 
   }
+
+  rule clean_report_vars {
+    select when fuse dirty_report_vars
+    noop();
+    always {
+      clear ent:time_info
+    }
+  }
     
   // ---------- housekeeping rules ----------
 
