@@ -155,7 +155,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
         before = time:add(today, period{"format"});
 
 	fleet_details = fleetDetails(before, today, summaries);
-	formatFleetReport(fleet_details)
+	formatFleetReport(before, yesterday, tz, fleet_details)
       }
 
       formatFleetReport = function(before, yesterday, tz, fleet_details) {

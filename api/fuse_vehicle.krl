@@ -575,7 +575,6 @@ Fuse ruleset for a vehicle pico
 
     rule create_periodic_vehicle_report {
       select when fuse periodic_vehicle_report
-
       pre {
         report_attrs = 	{"vehicle_id": event:attr("vehicle_id").defaultsTo(carvoyant:vehicle_id()),
 	                 "report_correlation_number": event:attr("report_correlation_number"),
@@ -583,16 +582,13 @@ Fuse ruleset for a vehicle pico
                         };
        	completed_event_name = "periodic_vehicle_report_created";
       }
-
       {
         event:send({"cid": fleetChannel()}, "fuse", completed_event_name) with attrs = report_attrs;
       }
-
       fired {
         log "Vehicle report generated and sent to fleet";
 	raise fuse event completed_event_name attributes report_attrs
       }
-
     }
 
 
