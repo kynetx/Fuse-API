@@ -152,7 +152,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 
         today = time:strftime(time:now(), "%Y%m%dT000000%z", {"tz": tz.defaultsTo("UTC")});
         yesterday = time:add(today, {"days": -1});
-        before = time:add(today, period{"format"});
+        before = time:add(today, period{"format"}).klog(">>>> before >>>>");
 
 	fleet_details = fleetDetails(before, today, summaries);
 	formatFleetReport(before, yesterday, tz, fleet_details)
