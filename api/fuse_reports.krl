@@ -416,6 +416,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
 	  
         readable_total_fleet_trips = trips_phrase(fleet_total_trip_num);
 	readable_total_fleet_fillups = fillups_phrase(fleet_total_fuel_num);
+	readable_total_fleet_size = fleet_details.length();
 
         html = <<
 <tr>
@@ -439,6 +440,7 @@ You can stop receiving them by <a href="http://joinfuse.com/app.html">editing yo
  
 
 <tr><td bgcolor="ffffff" style="font-size:18px;#{vehicle_table_row_style}"><b>Fleet totals:</b></td></tr>
+<tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Vehicles: #{readable_total_fleet_size} vehicles</td></tr>
 <tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Trips: #{readable_total_fleet_trips}, #{fleet_total_trip_miles} miles, #{fleet_total_trip_duration}, $#{fleet_total_trip_cost}</td></tr>
 <tr><td bgcolor="ffffff" style="#{vehicle_table_row_style}">Fillups: #{readable_total_fleet_fillups}, #{fleet_total_fuel_volume} gal, $#{fleet_total_fuel_cost}</td></tr>
 
