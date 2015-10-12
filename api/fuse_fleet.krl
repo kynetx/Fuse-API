@@ -20,10 +20,14 @@ Application that manages the fleet
         sharing on
         provides vehicleChannels, vehicleSummary, vehicleStatus, tripSummaries, tripsSummary, fuelSummaries, fuelSummary,
 	seeFleetData, // delete after testing
-	fleetDetails, vinAndDeviceIdCheck, errorSummary, showPicoStatus, createSharingChannel
+	fleetDetails, vinAndDeviceIdCheck, errorSummary, showPicoStatus, createSharingChannel, scheduledEvents
     }
 
     global {
+
+      scheduledEvents = function() {
+        event:get_list()
+      };
 
       vehicleChannels = function() {
 
@@ -817,7 +821,7 @@ You need HTML email to see this report.
 
   }    
 
-  rule test_timer_expiry is inactive {
+  rule test_timer_expiry is active {
     select when explicit periodic_report_timer_expired 
     pre {
       email_map = { "subj" :  "Timer expired",
