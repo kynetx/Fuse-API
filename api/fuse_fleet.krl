@@ -827,7 +827,7 @@ You need HTML email to see this report.
     }
     noop();
     fired {
-      raise fuse event email_for_owner attributes email_map;
+      log "Timer expired" + event:attrs().encode();
     }
   }    
 
