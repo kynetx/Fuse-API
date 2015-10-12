@@ -53,7 +53,7 @@ Functions for creating the Fuse reports
 
       vehicleDetails = function(start, end) {
         function(vehicle) {
-          trips_raw = common:role() eq "Vehicle" => trips:tripsByDate(start, end)
+          trips_raw = common:role() eq "Vehicle" => trips:tripsByDate(start, end).defaultsTo({}, "tripsByDate() failed")
                     | vehicle{"channel"}.isnull() => []
                     | common:skycloud(vehicle{"channel"},"b16x18","tripsByDate", {"start": start, "end": end});
           
@@ -84,7 +84,7 @@ Functions for creating the Fuse reports
                                 ).klog(">>>> longest >>>>");
 
 
-	  fillups_raw = common:role() eq "Vehicle" => fuel:fillupsByDate(start, end)
+	  fillups_raw = common:role() eq "Vehicle" => fuel:fillupsByDate(start, end).defaultsTo({}, "fillupsByDate() failed")
                       | vehicle{"channel"}.isnull() => []
                       | common:skycloud(vehicle{"channel"},"b16x20","fillupsByDate", {"start": start, "end": end}).klog(">>>>> seeing fillups >>>>>>");
 
