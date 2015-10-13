@@ -777,7 +777,8 @@ You need HTML email to see this report.
       report_data = {"period": period, "start": start, "end": end, "timezone": tz};
 
     }
-    {
+    if( not (vsum{"deviceId"}).isnull()
+      ) then {
       event:send(channel, "fuse", "periodic_vehicle_report")
           with attrs = {
 	    "report_correlation_number": rcn,

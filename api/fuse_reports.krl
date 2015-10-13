@@ -113,7 +113,7 @@ Functions for creating the Fuse reports
 	   "trips" : trips, 
 	   "fuelTotals" : total_fillups,
 	   "fillups" : fillups,
-	   "picoId": vehicle{"picoId"}
+	   "deviceId": vehicle{"deviceId"}
 	  }   
 
 
