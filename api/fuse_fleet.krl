@@ -879,7 +879,7 @@ You need HTML email to see this report.
       vehicle_summaries = vehicleSummary();
       vehicles_in_fleet = vehicle_summaries.length().klog(">>>> vehicles in fleet >>> ");
 
-      vehicle_reports = ent:vehicle_reports{[rcn,"reports"]};
+      vehicle_reports = ent:vehicle_reports{[rcn,"reports"]}.defaultsTo([]);
       number_of_reports_received = vehicle_reports.length().klog(">>>> reports received >>>>");
 
       vehicle_summaries_keys = vehicle_summaries.map(function(r){r{"deviceId"}}).klog(">> summary keys >>");
