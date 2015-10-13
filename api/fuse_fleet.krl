@@ -885,7 +885,7 @@ You need HTML email to see this report.
       vehicle_summaries_keys = vehicle_summaries.map(function(r){r{"deviceId"}}).klog(">> summary keys >>");
       vehicle_reports_keys = vehicle_reports.map(function(r){r{"deviceId"}}).klog(">> report keys >>");
 
-      missing_vehicles = vehicle_summaries_keys.difference(vehicle_reports_keys).klog(">> missing keys >>");
+      missing_vehicles = vehicle_reports_keys.difference(vehicle_summaries_keys).klog(">> missing keys >>");
 
       needed = vehicle_summaries.filter(function(s){
                                            missing_vehicles.map(function(m){m eq s{"deviceId"}})
