@@ -880,21 +880,26 @@ You need HTML email to see this report.
 
       vehicle_reports = ent:vehicle_reports{[rcn,"reports"]}.defaultsTo([]);
 
-      vehicle_summaries_keys = vehicle_summaries.map(function(r){r{"deviceId"}}).klog(">> summary keys >>");
-      vehicle_reports_keys = vehicle_reports.map(function(r){r{"deviceId"}}).klog(">> report keys >>");
+      vehicle_summaries_keys = vehicle_summaries.map(function(r){r{"deviceId"}})
+                                // .klog(">> summary keys >>")
+                                ;
+      vehicle_reports_keys = vehicle_reports.map(function(r){r{"deviceId"}})
+                                // .klog(">> report keys >>")
+				;
 
       missing_vehicles = vehicle_summaries_keys
-                             .klog(">>> summaries again >>>")
-                             .difference(vehicle_reports_keys.klog(">> reports again >>>"))
-                             .klog(">> missing keys >>");
+                             //.klog(">>> summaries again >>>")
+                             .difference(vehicle_reports_keys)
+                             .klog(">> missing keys >>")
+			     ;
 
       in_array = function(k,a){
         a.filter(function(x){x eq k}).length() > 0;
       };
 
       needed = vehicle_summaries.filter(function(s){
-                                           missing_vehicles.has([s{"deviceId"}])
-                                           //in_array(s{"deviceId"}, missing_vehicles)
+                                           //missing_vehicles.has([s{"deviceId"}])
+                                           in_array(s{"deviceId"}, missing_vehicles)
                                           })
                                 .klog(">>> needed vehicles >>")
                                 ;
