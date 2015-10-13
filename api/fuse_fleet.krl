@@ -843,11 +843,11 @@ You need HTML email to see this report.
     pre {
       rcn = event:attr("report_correlation_number");
       vehicles_in_fleet = vehicleSummary()
-                           .klog(">>>> vehicle summaries >>>>")
+                           //.klog(">>>> vehicle summaries >>>>")
                            .length()
                            .klog(">>>> vehicles in fleet >>> ");
       number_of_reports_received = (ent:vehicle_reports{[rcn,"reports"]})
-                                     .klog(">>>> vehicle reports >>>>")
+                                     //.klog(">>>> vehicle reports >>>>")
                                      .length()
                                      .klog(">>>> reports received >>>>")
                                      ;
@@ -918,7 +918,7 @@ You need HTML email to see this report.
       raise fuse event periodic_report_start attributes {
          "vehicle_summaries": needed,
 	 "timezone": tz,
-	 "report_correlation_nunmber": rcn
+	 "report_correlation_number": rcn
 	}
     } else {
       log "process vehicle reports ";
