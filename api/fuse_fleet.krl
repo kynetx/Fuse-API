@@ -906,7 +906,7 @@ You need HTML email to see this report.
                                            //missing_vehicles.has([s{"deviceId"}])
                                            in_array(s{"deviceId"}, missing_vehicles)
                                           })
-                                .klog(">>> needed vehicles >>")
+                                // .klog(">>> needed vehicles >>")
                                 ;
 
     }
