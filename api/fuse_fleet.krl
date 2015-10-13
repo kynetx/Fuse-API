@@ -888,7 +888,7 @@ You need HTML email to see this report.
       missing_vehicles = vehicle_summaries_keys.difference(vehicle_reports_keys).klog(">> missing keys >>");
 
       needed = vehicle_summaries.filter(function(s){
-                                           missing_vehicles.map(function(m){m{"deviceId"} eq s{"deviceId"}})
+                                           missing_vehicles.map(function(m){m eq s{"deviceId"}})
                                           })
                                 .klog(">>> needed vehicles >>")
                                 ;
