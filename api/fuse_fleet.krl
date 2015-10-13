@@ -52,7 +52,11 @@ Application that manages the fleet
         vehicle_ecis = CloudOS:subscriptionList(common:namespace(),"Vehicle").defaultsTo([]);
 
         // collect returns arrays as values, and we only have one, so map head()
-        vehicle_ecis_by_name = vehicle_ecis.collect(function(x){x{"channelName"}}).map(function(k,v){v.head()}).klog(">>> ecis by name  >>> ");
+        vehicle_ecis_by_name = vehicle_ecis
+	                           .collect(function(x){x{"channelName"}})
+				   .map(function(k,v){v.head()})
+				   //.klog(">>> ecis by name  >>> ")
+				   ;
 
 
 	summaries = (ent:fleet{["vehicle_info"]})
