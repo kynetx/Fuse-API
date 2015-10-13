@@ -756,12 +756,12 @@ You need HTML email to see this report.
 
   rule start_periodic_report {
     select when fuse periodic_report_start
-    foreach vehicleSummary() setting(vsum)
+    foreach event:attr("vehicle_summaries").defaultsTo(vehicleSummary()) setting(vsum)
 
     pre {
 
       // drop last digit to avoid "off by a second" errors
-      rcn = "CID-"+math:floor(time:strftime(time:now({ "tz" : "UTC" }), "%s")/10);
+      rcn = event:attr("report_correlation_number").defaultsTo("CID-"+math:floor(time:strftime(time:now({ "tz" : "UTC" }), "%s")/10));
 
       period = {"format": {"days" : -7}, // one week; must be negative
                 "readable" : "weekly"
@@ -798,7 +798,7 @@ You need HTML email to see this report.
       raise fuse event "periodic_report_started" attributes {"report_correlation_number": rcn};
       set ent:report_data{rcn.klog(">>>> rcn >>>")} report_data;
       schedule explicit event "periodic_report_timer_expired" at time:add(time:now(),{"minutes" : 2}) 
-        attributes {"report_correlation_number": rcn} on final; 
+        attributes {"report_correlation_number": rcn, "timezone": tz} on final; 
     }
   }
 
@@ -875,6 +875,7 @@ You need HTML email to see this report.
       max_retries = 1;
 
       rcn = event:attr("report_correlation_number");
+      tz = event:attr("timezone");
 
       vehicle_summaries = vehicleSummary();
 
@@ -914,6 +915,11 @@ You need HTML email to see this report.
     fired {
       log "Retrying for " + (needed.length()) + " vehicles";
       set ent:retry_count ent_retry_count+1;
+      raise fuse event periodic_report_start attributes {
+         "vehicle_summaries": needed,
+	 "timezone": tz,
+	 "report_correlation_nunmber": rcn
+	}
     } else {
       log "process vehicle reports ";
       log "timer expired" ;
