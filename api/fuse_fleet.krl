@@ -883,7 +883,10 @@ You need HTML email to see this report.
       vehicle_summaries_keys = vehicle_summaries.map(function(r){r{"deviceId"}}).klog(">> summary keys >>");
       vehicle_reports_keys = vehicle_reports.map(function(r){r{"deviceId"}}).klog(">> report keys >>");
 
-      missing_vehicles = vehicle_summaries_keys.difference(vehicle_reports_keys).klog(">> missing keys >>");
+      missing_vehicles = vehicle_summaries_keys
+                             .klog(">>> summaries again >>>")
+                             .difference(vehicle_reports_keys.klog(">> reports again >>>"))
+                             .klog(">> missing keys >>");
 
       in_array = function(k,a){
         a.filter(function(x){x eq k}).length() > 0;
