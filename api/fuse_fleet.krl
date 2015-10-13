@@ -877,10 +877,8 @@ You need HTML email to see this report.
       rcn = event:attr("report_correlation_number");
 
       vehicle_summaries = vehicleSummary();
-      vehicles_in_fleet = vehicle_summaries.length().klog(">>>> vehicles in fleet >>> ");
 
       vehicle_reports = ent:vehicle_reports{[rcn,"reports"]}.defaultsTo([]);
-      number_of_reports_received = vehicle_reports.length().klog(">>>> reports received >>>>");
 
       vehicle_summaries_keys = vehicle_summaries.map(function(r){r{"deviceId"}}).klog(">> summary keys >>");
       vehicle_reports_keys = vehicle_reports.map(function(r){r{"deviceId"}}).klog(">> report keys >>");
@@ -892,20 +890,21 @@ You need HTML email to see this report.
       };
 
       needed = vehicle_summaries.filter(function(s){
-                                           in_array(s{"deviceId"}, missing_vehicles)
+                                           missing_vehicles.has([s{"deviceId"}])
+                                           //in_array(s{"deviceId"}, missing_vehicles)
                                           })
                                 .klog(">>> needed vehicles >>")
                                 ;
 
     }
 
-    if ( vehicles_in_fleet > number_of_reports_received
+    if ( needed.length() > 0
       && ent:retry_count < max_retries
        ) then {
       noop();
     }
     fired {
-      log "Retrying for " + (vehicles_in_fleet - number_of_reports_received) + " vehicles";
+      log "Retrying for " + (needed.length()) + " vehicles";
       set ent:retry_count ent_retry_count+1;
     } else {
       log "process vehicle reports ";
