@@ -930,7 +930,7 @@ You need HTML email to see this report.
       log "timer expired" ;
       clear ent:retry_count;
       raise explicit event periodic_report_ready with
-        report_correlation_number = rcn ;
+        report_correlation_number = rcn if not ent:vehicle_reports{rcn}.isnull();
     }
   }
 
@@ -942,8 +942,9 @@ You need HTML email to see this report.
       // c = ent:report_data.keys().klog(">>> vehicle info >>>");
       time_info = ent:report_data{rcn}.defaultsTo({}).klog(">> report time info >>");
 
-      fleet_details = ent:vehicle_reports{[rcn, "reports"]};
+      fleet_details = ent:vehicle_reports{[rcn, "reports"]}.defaultsTo({});
       report_html = reports:formatFleetReport(time_info{"start"}, time_info{"end"}, time_info{"timezone"}, fleet_details);
+
 
       subj = "Your "+time_info{["period","readable"]}+" report from Fuse!";
 
@@ -959,7 +960,7 @@ You need HTML email to see this report.
 
 
     }
-    if not ent:vehicle_reports{rcn}.isnull() then noop();
+    noop();
     fired {
      raise fuse event email_for_owner attributes email_map;
      clear ent:vehicle_reports{rcn};
