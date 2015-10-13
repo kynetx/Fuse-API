@@ -822,7 +822,7 @@ You need HTML email to see this report.
 
   }    
 
-  rule test_timer_expiry is active {
+  rule test_timer_expiry is inactive {
     select when explicit periodic_report_timer_expired 
     pre {
       email_map = { "subj" :  "Timer expired",
@@ -883,7 +883,7 @@ You need HTML email to see this report.
       vehicle_summaries_keys = vehicle_summaries.map(function(r){r{"deviceId"}}).klog(">> summary keys >>");
       vehicle_reports_keys = vehicle_reports.map(function(r){r{"deviceId"}}).klog(">> report keys >>");
 
-      missing_vehicles = vehicle_reports_keys.difference(vehicle_summaries_keys).klog(">> missing keys >>");
+      missing_vehicles = vehicle_summaries_keys.difference(vehicle_reports_keys).klog(">> missing keys >>");
 
       in_array = function(k,a){
         a.filter(function(x){x eq k}).length() > 0;
