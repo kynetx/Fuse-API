@@ -875,8 +875,24 @@ You need HTML email to see this report.
       max_retries = 0;
 
       rcn = event:attr("report_correlation_number");
-      vehicles_in_fleet = vehicleSummary().length().klog(">>>> vehicles in fleet >>> ");
-      number_of_reports_received = (ent:vehicle_reports{[rcn,"reports"]}).length().klog(">>>> reports received >>>>");
+
+      vehicle_summaries = vehicleSummary();
+      vehicles_in_fleet = vehicle_summaries.length().klog(">>>> vehicles in fleet >>> ");
+
+      vehicle_reports = ent:vehicle_reports{[rcn,"reports"]};
+      number_of_reports_received = vehicle_reports.length().klog(">>>> reports received >>>>");
+
+      vehicle_summaries_keys = vehicle_summaries.map(function(r){r{deviceId}}).klog(">> summary keys >>");
+      vehicle_reports_keys = vehicle_reports.map(function(r){r{deviceId}}).klog(">> report keys >>");
+
+      missing_vehicles = vehicle_summaries_keys.difference(vehicle_reports_keys).klog(">> missing keys >>");
+
+      needed = vehicle_summaries.filter(function(s){
+                                           missing_vehicles.map(function(m){m{"deviceId"} eq s{"deviceId"}})
+                                          })
+                                .klog(">>> needed vehicles >>")
+                                ;
+
     }
 
     if ( vehicles_in_fleet > number_of_reports_received
