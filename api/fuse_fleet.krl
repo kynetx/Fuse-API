@@ -838,27 +838,57 @@ You need HTML email to see this report.
 
   rule check_periodic_report_status {
     select when explicit periodic_vehicle_report_added
-             or explicit periodic_report_timer_expired
 
     pre {
       rcn = event:attr("report_correlation_number");
       vehicles_in_fleet = vehicleSummary().length().klog(">>>> vehicles in fleet >>> ");
-      number_of_reports_received = (ent:vehicle_reports{[rcn,"reports"]}).length().klog(">>>> reports received >>>>");
+      number_of_reports_received = (ent:vehicle_reports{[rcn,"reports"]})
+                                     .klog(">>>> vehicle reports >>>>")
+                                     .length()
+                                     .klog(">>>> reports received >>>>")
+                                     ;
       timer_expired = event:type() eq "periodic_report_timer_expired"; 
     }
 
     if ( vehicles_in_fleet <= number_of_reports_received
-      || (timer_expired && not ent:vehicle_reports{rcn}.isnull())
        ) then {
       noop();
     }
     fired {
       log "process vehicle reports ";
-      log "timer expired" if(timer_expired);
       raise explicit event periodic_report_ready with
         report_correlation_number = rcn;
     } else {
       log "we're still waiting for " + (vehicles_in_fleet - number_of_reports_received) + " reports";
+    }
+  }
+
+  rule retry_from_expired_timer {
+    select when explicit periodic_report_timer_expired
+
+    pre {
+
+      max_retries = 0;
+
+      rcn = event:attr("report_correlation_number");
+      vehicles_in_fleet = vehicleSummary().length().klog(">>>> vehicles in fleet >>> ");
+      number_of_reports_received = (ent:vehicle_reports{[rcn,"reports"]}).length().klog(">>>> reports received >>>>");
+    }
+
+    if ( vehicles_in_fleet > number_of_reports_received
+      && ent:retry_count < max_retries
+       ) then {
+      noop();
+    }
+    fired {
+      log "Retrying for " + (vehicles_in_fleet - number_of_reports_received) + " vehicles";
+      set ent:retry_count ent_retry_count+1;
+    } else {
+      log "process vehicle reports ";
+      log "timer expired" ;
+      clear ent:retry_count;
+      raise explicit event periodic_report_ready with
+        report_correlation_number = rcn if not ent:vehicle_reports{rcn}.isnull();
     }
   }
 
