@@ -51,7 +51,7 @@ Functions for creating the Fuse reports
 	fleet_data
       }
 
-      vehicleDetails = function(start, end) {
+      vehicleDetails = function(start, end, vehicle_id) {
         function(vehicle) {
           trips_raw = common:role() eq "Vehicle" => trips:tripsByDate(start, end).defaultsTo({}, "tripsByDate() failed")
                     | vehicle{"channel"}.isnull() => []
@@ -113,7 +113,7 @@ Functions for creating the Fuse reports
 	   "trips" : trips, 
 	   "fuelTotals" : total_fillups,
 	   "fillups" : fillups,
-	   "deviceId": vehicle{"deviceId"}
+	   "deviceId": vehicle_id
 	  }   
 
 

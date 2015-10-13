@@ -782,7 +782,7 @@ You need HTML email to see this report.
       event:send(channel, "fuse", "periodic_vehicle_report")
           with attrs = {
 	    "report_correlation_number": rcn,
-	    "vehicle_id": vsum{"picoId"},
+	    "vehicle_id": vsum{"deviceId"},
 	    "start": common:convertToUTC(start),
 	    "end": common:convertToUTC(end)
 	  };
@@ -876,7 +876,7 @@ You need HTML email to see this report.
 
       rcn = event:attr("report_correlation_number");
 
-      vehicle_summaries = vehicleSummary().klog(">>> vehicle summaries >>> ");
+      vehicle_summaries = vehicleSummary();
 
       vehicle_reports = ent:vehicle_reports{[rcn,"reports"]}.defaultsTo([]);
 
