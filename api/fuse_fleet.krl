@@ -872,7 +872,7 @@ You need HTML email to see this report.
 
     pre {
 
-      max_retries = 0;
+      max_retries = 1;
 
       rcn = event:attr("report_correlation_number");
 
