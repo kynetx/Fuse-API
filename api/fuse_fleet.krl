@@ -841,7 +841,10 @@ You need HTML email to see this report.
 
     pre {
       rcn = event:attr("report_correlation_number");
-      vehicles_in_fleet = vehicleSummary().length().klog(">>>> vehicles in fleet >>> ");
+      vehicles_in_fleet = vehicleSummary()
+                           .klog(">>>> vehicle summaries >>>>")
+                           .length()
+                           .klog(">>>> vehicles in fleet >>> ");
       number_of_reports_received = (ent:vehicle_reports{[rcn,"reports"]})
                                      .klog(">>>> vehicle reports >>>>")
                                      .length()
