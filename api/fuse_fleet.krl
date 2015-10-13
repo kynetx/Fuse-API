@@ -876,7 +876,7 @@ You need HTML email to see this report.
 
       rcn = event:attr("report_correlation_number");
 
-      vehicle_summaries = vehicleSummary();
+      vehicle_summaries = vehicleSummary().klog(">>> vehicle summaries >>> ");
 
       vehicle_reports = ent:vehicle_reports{[rcn,"reports"]}.defaultsTo([]);
 
