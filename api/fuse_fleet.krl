@@ -913,6 +913,7 @@ You need HTML email to see this report.
 
     if ( needed.length() > 0
       && ent:retry_count < max_retries
+      && not ent:vehicle_reports{rcn}.isnull() // protect from time expiring after processing
        ) then {
       noop();
     }
@@ -929,7 +930,7 @@ You need HTML email to see this report.
       log "timer expired" ;
       clear ent:retry_count;
       raise explicit event periodic_report_ready with
-        report_correlation_number = rcn if not ent:vehicle_reports{rcn}.isnull();
+        report_correlation_number = rcn ;
     }
   }
 
@@ -938,7 +939,7 @@ You need HTML email to see this report.
     pre {
       rcn = event:attr("report_correlation_number");
 
-      c = ent:report_data.keys().klog(">>> vehicle info >>>");
+      // c = ent:report_data.keys().klog(">>> vehicle info >>>");
       time_info = ent:report_data{rcn}.defaultsTo({}).klog(">> report time info >>");
 
       fleet_details = ent:vehicle_reports{[rcn, "reports"]};
@@ -958,9 +959,8 @@ You need HTML email to see this report.
 
 
     }
-
-    noop();
-    always {
+    if not ent:vehicle_reports{rcn}.isnull() then noop();
+    fired {
      raise fuse event email_for_owner attributes email_map;
      clear ent:vehicle_reports{rcn};
      clear ent:report_data{rcn};
