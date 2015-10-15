@@ -909,11 +909,12 @@ You need HTML email to see this report.
                                 // .klog(">>> needed vehicles >>")
                                 ;
 
+      rcn_unprocessed = not ent:vehicle_reports{rcn}.isnull();
+
     }
 
     if ( needed.length() > 0
       && ent:retry_count < max_retries
-      && not ent:vehicle_reports{rcn}.isnull() // protect from time expiring after processing
        ) then {
       noop();
     }
@@ -923,14 +924,14 @@ You need HTML email to see this report.
       raise fuse event periodic_report_start attributes {
          "vehicle_summaries": needed,
 	 "timezone": tz,
-	 "report_correlation_number": rcn
-	}
+	 "report_correlation_number": rcn 
+	} if rcn_unprocessed;
     } else {
       log "process vehicle reports ";
       log "timer expired" ;
       clear ent:retry_count;
       raise explicit event periodic_report_ready with
-        report_correlation_number = rcn if not ent:vehicle_reports{rcn}.isnull();
+        report_correlation_number = rcn if rcn_unprocessed;
     }
   }
 
