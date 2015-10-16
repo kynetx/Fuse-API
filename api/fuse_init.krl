@@ -467,7 +467,7 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
       }
       if(reportPreference eq "on") then {
         send_directive("Sending event for report") with settings = settings;
-        event:send(fleet, "fuse", "periodic_report") with 
+        event:send(fleet, "fuse", "periodic_report_start") with 
             attrs = {"owner_name": owner_name,
 	    	     "timezone": tz
 		    };
