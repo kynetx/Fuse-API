@@ -876,7 +876,7 @@ You need HTML email to see this report.
 
     pre {
 
-      max_retries = 1;
+      max_retries = 2;
 
       rcn = event:attr("report_correlation_number");
       tz = event:attr("timezone");
