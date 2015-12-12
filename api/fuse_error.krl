@@ -39,11 +39,16 @@ ruleset fuse_error {
             ent_keys = rsm:entity_keys().encode();
 	    kre = meta:host();
 
+	    send_email=true;
+
             error_email = <<
 A Fuse error occured with the following details:
+  Time: #{time:now()}
+
   RID: #{rid}
   Rule: #{rule_name}
   Host: #{kre}
+  
 
   level: #{level}
   genus: #{genus}
@@ -57,6 +62,7 @@ A Fuse error occured with the following details:
 >>;
         }
 
+	if (send_email) then
         {
             sendgrid:send(to_name, to_addr, subject, error_email);
         }

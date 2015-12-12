@@ -840,7 +840,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       vehicle_name = about_me{"myProfileName"};
       device_id = about_me{"deviceId"};
 
-      details = dataSet(event:attr("vehicleId"),event:attr("dataSetId"));
+      details = dataSet(event:attr("vehicleId"),event:attr("dataSetId")).defaultsTo([]);
       
       detail = details
                   .filter(function(rec) {rec{"key"} eq "GEN_DTC"} )

@@ -594,16 +594,26 @@ Fuse ruleset for a vehicle pico
 
 
     // ---------- maintainance rules ----------
-    // doesn't do anything since the system forces event:send() to async mode
-    rule catch_complete {
-      select when system send_complete
-        foreach event:attr('send_results').pick("$.result") setting (result)
-        send_directive("event:send status")
-	  with status = result{"status"}
-	   and reason = result{"reason"}
-	   and body = result{"body"}
-	  ;
-   }
+
+  rule catch_complete {
+    select when system send_complete
+    foreach event:attr('send_results').decode() setting (result)
+         // send_directive("event:send status")
+	 //   with status = result{"status"}
+	 //    and reason = result{"reason"}
+	 //    and body = result{"body"}
+	 //   ;
+    pre {
+      status = result{["result","status"]};
+    }
+    if(not status.match(re/2../)) then {
+        noop();		      
+    }
+    fired {
+      log "Event send error " + result.encode()
+    }
+  }
+
 
 
 }
