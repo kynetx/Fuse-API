@@ -12,6 +12,7 @@ Functions for creating the Fuse reports
 	use module b16x19 alias common
         use module b16x18 alias trips
         use module b16x20 alias fuel
+	use module b16x21 alias maintenance
 
         sharing on
         provides fleetReport, emailBody, fleetDetails, vehicleDetails, formatFleetReport
