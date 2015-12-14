@@ -12,7 +12,7 @@ Functions for creating the Fuse reports
 	use module b16x19 alias common
         use module b16x18 alias trips
         use module b16x20 alias fuel
-	use module b16x21 alias maintenance
+	use module b16x28 alias webhooks // dummy module to keep fule cache bug from happening
 
         sharing on
         provides fleetReport, emailBody, fleetDetails, vehicleDetails, formatFleetReport
