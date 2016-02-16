@@ -259,6 +259,11 @@ Application that manages the fleet
 	shared_channel
       }
 
+      // return all vehicle where deviceId is present
+      activeVehicleSummary = function() {
+            vehicleSummary().filter(function(vsum){not (vsum{"deviceId"}).isnull()})
+      }     
+
     }
 
 
@@ -760,7 +765,8 @@ You need HTML email to see this report.
 
   rule start_periodic_report {
     select when fuse periodic_report_start
-    foreach event:attr("vehicle_summaries").defaultsTo(vehicleSummary()) setting(vsum)
+    // this filter should match the filter in check_periodic_report_status LOGICAL COUPLING!!!!
+    foreach event:attr("vehicle_summaries").defaultsTo(activeVehicleSummary()) setting(vsum)
 
     pre {
 
@@ -781,8 +787,8 @@ You need HTML email to see this report.
       report_data = {"period": period, "start": start, "end": end, "timezone": tz};
 
     }
-    if( not (vsum{"deviceId"}).isnull()
-      ) then {
+    
+    every {
       event:send(channel, "fuse", "periodic_vehicle_report")
           with attrs = {
 	    "report_correlation_number": rcn,
@@ -846,10 +852,9 @@ You need HTML email to see this report.
 
     pre {
       rcn = event:attr("report_correlation_number");
-      vehicles_in_fleet = vehicleSummary()
-                           .klog(">>>> vehicle summaries >>>>")
+      vehicles_in_fleet = activeVehicleSummary()
+                           // .klog(">>>> vehicle summaries >>>>")
 			    // this filter should match if condition in start_periodic_report
-			   .filter(function(vsum){not (vsum{"deviceId"}).isnull()})
                            .length()
                            .klog(">>>> vehicles in fleet >>> ");
       number_of_reports_received = (ent:vehicle_reports{[rcn,"reports"]})
