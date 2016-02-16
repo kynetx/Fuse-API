@@ -847,7 +847,9 @@ You need HTML email to see this report.
     pre {
       rcn = event:attr("report_correlation_number");
       vehicles_in_fleet = vehicleSummary()
-                           //.klog(">>>> vehicle summaries >>>>")
+                           .klog(">>>> vehicle summaries >>>>")
+			    // this filter should match if condition in start_periodic_report
+			   .filter(function(vsum){not (vsum{"deviceId"}).isnull()})
                            .length()
                            .klog(">>>> vehicles in fleet >>> ");
       number_of_reports_received = (ent:vehicle_reports{[rcn,"reports"]})
