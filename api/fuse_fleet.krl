@@ -765,13 +765,12 @@ You need HTML email to see this report.
 
   rule start_periodic_report {
     select when fuse periodic_report_start
-    // this filter should match the filter in check_periodic_report_status LOGICAL COUPLING!!!!
-    foreach event:attr("vehicle_summaries").defaultsTo(activeVehicleSummary()) setting(vsum)
 
     pre {
 
       // drop last digit to avoid "off by a second" errors
-      rcn = event:attr("report_correlation_number").defaultsTo("CID-"+math:floor(time:strftime(time:now({ "tz" : "UTC" }), "%s")/10));
+      rcn = event:attr("report_correlation_number")
+              .defaultsTo("CID-"+math:floor(time:strftime(time:now({ "tz" : "UTC" }), "%s")/10));
 
       period = {"format": {"days" : -7}, // one week; must be negative
                 "readable" : "weekly"
@@ -783,19 +782,11 @@ You need HTML email to see this report.
       end = time:add(today, {"seconds": -1}).klog(">>> end of period >>>>");
       start = time:add(today, period{"format"}).klog(">>> start of period >>>");
 
-      channel = {"cid": vsum{"channel"}};
       report_data = {"period": period, "start": start, "end": end, "timezone": tz};
 
     }
     
     every {
-      event:send(channel, "fuse", "periodic_vehicle_report")
-          with attrs = {
-	    "report_correlation_number": rcn,
-	    "vehicle_id": vsum{"deviceId"},
-	    "start": common:convertToUTC(start),
-	    "end": common:convertToUTC(end)
-	  };
       send_directive("periodic_report_started") with 
         rcn = rcn and 
 	vehicle_id = vsum{"picoId"} and 
@@ -805,10 +796,46 @@ You need HTML email to see this report.
     }
 
     fired {
-      raise fuse event "periodic_report_started" attributes {"report_correlation_number": rcn};
+      raise explcit event "periodic_report_routable" attributes
+          {"report_correlation_number": rcn,
+	   "start": start,
+	   "end": end,
+	   "timezone": tz
+	  };
       set ent:report_data{rcn.klog(">>>> rcn >>>")} report_data;
       schedule explicit event "periodic_report_timer_expired" at time:add(time:now(),{"minutes" : 2}) 
-        attributes {"report_correlation_number": rcn, "timezone": tz} on final; 
+        attributes {"report_correlation_number": rcn, "timezone": tz}
+    }
+  }
+
+  rule sent_periodic_report_event_vehicle {
+    select when explicit periodic_report_routable
+    foreach event:attr("vehicle_summaries").defaultsTo(activeVehicleSummary()) setting(vsum)
+
+    pre {
+
+      rcn = event:attr("report_correlation_number");
+
+      tz = event:attr("timezone").klog(">>> owner told me their timezone >>>> ");
+      end = common:convertToUTC(event:attr("end"));
+      start = common:convertToUTC(event:attr("start"));
+
+      channel = {"cid": vsum{"channel"}};
+
+    }
+    
+    every {
+      event:send(channel, "fuse", "periodic_vehicle_report")
+          with attrs = {
+	    "report_correlation_number": rcn,
+	    "vehicle_id": vsum{"deviceId"},
+	    "start": start,
+	    "end": end
+	  };
+    }
+
+    fired {
+      raise fuse event "periodic_report_started" attributes {"report_correlation_number": rcn};
     }
   }
 
