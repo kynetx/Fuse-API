@@ -822,8 +822,7 @@ You need HTML email to see this report.
       channel = {"cid": vsum{"channel"}};
 
     }
-    
-    every {
+    if(not rcn.isnull()) then {
       event:send(channel, "fuse", "periodic_vehicle_report")
           with attrs = {
 	    "report_correlation_number": rcn,
