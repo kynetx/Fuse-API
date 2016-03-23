@@ -789,7 +789,6 @@ You need HTML email to see this report.
     every {
       send_directive("periodic_report_started") with 
         rcn = rcn and 
-	vehicle_id = vsum{"picoId"} and 
 	start = start and
 	end = end and
         timezone = tz;
