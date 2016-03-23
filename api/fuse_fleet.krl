@@ -795,7 +795,7 @@ You need HTML email to see this report.
     }
 
     fired {
-      raise explcit event "periodic_report_routable" attributes
+      raise explicit event "periodic_report_routable" attributes
           {"report_correlation_number": rcn,
 	   "start": start,
 	   "end": end,
