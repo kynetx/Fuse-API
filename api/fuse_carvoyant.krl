@@ -380,6 +380,12 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
                                       | CloudOS:channelCreate(carvoyant_channel_name).pick("$.token")
     }
 
+    normalize_carvoyant_attributes = function(attrs) {
+           attrs.defaultsTo({})	
+                .put(["timestamp"], common:convertToUTC(time:now()))
+       		.delete(["_generatedby"]);
+
+    }
 
   }
 
@@ -766,31 +772,49 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 
   // ---------- rules for handling notifications ----------
 
-  rule ignition_status_changed  {  
-    select when carvoyant ignitionStatus
+  rule process_ignition_on  {  
+    select when carvoyant ignitionStatus where status eq "ON"
     pre {
-
-      status = event:attr("ignitionStatus");
-      tid = event:attr("tripId");
-      trip_data = event:attrs()
-                    .defaultsTo({})	
-                    .put(["timestamp"], common:convertToUTC(time:now()))
-       		    .delete(["_generatedby"]);
+      ignition_data = normalize_carvoyant_attributes(event:attrs());
     }
     noop();
     always {
-      raise fuse event "new_trip" with tripId = tid if status eq "OFF" && tid;
-      raise fuse event "trip_check" with duration = 2 if status eq "ON"; // recover lost trips
+      raise fuse event "trip_check" with duration = 2; // recover lost trips
+      raise fuse event ignition_processed attributes ignition_data;
+    }
+  }
+
+  rule process_ignition_off {  
+    select when carvoyant ignitionStatus where status eq "OFF"
+    pre {
+      tid = event:attr("tripId");
+      ignition_data = normalize_carvoyant_attributes(event:attrs());
+    }
+    if not tid.isnull() then noop();
+    fired {
+      raise fuse event "new_trip" with tripId = tid;
+      raise fuse event ignition_processed attributes ignition_data;
+    } else {
+      error warn "No trip ID " + ignition_data.encode();
+    }
+  }
+
+  rule post_process_ignition {
+    select when fuse ignition_processed
+    pre {
+      ignition_data = event:attrs();
+    }
+    noop();
+    always {
       raise fuse event "need_vehicle_status";
       raise pds event "new_data_available"
 	  attributes {
 	    "namespace": namespace(),
 	    "keyvalue": "ignitionStatus_fired",
-	    "value": trip_data,
+	    "value": ignition_data,
             "_api": "sky"
  		   
-	  };   
-      error warn "No trip ID " + trip_data.encode()  if not tid;
+	  };
     }
   }
 
