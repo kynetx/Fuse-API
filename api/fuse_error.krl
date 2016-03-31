@@ -21,7 +21,7 @@ ruleset fuse_error {
 
     global {
       to_name = "Kynetx Fuse Team";
-      to_addr = "pjw@kynetx.com";
+      to_addr = "fuse-support@kynetx.com";
       subject = "Fuse System Error";
     }
 
