@@ -357,7 +357,7 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
         }
 
         {
-            sendgrid:send("Kynetx Fleet Team", "pjw@kynetx.com", "New Fuse Fleet", msg);
+            sendgrid:send("Kynetx Fleet Team", "fuse-support@kynetx.com", "New Fuse Fleet", msg);
         }
 
 	always {
