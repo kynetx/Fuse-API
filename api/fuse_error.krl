@@ -76,6 +76,16 @@ A Fuse error occured with the following details:
 	}
     }
 
+  rule no_trip_id {
+    select when system error where msg.match(re/No trip ID/)
+    sendgrid:send(to_name, to_addr, subject, "Scheduling retry for " + event:attr("msg"));
+    always {
+      schedule fuse event "trip_check" at time:add(time:now(),{"minutes" : 1}) 
+         with duration = 1; // recover lost trips
+	 
+    }
+  }
+
 
   // move to fuse_common.krl after we bootstrap
   rule check_pico_setup {
