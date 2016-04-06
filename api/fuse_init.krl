@@ -1,8 +1,8 @@
 ruleset fuse_init {
     meta {
-        name "Fuse Initiialize"
+        name "Fuse Owner"
         description <<
-Ruleset for initializing a Fuse account and managing vehicle picos
+Primary ruleset for Fuse owner pico
         >>
         author "PJW from AKO's Guard Tour code"
 
