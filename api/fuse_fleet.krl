@@ -768,6 +768,8 @@ You need HTML email to see this report.
 
     pre {
 
+      vehicle_summaries = event:attr("vehicle_summaries").defaultsTo(activeVehicleSummary());
+      
       // drop last digit to avoid "off by a second" errors
       rcn = event:attr("report_correlation_number")
               .defaultsTo("CID-"+math:floor(time:strftime(time:now({ "tz" : "UTC" }), "%s")/10));
@@ -799,7 +801,8 @@ You need HTML email to see this report.
           {"report_correlation_number": rcn,
 	   "start": start,
 	   "end": end,
-	   "timezone": tz
+	   "timezone": tz,
+	   "vehicle_summaries": vehicle_summaries
 	  };
       set ent:report_data{rcn.klog(">>>> rcn >>>")} report_data;
       schedule explicit event "periodic_report_timer_expired" at time:add(time:now(),{"minutes" : 2}) 
@@ -887,7 +890,6 @@ You need HTML email to see this report.
                                      .length()
                                      .klog(">>>> reports received >>>>")
                                      ;
-      timer_expired = event:type() eq "periodic_report_timer_expired"; 
     }
 
     if ( vehicles_in_fleet <= number_of_reports_received
