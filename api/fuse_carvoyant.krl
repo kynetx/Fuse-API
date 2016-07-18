@@ -860,6 +860,13 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       codes = event:attr("troubleCodes");
       id = event:attr("id");
 
+      status = event:attrs()
+                      .defaultsTo({})	
+                      .put(["timestamp"], common:convertToUTC(time:now()))
+                      .put(["translatedValues"], reason_string)
+	              .delete(["_generatedby"]);
+
+
       about_me = pds:get_all_me();
       vehicle_name = about_me{"myProfileName"};
       device_id = about_me{"deviceId"};
@@ -867,19 +874,13 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
       details = dataSet(event:attr("vehicleId"),event:attr("dataSetId")).defaultsTo([]);
       
       detail = details
-                  .filter(function(rec) {rec{"key"} eq "GEN_DTC"} )
+                  .filter(function(rec) {rec{["datum","key"]} eq "GEN_DTC"} )
 		  ; 
 
       reason_string = detail
-                         .map( function(rec) { rec{"translatedValue"} } )
+                         .map( function(rec) { rec{["datum","translatedValue"]} } )
 			 .join("; ")
 			 ;
-
-      status = event:attrs()
-                      .defaultsTo({})	
-                      .put(["timestamp"], common:convertToUTC(time:now()))
-                      .put(["translatedValues"], reason_string)
-	              .delete(["_generatedby"]);
 
 
     }
@@ -890,7 +891,7 @@ Provides rules for handling Carvoyant events. Modified for the Mashery API
 	  attributes {
 	    "namespace": namespace(),
 	    "keyvalue": "troubleCode_fired",
-	    "value": status,
+	    "value": status.put(["detauls"], detail.encode()),
             "_api": "sky"
           };
      raise fuse event "updated_dtc"

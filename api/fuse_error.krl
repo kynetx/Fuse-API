@@ -25,6 +25,22 @@ ruleset fuse_error {
       subject = "Fuse System Error";
     }
 
+
+    rule no_trip_id {
+      select when system error msg re/No trip ID/
+      pre {
+        send_email = false;
+      }
+      if (send_email) then sendgrid:send(to_name, to_addr, subject, "Scheduling retry for " + event:attr("msg"));
+      always {
+        schedule fuse event "trip_check" at time:add(time:now(),{"minutes" : 1}) 
+           with duration = 1; // recover lost trips
+        last;	 
+      }
+    }
+
+
+
     rule handle_error {
         select when system error 
         pre {
@@ -75,16 +91,6 @@ A Fuse error occured with the following details:
             if event:attr("_test")
 	}
     }
-
-  rule no_trip_id {
-    select when system error where msg.match(re/No trip ID/)
-    sendgrid:send(to_name, to_addr, subject, "Scheduling retry for " + event:attr("msg"));
-    always {
-      schedule fuse event "trip_check" at time:add(time:now(),{"minutes" : 1}) 
-         with duration = 1; // recover lost trips
-	 
-    }
-  }
 
 
   // move to fuse_common.krl after we bootstrap
