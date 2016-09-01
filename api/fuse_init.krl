@@ -372,6 +372,17 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
       }
     }
 
+    rule clean_up_owners {
+      select when explicit owners_polluted
+      foreach ent:fuse_users.keys() setting (k)
+      if(k.match(re/.+@.+/)) then noop()
+      fired {
+        log "Found email key #{k}"
+      } else {
+        log "Found UUID key #{k}"
+      }     
+    }
+
     rule send_email_to_owner {
         select when fuse email_for_owner
         pre {
