@@ -350,17 +350,17 @@ Primary ruleset for Fuse owner pico
         pre {
 
 	  me = pds:get_all_me();
-	  my_email =  me{"myProfileEmail"} || random:uuid();
+	  my_email =  me{"myProfileEmail"};
           msg = <<
 A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
 >>;
         }
-
+        if not my_email.isnull() then
         {
             sendgrid:send("Kynetx Fleet Team", "fuse-support@kynetx.com", "New Fuse Fleet", msg);
         }
 
-	always {
+	fired {
 	  set app:fuse_users{my_email} makeAcctRecord(me)
 	}
     }
@@ -452,6 +452,24 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
         log ">>>> event #{use_domain}/#{use_type} already scheduled " + report_events.encode();
       }
        
+    }
+
+    rule clear_report_schedule {
+      select when fuse report_sched_bad
+      pre {
+        use_domain = "explicit";
+	use_type = "periodic_report";
+        scheduled = event:get_list();
+	evid = 0;
+	evtype = 1;
+        evrid = 3; 
+       	report_events = scheduled.filter(function(e){e[evtype] eq "#{use_domain}/#{use_type}" && e[evrid] eq meta:rid()}).klog(">>>> report schedules >>>>");
+	// clean up all 
+	isDeleted = report_events.map(function(e){event:delete(e[evid])}).klog(">>> deleted events >>> ");
+      }
+      send_directive("deleted all scheduled events") with
+        deleted_events = report_events and
+	status = isDeleted
     }
 
     rule catch_periodic_report {
