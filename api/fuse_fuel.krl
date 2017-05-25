@@ -16,7 +16,7 @@ Operations for fuel
     use module b16x11 alias carvoyant
 
 	
-    provides fillups, fillupsByDate, currentCPM, standardMPG, standardCPG, callEdmunds, callFuelEconomy
+    provides fillups, fillupsByDate, currentCPM, standardMPG, standardCPG, callEdmunds, callFuelEconomy, exportFillups
   }
 
   global {
@@ -89,6 +89,20 @@ Operations for fuel
       sorted_keys.map(function(id){ ent:fuel_purchases{id} })
     };
 
+ // result; 
+ // {
+ // "cost": "24.29",
+ // "volume": "15.682",
+ // "mpg": "13.34",
+ // "location": null,
+ // "distance": "209.2",
+ // "interval": 1009046,
+ // "timestamp": "20160224T161726+0000",
+ // "id": "17DCB874-DB12-11E5-A341-73F4E71C24E1",
+ // "unit_price": "1.549",
+ // "odometer": "92784.2"
+ // },
+
     defaultMPG = 15;
 
     currentCPM = function() {
@@ -149,6 +163,36 @@ Operations for fuel
                 };
       cpg_obj.pset(ent:cpg);   
     }
+
+
+ // result; 
+ // {
+ // "cost": "24.29",
+ // "volume": "15.682",
+ // "mpg": "13.34",
+ // "location": null,
+ // "distance": "209.2",
+ // "interval": 1009046,
+ // "timestamp": "20160224T161726+0000",
+ // "id": "17DCB874-DB12-11E5-A341-73F4E71C24E1",
+ // "unit_price": "1.549",
+ // "odometer": "92784.2"
+ // },
+    exportFillups = function(start, end, tz) {
+      timezone = tz.defaultsTo("America/Denver"); 
+
+      fillups = fillupsByDate(start,end)
+                 .map(function(v){ v.put(["date"], time:strftime(v{"timestamp"},"%F", {"tz":timezone}))
+				                            .put(["time"], time:strftime(v{"timestamp"},"%r", {"tz":timezone}))
+		                 });
+
+      // order fields
+      field_array = ["id", "date", "time", "cost", "volume", "mpg", "distance", "unit_price", "odometer", "location"
+                    ];
+
+      csv:from_array(trips, field_array);
+    }
+
       
   }
 
