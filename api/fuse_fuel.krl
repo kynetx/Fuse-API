@@ -353,14 +353,13 @@ Operations for fuel
 
       // configurables
       year = event:attr("year");
-      month = event:attr("month");
       tz = event:attr("timezone").klog(">>> owner told me their timezone >>>> ").defaultsTo("America/Denver");
 
 
       profile = pds:get_all_me().defaultsTo({});
       vehicle_name = profile{"myProfileName"};
 
-      subj = "Fuse Trip Export for #{vehicle_name} (#{month}/#{year})";
+      subj = "Fuse Fillup Export for #{vehicle_name} (#{year})";
 
       tz_str = time:strftime(time:now({"tz": tz}), "%Y%m%dT%H%M%S%z")
                   .split(re/[+-]/)
@@ -368,22 +367,22 @@ Operations for fuel
                   .head()
                   .klog(">>>> tz string >>>>>>>")
                   ;
-      start = time:new(year+month+"01T000000-"+tz_str);
-      end = time:add(start, {"months": 1});
+      start = time:new(year+"0101T000000-"+tz_str);
+      end = time:add(start, {"months": 12});
 
 
       // don't generate report unless there are vehicles
-      csv = exportTrips(start, end, tz);
+      csv = exportFillups(start, end, tz);
 
       msg = <<
-Here is your trip export for #{vehicle_name} for #{month}/#{year}
+Here is your fillup export for #{vehicle_name} for #{year}
       >>; 
 
 
       email_map = { "subj" :  subj, 
 		    "msg" : msg,
 		    "attachment": csv,
-		    "filename" : "Trips_#{vehicle_name}_#{year}_#{month}.csv"
+		    "filename" : "Fillups_#{vehicle_name}_#{year}.csv"
                   };
 
 
