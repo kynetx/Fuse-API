@@ -146,6 +146,7 @@ Primary ruleset for Fuse owner pico
 	  
 	}
 
+      send_reports = false;
     }
 
     // ---------- manage fleet singleton ----------
@@ -434,31 +435,31 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
                or pds new_settings_available reportPreference re/.+/
       pre {
         use_domain = "explicit";
-	use_type = "periodic_report";
+	      use_type = "periodic_report";
         scheduled = event:get_list();
-	evid = 0;
-	evtype = 1;
+	      evid = 0;
+	      evtype = 1;
         evrid = 3; 
-	report_events = scheduled.filter(function(e){e[evtype] eq "#{use_domain}/#{use_type}" && e[evrid] eq meta:rid()}).klog(">>>> report schedules >>>>");
-	// clean up all but first
-	isDeleted = report_events.tail().map(function(e){event:delete(e[evid])}).klog(">>> deleted events >>> ");
+	      report_events = scheduled.filter(function(e){e[evtype] eq "#{use_domain}/#{use_type}" && e[evrid] eq meta:rid()}).klog(">>>> report schedules >>>>");
+	      // clean up all but first
+	      isDeleted = report_events.tail().map(function(e){event:delete(e[evid])}).klog(">>> deleted events >>> ");
 
-	// for cron spec
-	hour = math:random(3).klog(">>> hour (plus 3)>>> ") + 3; // between 3 and 7
-	minute = math:random(59).klog(">>>> minute >>>> ");
-	dow = 0; // sunday
+        // for cron spec
+         hour = math:random(3).klog(">>> hour (plus 3)>>> ") + 3; // between 3 and 7
+         minute = math:random(59).klog(">>>> minute >>>> ");
+         dow = 0; // sunday
       }
       if (report_events.length() < 1) then // idempotent 
       {
 
         send_directive("schedule event for report") with
-	  domain = use_domain and
- 	  type = use_type
+	        domain = use_domain and
+           	  type = use_type
       }
       fired {
         log ">>>> scheduling event for #{use_domain}/#{use_type}";
- 	 // five minutes after midnight on sun
-	schedule explicit event use_type repeat "#{minute} #{hour} * * #{dow}";
+        // five minutes after midnight on sun
+	      schedule explicit event use_type repeat "#{minute} #{hour} * * #{dow}";
       } else {
         log ">>>> event #{use_domain}/#{use_type} already scheduled " + report_events.encode();
       }
@@ -487,14 +488,14 @@ A new fleet was created for #{me.encode()} with ECI #{meta:eci()}
       select when explicit periodic_report
       pre {
         settings = pds:get_setting_data(meta:rid()).klog(">>>> my settings >>>> ") || {};
-	reportPreference = settings{"reportPreference"} || "on"; // on or off; default on
-	fleet = fleetChannel();
-	owner_name = pds:get_me("myProfileName");
+	      reportPreference = settings{"reportPreference"} || "on"; // on or off; default on
+	      fleet = fleetChannel();
+	      owner_name = pds:get_me("myProfileName");
 
         tz = (settings{"timezonePreference"} || settings{"timezeonePreference"} || "America/Denver").klog(">>>> using timezone for report >>> ");  // remove misspelling later
 
       }
-      if(reportPreference eq "on") then {
+      if(reportPreference eq "on" && send_reports) then {
         send_directive("Sending event for report") with settings = settings;
         event:send(fleet, "fuse", "periodic_report_start") with 
             attrs = {"owner_name": owner_name,
