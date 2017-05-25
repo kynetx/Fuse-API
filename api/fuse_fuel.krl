@@ -190,7 +190,7 @@ Operations for fuel
       field_array = ["id", "date", "time", "cost", "volume", "mpg", "distance", "unit_price", "odometer", "location"
                     ];
 
-      csv:from_array(trips, field_array);
+      csv:from_array(fillups, field_array);
     }
 
       
@@ -346,6 +346,59 @@ Operations for fuel
       set ent:monthly_fuel_summary{[year, month]} month_totals;
     }
   }
+
+  rule send_fuel_export {
+    select when fuse fuel_export
+    pre {
+
+      // configurables
+      year = event:attr("year");
+      month = event:attr("month");
+      tz = event:attr("timezone").klog(">>> owner told me their timezone >>>> ").defaultsTo("America/Denver");
+
+
+      profile = pds:get_all_me().defaultsTo({});
+      vehicle_name = profile{"myProfileName"};
+
+      subj = "Fuse Trip Export for #{vehicle_name} (#{month}/#{year})";
+
+      tz_str = time:strftime(time:now({"tz": tz}), "%Y%m%dT%H%M%S%z")
+                  .split(re/[+-]/)
+                  .reverse()
+                  .head()
+                  .klog(">>>> tz string >>>>>>>")
+                  ;
+      start = time:new(year+month+"01T000000-"+tz_str);
+      end = time:add(start, {"months": 1});
+
+
+      // don't generate report unless there are vehicles
+      csv = exportTrips(start, end, tz);
+
+      msg = <<
+Here is your trip export for #{vehicle_name} for #{month}/#{year}
+      >>; 
+
+
+      email_map = { "subj" :  subj, 
+		    "msg" : msg,
+		    "attachment": csv,
+		    "filename" : "Trips_#{vehicle_name}_#{year}_#{month}.csv"
+                  };
+
+
+    }
+    if(not csv.isnull() ) then
+    {
+      send_directive("sending email to fleet owner") with
+        content = email_map;
+    }
+    fired {
+      raise fuse event email_for_owner attributes email_map;
+    }
+    
+  }
+
 
 }
 // fuse_fuel.krl
